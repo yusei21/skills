@@ -1,108 +1,108 @@
 # skills
 
-*[Read this in English](./README.en.md)*
+*[Leia em português](./README.pt-BR.md)*
 
-Coleção pessoal de agentes, skills, regras e hooks para uso com o Claude Code.
+Personal collection of agents, skills, rules and hooks for use with Claude Code.
 
-Este repositório teve origem no conteúdo do projeto open source
+This repository originated from the open source project
 [Everything Claude Code](https://github.com/affaan-m/everything-claude-code)
-(licença MIT) e pode incorporar conteúdo de outras fontes ao longo do tempo.
-Veja [`NOTICE.md`](./NOTICE.md) para os créditos completos e o que foi
-mantido, adaptado ou removido em relação ao original.
+(MIT license) and may incorporate content from other sources over time.
+See [`NOTICE.en.md`](./NOTICE.en.md) for full credits and what was kept,
+adapted, or removed compared to the original.
 
-Para tirar o máximo proveito do que está aqui dentro (quando usar cada
-agente, como combinar skills, dicas de custo/token), veja o
-[guia de uso avançado](./docs/GUIA.md).
+To get the most out of what's in here (when to use each agent, how to
+combine skills, token/cost tips), see the
+[advanced usage guide](./docs/GUIDE.md).
 
-## Pré-requisitos
+## Requirements
 
-- Claude Code CLI instalado (versão 2.1.0 ou mais recente)
+- Claude Code CLI installed (version 2.1.0 or later)
 ```bash
 claude --version
 ```
 
-## Instalação
+## Installation
 
-### Opção A — Instalar como plugin (recomendado)
+### Option A — Install as a plugin (recommended)
 
 ```bash
 /plugin marketplace add git@github.com:yusei21/skills.git
 /plugin install skills@skills
 ```
 
-> Ajuste `skills@skills` conforme o identificador definido no
-> `.claude-plugin/plugin.json` deste repositório, se for diferente.
+> Adjust `skills@skills` according to the identifier defined in this
+> repository's `.claude-plugin/plugin.json`, if different.
 
-### Opção B — Instalação manual
+### Option B — Manual installation
 
 ```bash
 git clone git@github.com:yusei21/skills.git
 cd skills
 
-# Agentes
+# Agents
 cp agents/*.md ~/.claude/agents/
 
-# Skills (principal superfície de trabalho)
-mkdir -p ~/.claude/skills/meu-repo
-cp -r skills/* ~/.claude/skills/meu-repo/
+# Skills (primary workflow surface)
+mkdir -p ~/.claude/skills/my-repo
+cp -r skills/* ~/.claude/skills/my-repo/
 
-# Regras (comuns + específicas da sua stack)
-mkdir -p ~/.claude/rules/meu-repo
-cp -r rules/common ~/.claude/rules/meu-repo/
-cp -r rules/typescript ~/.claude/rules/meu-repo/   # troque pela sua stack
+# Rules (common + your stack)
+mkdir -p ~/.claude/rules/my-repo
+cp -r rules/common ~/.claude/rules/my-repo/
+cp -r rules/typescript ~/.claude/rules/my-repo/   # swap for your stack
 ```
 
 ### Hooks
 
-Não copie `hooks/hooks.json` diretamente para `~/.claude/settings.json`.
-Copie o conteúdo de cada hook individualmente, ajustando os caminhos dos
-scripts, ou use o instalador do repositório se houver um.
+Don't copy `hooks/hooks.json` directly into `~/.claude/settings.json`.
+Copy each hook's content manually, adjusting script paths, or use the
+repository's installer if one exists.
 
-### Servidores MCP
+### MCP servers
 
-O catálogo completo está em [`mcp-configs/mcp-servers.json`](./mcp-configs/mcp-servers.json).
-Nada é ativado por padrão — copie os servidores que quiser para a seção
-`mcpServers` do seu `~/.claude.json` e substitua os placeholders
-`YOUR_*_HERE` por chaves reais. Um bom par inicial é **GitHub** e
-**Context7**. Mantenha menos de ~10 ativos para preservar a janela de contexto.
+The full catalog lives in [`mcp-configs/mcp-servers.json`](./mcp-configs/mcp-servers.json).
+Nothing is enabled by default — copy the servers you want into your
+`~/.claude.json` `mcpServers` section and replace the `YOUR_*_HERE`
+placeholders with real keys. A good starting pair is **GitHub** and
+**Context7**. Keep under ~10 enabled to preserve the context window.
 
-### Suporte a Antigravity CLI (`agy`)
+### Antigravity CLI (`agy`) support
 
-A pasta `.gemini/` é voltada para o **Antigravity CLI (`agy`)**, sucessor do
-Gemini CLI descontinuado pelo Google (contas individuais foram cortadas em
-18/06/2026). O `agy` ainda lê de `~/.gemini/`, mas com um layout novo:
+The `.gemini/` folder targets **Antigravity CLI (`agy`)**, Google's
+successor to the discontinued Gemini CLI (individual accounts were cut off
+on 2026-06-18). `agy` still reads from `~/.gemini/`, but with a new layout:
 
-- Config geral / instruções: [`.gemini/antigravity-cli/`](./.gemini/antigravity-cli/)
-- Config de MCP centralizada: [`.gemini/config/mcp_config.json`](./.gemini/config/mcp_config.json)
-  (substitui o antigo `~/.gemini/settings.json`)
+- General config / instructions: [`.gemini/antigravity-cli/`](./.gemini/antigravity-cli/)
+- Centralized MCP config: [`.gemini/config/mcp_config.json`](./.gemini/config/mcp_config.json)
+  (replaces the old `~/.gemini/settings.json`)
 
-Importe plugins antigos do Gemini CLI com `agy plugin import gemini`.
+Migrate legacy Gemini CLI plugins with `agy plugin import gemini`.
 
-### Verificar instalação
+### Verify installation
 
 ```bash
 /plugin list skills@skills
 ```
 
-## Estrutura
+## Structure
 
 ```
 skills/
-├── agents/       # subagentes especializados (planner, reviewer, etc.)
-├── skills/       # skills — fluxos de trabalho e conhecimento de domínio
-├── rules/        # regras sempre ativas (comuns + por linguagem)
-├── hooks/        # automações disparadas por eventos
-├── scripts/      # scripts de apoio de instalação/runtime
-├── commands/     # comandos de compatibilidade (formato /slash)
-├── mcp-configs/  # catálogo de servidores MCP (não ativado por padrão)
-├── .codex/       # alvo Codex CLI
-├── .opencode/    # alvo OpenCode
-├── .gemini/      # alvo Antigravity CLI (agy)
-├── docs/         # guia de uso avançado
-├── NOTICE.md / NOTICE.en.md  # avisos de origem, licenças e adaptações
-└── README.md / README.en.md  # este arquivo
+├── agents/       # specialized subagents (planner, reviewer, etc.)
+├── skills/       # workflows and domain knowledge
+├── rules/        # always-follow rules (common + per language)
+├── hooks/        # event-triggered automations
+├── scripts/      # supporting installer/runtime scripts
+├── commands/     # compatibility /slash commands
+├── mcp-configs/  # shared MCP server catalog (not enabled by default)
+├── .codex/       # Codex CLI target
+├── .opencode/    # OpenCode target
+├── .gemini/      # Antigravity CLI (agy) target
+├── docs/         # advanced usage guide
+├── NOTICE.md / NOTICE.en.md  # source notices, licenses, and adaptations
+└── README.md / README.pt-BR.md  # English / Portuguese
 ```
 
-## Licença
+## License
 
-MIT — veja [`LICENSE`](./LICENSE) e [`NOTICE.md`](./NOTICE.md).
+MIT — see [`LICENSE`](./LICENSE) and [`NOTICE.en.md`](./NOTICE.en.md).
