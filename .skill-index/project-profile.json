@@ -1,0 +1,50 @@
+{
+  "detected_at": "2026-07-30T00:00:00-03:00",
+  "git_commit": "4bb8e00d6d1f4ab9c5e6d2ab89920f9d6539c4f1",
+  "languages": [
+    "TypeScript",
+    "JavaScript",
+    "Python",
+    "Shell",
+    "Markdown"
+  ],
+  "frameworks": [
+    "OpenCode plugin system",
+    "Claude Code agents/skills/hooks",
+    "pytest"
+  ],
+  "package_managers": [
+    "npm",
+    "pip/uv-compatible Python packaging"
+  ],
+  "build_tools": [
+    "tsc",
+    "Node.js scripts"
+  ],
+  "test_tools": [
+    "pytest"
+  ],
+  "deployment_tools": [
+    "npm publish / plugin packaging",
+    "local installer scripts",
+    "loopback-only local dashboards and control panes"
+  ],
+  "important_directories": [
+    "skills/",
+    "agents/",
+    "commands/",
+    "rules/",
+    "hooks/",
+    "scripts/",
+    ".opencode/",
+    "mcp-configs/",
+    ".skill-index/"
+  ],
+  "recommended_default_skills": [
+    "project-orchestrator",
+    "codebase-onboarding",
+    "coding-standards",
+    "security-review",
+    "verification-loop"
+  ]
+}
