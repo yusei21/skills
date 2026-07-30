@@ -2,8 +2,9 @@
 
 *[Read this in English](./NOTICE.en.md)*
 
-Este repositório incorpora conteúdo de projetos open source de terceiros,
-listados abaixo com sua origem, copyright e licença.
+Este repositório incorpora e adapta conteúdo de projetos open source de
+terceiros. Os avisos abaixo preservam a origem, o copyright e a licença dos
+materiais incorporados.
 
 ---
 
@@ -13,7 +14,7 @@ listados abaixo com sua origem, copyright e licença.
 - **Copyright:** (c) 2026 Affaan Mustafa
 - **Licença:** MIT
 
-```
+```text
 MIT License
 
 Copyright (c) 2026 Affaan Mustafa
@@ -37,16 +38,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-**O que foi mantido / adaptado / removido em relação ao original:**
+## Adaptações deste repositório
 
-- **Mantido:** `agents/`, `skills/`, `rules/`, `hooks/`, `scripts/`,
-  `commands/`, `mcp-configs/`, `.codex/`, `.opencode/`.
-- **Adaptado:** `.gemini/` foi reestruturado para o **Antigravity CLI (`agy`)**,
-  sucessor do Gemini CLI descontinuado — config geral em
-  `.gemini/antigravity-cli/` e config de MCP em `.gemini/config/mcp_config.json`.
-- **Removido:** `ecc2/`, `tests/`, `.github/`, `.kiro/`, `.trae/`, `.codebuddy/`
-  e outros andaimes específicos de harness desnecessários para esta coleção
-  pessoal.
+A estrutura atual usa fontes canônicas compartilhadas na raiz:
+
+- `skills/` para skills;
+- `agents/` para definições de agentes;
+- `commands/`, `rules/`, `hooks/`, `scripts/` e `mcp-configs/` para recursos de apoio.
+
+As integrações específicas de ferramentas foram reorganizadas para reduzir
+cópias divergentes:
+
+- `.claude/`, `.codex/`, `.agents/`, `.agy/`, `.mimocode/`, `.opencode/` e
+  `.kimi/` mantêm configuração, documentação e links próprios;
+- skills e agentes compartilhados permanecem nas fontes canônicas da raiz;
+- `project-orchestrator`, `skill-builder` e `subagent-builder` foram adicionados
+  como extensões locais deste repositório para roteamento, criação e delegação
+  automáticos;
+- `.gemini/` permanece como conteúdo legado de compatibilidade e histórico,
+  enquanto a integração ativa do Antigravity é mantida em `.agy/`.
+
+Conteúdo removido ou consolidado pode incluir cópias redundantes, testes,
+andaimes e integrações específicas que não fazem parte da arquitetura atual.
+Esta seção descreve a organização deste fork; ela não altera as licenças nem os
+créditos dos materiais de terceiros.
 
 ---
 
@@ -58,7 +73,7 @@ SOFTWARE.
 - **Copyright:** (c) AAAA Autor
 - **Licença:** [MIT / Apache-2.0 / BSD / etc.]
 
-```
+```text
 (cole aqui o texto da licença original)
 ```
 
