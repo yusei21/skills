@@ -1,0 +1,27 @@
+{
+  "name": "skills",
+  "version": "0.1.0",
+  "description": "Personal collection of agents, skills, rules, hooks and commands for Claude Code (and Codex/OpenCode/Antigravity targets). Derived from Everything Claude Code (MIT).",
+  "author": {
+    "name": "yusei21"
+  },
+  "repository": "https://github.com/yusei21/skills",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "agents",
+    "skills",
+    "hooks",
+    "rules",
+    "commands",
+    "workflow",
+    "best-practices"
+  ],
+  "mcpServers": {},
+  "skills": [
+    "./skills/"
+  ],
+  "commands": [
+    "./commands/"
+  ]
+}

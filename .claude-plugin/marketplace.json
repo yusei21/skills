@@ -1,0 +1,41 @@
+{
+  "name": "skills",
+  "owner": {
+    "name": "yusei21",
+    "email": "asmagic111@gmail.com"
+  },
+  "metadata": {
+    "description": "Personal collection of agents, skills, rules, hooks, commands and MCP conventions for Claude Code"
+  },
+  "plugins": [
+    {
+      "name": "skills",
+      "source": "./",
+      "description": "Personal agents, skills, rules, hooks and commands for Claude Code, Codex, OpenCode, and Antigravity (agy). Derived from Everything Claude Code (MIT).",
+      "version": "0.1.0",
+      "author": {
+        "name": "yusei21",
+        "email": "asmagic111@gmail.com"
+      },
+      "repository": "https://github.com/yusei21/skills",
+      "license": "MIT",
+      "keywords": [
+        "agents",
+        "skills",
+        "hooks",
+        "commands",
+        "code-review",
+        "security",
+        "best-practices"
+      ],
+      "category": "workflow",
+      "tags": [
+        "agents",
+        "skills",
+        "hooks",
+        "commands"
+      ],
+      "strict": false
+    }
+  ]
+}
