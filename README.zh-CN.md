@@ -14,7 +14,7 @@
 
 本仓库源自开源项目 [Everything Claude Code](https://github.com/affaan-m/everything-claude-code)（MIT 许可证），并可能随着时间推移吸收其他来源的内容。来源、版权和适配说明请参阅 [`NOTICE.zh-CN.md`](./NOTICE.zh-CN.md)。
 
-高级用法、编排以及上下文预算建议请参阅 [`docs/GUIDE.zh-CN.md`](./docs/GUIDE.zh-CN.md)。当前外部 skill 生态调研、选择标准、去重决策以及实现说明请参阅 [`docs/ECOSYSTEM.zh-CN.md`](./docs/ECOSYSTEM.zh-CN.md)。
+高级用法、编排、skill 路由、贡献方式和上下文管理请参阅 [`docs/GUIDE.zh-CN.md`](./docs/GUIDE.zh-CN.md)。当前外部 skill 生态调研、选择标准、去重决策以及实现说明请参阅 [`docs/ECOSYSTEM.zh-CN.md`](./docs/ECOSYSTEM.zh-CN.md)。
 
 ## 自动路由
 
@@ -26,7 +26,23 @@
 
 专业 skills 保存在 `skills/` 中并按需加载。这样可以避免在每个工具中注册整个目录，从而降低上下文消耗。
 
-规范 skill 索引由 `scripts/build-skill-index.js` 根据 `skills/*/SKILL.md` 自动生成，并通过 GitHub Actions 保持同步。
+规范 skill 索引由 `scripts/build-skill-index.js` 根据 `skills/*/SKILL.md` 自动生成，并通过 GitHub Actions 保持同步：
+
+```bash
+node scripts/build-skill-index.js
+```
+
+发现数据保存在 `.skill-index/skills.json`。不要在工具特定目录中手工维护第二套 skill 目录。
+
+## 重点工作流 skills
+
+最新的生态调研在检查现有目录重叠后，最终增加了三个独立能力：
+
+- `systematic-debugging` — 基于证据的根因分析，覆盖可复现故障、可证伪假设、故障隔离与回归验证；
+- `verification-before-completion` — 在 agent 宣称实现、调试、迁移或自动化工作“已完成”之前，要求提供当前证据；
+- `composition-patterns` — 使用组合、slots、controlled/uncontrolled 状态、compound components 和明确扩展点来设计可复用 UI 组件 API。
+
+宽泛的 React 和 Web 设计候选能力被有意放弃，因为仓库已经通过 `react-patterns`、`react-performance`、`design-system`、`frontend-design-direction`、`make-interfaces-feel-better` 等 skills 提供了更强且重叠的覆盖。完整决策记录见 [`docs/ECOSYSTEM.zh-CN.md`](./docs/ECOSYSTEM.zh-CN.md)。
 
 ## 支持的集成
 
@@ -72,6 +88,16 @@ opencode
 
 共享目录位于 [`mcp-configs/mcp-servers.json`](./mcp-configs/mcp-servers.json)。凭据必须保存在环境变量或用户级配置中，绝不能提交到仓库。只启用任务真正需要的服务器，以减少上下文占用和攻击面。
 
+## 文档策略
+
+面向用户的文档按以下顺序维护：
+
+1. 英语 — 规范来源；
+2. 葡萄牙语（`pt-BR`）；
+3. 简体中文（`zh-CN`）。
+
+当文档发生实质变化时，应在同一组变更中更新三种语言版本。代码标识符、命令名称、文件路径、API 名称和配置键默认保持英语，除非底层工具明确要求本地化。
+
 ## 目录结构
 
 ```text
@@ -83,6 +109,7 @@ skills/
 ├── hooks/           # 事件驱动自动化
 ├── scripts/         # 支持脚本与运行时
 ├── mcp-configs/     # 共享 MCP 目录
+├── .skill-index/    # 自动生成的规范 skill 发现索引
 ├── .agents/         # Codex/原生 skill 发现链接
 ├── .claude/         # Claude 专用集成
 ├── .codex/          # Codex 配置与原生角色
@@ -91,7 +118,7 @@ skills/
 ├── .opencode/       # OpenCode 插件与集成
 ├── .kimi/           # Kimi 专用集成
 ├── .gemini/         # 旧版兼容内容
-├── docs/            # 指南与支持文档
+├── docs/            # 多语言指南与生态调研
 ├── AGENTS.md        # 共享自动路由说明
 ├── CLAUDE.md        # Claude 专用入口
 ├── NOTICE.md        # 葡萄牙语来源与许可证说明
@@ -101,7 +128,15 @@ skills/
 
 ## 贡献
 
-共享实现应保存在根目录中的规范目录。集成目录应引用这些资源，而不是复制它们。新增 skill 前，应先搜索已有能力、验证内容并更新清单。
+共享实现应保存在根目录中的规范目录。集成目录应引用这些资源，而不是复制它们。
+
+新增 skill 之前：
+
+1. 搜索当前索引，并与已有 skill 比较真实意图；
+2. 如果存在近似能力，优先扩展已有规范 skill；
+3. 验证 frontmatter、工作流边界、安全性和许可证；
+4. 重新生成 skill 索引；
+5. 如果变更影响用户使用方式，同时更新英语、葡萄牙语和简体中文文档。
 
 ## 许可证
 
