@@ -42,11 +42,14 @@ Anthropic 官方公开的 Agent Skills 仓库，是 `SKILL.md` 规范实践的�
 
 Vercel 官方的 agent skill 集合，是现代 React 与 Web 开发的重要参考。调研期间，该仓库包含 React 最佳实践、组件组合、React Native、Vercel 部署、Web 设计等相关 skill。
 
-本仓库选择进行原创实现的概念：
+本仓库最终保留了一个原创实现概念：
 
-- `react-best-practices`
 - `composition-patterns`
-- `web-design-guidelines`
+
+另外两个候选 skill 在调研过程中曾被临时实现，但在完整检查本地目录后被删除：
+
+- `react-best-practices` 与现有的 `react-patterns`、`react-performance` 存在明显重叠；
+- `web-design-guidelines` 与 `design-system`、`frontend-design-direction`、`make-interfaces-feel-better` 以及可访问性相关内容存在明显重叠。
 
 没有复制任何上游文字。在本次快照时，GitHub 未为 `vercel-labs/agent-skills` 显示仓库许可证，因此这里只把能力缺口和高层主题作为研究信号，并采用独立实现。
 
@@ -79,20 +82,22 @@ Trail of Bits 维护了一套以安全研究为中心的 skill 生态，涵盖�
 
 | Skill | 主要能力缺口 | 调研信号 |
 |---|---|---|
-| `systematic-debugging` | 基于证据的根因分析 | obra/superpowers |
-| `verification-before-completion` | 防止在缺乏证据时声称任务完成 | obra/superpowers |
-| `react-best-practices` | 现代 React 正确性与性能审查 | vercel-labs/agent-skills |
-| `composition-patterns` | 可复用组件 API 设计 | vercel-labs/agent-skills |
-| `web-design-guidelines` | 结构化 Web UI / 设计审查 | vercel-labs/agent-skills |
+| `systematic-debugging` | 基于证据和可证伪假设的根因分析 | obra/superpowers |
+| `verification-before-completion` | 在声明完成之前强制建立证据 | obra/superpowers |
+| `composition-patterns` | 可复用组件 API 与扩展点设计 | vercel-labs/agent-skills |
 
-## 有意暂缓的候选能力
+经过第二轮重叠检查后，这三个 skill 的触发意图仍与现有目录保持足够清晰的区别，因此被保留。
 
-以下领域可能有价值，但本轮没有加入：
+## 未添加的候选能力
 
-- test-driven development — 很有价值，但应先与现有测试类 skills 做更细的重叠分析；
-- Git worktree 工作流 — 对并行 agent 很有用，但应与现有 orchestration 和 DevFleet 相关内容整合；
-- Vercel 部署 — 供应商特定能力，应在真实需求足够明显时再增加专门 skill；
-- 专业安全分析 skills — 价值很高，但应逐个引入，并明确与 `security-review` 的边界；
+以下领域已经评估，但被拒绝或暂缓：
+
+- 泛化 React 最佳实践 — 已由 `react-patterns`、`react-performance` 和其他 React skills 覆盖；
+- 泛化 Web 设计审查 — 已由 `design-system`、`frontend-design-direction`、`make-interfaces-feel-better`、可访问性和其他 UI skills 覆盖；
+- test-driven development — 已由 `tdd-workflow` 以及语言/框架专用 TDD skills 覆盖；
+- Git worktree 工作流 — 对并行 agent 很有用，但应整合进现有 orchestration 与 DevFleet 能力，而不是新增孤立重复项；
+- Vercel 部署 — 属于供应商特定能力，应在真实需求足够明显时再增加专门 skill；
+- 泛化 security review — 已由 `security-review` 覆盖；未来安全扩展应选择边界更窄的专业能力；
 - 文档生成 skills — 当前目录和已有上游集成已经覆盖较多相关能力。
 
 ## 维护策略
