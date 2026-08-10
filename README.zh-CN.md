@@ -1,0 +1,106 @@
+# skills（测试）
+
+[English](./README.md) | [Português](./README.pt-BR.md) | **简体中文**
+
+这是一个面向多种 AI 编程工具的共享资源集合，包含 skills、智能体、命令、规则、hooks、脚本以及 MCP 配置。
+
+本仓库在根目录维护规范来源：
+
+- `skills/`：可复用工作流与领域知识；
+- `agents/`：可复用的智能体角色定义；
+- `commands/`、`rules/`、`hooks/`、`scripts/` 和 `mcp-configs/`：共享支持资源。
+
+`.claude/`、`.codex/`、`.agents/`、`.agy/`、`.mimocode/`、`.opencode/` 等特定工具目录应仅包含集成文件、原生配置以及指向规范资源的链接，不应维护共享 skills 或智能体的独立实体副本。
+
+本仓库源自开源项目 [Everything Claude Code](https://github.com/affaan-m/everything-claude-code)（MIT 许可证），并可能随着时间推移吸收其他来源的内容。来源、版权和适配说明请参阅 [`NOTICE.zh-CN.md`](./NOTICE.zh-CN.md)。
+
+高级用法、编排以及上下文预算建议请参阅 [`docs/GUIDE.zh-CN.md`](./docs/GUIDE.zh-CN.md)。
+
+## 自动路由
+
+三个项目级 skill 用于协调发现与创建：
+
+- `project-orchestrator` 检查仓库，并仅选择当前任务需要的 skills 与专家提示；
+- `skill-builder` 在创建能力之前先搜索现有能力，然后负责扩展、验证和注册 skill；
+- `subagent-builder` 在创建或注册专家子智能体之前先搜索已有角色。
+
+专业 skills 保存在 `skills/` 中并按需加载。这样可以避免在每个工具中注册整个目录，从而降低上下文消耗。
+
+## 支持的集成
+
+仓库目前提供以下集成入口：
+
+- Claude Code：`.claude/` 与 `CLAUDE.md`；
+- OpenAI Codex CLI：`.codex/` 与 `.agents/skills/`；
+- Antigravity CLI：`.agy/`；
+- MiMo Code：`.mimocode/`；
+- OpenCode：`.opencode/`；
+- Kimi：`.kimi/`。
+
+旧版 `.gemini/` 内容保留用于兼容与迁移历史；当前 Antigravity 集成维护在 `.agy/` 下。
+
+## 安装
+
+克隆仓库，并从仓库根目录启动工具，以便加载项目本地的说明和链接：
+
+```bash
+git clone git@github.com:yusei21/skills.git
+cd skills
+```
+
+示例：
+
+```bash
+claude
+codex
+agy
+opencode
+```
+
+当当前 Claude Code 版本以及本仓库插件元数据支持时，可按以下方式安装 Claude Code 插件：
+
+```text
+/plugin marketplace add git@github.com:yusei21/skills.git
+/plugin install skills@skills
+```
+
+默认不要把所有 skills 复制到工具的全局目录。优先使用本项目的本地路由 skills，或仅在其他仓库中安装真正需要的资源。
+
+## MCP 服务器
+
+共享目录位于 [`mcp-configs/mcp-servers.json`](./mcp-configs/mcp-servers.json)。凭据必须保存在环境变量或用户级配置中，绝不能提交到仓库。只启用任务真正需要的服务器，以减少上下文占用和攻击面。
+
+## 目录结构
+
+```text
+skills/
+├── skills/          # 规范 skills
+├── agents/          # 规范智能体提示
+├── commands/        # 共享命令
+├── rules/           # 共享规则
+├── hooks/           # 事件驱动自动化
+├── scripts/         # 支持脚本与运行时
+├── mcp-configs/     # 共享 MCP 目录
+├── .agents/         # Codex/原生 skill 发现链接
+├── .claude/         # Claude 专用集成
+├── .codex/          # Codex 配置与原生角色
+├── .agy/            # Antigravity 专用集成
+├── .mimocode/       # MiMo Code 专用集成
+├── .opencode/       # OpenCode 插件与集成
+├── .kimi/           # Kimi 专用集成
+├── .gemini/         # 旧版兼容内容
+├── docs/            # 指南与支持文档
+├── AGENTS.md        # 共享自动路由说明
+├── CLAUDE.md        # Claude 专用入口
+├── NOTICE.md        # 葡萄牙语来源与许可证说明
+├── NOTICE.en.md     # 英语来源与许可证说明
+└── NOTICE.zh-CN.md  # 简体中文来源与许可证说明
+```
+
+## 贡献
+
+共享实现应保存在根目录中的规范目录。集成目录应引用这些资源，而不是复制它们。新增 skill 前，应先搜索已有能力、验证内容并更新清单。
+
+## 许可证
+
+MIT — 参阅 [`LICENSE`](./LICENSE) 与 [`NOTICE.zh-CN.md`](./NOTICE.zh-CN.md)。
