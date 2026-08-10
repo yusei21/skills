@@ -1,4 +1,4 @@
-# skills (test)
+# Skills
 
 **English** | [Português](./README.pt-BR.md) | [简体中文](./README.zh-CN.md)
 
@@ -22,7 +22,9 @@ This repository originated from the open source project
 [`NOTICE.en.md`](./NOTICE.en.md) for credits and adaptation notes.
 
 For advanced usage, orchestration, and context-budget guidance, see
-[`docs/GUIDE.md`](./docs/GUIDE.md).
+[`docs/GUIDE.md`](./docs/GUIDE.md). For the current external skill-ecosystem
+review, selection criteria, deduplication decisions, and implementation notes,
+see [`docs/ECOSYSTEM.md`](./docs/ECOSYSTEM.md).
 
 ## Automatic routing
 
@@ -37,6 +39,9 @@ Three project-level skills coordinate discovery and creation:
 
 Specialized skills remain in `skills/` and are loaded on demand. This avoids
 registering the entire catalog in every tool and exceeding context budgets.
+
+The canonical skill index is generated from `skills/*/SKILL.md` by
+`scripts/build-skill-index.js` and kept synchronized by GitHub Actions.
 
 ## Supported integrations
 
