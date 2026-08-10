@@ -3,11 +3,17 @@ name: skill-index
 on:
   push:
     branches: [main]
+    paths:
+      - "skills/**/SKILL.md"
+      - "scripts/build-skill-index.js"
+      - ".skill-index/skills.json"
+      - ".github/workflows/skill-index.yml"
   pull_request:
     paths:
       - "skills/**/SKILL.md"
       - "scripts/build-skill-index.js"
       - ".skill-index/skills.json"
+      - ".github/workflows/skill-index.yml"
 
 permissions:
   contents: write
