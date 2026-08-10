@@ -2,90 +2,221 @@
 
 **English** | [Português](./GUIA.md) | [简体中文](./GUIDE.zh-CN.md)
 
-This guide assumes the repository is already installed (see
-[`README.md`](../README.md) for installation instructions). The focus here
-is how to use every piece of the repository as efficiently as possible.
+This guide assumes the repository is already installed. See [`README.md`](../README.md) for installation and integration instructions.
 
-## 1. When to use each type of resource
+The repository is designed around canonical reusable resources, automatic skill discovery, and selective loading. The goal is not to load the largest possible catalog into every session; it is to make the smallest useful set of capabilities easy to discover and reuse.
 
-| Resource | What it's for | When to trigger it |
+For the external ecosystem review and the criteria used to add or reject skills, see [`ECOSYSTEM.md`](./ECOSYSTEM.md).
+
+## 1. Canonical architecture
+
+Shared implementations live at the repository root:
+
+| Resource | Canonical location | Purpose |
 |---|---|---|
-| **Agents** (`agents/`) | Delegated, scoped tasks (e.g. code review, build error resolution) | When the task is well-defined and isolated — let the agent run without cluttering the main context |
-| **Skills** (`skills/`) | Reusable workflows and domain knowledge | The main day-to-day surface — call directly or let Claude Code suggest one automatically |
-| **Rules** (`rules/`) | Always-on guidelines (code style, testing, security) | Loaded at all times — use to standardize behavior without repeating instructions |
-| **Hooks** (`hooks/`) | Event-triggered automation (e.g. block a commit with an exposed secret) | Set up once, runs on its own from then on |
-| **Commands** (`commands/`) | `/slash` shortcuts for specific skills/flows | When you want to trigger something quickly without spelling out the task |
+| Agents | `agents/` | Specialist role definitions for delegated work |
+| Skills | `skills/` | Reusable workflows, procedures, and domain knowledge |
+| Rules | `rules/` | Cross-cutting behavioral and coding constraints |
+| Hooks | `hooks/` | Event-driven enforcement and automation |
+| Commands | `commands/` | Fast entry points for repeatable workflows |
+| MCP configs | `mcp-configs/` | Shared MCP server catalog |
+| Scripts | `scripts/` | Deterministic support tooling and integrations |
 
-## 2. Common workflows
+Tool-specific directories such as `.claude/`, `.codex/`, `.agents/`, `.agy/`, `.mimocode/`, and `.opencode/` should contain integration files, native configuration, and links to canonical resources rather than independent copies.
+
+## 2. Automatic skill discovery
+
+`project-orchestrator` is the repository-level router for substantial tasks. It should:
+
+1. inspect the current repository and task;
+2. read `.skill-index/skills.json` as the discovery catalog;
+3. select only the smallest useful group of skills;
+4. load specialist agent prompts only when they add value;
+5. avoid loading the entire catalog into context.
+
+The canonical skill index is generated from `skills/*/SKILL.md` by:
+
+```bash
+node scripts/build-skill-index.js
+```
+
+The generated file is:
+
+```text
+.skill-index/skills.json
+```
+
+GitHub Actions keeps the index synchronized when canonical skill definitions or the index generator change. Pull requests that modify skills should leave the generated index clean.
+
+Do not hand-maintain a second list of skills in tool-specific directories.
+
+## 3. Choosing the right skill
+
+Prefer intent matching over name matching. Before creating a new skill:
+
+1. search `.skill-index/skills.json`;
+2. compare the candidate against existing skills with similar outcomes;
+3. extend an existing canonical skill when the intent substantially overlaps;
+4. create a new skill only when it adds a distinct reusable workflow;
+5. use `skill-scout`, `skill-builder`, `skill-stocktake`, and `skill-comply` when appropriate.
+
+A useful skill should have a clear trigger, an actionable procedure, a verifiable outcome, and boundaries that distinguish it from neighboring skills.
+
+## 4. Current high-value workflow skills
+
+### Systematic debugging
+
+Use `systematic-debugging` when the cause of a failure is unclear, intermittent, cross-layer, or has resisted previous fixes.
+
+The workflow is evidence-first:
+
+```text
+reproduce
+  ↓
+collect evidence
+  ↓
+state a falsifiable hypothesis
+  ↓
+isolate the fault domain
+  ↓
+test the hypothesis
+  ↓
+fix the root cause
+  ↓
+verify the regression
+```
+
+Do not modify code merely because a change looks plausible. The skill requires a concrete hypothesis and a disproof test before treating a patch as a root-cause fix.
+
+### Verification before completion
+
+Use `verification-before-completion` before claiming that implementation, debugging, migration, refactoring, or automation work is finished.
+
+Completion claims should be backed by current evidence such as:
+
+- expected artifacts exist and contain the intended change;
+- the requested behavior was exercised directly;
+- focused tests pass;
+- broader tests, static checks, or builds pass when relevant;
+- remaining risks and unverified areas are stated explicitly.
+
+This skill complements `verification-loop`: the loop defines broad project checks, while `verification-before-completion` governs what evidence is required before making a completion claim.
+
+### Component composition patterns
+
+Use `composition-patterns` when a UI component is accumulating interacting boolean props or needs flexible extension points.
+
+Prefer:
+
+- `children` and explicit slots for structure;
+- controlled/uncontrolled state contracts;
+- compound components when subparts belong to one conceptual API;
+- narrow context boundaries;
+- explicit extension points over prop explosions.
+
+Use it alongside `react-patterns` and `react-performance` for React work rather than creating another broad React best-practices skill.
+
+## 5. Common workflows
 
 ### Starting a new feature
+
+```text
+project-orchestrator
+  ↓
+intent / planning skill
+  ↓
+implementation + relevant framework skills
+  ↓
+tests
+  ↓
+code/security review when needed
+  ↓
+verification-before-completion
 ```
-/plan "feature description"   → planning agent produces a blueprint
-TDD skill                      → write the test before the implementation
-/code-review                   → quality and security review
-```
+
+For larger work, use the `orch-*` family or other orchestration skills already present in the catalog instead of inventing an independent pipeline.
 
 ### Fixing a bug
+
+```text
+systematic-debugging
+  ↓
+reproduce the failure
+  ↓
+add a regression test when practical
+  ↓
+implement the root-cause fix
+  ↓
+run focused and broader checks
+  ↓
+verification-before-completion
 ```
-TDD skill      → write a test that reproduces the bug (fails first)
-                 → implement the fix, confirm the test passes
-/code-review   → check nothing else broke
+
+### Preparing for production
+
+Combine only what the project needs, for example:
+
+```text
+security-review / security-scan
+production-audit
+E2E or framework-specific verification
+canary-watch when deployment verification is required
+verification-before-completion
 ```
 
-### Getting ready for production
-```
-/security-scan     → security checklist
-E2E testing skill  → test critical user flows
-/test-coverage     → confirm test coverage
-```
+## 6. Combining agents and skills
 
-Adjust the command/skill names above to whatever actually exists in this
-repository — use `/plugin list skills@skills` to see the real list.
+Agents are role definitions; skills are reusable capabilities. Keep those concerns separate.
 
-## 3. Combining agents and skills
+A reviewer agent may load security or framework-review skills. A developer agent may load implementation, testing, and verification skills. Do not copy the same domain knowledge into every agent prompt.
 
-An agent can invoke a skill as part of its process. For example, a code
-review agent might consult a security-patterns skill before giving its
-final verdict. When creating your own agents, reference existing skills
-instead of duplicating knowledge — it keeps the repository easier to
-maintain.
+For multi-agent execution, prefer explicit ownership, artifacts, verification gates, and bounded handoffs over open-ended agent conversations.
 
-## 4. Rules: common vs. language-specific
+## 7. Context and cost discipline
 
-Always install the `rules/common/` folder (universal) and add **only** the
-language(s) you actually use. This avoids:
-- Unnecessary context eating up tokens
-- Convention conflicts between languages you don't use
+- Load only the skills required for the current task.
+- Prefer index metadata before opening full `SKILL.md` files.
+- Use project-specific rules only for technologies actually present.
+- Keep unrelated MCP servers disabled to reduce context and attack surface.
+- Compact context at logical phase boundaries, not during active debugging or implementation.
+- Reuse project profiles and durable memory where available rather than rediscovering stable facts every turn.
 
-## 5. Token/cost optimization
+## 8. Adding content from external repositories
 
-- Prefer the default model (`sonnet`) for most tasks; switch to a more
-  expensive model only when you need deeper reasoning.
-- Use `/clear` between unrelated tasks — it's instant and free.
-- Use `/compact` at logical breakpoints (after research, before
-  implementation; after finishing a milestone) — not mid-implementation,
-  or you'll lose variable names and partial state.
-- Don't enable too many MCP servers at once — each one consumes context
-  window tokens just by being listed as a tool.
+Before importing or adapting an external capability:
 
-## 6. Adding content from other repositories
+1. inspect the local catalog first;
+2. compare intent rather than names;
+3. inspect the source repository's current license;
+4. review scripts, hooks, dependencies, MCP configuration, and data-access behavior;
+5. prefer an original implementation when licensing is absent or uncertain;
+6. preserve required attribution when copyrighted material is actually copied or adapted;
+7. update the appropriate NOTICE files when required;
+8. regenerate the skill index after adding canonical skills.
 
-Whenever you bring in code, skills, or configs from another repository:
+The research methodology and reviewed ecosystems are documented in [`ECOSYSTEM.md`](./ECOSYSTEM.md).
 
-1. Check the source's license before copying:
-   - **MIT / Apache-2.0 / BSD:** generally permissive; preserve required notices
-   - **GPL / AGPL:** review redistribution and copyleft obligations carefully
-   - **No declared license:** don't copy without explicit permission
-2. Review the skill and any scripts, dependencies, assets, hooks, or MCP config before trusting it
-3. Prefer implementing a needed capability from public patterns rather than copying unrelated source material
-4. Put the content in the matching canonical folder here (`agents/`, `skills/`, `rules/`, etc.)
-5. If copyrighted third-party material is actually copied or adapted, update [`NOTICE.md`](../NOTICE.md), [`NOTICE.en.md`](../NOTICE.en.md), and [`NOTICE.zh-CN.md`](../NOTICE.zh-CN.md) with source, copyright, license, and adaptation notes
+## 9. Documentation language policy
 
-## 7. Customizing what's already here
+User-facing repository documentation must remain available in three languages:
 
-The inherited content is a starting point, not a final destination:
+1. English — canonical source;
+2. Portuguese (`pt-BR`);
+3. Simplified Chinese (`zh-CN`).
 
-1. Start with what already fits your workflow
-2. Adapt rules and skills to your actual stack
-3. Remove what you never use (less loaded context = more efficiency)
-4. Document your own patterns as new skills as you learn them
+When a user-facing document changes materially, update the three language variants in the same change set. Keep code identifiers, command names, file paths, API names, and configuration keys in English unless localization is required by the underlying tool.
+
+Use language links near the top of equivalent documents so readers can switch directly between versions.
+
+## 10. Maintaining the catalog
+
+Periodically review the catalog for:
+
+- duplicate or near-duplicate intents;
+- stale framework/version guidance;
+- truncated or weak frontmatter descriptions;
+- skills that require unsafe or unnecessary permissions;
+- skills whose workflows are no longer actionable;
+- external references whose licensing or maintenance status changed.
+
+Popularity is a discovery signal, not an automatic import criterion. A smaller, well-routed catalog is more useful than a larger catalog filled with overlapping prompts.
