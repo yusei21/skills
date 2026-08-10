@@ -1,6 +1,6 @@
 # skills (teste)
 
-*[Read this in English](./README.md)*
+[English](./README.md) | **Português** | [简体中文](./README.zh-CN.md)
 
 Coleção compartilhada de skills, agentes, comandos, regras, hooks, scripts e
 configurações MCP para várias ferramentas de programação com IA.
@@ -116,7 +116,8 @@ skills/
 ├── AGENTS.md        # instruções compartilhadas de roteamento automático
 ├── CLAUDE.md        # entrada específica do Claude
 ├── NOTICE.md        # avisos de origem e licença em português
-└── NOTICE.en.md     # avisos de origem e licença em inglês
+├── NOTICE.en.md     # avisos de origem e licença em inglês
+└── NOTICE.zh-CN.md  # avisos de origem e licença em chinês simplificado
 ```
 
 ## Contribuição
