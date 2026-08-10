@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "count": 281,
+  "count": 292,
   "skills": [
     {
       "name": "accessibility",
@@ -120,7 +120,7 @@
     {
       "name": "benchmark-methodology",
       "path": "skills/benchmark-methodology/SKILL.md",
-      "description": ">-"
+      "description": "Use after competitive-platform-analysis has produced a tiered competitor set. Scores each competitor across nine weighted dimensions (positioning, voice, visual craft, offer packaging, evidence, enterprise-readiness, thought leadership, pricing, client's strategic tension) with explicit 1–5 rubrics and a tension-plot. Precedes competitive-report-structure."
     },
     {
       "name": "benchmark-optimization-loop",
@@ -135,12 +135,12 @@
     {
       "name": "blueprint",
       "path": "skills/blueprint/SKILL.md",
-      "description": ">-"
+      "description": "Turn a one-line objective into a step-by-step construction plan for multi-session, multi-agent engineering projects. Each step has a self-contained context brief so a fresh agent can execute it cold. Includes adversarial review gate, dependency graph, parallel step detection, anti-pattern catalog, and plan mutation protocol. TRIGGER when: user requests a plan, blueprint, or roadmap for a complex multi-PR task, or describes work that needs multiple sessions. DO NOT TRIGGER when: task is completable in a single PR or fewer than 3 tool calls, or user says \"just do it\"."
     },
     {
       "name": "brand-discovery",
       "path": "skills/brand-discovery/SKILL.md",
-      "description": ">-"
+      "description": "Use when a brand needs to discover or articulate its identity through structured multi-session interviews. Covers purpose, positioning, audience, personality, voice, narrative, and founder-brand tension across 8 modules using laddering, 5 Whys, and projective techniques. Produces a resumable session with disk-persisted state and a master brandbook (90_SYNTHESIS.md)."
     },
     {
       "name": "brand-voice",
@@ -165,7 +165,7 @@
     {
       "name": "carrier-relationship-management",
       "path": "skills/carrier-relationship-management/SKILL.md",
-      "description": ">"
+      "description": "Codified expertise for managing carrier portfolios, negotiating freight rates, tracking carrier performance, allocating freight, and maintaining strategic carrier relationships. Informed by transportation managers with 15+ years experience. Includes scorecarding frameworks, RFP processes, market intelligence, and compliance vetting. Use when managing carriers, negotiating rates, evaluating carrier performance, or building freight strategies."
     },
     {
       "name": "cisco-ios-patterns",
@@ -215,17 +215,22 @@
     {
       "name": "competitive-platform-analysis",
       "path": "skills/competitive-platform-analysis/SKILL.md",
-      "description": ">-"
+      "description": "Use when scoping a competitive landscape — identifying, categorising, and score-filtering a competitor set before any benchmarking begins. Decides who counts as a competitor, which tier they belong to, and which sources to mine. First step in the three-skill competitive pipeline; precedes benchmark-methodology."
     },
     {
       "name": "competitive-report-structure",
       "path": "skills/competitive-report-structure/SKILL.md",
-      "description": ">-"
+      "description": "Use after benchmark-methodology has produced scored competitor profile cards. Assembles findings into a decision-grade report: landscape map, competitor profiles, benchmarking matrix, white-space analysis, strategic recommendations, and team alignment trigger questions. Final step in the three-skill competitive pipeline."
     },
     {
       "name": "compose-multiplatform-patterns",
       "path": "skills/compose-multiplatform-patterns/SKILL.md",
       "description": "Compose Multiplatform and Jetpack Compose patterns for KMP projects — state management, navigation, theming, performance, and platform-specific UI."
+    },
+    {
+      "name": "composition-patterns",
+      "path": "skills/composition-patterns/SKILL.md",
+      "description": "Design reusable component APIs with composition, slots, controlled and uncontrolled state, context boundaries, compound components, and explicit extension points instead of brittle prop explosions."
     },
     {
       "name": "config-gc",
@@ -320,7 +325,7 @@
     {
       "name": "customs-trade-compliance",
       "path": "skills/customs-trade-compliance/SKILL.md",
-      "description": ">"
+      "description": "Codified expertise for customs documentation, tariff classification, duty optimization, restricted party screening, and regulatory compliance across multiple jurisdictions. Informed by trade compliance specialists with 15+ years experience. Includes HS classification logic, Incoterms application, FTA utilization, and penalty mitigation. Use when handling customs clearance, tariff classification, trade compliance, import/export documentation, or duty optimization."
     },
     {
       "name": "dart-flutter-patterns",
@@ -435,7 +440,7 @@
     {
       "name": "ecc-recipes",
       "path": "skills/ecc-recipes/SKILL.md",
-      "description": "Map a described workflow to the right ECC command-GROUP with run-order and stop condition, and browse all command-group recipe families. Adds a family-grouping + run-order + when-to-stop layer on top of the flat command catalog. Advisory only. TRIGGER when the user says which commands for X, what command group runs X, show ECC recipes, list ECC pipelines, or how do I run a workflow with ECC. DO NOT TRIGGER when the user wants the task executed directly, wants a single-command deep doc (use ecc-g"
+      "description": "Map a described workflow to the right ECC command-GROUP with run-order and stop condition, and browse all command-group recipe families. Adds a family-grouping + run-order + when-to-stop layer on top of the flat command catalog. Advisory only. TRIGGER when the user says which commands for X, what command group runs X, show ECC recipes, list ECC pipelines, or how do I run a workflow with ECC. DO NOT TRIGGER when the user wants the task executed directly, wants a single-command deep doc (use ecc-guide), or wants a draft prompt rewritten (use prompt-optimizer)."
     },
     {
       "name": "ecc-tools-cost-audit",
@@ -450,7 +455,7 @@
     {
       "name": "energy-procurement",
       "path": "skills/energy-procurement/SKILL.md",
-      "description": ">"
+      "description": "Codified expertise for electricity and gas procurement, tariff optimization, demand charge management, renewable PPA evaluation, and multi-facility energy cost management. Informed by energy procurement managers with 15+ years experience at large commercial and industrial consumers. Includes market structure analysis, hedging strategies, load profiling, and sustainability reporting frameworks. Use when procuring energy, optimizing tariffs, managing demand charges, evaluating PPAs, or developing energy strategies."
     },
     {
       "name": "enterprise-agent-ops",
@@ -495,7 +500,7 @@
     {
       "name": "flox-environments",
       "path": "skills/flox-environments/SKILL.md",
-      "description": "Create reproducible, cross-platform (macOS/Linux) development environments with Flox, a declarative Nix-based environment manager. Use when setting up project toolchains for any language, installing system-level dependencies (compilers, databases, native libs like openssl/BLAS), pinning exact package versions for a team, running local services (PostgreSQL, Redis, Kafka), onboarding developers with one command, or solving 'works on my machine' problems — including agent/vibe-coding setups that ne"
+      "description": "Create reproducible, cross-platform (macOS/Linux) development environments with Flox, a declarative Nix-based environment manager. Use when setting up project toolchains for any language, installing system-level dependencies (compilers, databases, native libs like openssl/BLAS), pinning exact package versions for a team, running local services (PostgreSQL, Redis, Kafka), onboarding developers with one command, or solving 'works on my machine' problems — including agent/vibe-coding setups that need project-scoped tools without sudo. Also use when the user mentions .flox/, manifest.toml, flox activate, or FloxHub."
     },
     {
       "name": "flutter-dart-code-review",
@@ -510,7 +515,7 @@
     {
       "name": "frontend-a11y",
       "path": "skills/frontend-a11y/SKILL.md",
-      "description": ">"
+      "description": "Accessibility patterns for React and Next.js — semantic HTML, ARIA attributes, form labeling, keyboard navigation, focus management, and screen reader support. Use when building any interactive UI component or form."
     },
     {
       "name": "frontend-design-direction",
@@ -546,6 +551,11 @@
       "name": "generating-python-installer",
       "path": "skills/generating-python-installer/SKILL.md",
       "description": "Commercial-grade Python installer expert for Windows: Nuitka extreme compilation, dist slimming, DLL footprint analysis, and Inno Setup packaging to ship the smallest, fastest installers. Use only for advanced packaging/optimization (minimal size, fast startup), not basic script-to-exe conversion. 中文触发：Nuitka 极限优化、Python 商业打包、极限编译 Python、dist 瘦身、DLL 分析、最小安装包、最快启动、商业级打包风格"
+    },
+    {
+      "name": "gget",
+      "path": "skills/scientific-pkg-gget/SKILL.md",
+      "description": "gget CLI and Python workflow for quick genomic database queries, sequence lookup, BLAST-style searches, enrichment checks, and reproducible bioinformatics evidence logs."
     },
     {
       "name": "git-workflow",
@@ -645,17 +655,17 @@
     {
       "name": "inherit-legacy-style",
       "path": "skills/inherit-legacy-style/SKILL.md",
-      "description": "Legacy-project style inheritance skill. Use when the user types /inherit-legacy-style, or when onboarding an AI coding agent onto a hand-written legacy project and you need to prevent \"style drift\" (the model imposing its pretrained mainstream idioms onto the project). Language- and framework-agnostic — it aligns meta-architecture only, not syntax. Once run, it becomes a behavioral constraint on all subsequent coding tasks. Do NOT use for pure research or one-off questions unrelated to code-styl"
+      "description": "Legacy-project style inheritance skill. Use when the user types /inherit-legacy-style, or when onboarding an AI coding agent onto a hand-written legacy project and you need to prevent \"style drift\" (the model imposing its pretrained mainstream idioms onto the project). Language- and framework-agnostic — it aligns meta-architecture only, not syntax. Once run, it becomes a behavioral constraint on all subsequent coding tasks. Do NOT use for pure research or one-off questions unrelated to code-style alignment."
     },
     {
       "name": "intent-driven-development",
       "path": "skills/intent-driven-development/SKILL.md",
-      "description": "Turn ambiguous or high-impact product and engineering changes into scoped, verifiable acceptance criteria before or alongside implementation. Use when a user asks to clarify a feature, define acceptance criteria, de-risk a security/data/migration/integration change, prepare implementation requirements for another agent, or make a complex request testable. Do not trigger for trivial edits, straightforward fixes, active debugging, code review, or implementation requests whose acceptance conditions"
+      "description": "Turn ambiguous or high-impact product and engineering changes into scoped, verifiable acceptance criteria before or alongside implementation. Use when a user asks to clarify a feature, define acceptance criteria, de-risk a security/data/migration/integration change, prepare implementation requirements for another agent, or make a complex request testable. Do not trigger for trivial edits, straightforward fixes, active debugging, code review, or implementation requests whose acceptance conditions are already clear unless the user explicitly invokes this skill."
     },
     {
       "name": "inventory-demand-planning",
       "path": "skills/inventory-demand-planning/SKILL.md",
-      "description": ">"
+      "description": "Codified expertise for demand forecasting, safety stock optimization, replenishment planning, and promotional lift estimation at multi-location retailers. Informed by demand planners with 15+ years experience managing hundreds of SKUs. Includes forecasting method selection, ABC/XYZ analysis, seasonal transition management, and vendor negotiation frameworks. Use when forecasting demand, setting safety stock, planning replenishment, managing promotions, or optimizing inventory levels."
     },
     {
       "name": "investor-materials",
@@ -793,6 +803,11 @@
       "description": "iOS 26 Liquid Glass design system — dynamic glass material with blur, reflection, and interactive morphing for SwiftUI, UIKit, and WidgetKit."
     },
     {
+      "name": "literature-review",
+      "path": "skills/scientific-thinking-literature-review/SKILL.md",
+      "description": "Systematic literature-review workflow for academic, biomedical, technical, and scientific topics, including search planning, source screening, synthesis, citation checks, and evidence logging."
+    },
+    {
       "name": "llm-trading-agent-security",
       "path": "skills/llm-trading-agent-security/SKILL.md",
       "description": "Security patterns for autonomous trading agents with wallet or transaction authority. Covers prompt injection, spend limits, pre-send simulation, circuit breakers, MEV protection, and key handling."
@@ -800,12 +815,12 @@
     {
       "name": "logistics-exception-management",
       "path": "skills/logistics-exception-management/SKILL.md",
-      "description": ">"
+      "description": "Codified expertise for handling freight exceptions, shipment delays, damages, losses, and carrier disputes. Informed by logistics professionals with 15+ years operational experience. Includes escalation protocols, carrier-specific behaviors, claims procedures, and judgment frameworks. Use when handling shipping exceptions, freight claims, delivery issues, or carrier disputes."
     },
     {
       "name": "loop-design-check",
       "path": "skills/loop-design-check/SKILL.md",
-      "description": "Design a goal-oriented agent loop, and review it for the ways loops go wrong — spinning and burning tokens, Goodhart-gaming the verifier, or running a wrong answer to completion. Two actions: (1) WRITE a loop — gate whether to build it, define a machine-decidable goal, pick the loop type, pick a skeleton; (2) REVIEW a loop — run it past five failure modes plus decidability, boundaries, fallback, judge independence, and keep-judgment-with-the-human red lines. Use when designing an autonomous agen"
+      "description": "Design a goal-oriented agent loop, and review it for the ways loops go wrong — spinning and burning tokens, Goodhart-gaming the verifier, or running a wrong answer to completion. Two actions: (1) WRITE a loop — gate whether to build it, define a machine-decidable goal, pick the loop type, pick a skeleton; (2) REVIEW a loop — run it past five failure modes plus decidability, boundaries, fallback, judge independence, and keep-judgment-with-the-human red lines. Use when designing an autonomous agent loop, or when you already have one and worry it will spin, cheat, or run a wrong answer to the end. Complements the mechanism-layer loop skills (autonomous-loops, continuous-agent-loop) by covering the judgment layer they don't. 中文触发：写 loop、设计 loop、做一个 loop、检查 loop 对不对、loop 体检、loop 会不会跑飞、可判定目标、五个崩法、plan build judge。English triggers: design an agent loop, write a loop, check a loop, loop review, prevent a runaway loop, goal-oriented loop, decidable goal, plan/build/judge."
     },
     {
       "name": "mailtrap-email-integration",
@@ -831,6 +846,11 @@
       "name": "marketing-campaign",
       "path": "skills/marketing-campaign/SKILL.md",
       "description": "End-to-end marketing campaign planning and execution. Covers audience research, positioning, campaign angle definition, landing page copy, email sequences, social posts, ad copy, short-form video scripts, and content calendars. Use as the orchestration layer for multi-channel product launches."
+    },
+    {
+      "name": "mcp-builder",
+      "path": "skills/mcp-builder/SKILL.md",
+      "description": "Design, implement, test, and review Model Context Protocol servers with clear tool/resource boundaries, typed schemas, least-privilege access, safe transports, and host integration. Use when building a new MCP server, exposing an API or local capability through MCP, reviewing an existing server, or deciding how capabilities should be modeled."
     },
     {
       "name": "mcp-server-patterns",
@@ -1018,6 +1038,11 @@
       "description": "Review prediction-market, basket, oracle, and trading-agent workflows for compliance, safety, data-quality, privacy, and execution risk. Use before any workflow handles venue auth, user portfolio data, API keys, or trade planning."
     },
     {
+      "name": "prefer-deterministic-code",
+      "path": "skills/prefer-deterministic-code/SKILL.md",
+      "description": "Prefer deterministic computation, repository inspection, parsers, tests, and direct tool results over model inference whenever the answer can be derived mechanically. Use for calculations, transformations, validation, extraction, codebase facts, and repeatable automation where an LLM call would add cost or variance without adding judgment."
+    },
+    {
       "name": "prisma-patterns",
       "path": "skills/prisma-patterns/SKILL.md",
       "description": "Prisma ORM patterns for TypeScript backends — schema design, query optimization, transactions, pagination, and critical traps like updateMany returning count not records, $transaction timeouts, migrate dev resetting the DB, @updatedAt skipped on bulk writes, and serverless connection exhaustion."
@@ -1040,7 +1065,7 @@
     {
       "name": "production-scheduling",
       "path": "skills/production-scheduling/SKILL.md",
-      "description": ">"
+      "description": "Codified expertise for production scheduling, job sequencing, line balancing, changeover optimization, and bottleneck resolution in discrete and batch manufacturing. Informed by production schedulers with 15+ years experience. Includes TOC/drum-buffer-rope, SMED, OEE analysis, disruption response frameworks, and ERP/MES interaction patterns. Use when scheduling production, resolving bottlenecks, optimizing changeovers, responding to disruptions, or balancing manufacturing lines."
     },
     {
       "name": "project-flow-ops",
@@ -1048,9 +1073,19 @@
       "description": "Operate execution flow across GitHub and Linear by triaging issues and pull requests, linking active work, and keeping GitHub public-facing while Linear remains the internal execution layer. Use when the user wants backlog control, PR triage, or GitHub-to-Linear coordination."
     },
     {
+      "name": "project-orchestrator",
+      "path": "skills/project-orchestrator/SKILL.md",
+      "description": "Automatically inspect the current repository, identify its technologies and task type, select relevant canonical skills from skills/, and load specialized agent prompts from agents/ when useful. Use this automatically for every substantial repository task."
+    },
+    {
       "name": "prompt-optimizer",
       "path": "skills/prompt-optimizer/SKILL.md",
-      "description": ">-"
+      "description": "Analyze raw prompts, identify intent and gaps, match ECC components (skills/commands/agents/hooks), and output a ready-to-paste optimized prompt. Advisory role only — never executes the task itself. TRIGGER when: user says \"optimize prompt\", \"improve my prompt\", \"how to write a prompt for\", \"help me prompt\", \"rewrite this prompt\", or explicitly asks to enhance prompt quality. Also triggers on Chinese equivalents: \"优化prompt\", \"改进prompt\", \"怎么写prompt\", \"帮我优化这个指令\". DO NOT TRIGGER when: user wants the task executed directly, or says \"just do it\" / \"直接做\". DO NOT TRIGGER when user says \"优化代码\", \"优化性能\", \"optimize performance\", \"optimize this code\" — those are refactoring/performance tasks, not prompt optimization."
+    },
+    {
+      "name": "pubmed-database",
+      "path": "skills/scientific-db-pubmed-database/SKILL.md",
+      "description": "Direct PubMed and NCBI E-utilities search workflows for biomedical literature, MeSH queries, PMID lookup, citation retrieval, and API-backed literature monitoring."
     },
     {
       "name": "python-patterns",
@@ -1070,7 +1105,7 @@
     {
       "name": "quality-nonconformance",
       "path": "skills/quality-nonconformance/SKILL.md",
-      "description": ">"
+      "description": "Codified expertise for quality control, non-conformance investigation, root cause analysis, corrective action, and supplier quality management in regulated manufacturing. Informed by quality engineers with 15+ years experience across FDA, IATF 16949, and AS9100 environments. Includes NCR lifecycle management, CAPA systems, SPC interpretation, and audit methodology. Use when investigating non-conformances, performing root cause analysis, managing CAPAs, interpreting SPC data, or handling supplier quality issues."
     },
     {
       "name": "quarkus-patterns",
@@ -1155,7 +1190,7 @@
     {
       "name": "returns-reverse-logistics",
       "path": "skills/returns-reverse-logistics/SKILL.md",
-      "description": ">"
+      "description": "Codified expertise for returns authorization, receipt and inspection, disposition decisions, refund processing, fraud detection, and warranty claims management. Informed by returns operations managers with 15+ years experience. Includes grading frameworks, disposition economics, fraud pattern recognition, and vendor recovery processes. Use when handling product returns, reverse logistics, refund decisions, return fraud detection, or warranty claims."
     },
     {
       "name": "rules-distill",
@@ -1183,27 +1218,7 @@
       "description": "Multi-agent adversarial verification with convergence loop. Two independent review agents must both pass before output ships."
     },
     {
-      "name": "scientific-db-pubmed-database",
-      "path": "skills/scientific-db-pubmed-database/SKILL.md",
-      "description": "Direct PubMed and NCBI E-utilities search workflows for biomedical literature, MeSH queries, PMID lookup, citation retrieval, and API-backed literature monitoring."
-    },
-    {
-      "name": "scientific-db-uspto-database",
-      "path": "skills/scientific-db-uspto-database/SKILL.md",
-      "description": "USPTO patent and trademark data workflow for official record lookup, PatentSearch queries, TSDR checks, assignment data, and reproducible IP research logs."
-    },
-    {
-      "name": "scientific-pkg-gget",
-      "path": "skills/scientific-pkg-gget/SKILL.md",
-      "description": "gget CLI and Python workflow for quick genomic database queries, sequence lookup, BLAST-style searches, enrichment checks, and reproducible bioinformatics evidence logs."
-    },
-    {
-      "name": "scientific-thinking-literature-review",
-      "path": "skills/scientific-thinking-literature-review/SKILL.md",
-      "description": "Systematic literature-review workflow for academic, biomedical, technical, and scientific topics, including search planning, source screening, synthesis, citation checks, and evidence logging."
-    },
-    {
-      "name": "scientific-thinking-scholar-evaluation",
+      "name": "scholar-evaluation",
       "path": "skills/scientific-thinking-scholar-evaluation/SKILL.md",
       "description": "Structured scholarly-work evaluation for papers, proposals, literature reviews, methods sections, evidence quality, citation support, and research-writing feedback."
     },
@@ -1233,6 +1248,11 @@
       "description": "Audit, plan, and implement SEO improvements across technical SEO, on-page optimization, structured data, Core Web Vitals, and content strategy. Use when the user wants better search visibility, SEO remediation, schema markup, sitemap/robots work, or keyword mapping."
     },
     {
+      "name": "skill-builder",
+      "path": "skills/skill-builder/SKILL.md",
+      "description": "Cria, amplia, corrige, valida e registra skills do repositório. Use automaticamente quando não existir uma skill adequada para o fluxo solicitado."
+    },
+    {
       "name": "skill-comply",
       "path": "skills/skill-comply/SKILL.md",
       "description": "Visualize whether skills, rules, and agent definitions are actually followed — auto-generates scenarios at 3 prompt strictness levels, runs agents, classifies behavioral sequences, and reports compliance rates with full tool call timelines"
@@ -1241,6 +1261,11 @@
       "name": "skill-scout",
       "path": "skills/skill-scout/SKILL.md",
       "description": "Search existing local, marketplace, GitHub, and web skill sources before creating a new skill. Use when the user wants to create, build, fork, or find a skill for a workflow."
+    },
+    {
+      "name": "skill-security-audit",
+      "path": "skills/skill-security-audit/SKILL.md",
+      "description": "Review third-party agent skills and their scripts, assets, dependencies, and instructions for prompt injection, destructive behavior, credential access, data exfiltration, unsafe dependency installation, hidden payloads, and provenance risks before adoption. Use when importing, installing, updating, or trusting a skill from another repository or marketplace."
     },
     {
       "name": "skill-stocktake",
@@ -1283,6 +1308,11 @@
       "description": "Suggests manual context compaction at logical intervals to preserve context through task phases rather than arbitrary auto-compaction."
     },
     {
+      "name": "subagent-builder",
+      "path": "skills/subagent-builder/SKILL.md",
+      "description": "Cria, amplia, valida e registra subagentes especializados. Use automaticamente quando uma tarefa precisar de delegação ou revisão especializada e nenhum agente existente for adequado."
+    },
+    {
       "name": "swift-actor-persistence",
       "path": "skills/swift-actor-persistence/SKILL.md",
       "description": "Thread-safe data persistence in Swift using actors — in-memory cache with file-backed storage, eliminating data races by design."
@@ -1303,9 +1333,14 @@
       "description": "SwiftUI architecture patterns, state management with @Observable, view composition, navigation, performance optimization, and modern iOS/macOS UI best practices."
     },
     {
+      "name": "systematic-debugging",
+      "path": "skills/systematic-debugging/SKILL.md",
+      "description": "Diagnose software failures with an evidence-first workflow that reproduces the issue, narrows the fault domain, tests hypotheses, fixes the root cause, and verifies against regressions."
+    },
+    {
       "name": "taste",
       "path": "skills/taste/SKILL.md",
-      "description": "A creative-direction (taste) layer for music videos and short-form edits in the angelcore / cloud-trance / hyperpop visual family. Distills a named-genre aesthetic vocabulary, a mood + color + light system, and a beat-synced editing grammar, then chains ECC's video skills (video-editing, fal-ai-media, remotion-video-creation, motion-*, content-engine) into one production pipeline. Use when the work is not just making a video function but making it feel intentional, when building a music video, a"
+      "description": "A creative-direction (taste) layer for music videos and short-form edits in the angelcore / cloud-trance / hyperpop visual family. Distills a named-genre aesthetic vocabulary, a mood + color + light system, and a beat-synced editing grammar, then chains ECC's video skills (video-editing, fal-ai-media, remotion-video-creation, motion-*, content-engine) into one production pipeline. Use when the work is not just making a video function but making it feel intentional, when building a music video, a fancam/edit, a moodboard-driven reel, or when choosing a coherent visual direction for AI-generated b-roll."
     },
     {
       "name": "tdd-workflow",
@@ -1335,7 +1370,12 @@
     {
       "name": "token-budget-advisor",
       "path": "skills/token-budget-advisor/SKILL.md",
-      "description": ">-"
+      "description": "Offers the user an informed choice about how much response depth to consume before answering. Use this skill when the user explicitly wants to control response length, depth, or token budget. TRIGGER when: \"token budget\", \"token count\", \"token usage\", \"token limit\", \"response length\", \"answer depth\", \"short version\", \"brief answer\", \"detailed answer\", \"exhaustive answer\", \"respuesta corta vs larga\", \"cuántos tokens\", \"ahorrar tokens\", \"responde al 50%\", \"dame la versión corta\", \"quiero controlar cuánto usas\", or clear variants where the user is explicitly asking to control answer size or depth. DO NOT TRIGGER when: user has already specified a level in the current session (maintain it), the request is clearly a one-word answer, or \"token\" refers to auth/session/payment tokens rather than response size."
+    },
+    {
+      "name": "token-budget-discipline",
+      "path": "skills/token-budget-discipline/SKILL.md",
+      "description": "Establish explicit per-task and per-session budgets for model tokens, tool calls, retries, context growth, and autonomous iterations. Use for long-running, multi-step, agentic, research, debugging, optimization, or delegated workflows where uncontrolled loops can waste cost and reduce reliability."
     },
     {
       "name": "ui-demo",
@@ -1363,6 +1403,16 @@
       "description": "Operate notifications as one ECC-native workflow across GitHub, Linear, desktop alerts, hooks, and connected communication surfaces. Use when the real problem is alert routing, deduplication, escalation, or inbox collapse."
     },
     {
+      "name": "uspto-database",
+      "path": "skills/scientific-db-uspto-database/SKILL.md",
+      "description": "USPTO patent and trademark data workflow for official record lookup, PatentSearch queries, TSDR checks, assignment data, and reproducible IP research logs."
+    },
+    {
+      "name": "verification-before-completion",
+      "path": "skills/verification-before-completion/SKILL.md",
+      "description": "Require concrete evidence before declaring implementation work complete by checking acceptance criteria, tests, static analysis, runtime behavior, artifacts, and remaining risks."
+    },
+    {
       "name": "verification-loop",
       "path": "skills/verification-loop/SKILL.md",
       "description": "A comprehensive verification system for Claude Code sessions."
@@ -1375,7 +1425,7 @@
     {
       "name": "videodb",
       "path": "skills/videodb/SKILL.md",
-      "description": "See, Understand, Act on video and audio. See- ingest from local files, URLs, RTSP/live feeds, or live record desktop; return realtime context and playable stream links. Understand- extract frames, build visual/semantic/temporal indexes, and search moments with timestamps and auto-clips. Act- transcode and normalize (codec, fps, resolution, aspect ratio), perform timeline edits (subtitles, text/image overlays, branding, audio overlays, dubbing, translation), generate media assets (image, audio, v"
+      "description": "See, Understand, Act on video and audio. See- ingest from local files, URLs, RTSP/live feeds, or live record desktop; return realtime context and playable stream links. Understand- extract frames, build visual/semantic/temporal indexes, and search moments with timestamps and auto-clips. Act- transcode and normalize (codec, fps, resolution, aspect ratio), perform timeline edits (subtitles, text/image overlays, branding, audio overlays, dubbing, translation), generate media assets (image, audio, video), and create real time alerts for events from live streams or desktop capture."
     },
     {
       "name": "visa-doc-translate",
@@ -1391,6 +1441,11 @@
       "name": "vue-patterns",
       "path": "skills/vue-patterns/SKILL.md",
       "description": "Vue.js 3 Composition API patterns, component architecture, reactivity best practices, Pinia state management, Vue Router navigation, and Nuxt SSR patterns. Activates for Vue, Nuxt, Vite, or Pinia projects."
+    },
+    {
+      "name": "webapp-testing",
+      "path": "skills/webapp-testing/SKILL.md",
+      "description": "Plan and execute browser-based web application testing across critical user journeys, regression risks, forms, authentication, accessibility, responsive layouts, and network failures. Use when validating a web feature, reproducing a browser bug, designing E2E coverage, or producing evidence-rich test reports."
     },
     {
       "name": "windows-desktop-e2e",
