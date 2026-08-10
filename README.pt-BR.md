@@ -1,4 +1,4 @@
-# skills (teste)
+# Skills
 
 [English](./README.md) | **Português** | [简体中文](./README.zh-CN.md)
 
@@ -23,7 +23,9 @@ Este repositório teve origem no projeto open source
 Veja [`NOTICE.md`](./NOTICE.md) para os créditos e notas de adaptação.
 
 Para uso avançado, orquestração e controle de orçamento de contexto, consulte
-[`docs/GUIA.md`](./docs/GUIA.md).
+[`docs/GUIA.md`](./docs/GUIA.md). Para a análise atual do ecossistema externo de
+skills, critérios de seleção, decisões de deduplicação e notas de implementação,
+consulte [`docs/ECOSYSTEM.pt-BR.md`](./docs/ECOSYSTEM.pt-BR.md).
 
 ## Roteamento automático
 
@@ -39,6 +41,9 @@ Três skills de projeto coordenam descoberta e criação:
 As skills especializadas permanecem em `skills/` e são carregadas sob demanda.
 Isso evita registrar todo o catálogo em cada ferramenta e ultrapassar os
 limites de contexto.
+
+O índice canônico de skills é gerado a partir de `skills/*/SKILL.md` por
+`scripts/build-skill-index.js` e mantido sincronizado pelo GitHub Actions.
 
 ## Integrações suportadas
 
