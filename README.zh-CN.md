@@ -1,4 +1,4 @@
-# skills（测试）
+# Skills
 
 [English](./README.md) | [Português](./README.pt-BR.md) | **简体中文**
 
@@ -14,7 +14,7 @@
 
 本仓库源自开源项目 [Everything Claude Code](https://github.com/affaan-m/everything-claude-code)（MIT 许可证），并可能随着时间推移吸收其他来源的内容。来源、版权和适配说明请参阅 [`NOTICE.zh-CN.md`](./NOTICE.zh-CN.md)。
 
-高级用法、编排以及上下文预算建议请参阅 [`docs/GUIDE.zh-CN.md`](./docs/GUIDE.zh-CN.md)。
+高级用法、编排以及上下文预算建议请参阅 [`docs/GUIDE.zh-CN.md`](./docs/GUIDE.zh-CN.md)。当前外部 skill 生态调研、选择标准、去重决策以及实现说明请参阅 [`docs/ECOSYSTEM.zh-CN.md`](./docs/ECOSYSTEM.zh-CN.md)。
 
 ## 自动路由
 
@@ -25,6 +25,8 @@
 - `subagent-builder` 在创建或注册专家子智能体之前先搜索已有角色。
 
 专业 skills 保存在 `skills/` 中并按需加载。这样可以避免在每个工具中注册整个目录，从而降低上下文消耗。
+
+规范 skill 索引由 `scripts/build-skill-index.js` 根据 `skills/*/SKILL.md` 自动生成，并通过 GitHub Actions 保持同步。
 
 ## 支持的集成
 
