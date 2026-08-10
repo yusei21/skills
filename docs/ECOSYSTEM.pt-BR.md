@@ -42,13 +42,16 @@ Muitas dessas capacidades de alto valor já existem aqui. Em especial, este repo
 
 Coleção oficial de agent skills da Vercel e uma referência forte para desenvolvimento web e React moderno. Durante esta análise, o repositório apresentava skills de boas práticas React, composição de componentes, React Native, deploy na Vercel, design web e workflows de frontend relacionados.
 
-Conceitos escolhidos para implementações locais originais:
+Um conceito foi selecionado para implementação local original:
 
-- `react-best-practices`
 - `composition-patterns`
-- `web-design-guidelines`
 
-Nenhum texto upstream foi copiado. No momento deste levantamento, o GitHub não expunha uma licença do repositório `vercel-labs/agent-skills`, então apenas as lacunas de capacidade e os temas de alto nível foram usados como sinais de pesquisa.
+Duas candidatas adicionais chegaram a ser implementadas temporariamente durante a análise e depois foram removidas após a inspeção completa do catálogo local:
+
+- `react-best-practices` tinha sobreposição substancial com as skills existentes `react-patterns` e `react-performance`;
+- `web-design-guidelines` tinha sobreposição substancial com `design-system`, `frontend-design-direction`, `make-interfaces-feel-better` e materiais de acessibilidade.
+
+Nenhum texto upstream foi copiado. No momento deste levantamento, o GitHub não expunha uma licença do repositório `vercel-labs/agent-skills`, então apenas lacunas de capacidade e temas de alto nível foram usados como sinais de pesquisa.
 
 ### trailofbits/skills
 
@@ -79,20 +82,22 @@ Uma skill candidata normalmente deve atender a todos os critérios abaixo:
 
 | Skill | Lacuna principal | Sinal de pesquisa |
 |---|---|---|
-| `systematic-debugging` | Análise de causa raiz baseada em evidências | obra/superpowers |
-| `verification-before-completion` | Evitar alegações de conclusão sem evidência | obra/superpowers |
-| `react-best-practices` | Revisão moderna de correção/performance em React | vercel-labs/agent-skills |
-| `composition-patterns` | Design de APIs reutilizáveis de componentes | vercel-labs/agent-skills |
-| `web-design-guidelines` | Revisão estruturada de interface e design | vercel-labs/agent-skills |
+| `systematic-debugging` | Análise de causa raiz baseada em evidências e hipóteses falsificáveis | obra/superpowers |
+| `verification-before-completion` | Disciplina de evidências antes de afirmar conclusão | obra/superpowers |
+| `composition-patterns` | Design de APIs reutilizáveis de componentes e pontos de extensão | vercel-labs/agent-skills |
 
-## Candidatas adiadas de propósito
+Essas três foram mantidas porque, após uma segunda revisão de sobreposição, a intenção de ativação permanece suficientemente distinta do catálogo existente.
 
-As áreas abaixo podem ser úteis depois, mas não foram adicionadas neste passe:
+## Candidatas não adicionadas
 
-- test-driven development — valioso, mas deve ser comparado primeiro com as skills de testes já existentes para evitar sobreposição;
-- workflows com Git worktrees — úteis para agentes paralelos, mas devem ser integrados ao material existente de orquestração e DevFleet;
+As áreas abaixo foram analisadas, mas rejeitadas ou adiadas:
+
+- boas práticas React genéricas — já cobertas por `react-patterns`, `react-performance` e skills React relacionadas;
+- revisão genérica de web design — já coberta por `design-system`, `frontend-design-direction`, `make-interfaces-feel-better`, acessibilidade e outras skills de UI;
+- test-driven development — já representado por `tdd-workflow` e skills TDD específicas de linguagens e frameworks;
+- workflows com Git worktrees — úteis para agentes paralelos, mas devem ser integrados ao material existente de orquestração e DevFleet em vez de adicionados como duplicata isolada;
 - deploy na Vercel — específico de fornecedor e só deve entrar se houver demanda que justifique uma skill dedicada;
-- skills especializadas de análise de segurança — alto valor, mas devem ser introduzidas individualmente e com fronteiras claras em relação a `security-review`;
+- security review genérico — já representado por `security-review`; futuras adições de segurança devem ser capacidades especializadas e mais estreitas;
 - geração de documentos — já está amplamente representada pelo catálogo atual e integrações upstream.
 
 ## Política de manutenção
