@@ -1,6 +1,6 @@
 # skills (test)
 
-*[Leia em português](./README.pt-BR.md)*
+**English** | [Português](./README.pt-BR.md) | [简体中文](./README.zh-CN.md)
 
 A shared collection of skills, agents, commands, rules, hooks, scripts, and MCP
 configurations for multiple AI coding tools.
@@ -114,7 +114,8 @@ skills/
 ├── AGENTS.md        # shared automatic routing instructions
 ├── CLAUDE.md        # Claude-specific entry point
 ├── NOTICE.md        # Portuguese source and license notices
-└── NOTICE.en.md     # English source and license notices
+├── NOTICE.en.md     # English source and license notices
+└── NOTICE.zh-CN.md  # Simplified Chinese source and license notices
 ```
 
 ## Contributing
