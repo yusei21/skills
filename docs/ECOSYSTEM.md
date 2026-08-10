@@ -42,13 +42,16 @@ Many of its high-value capability areas are already represented here. In particu
 
 Vercel's official agent-skill collection is a strong reference for modern React and web development. During this review the repository exposed skills around React practices, component composition, React Native, Vercel deployment, web design, and related frontend workflows.
 
-Concepts selected for original local implementations:
+One concept was selected for an original local implementation:
 
-- `react-best-practices`
 - `composition-patterns`
-- `web-design-guidelines`
 
-No upstream prose was copied. At the time of this snapshot GitHub did not expose a repository license for `vercel-labs/agent-skills`, so only the capability gaps and high-level topics were used as research signals.
+Two additional candidates were implemented temporarily during the review and then removed after the full local catalog was inspected:
+
+- `react-best-practices` overlapped substantially with the existing `react-patterns` and `react-performance` skills;
+- `web-design-guidelines` overlapped substantially with `design-system`, `frontend-design-direction`, `make-interfaces-feel-better`, and accessibility-oriented material.
+
+No upstream prose was copied. At the time of this snapshot GitHub did not expose a repository license for `vercel-labs/agent-skills`, so only capability gaps and high-level topics were used as research signals.
 
 ### trailofbits/skills
 
@@ -79,20 +82,22 @@ A candidate skill should normally satisfy all of the following:
 
 | Skill | Primary gap | Research signal |
 |---|---|---|
-| `systematic-debugging` | Evidence-first root-cause analysis | obra/superpowers |
-| `verification-before-completion` | Prevent unsupported completion claims | obra/superpowers |
-| `react-best-practices` | Modern React correctness/performance review | vercel-labs/agent-skills |
-| `composition-patterns` | Reusable component API design | vercel-labs/agent-skills |
-| `web-design-guidelines` | Structured interface/design review | vercel-labs/agent-skills |
+| `systematic-debugging` | Evidence-first, falsifiable root-cause analysis | obra/superpowers |
+| `verification-before-completion` | Evidence discipline before completion claims | obra/superpowers |
+| `composition-patterns` | Reusable component API and extension-point design | vercel-labs/agent-skills |
 
-## Candidates intentionally deferred
+These three were retained because their activation intent remains distinct enough from the existing catalog after a second-pass overlap review.
 
-The following areas may be useful later but were not added in this pass:
+## Candidates intentionally not added
 
-- test-driven development — valuable, but should first be compared against the repository's existing testing skills to avoid overlap;
-- Git worktree workflows — useful for parallel agents, but should be integrated with the repository's existing orchestration and DevFleet material;
+The following areas were reviewed but rejected or deferred:
+
+- broad React best practices — already covered by `react-patterns`, `react-performance`, and related React skills;
+- broad web-design review — already covered by `design-system`, `frontend-design-direction`, `make-interfaces-feel-better`, accessibility, and related UI skills;
+- test-driven development — already represented by `tdd-workflow` and language/framework-specific TDD skills;
+- Git worktree workflows — useful for parallel agents, but should be integrated with the repository's existing orchestration and DevFleet material instead of added as an isolated duplicate;
 - Vercel deployment — provider-specific and should be added only if demand justifies a dedicated skill;
-- specialized security-analysis skills — high value, but they should be introduced individually with clear boundaries against `security-review`;
+- broad security review — already represented by `security-review`; future security additions should be narrower specialist capabilities;
 - document-generation skills — already substantially represented by the current catalog and upstream integrations.
 
 ## Maintenance policy
