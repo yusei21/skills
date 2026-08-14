@@ -2,7 +2,7 @@
 
 [English](./README.md) | [Português](./README.pt-BR.md) | **简体中文**
 
-这是一个面向多种 AI 编程工具的共享资源集合，包含 skills、智能体、命令、规则、hooks、脚本以及 MCP 配置。
+这是一个持续维护并扩展的共享资源集合，面向多种 AI 编程工具，包含 skills、智能体、命令、规则、hooks、脚本以及 MCP 配置。
 
 本仓库在根目录维护规范来源：
 
@@ -12,7 +12,7 @@
 
 `.claude/`、`.codex/`、`.agents/`、`.agy/`、`.mimocode/`、`.opencode/` 等特定工具目录应仅包含集成文件、原生配置以及指向规范资源的链接，不应维护共享 skills 或智能体的独立实体副本。
 
-本仓库源自开源项目 [Everything Claude Code](https://github.com/affaan-m/everything-claude-code)（MIT 许可证），并可能随着时间推移吸收其他来源的内容。来源、版权和适配说明请参阅 [`NOTICE.zh-CN.md`](./NOTICE.zh-CN.md)。
+本项目整合并改编了多个开源来源的工作。来源、许可证、版权和适配说明统一维护在 [`NOTICE.zh-CN.md`](./NOTICE.zh-CN.md) 中。
 
 高级用法、编排、skill 路由、贡献方式和上下文管理请参阅 [`docs/GUIDE.zh-CN.md`](./docs/GUIDE.zh-CN.md)。当前外部 skill 生态调研、选择标准、去重决策以及实现说明请参阅 [`docs/ECOSYSTEM.zh-CN.md`](./docs/ECOSYSTEM.zh-CN.md)。
 
