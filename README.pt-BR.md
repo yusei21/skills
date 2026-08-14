@@ -2,7 +2,7 @@
 
 [English](./README.md) | **Português** | [简体中文](./README.zh-CN.md)
 
-Coleção compartilhada de skills, agentes, comandos, regras, hooks, scripts e configurações MCP para várias ferramentas de programação com IA.
+Uma coleção mantida e expandida de skills, agentes, comandos, regras, hooks, scripts e configurações MCP para várias ferramentas de programação com IA.
 
 O repositório usa fontes canônicas na raiz:
 
@@ -12,7 +12,7 @@ O repositório usa fontes canônicas na raiz:
 
 Pastas específicas de ferramentas, como `.claude/`, `.codex/`, `.agents/`, `.agy/`, `.mimocode/` e `.opencode/`, devem conter apenas arquivos de integração, configuração nativa e links para os recursos canônicos. Elas não devem manter cópias físicas independentes das skills ou dos agentes compartilhados.
 
-Este repositório teve origem no projeto open source [Everything Claude Code](https://github.com/affaan-m/everything-claude-code) (licença MIT) e pode incorporar conteúdo de outras fontes ao longo do tempo. Veja [`NOTICE.md`](./NOTICE.md) para créditos e notas de adaptação.
+Este projeto incorpora e adapta trabalho open source de várias fontes. Os créditos, detalhes de licenciamento e notas de adaptação são mantidos em [`NOTICE.md`](./NOTICE.md).
 
 Para uso avançado, orquestração, roteamento de skills, contribuição e disciplina de contexto, consulte [`docs/GUIA.md`](./docs/GUIA.md). Para a análise atual do ecossistema externo de skills, critérios de seleção, decisões de deduplicação e notas de implementação, consulte [`docs/ECOSYSTEM.pt-BR.md`](./docs/ECOSYSTEM.pt-BR.md).
 
