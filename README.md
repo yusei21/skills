@@ -2,7 +2,7 @@
 
 **English** | [Português](./README.pt-BR.md) | [简体中文](./README.zh-CN.md)
 
-A shared collection of skills, agents, commands, rules, hooks, scripts, and MCP configurations for multiple AI coding tools.
+A maintained and expanded collection of skills, agents, commands, rules, hooks, scripts, and MCP configurations for multiple AI coding tools.
 
 The repository uses canonical sources at the root:
 
@@ -12,7 +12,7 @@ The repository uses canonical sources at the root:
 
 Tool-specific directories such as `.claude/`, `.codex/`, `.agents/`, `.agy/`, `.mimocode/`, and `.opencode/` should contain only integration files, native configuration, and links to canonical resources. They should not contain independent physical copies of shared skills or agents.
 
-This repository originated from the open source project [Everything Claude Code](https://github.com/affaan-m/everything-claude-code) (MIT license) and may incorporate content from other sources over time. See [`NOTICE.en.md`](./NOTICE.en.md) for credits and adaptation notes.
+This project incorporates and adapts open-source work from multiple sources. Attribution, licensing, and adaptation details are maintained in [`NOTICE.en.md`](./NOTICE.en.md).
 
 For advanced usage, orchestration, skill routing, contribution guidance, and context-budget discipline, see [`docs/GUIDE.md`](./docs/GUIDE.md). For the current external skill-ecosystem review, selection criteria, deduplication decisions, and implementation notes, see [`docs/ECOSYSTEM.md`](./docs/ECOSYSTEM.md).
 
