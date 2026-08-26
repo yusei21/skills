@@ -68,10 +68,40 @@ Each phase delegates — it does not do the work inline.
 - **3. Scaffold** — `orch-build-mvp` only: stand up the first end-to-end slice.
 - **4. Implement (TDD)** — drive each task through the `tdd-guide` agent (or the `tdd-workflow` skill):
   red → green → refactor. Honor the operation's first-move rule.
-- **5. Review** — `code-reviewer` agent / `/code-review`. Add `security-reviewer`
-  whenever the diff touches a security trigger (below).
+- **5. Review** — use `code-reviewer` / `/code-review` as the primary review and
+  apply the confidence rules below. Add `security-reviewer` whenever the diff
+  touches a security trigger. For standard/large changes, or whenever the first
+  pass is ambiguous, add independent review lenses for project-rule compliance,
+  concrete bug detection, and repository/history context before finalizing
+  findings.
 - **6. Commit** — conventional commits (`feat:` / `fix:` / `refactor:` / …), one
   per logical chunk. → **GATE 2.**
+
+## Review confidence and deduplication
+
+Phase 5 is evidence-driven. Its purpose is to reduce false positives while still
+catching high-impact regressions.
+
+1. Review the changed behavior from separate lenses rather than asking one pass
+   to reason about everything at once. At minimum, consider correctness and
+   repository-rule compliance; add history/context and security when relevant.
+2. Distinguish issues introduced by the current change from pre-existing debt.
+   Do not block Gate 2 on unrelated existing problems unless they are CRITICAL
+   and materially affected by the change.
+3. Consolidate duplicate findings that share the same root cause.
+4. Apply the `code-reviewer` confidence policy: only actionable findings with
+   confidence above 80% survive the final report.
+5. HIGH and CRITICAL findings require concrete proof: exact location, failure
+   scenario, and evidence that existing guards/tests/framework behavior do not
+   already prevent the problem.
+6. Use `git blame`, targeted history, callers, tests, or project instructions as
+   corroborating evidence when a finding depends on intent or historical
+   context.
+7. Zero findings is a valid result. Do not invent low-value nits to make the
+   review appear productive.
+
+See `docs/REVIEW-INTEGRITY.md` for the repository-wide policy behind this review
+stage.
 
 ## The two gates
 
@@ -91,7 +121,7 @@ Everything between the gates flows without stopping.
 | Intake / understand | `code-explorer` | trace existing paths before a tweak, fix, or refactor |
 | Plan | `planner` | `architect`, `code-architect` for structural calls |
 | Implement | `tdd-guide` (or `tdd-workflow` skill) | `build-error-resolver` / `/build-fix` on build breaks |
-| Review | `code-reviewer` / `/code-review` | language reviewer (`python-reviewer`, `typescript-reviewer`, …) |
+| Review | `code-reviewer` / `/code-review` | language reviewer (`python-reviewer`, `typescript-reviewer`, …); independent rule/bug/history lenses for standard or large changes |
 | Security | `security-reviewer` | — |
 | MVP inner loop | `/gan-build "<brief>" --skip-planner` | drives `gan-generator` → `gan-evaluator`; tune `--max-iterations` / `--pass-threshold` |
 
@@ -103,6 +133,12 @@ Pull in `security-reviewer` when the diff touches any of: authentication or
 authorization, user-input handling, database queries, file-system paths,
 external API calls, cryptography, or secrets / credentials. (Per `rules/common/security.md`.)
 
+Instruction/control-plane changes also require `skill-security-audit` when they
+modify agent prompts, skills, hooks, MCP/tool configuration, plugin metadata, or
+runtime adapters. This review is about prompt injection, permission expansion,
+persistence, provenance, and cross-runtime instruction drift rather than normal
+application-code vulnerabilities.
+
 ## Handoff artifacts
 
 The pipeline carries no hidden state — the planning docs *are* the handoff:
@@ -110,6 +146,8 @@ The pipeline carries no hidden state — the planning docs *are* the handoff:
 - `task_list` (from Plan) drives the Implement loop.
 - Larger work may also emit PRD / architecture / system_design under the repo's
   `docs/` per `rules/common/development-workflow.md`.
+- Review findings must include evidence and confidence; duplicate findings are
+  collapsed before handoff.
 - Review findings (CRITICAL / HIGH) must be resolved before Gate 2.
 
 ## Verification
@@ -117,5 +155,8 @@ The pipeline carries no hidden state — the planning docs *are* the handoff:
 - size tier was stated and matched the work
 - Gate 1 (plan) and Gate 2 (commit) were both honored
 - `security-reviewer` ran iff a security trigger was touched
+- instruction/control-plane changes received `skill-security-audit`
+- final review findings were deduplicated, tied to changed behavior, and passed the >80% confidence threshold
+- HIGH / CRITICAL findings include concrete proof rather than pattern matching
 - commits are conventional and scoped to one logical change
 - new / changed behavior has tests; coverage ≥ 80% per `rules/common/testing.md`
