@@ -220,3 +220,21 @@ Revise periodicamente o catálogo em busca de:
 - referências externas cuja licença ou manutenção mudou.
 
 Popularidade é um sinal de descoberta, não um critério automático de importação. Um catálogo menor e bem roteado é mais útil do que um catálogo maior cheio de prompts sobrepostos.
+
+## 11. Usando revisão baseada em evidências e integridade de instruções
+
+Para trabalho normal de implementação, inicie a ferramenta de programação na raiz do repositório e descreva a tarefa normalmente. Integrações compatíveis devem permitir que `project-orchestrator` inspecione o projeto, selecione as skills relevantes e mantenha o contexto carregado pequeno. Para feature, correção, refatoração ou MVP maiores, use o workflow `orch-*` correspondente para manter planejamento, implementação, review, verificação e gates de commit consistentes.
+
+Quando quiser uma revisão explícita de código, use `code-reviewer` ou `/code-review` quando disponível. O relatório final deve manter apenas achados acionáveis com confiança acima de 80%, consolidar duplicatas e aceitar zero achados quando a mudança estiver limpa. Achados HIGH e CRITICAL devem indicar o local exato afetado e um cenário concreto de falha.
+
+Mudanças em `AGENTS.md`, `CLAUDE.md`, skills, prompts de agentes, hooks, configuração MCP/ferramentas, metadados de plugin ou adaptadores de runtime exigem uma passada de integridade de instruções. Nesses casos:
+
+1. deixe `project-orchestrator` determinar a hierarquia efetiva de instruções do runtime afetado;
+2. mantenha política compartilhada nos recursos canônicos e sintaxe nativa de carregamento no adaptador;
+3. compare adaptadores irmãos em busca de drift acidental ou contradições;
+4. execute `skill-security-audit` para riscos de prompt injection, expansão de permissões, persistência, credenciais e proveniência;
+5. documente diferenças intencionais entre runtimes em vez de copiar diretivas de uma ferramenta para todas as outras.
+
+Ao avaliar um repositório externo de plugins, use-o principalmente como fonte de padrões. Verifique a licença e a fronteira de segurança antes de adotar conteúdo, prefira uma implementação original e portátil quando possível e preserve atribuição quando material for realmente copiado ou adaptado de forma substancial.
+
+Veja [`INTEGRIDADE-DE-REVISAO.md`](./INTEGRIDADE-DE-REVISAO.md) para a política detalhada e o checklist de review.
