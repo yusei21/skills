@@ -1,6 +1,6 @@
 ---
 name: project-orchestrator
-description: Automatically inspect the current repository, identify its technologies, instruction hierarchy, and task type, select relevant canonical skills from skills/, and load specialized agent prompts from agents/ when useful. Use this automatically for every substantial repository task.
+description: Automatically inspect the current repository, identify its technologies and task type, select relevant canonical skills from skills/, and load specialized agent prompts from agents/ when useful. Use this automatically for every substantial repository task.
 ---
 
 # Project Orchestrator
