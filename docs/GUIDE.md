@@ -220,3 +220,21 @@ Periodically review the catalog for:
 - external references whose licensing or maintenance status changed.
 
 Popularity is a discovery signal, not an automatic import criterion. A smaller, well-routed catalog is more useful than a larger catalog filled with overlapping prompts.
+
+## 11. Using evidence-based review and instruction integrity
+
+For ordinary implementation work, start the coding tool from the repository root and describe the task normally. Compatible integrations should allow `project-orchestrator` to inspect the repository, select the relevant skills, and keep the loaded context small. For larger feature, fix, refactor, or MVP work, use the matching `orch-*` workflow so planning, implementation, review, verification, and commit gates stay consistent.
+
+When you want an explicit code review, use `code-reviewer` or `/code-review` where available. The final report should keep only actionable findings above 80% confidence, merge duplicate findings, and accept zero findings when the change is clean. HIGH and CRITICAL findings should identify the exact affected location and a concrete failure scenario.
+
+Changes to `AGENTS.md`, `CLAUDE.md`, skills, agent prompts, hooks, MCP/tool configuration, plugin metadata, or runtime adapters require an instruction-integrity pass. In those cases:
+
+1. let `project-orchestrator` determine the effective instruction hierarchy for the affected runtime;
+2. keep shared policy in canonical resources and native loading syntax in the adapter;
+3. compare sibling adapters for accidental drift or contradictions;
+4. run `skill-security-audit` for prompt-injection, permission-expansion, persistence, credential, and provenance risks;
+5. document intentional runtime differences instead of copying one tool's directives everywhere.
+
+When evaluating an external plugin repository, use it primarily as a source of patterns. Inspect the license and security boundary before adopting content, prefer an original portable implementation when possible, and preserve attribution when material is actually copied or substantially adapted.
+
+See [`REVIEW-INTEGRITY.md`](./REVIEW-INTEGRITY.md) for the detailed policy and review checklist.
