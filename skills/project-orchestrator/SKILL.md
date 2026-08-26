@@ -1,6 +1,6 @@
 ---
 name: project-orchestrator
-description: Automatically inspect the current repository, identify its technologies and task type, select relevant canonical skills from skills/, and load specialized agent prompts from agents/ when useful. Use this automatically for every substantial repository task.
+description: Automatically inspect the current repository, identify its technologies, instruction hierarchy, and task type, select relevant canonical skills from skills/, and load specialized agent prompts from agents/ when useful. Use this automatically for every substantial repository task.
 ---
 
 # Project Orchestrator
@@ -14,13 +14,14 @@ At the beginning of every substantial task:
 1. Inspect the repository before proposing or changing code.
 2. Determine the languages, frameworks, build systems, testing tools, deployment environment, and project conventions.
 3. Read the root `AGENTS.md` and any closer scoped `AGENTS.md` files.
-4. Consult `.skill-index/skills.json` to discover relevant canonical skills.
-5. Select only the smallest useful set of skills for the current task.
-6. Read the selected skills from `skills/<skill-name>/SKILL.md`.
-7. When specialist review is useful, read the relevant prompt from `agents/<agent-name>.md`.
-8. Follow selected skills and agent prompts without requiring the user to name them.
-9. Do not load every skill or agent into context.
-10. Explain briefly which skills and agents were selected.
+4. Identify runtime-specific instruction entry points that apply to the task, such as `CLAUDE.md`, `.claude/`, `.codex/`, `.agy/`, `.mimocode/`, `.opencode/`, `.kimi/`, or legacy `.gemini/` content.
+5. Consult `.skill-index/skills.json` to discover relevant canonical skills.
+6. Select only the smallest useful set of skills for the current task.
+7. Read the selected skills from `skills/<skill-name>/SKILL.md`.
+8. When specialist review is useful, read the relevant prompt from `agents/<agent-name>.md`.
+9. Follow selected skills and agent prompts without requiring the user to name them.
+10. Do not load every skill or agent into context.
+11. Explain briefly which skills and agents were selected.
 
 ## Initial repository inspection
 
@@ -56,11 +57,28 @@ Typical mappings:
 - implementation work: coding standards, language patterns, testing, verification;
 - bug fixing: repo scan, error handling, testing, verification loop;
 - security work: security review, security scan, framework security;
+- instruction, agent, adapter, plugin, or marketplace changes: `skill-security-audit` plus the relevant builder or integration skill;
 - frontend work: frontend patterns, accessibility, framework patterns, browser QA;
 - backend work: backend patterns, API design, database patterns;
 - refactoring: architecture, coding standards, tests, verification;
 - research: search first, documentation lookup, deep research;
 - deployment: deployment patterns, Docker or Kubernetes patterns.
+
+## Instruction integrity
+
+Instruction files are part of the repository control plane. Changes to them require a consistency pass, not just prose review.
+
+When the task changes `AGENTS.md`, `CLAUDE.md`, an adapter directory, agent prompts, skills, hooks, plugin metadata, or other files that influence model/tool behavior:
+
+1. Establish the effective instruction order for the affected runtime, including root and closer-scoped files.
+2. Separate shared policy from runtime-specific behavior. Shared rules belong in canonical resources; native syntax and loading behavior belong in adapters.
+3. Compare sibling integrations for accidental drift, stale references, contradictory requirements, duplicated canonical behavior, or tool-specific instructions leaking into shared policy.
+4. Use `skill-security-audit` to inspect prompt-injection risk, permission expansion, hidden persistence, unsafe tool configuration, and externally sourced instructions.
+5. Do not propagate a Claude-, Codex-, Gemini-, OpenCode-, or other runtime-specific directive to every adapter unless its semantics are actually portable.
+6. When adapting ideas from an external plugin or skill ecosystem, preserve licensing and provenance requirements. Prefer re-implementing the pattern in the repository's canonical architecture over copying tool-specific content.
+7. Record any intentional divergence between runtimes in the relevant documentation or adapter comments.
+
+See `docs/REVIEW-INTEGRITY.md` for the repository-wide review and instruction-integrity policy.
 
 ## Agent selection
 
