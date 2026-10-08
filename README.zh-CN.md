@@ -82,6 +82,10 @@ opencode
 
 默认不要把所有 skills 复制到工具的全局目录。优先使用项目本地路由，或仅安装其他仓库真正需要的资源。
 
+## Jev AI — 类型化决策
+
+规范技能 [`jev-agent`](./skills/jev-agent/SKILL.md) 使用 Jev AI API 提供分类（`choice`）、评分（`score`）和是/否判断（`noul`）的指导。请在本地配置 `JEV_API_KEY`，参阅[使用指南](./docs/JEV.zh-CN.md)。操作与权限仍由 Agent 和应用管理。
+
 ## MCP 服务器
 
 共享目录位于 [`mcp-configs/mcp-servers.json`](./mcp-configs/mcp-servers.json)。凭据必须保存在环境变量或用户级配置中，绝不能提交到仓库。只启用任务真正需要的服务器，以减少上下文占用和攻击面。
