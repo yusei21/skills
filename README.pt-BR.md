@@ -82,6 +82,10 @@ Para instalação como plugin do Claude Code, quando compatível com a versão a
 
 Não copie todas as skills para uma pasta global da ferramenta por padrão. Prefira o roteamento local do projeto ou instale somente os recursos específicos necessários em outro repositório.
 
+## Jev AI — decisões tipadas
+
+A skill canônica [`jev-agent`](./skills/jev-agent/SKILL.md) permite usar a API Jev AI para classificação (`choice`), pontuação (`score`) e avaliação sim/não (`noul`). Configure `JEV_API_KEY` localmente e consulte o [guia de uso](./docs/JEV.pt-BR.md). O agente mantém o controle das ações e permissões.
+
 ## Servidores MCP
 
 O catálogo compartilhado está em [`mcp-configs/mcp-servers.json`](./mcp-configs/mcp-servers.json). Credenciais devem permanecer em variáveis de ambiente ou na configuração do usuário, nunca no repositório. Ative somente os servidores necessários para preservar contexto e reduzir a superfície de ataque.
