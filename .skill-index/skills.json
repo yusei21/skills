@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "count": 292,
+  "count": 293,
   "skills": [
     {
       "name": "accessibility",
@@ -716,6 +716,11 @@
       "name": "java-coding-standards",
       "path": "skills/java-coding-standards/SKILL.md",
       "description": "Java coding standards for Spring Boot and Quarkus services: naming, immutability, Optional usage, streams, exceptions, generics, CDI, reactive patterns, and project layout. Automatically applies framework-specific conventions."
+    },
+    {
+      "name": "jev-agent",
+      "path": "skills/jev-agent/SKILL.md",
+      "description": "Use Jev AI for bounded, typed decisions (choice, score, noul), including task routing, prioritization, evidence checks and review gates. Requires a user-configured JEV_API_KEY; never delegates authorization or execution to the model."
     },
     {
       "name": "jira-integration",
