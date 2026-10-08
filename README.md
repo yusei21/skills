@@ -82,6 +82,10 @@ For Claude Code plugin installation, when supported by the current Claude Code v
 
 Do not copy every skill into a global tool directory by default. Prefer project-local routing or install only the specific resources needed elsewhere.
 
+## Jev AI — typed decisions
+
+The canonical [`jev-agent`](./skills/jev-agent/SKILL.md) skill guides typed classification (`choice`), scoring (`score`), and yes/no judgments (`noul`) through the Jev AI API. Configure `JEV_API_KEY` locally; see the [usage guide](./docs/JEV.md). The agent retains responsibility for actions and permissions.
+
 ## MCP servers
 
 The shared catalog is in [`mcp-configs/mcp-servers.json`](./mcp-configs/mcp-servers.json). Credentials must remain in environment variables or user-level configuration, never in the repository. Enable only the servers needed for a task to preserve context and reduce attack surface.
