@@ -1,29 +1,31 @@
 {
-  "name": "skills",
+  "name": "ecc",
   "owner": {
-    "name": "yusei21",
-    "email": "asmagic111@gmail.com"
+    "name": "Affaan Mustafa",
+    "email": "me@affaanmustafa.com"
   },
   "metadata": {
-    "description": "Personal collection of agents, skills, rules, hooks, commands and MCP conventions for Claude Code"
+    "description": "Harness-native ECC skills, hooks, rules, MCP conventions, and operator workflows"
   },
   "plugins": [
     {
-      "name": "skills",
+      "name": "ecc",
       "source": "./",
-      "description": "Personal agents, skills, rules, hooks and commands for Claude Code, Codex, OpenCode, and Antigravity (agy). Derived from Everything Claude Code (MIT).",
-      "version": "0.1.0",
+      "description": "Harness-native ECC operator layer - 71 agents, 314 skills, 98 legacy command shims, reusable hooks, rules, selective install profiles, and production-ready workflows for Claude Code, Codex, OpenCode, Cursor, and related agent harnesses",
+      "version": "2.2.3",
       "author": {
-        "name": "yusei21",
-        "email": "asmagic111@gmail.com"
+        "name": "Affaan Mustafa",
+        "email": "me@affaanmustafa.com"
       },
-      "repository": "https://github.com/yusei21/skills",
+      "homepage": "https://ecc.tools",
+      "repository": "https://github.com/affaan-m/ECC",
       "license": "MIT",
       "keywords": [
         "agents",
         "skills",
         "hooks",
         "commands",
+        "tdd",
         "code-review",
         "security",
         "best-practices"
@@ -33,7 +35,11 @@
         "agents",
         "skills",
         "hooks",
-        "commands"
+        "commands",
+        "tdd",
+        "code-review",
+        "security",
+        "best-practices"
       ],
       "strict": false
     }
