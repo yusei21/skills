@@ -4,7 +4,8 @@
 
 'use strict';
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const Module = require('module');
 const os = require('os');
@@ -13,18 +14,6 @@ const path = require('path');
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const PLAN_ENTRY = path.join(REPO_ROOT, 'scripts', 'lib', 'install', 'plan.js');
 const NODE_BUILTINS = new Set(Module.builtinModules.flatMap(name => [name, `node:${name}`]));
-
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
 
 function resolveRelativeModule(from, specifier) {
   const base = path.resolve(path.dirname(from), specifier);
@@ -68,18 +57,14 @@ function createPlan(createManifestInstallPlan, homeDir) {
   });
 }
 
-function runTests() {
-  let passed = 0;
-  let failed = 0;
-
-  if (test('exposes a planning-only module with a package-free lexical dependency closure', () => {
+  test('exposes a planning-only module with a package-free lexical dependency closure', () => {
     const closure = planningDependencyClosure(PLAN_ENTRY);
     assert.ok(closure.includes('scripts/lib/install/plan.js'));
     assert.ok(!closure.includes('scripts/lib/install/apply.js'));
     assert.ok(!closure.includes('scripts/lib/install/antigravity-agent.js'));
-  })) passed++; else failed++;
+  });
 
-  if (test('does not load js-yaml while generating a real manifest plan', () => {
+  test('does not load js-yaml while generating a real manifest plan', () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-pure-plan-load-'));
     const loaded = [];
     const originalLoad = Module._load;
@@ -97,9 +82,9 @@ function runTests() {
       Module._load = originalLoad;
       fs.rmSync(tempDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('preserves the install-executor manifest-plan contract exactly', () => {
+  test('preserves the install-executor manifest-plan contract exactly', () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-pure-plan-contract-'));
     try {
       const pure = require(PLAN_ENTRY).createManifestInstallPlan;
@@ -115,10 +100,4 @@ function runTests() {
     } finally {
       fs.rmSync(tempDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

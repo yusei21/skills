@@ -4,7 +4,8 @@
 
 'use strict';
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -80,25 +81,7 @@ function run(options = {}) {
   });
 }
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  PASS ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  FAIL ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
-
-function runTests() {
-  console.log('\n=== Testing insaits-security-wrapper.js ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('passes stdin through when InsAIts is disabled', () => {
+  test('passes stdin through when InsAIts is disabled', () => {
     const result = run({
       input: '{"tool_name":"Bash"}',
       env: { ECC_ENABLE_INSAITS: '' },
@@ -107,9 +90,9 @@ function runTests() {
     assert.strictEqual(result.status, 0);
     assert.strictEqual(result.stdout, '{"tool_name":"Bash"}');
     assert.strictEqual(result.stderr, '');
-  })) passed++; else failed++;
+  });
 
-  if (test('enabled clean monitor exit preserves original stdin', () => {
+  test('enabled clean monitor exit preserves original stdin', () => {
     const tempDir = createTempDir();
     try {
       writeFakePython(path.join(tempDir, 'bin'));
@@ -128,9 +111,9 @@ function runTests() {
     } finally {
       cleanup(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('enabled monitor stdout replaces raw input and preserves status', () => {
+  test('enabled monitor stdout replaces raw input and preserves status', () => {
     const tempDir = createTempDir();
     try {
       writeFakePython(path.join(tempDir, 'bin'));
@@ -150,9 +133,9 @@ function runTests() {
     } finally {
       cleanup(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('enabled monitor unexpected failure fails open with warning and raw stdin', () => {
+  test('enabled monitor unexpected failure fails open with warning and raw stdin', () => {
     const tempDir = createTempDir();
     try {
       writeFakePython(path.join(tempDir, 'bin'));
@@ -179,9 +162,9 @@ function runTests() {
     } finally {
       cleanup(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('missing Python fails open with warning and raw stdin', () => {
+  test('missing Python fails open with warning and raw stdin', () => {
     const result = run({
       input: 'raw-input',
       env: {
@@ -196,10 +179,4 @@ function runTests() {
       result.stderr.includes('python3/python not found')
       || result.stderr.includes('Security monitor exited with status')
     );
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

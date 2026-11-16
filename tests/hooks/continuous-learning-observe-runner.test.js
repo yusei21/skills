@@ -6,7 +6,8 @@
 
 'use strict';
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -18,18 +19,6 @@ const runWithFlagsPath = path.join(repoRoot, 'scripts', 'hooks', 'run-with-flags
 const observeRunner = require(path.join(repoRoot, 'scripts', 'hooks', 'observe-runner.js'));
 const postToolUseDispatcher = require(path.join(repoRoot, 'scripts', 'hooks', 'posttooluse-dispatcher.js'));
 const { readHooksConfig } = require(path.join(repoRoot, 'scripts', 'lib', 'hooks-config.js'));
-
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (err) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${err.message}`);
-    return false;
-  }
-}
 
 function loadHook(id) {
   const hookGroups = readHooksConfig(hooksJsonPath).hooks;
@@ -110,13 +99,7 @@ function runWithFlags(tempRoot, hookId, relScriptPath, stdin) {
   });
 }
 
-function runTests() {
-  console.log('\n=== Testing continuous-learning observe hook dispatch ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('observe hooks use node-mode runner instead of shell-mode dispatch', () => {
+  test('observe hooks use node-mode runner instead of shell-mode dispatch', () => {
     const preCommand = loadHook('pre:observe:continuous-learning');
     assert.ok(preCommand.includes('node scripts/hooks/run-with-flags.js pre:observe scripts/hooks/observe-runner.js standard,strict'));
     assert.ok(!preCommand.includes('shell scripts/hooks/run-with-flags-shell.sh'));
@@ -125,9 +108,9 @@ function runTests() {
     const postHook = postToolUseDispatcher.ASYNC_HOOKS.find(hook => hook.id === 'post:observe:continuous-learning');
     assert.ok(postHook, 'PostToolUse dispatcher should retain the observe hook ID');
     assert.strictEqual(postHook.script, 'scripts/hooks/observe-runner.js');
-  })) passed++; else failed++;
+  });
 
-  if (test('run-with-flags passes hookId to direct run exports', () => {
+  test('run-with-flags passes hookId to direct run exports', () => {
     withTempPluginRoot(tempRoot => {
       const scriptPath = path.join(tempRoot, 'scripts', 'hooks', 'capture-hook-id.js');
       fs.writeFileSync(
@@ -147,16 +130,16 @@ function runTests() {
       const payload = JSON.parse(result.stdout);
       assert.deepStrictEqual(payload, { raw: '{"ok":true}', hookId: 'post:observe', truncated: false });
     });
-  })) passed++; else failed++;
+  });
 
-  if (test('observe-runner derives the observe phase from the hook id', () => {
+  test('observe-runner derives the observe phase from the hook id', () => {
     assert.strictEqual(observeRunner.getPhaseFromHookId('pre:observe'), 'pre');
     assert.strictEqual(observeRunner.getPhaseFromHookId('post:observe'), 'post');
     assert.strictEqual(observeRunner.getPhaseFromHookId('pre:observe:continuous-learning'), 'pre');
     assert.strictEqual(observeRunner.getPhaseFromHookId('unknown'), null);
-  })) passed++; else failed++;
+  });
 
-  if (test('observe-runner invokes observe.sh with phase, stdin, and plugin root', () => {
+  test('observe-runner invokes observe.sh with phase, stdin, and plugin root', () => {
     withTempPluginRoot(tempRoot => {
       writeFakeObserveScript(tempRoot);
       const env = fs.existsSync('/bin/sh') ? { BASH: '/bin/sh' } : {};
@@ -170,9 +153,9 @@ function runTests() {
         assert.strictEqual(output.stdout, `phase=pre input=payload root=${tempRoot}`);
       });
     });
-  })) passed++; else failed++;
+  });
 
-  if (test('observe-runner fails open when no shell runtime is available', () => {
+  test('observe-runner fails open when no shell runtime is available', () => {
     withTempPluginRoot(tempRoot => {
       writeFakeObserveScript(tempRoot);
       withEnv({ BASH: '', PATH: '' }, () => {
@@ -186,11 +169,4 @@ function runTests() {
         assert.ok(output.stderr.includes('shell runtime unavailable'));
       });
     });
-  })) passed++; else failed++;
-
-  console.log(`\nPassed: ${passed}`);
-  console.log(`Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

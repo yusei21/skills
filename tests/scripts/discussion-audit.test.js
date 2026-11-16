@@ -2,7 +2,8 @@
  * Tests for scripts/discussion-audit.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -79,25 +80,7 @@ function runProcess(args = [], options = {}) {
   });
 }
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  PASS ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  FAIL ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
-
-function runTests() {
-  console.log('\n=== Testing discussion-audit.js ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('passes when discussions have maintainer touch and accepted answers', () => {
+  test('passes when discussions have maintainer touch and accepted answers', () => {
     const rootDir = createTempDir('discussion-audit-pass-');
 
     try {
@@ -158,9 +141,9 @@ function runTests() {
     } finally {
       cleanup(rootDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('fails when Q&A lacks accepted answer and maintainer touch', () => {
+  test('fails when Q&A lacks accepted answer and maintainer touch', () => {
     const rootDir = createTempDir('discussion-audit-fail-');
 
     try {
@@ -212,9 +195,9 @@ function runTests() {
     } finally {
       cleanup(rootDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('writes markdown output as a durable operator artifact', () => {
+  test('writes markdown output as a durable operator artifact', () => {
     const rootDir = createTempDir('discussion-audit-markdown-');
     const outputPath = path.join(rootDir, 'artifacts', 'discussion-audit.md');
 
@@ -251,9 +234,9 @@ function runTests() {
     } finally {
       cleanup(rootDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('passes without heavy query when discussions are disabled', () => {
+  test('passes without heavy query when discussions are disabled', () => {
     const rootDir = createTempDir('discussion-audit-disabled-');
 
     try {
@@ -279,9 +262,9 @@ function runTests() {
     } finally {
       cleanup(rootDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('cli help and invalid args exit cleanly', () => {
+  test('cli help and invalid args exit cleanly', () => {
     const help = runProcess(['--help']);
     assert.strictEqual(help.status, 0);
     assert.ok(help.stdout.includes('Usage: node scripts/discussion-audit.js'));
@@ -289,14 +272,4 @@ function runTests() {
     const invalid = runProcess(['--format', 'xml']);
     assert.strictEqual(invalid.status, 1);
     assert.ok(invalid.stderr.includes('Invalid format'));
-  })) passed++; else failed++;
-
-  console.log(`\nPassed: ${passed}`);
-  console.log(`Failed: ${failed}`);
-
-  if (failed > 0) {
-    process.exit(1);
-  }
-}
-
-runTests();
+  });

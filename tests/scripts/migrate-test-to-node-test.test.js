@@ -110,6 +110,17 @@ describe('migrate', () => {
     assert.strictEqual(runMigrated(out).status, 0);
   });
 
+  test('a file without section headers imports only test()', () => {
+    const source = LEGACY.replace("  console.log('Addition:');\n", '').replace("  console.log('\\nSubtraction:');\n", '');
+    const out = migrate(source);
+    assert.match(out, /^const { test } = require\('node:test'\);$/m);
+    assert.ok(!out.includes('describe'), 'no describe import or call');
+    assert.ok(!out.includes('sectionTitle'), 'no unused section helper');
+    const result = runMigrated(out);
+    assert.strictEqual(result.status, 0, result.stdout + result.stderr);
+    assert.match(result.stdout, /^\u2139 pass 3$/m);
+  });
+
   const refusals = [
     ['an async helper', LEGACY.replace('    fn();', '    await fn();'), /no synchronous/],
     ['statements between tests', LEGACY.replace("  console.log('Addition:');", "  const shared = 1;\n  console.log('Addition:');"), /unsupported statement/],

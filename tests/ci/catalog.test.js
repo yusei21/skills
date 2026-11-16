@@ -4,7 +4,8 @@
 
 'use strict';
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -182,25 +183,7 @@ function writeCatalogFixture(root, options = {}) {
   writePluginMetadata(root, documentedCounts);
 }
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  PASS ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  FAIL ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
-
-function runTests() {
-  console.log('\n=== Testing CI catalog.js ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('builds catalog counts from a supplied root', () => {
+  test('builds catalog counts from a supplied root', () => {
     const testDir = createTestDir();
     try {
       writeCatalogFixture(testDir, {
@@ -223,9 +206,9 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects unmarked skill undercounts in English and Chinese agent trees', () => {
+  test('rejects unmarked skill undercounts in English and Chinese agent trees', () => {
     const testDir = createTestDir();
     try {
       writeCatalogFixture(testDir, { actualCounts: { agents: 1, skills: 2, commands: 1 } });
@@ -242,9 +225,9 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('accepts explicitly marked lower-bound skill counts in agent trees', () => {
+  test('accepts explicitly marked lower-bound skill counts in agent trees', () => {
     const testDir = createTestDir();
     try {
       writeCatalogFixture(testDir, { actualCounts: { agents: 1, skills: 2, commands: 1 } });
@@ -261,9 +244,9 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('reports mismatches from every tracked catalog document', () => {
+  test('reports mismatches from every tracked catalog document', () => {
     const testDir = createTestDir();
     try {
       writeCatalogFixture(testDir, {
@@ -290,9 +273,9 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('write mode syncs counts while preserving plus suffixes and unrelated tables', () => {
+  test('write mode syncs counts while preserving plus suffixes and unrelated tables', () => {
     const testDir = createTestDir();
     try {
       writeCatalogFixture(testDir, {
@@ -332,9 +315,9 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('flags a stale count hidden in a second project-tree block', () => {
+  test('flags a stale count hidden in a second project-tree block', () => {
     const testDir = createTestDir();
     try {
       writeCatalogFixture(testDir, {
@@ -353,9 +336,9 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('write mode repairs every project-tree block, not just the first', () => {
+  test('write mode repairs every project-tree block, not just the first', () => {
     const testDir = createTestDir();
     try {
       writeCatalogFixture(testDir, {
@@ -378,9 +361,9 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('throws when a project-tree count entry is missing entirely', () => {
+  test('throws when a project-tree count entry is missing entirely', () => {
     const testDir = createTestDir();
     try {
       writeCatalogFixture(testDir, {
@@ -402,9 +385,9 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('throws a clear error for missing tracked documents', () => {
+  test('throws a clear error for missing tracked documents', () => {
     const testDir = createTestDir();
     try {
       writeCatalogFixture(testDir);
@@ -418,10 +401,4 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

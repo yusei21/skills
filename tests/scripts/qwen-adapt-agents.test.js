@@ -2,7 +2,8 @@
  * Tests for scripts/qwen-adapt-agents.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -28,18 +29,6 @@ function run(args = [], options = {}) {
   }
 }
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  ✓ ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  ✗ ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
-
 function createTempDir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-qwen-adapt-'));
 }
@@ -57,20 +46,14 @@ function readAgent(dirPath, name) {
   return fs.readFileSync(path.join(dirPath, name), 'utf8');
 }
 
-function runTests() {
-  console.log('\n=== Testing qwen-adapt-agents.js ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('shows help with an explicit help flag', () => {
+  test('shows help with an explicit help flag', () => {
     const result = run(['--help']);
     assert.strictEqual(result.code, 0, result.stderr);
     assert.ok(result.stdout.includes('Adapt ECC agent frontmatter for Qwen Code'));
     assert.ok(result.stdout.includes('Usage:'));
-  })) passed++; else failed++;
+  });
 
-  if (test('maps Claude Code tool names to Qwen Code ids', () => {
+  test('maps Claude Code tool names to Qwen Code ids', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.qwen', 'agents');
 
@@ -105,9 +88,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('preserves the mcp__server__tool shape', () => {
+  test('preserves the mcp__server__tool shape', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.qwen', 'agents');
 
@@ -137,9 +120,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('deduplicates MultiEdit and Edit onto a single edit entry', () => {
+  test('deduplicates MultiEdit and Edit onto a single edit entry', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.qwen', 'agents');
 
@@ -167,9 +150,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('remaps an out-of-palette color instead of dropping it', () => {
+  test('remaps an out-of-palette color instead of dropping it', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.qwen', 'agents');
 
@@ -201,9 +184,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('adapts color with long whitespace through the actual CLI', () => {
+  test('adapts color with long whitespace through the actual CLI', () => {
     const tempDir = createTempDir();
     try {
       const tabs = '\t'.repeat(250000);
@@ -215,9 +198,9 @@ function runTests() {
       assert.strictEqual(run([tempDir]).code, 0);
       assert.strictEqual(readAgent(tempDir, 'color.md'), before);
     } finally { cleanupTempDir(tempDir); }
-  })) passed++; else failed++;
+  });
 
-  if (test('leaves an already-compatible agent untouched', () => {
+  test('leaves an already-compatible agent untouched', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.qwen', 'agents');
 
@@ -247,9 +230,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('leaves the agent body untouched', () => {
+  test('leaves the agent body untouched', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.qwen', 'agents');
     const body = ['', 'Read the codebase, then Write a summary.', 'Use Bash only when needed.'].join('\n');
@@ -270,9 +253,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('is idempotent on a second run', () => {
+  test('is idempotent on a second run', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.qwen', 'agents');
 
@@ -296,9 +279,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('defaults to the cwd .qwen/agents directory', () => {
+  test('defaults to the cwd .qwen/agents directory', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.qwen', 'agents');
 
@@ -315,9 +298,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('fails with a clear error when the agents directory is missing', () => {
+  test('fails with a clear error when the agents directory is missing', () => {
     const tempDir = createTempDir();
 
     try {
@@ -327,9 +310,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('adapts a CRLF agent and preserves its line endings', () => {
+  test('adapts a CRLF agent and preserves its line endings', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.qwen', 'agents');
 
@@ -355,9 +338,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects an unknown flag without modifying any file', () => {
+  test('rejects an unknown flag without modifying any file', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.qwen', 'agents');
 
@@ -378,9 +361,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects an empty allowlist before writing any agent in the CLI batch', () => {
+  test('rejects an empty allowlist before writing any agent in the CLI batch', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.qwen', 'agents');
     try {
@@ -399,9 +382,9 @@ function runTests() {
         }
       }
     } finally { cleanupTempDir(tempDir); }
-  })) passed++; else failed++;
+  });
 
-  if (test('adapts a nonempty YAML block list without leftover tool entries', () => {
+  test('adapts a nonempty YAML block list without leftover tool entries', () => {
     const { adaptFrontmatter } = require(SCRIPT);
     const yaml = require('js-yaml');
     const result = adaptFrontmatter(['---', 'name: block-tools', 'description: Neighbor metadata', 'tools:', '  - Read', '', '# Tool list comment', '  - Grep', 'model: sonnet', 'metadata:', '  owner: operator', '---', 'BODY'].join('\n'));
@@ -411,9 +394,9 @@ function runTests() {
     assert.strictEqual(parsed.description, 'Neighbor metadata');
     assert.deepStrictEqual(parsed.metadata, { owner: 'operator' });
     assert.strictEqual(adaptFrontmatter(result.text).changed, false);
-  })) passed++; else failed++;
+  });
 
-  if (test('converts indentless tool sequences through the actual CLI without changing neighboring metadata', () => {
+  test('converts indentless tool sequences through the actual CLI without changing neighboring metadata', () => {
     const tempDir = createTempDir();
     const yaml = require('js-yaml');
     try {
@@ -438,9 +421,9 @@ function runTests() {
       assert.strictEqual(run([tempDir]).code, 0);
       assert.deepStrictEqual(fs.readdirSync(tempDir).sort().map(name => [name, readAgent(tempDir, name)]), beforeRerun);
     } finally { cleanupTempDir(tempDir); }
-  })) passed++; else failed++;
+  });
 
-  if (test('a real managed plan installs parseable indentless tool sequences', () => {
+  test('a real managed plan installs parseable indentless tool sequences', () => {
     const { createManifestInstallPlan, previewInstallPlan, applyInstallPlan } = require('../../scripts/lib/install-executor');
     const yaml = require('js-yaml');
     const tempDir = createTempDir();
@@ -465,9 +448,9 @@ function runTests() {
       assert.ok(installed.endsWith('MANAGED_BODY'));
       assert.ok(fs.existsSync(plan.installStatePath));
     } finally { cleanupTempDir(tempDir); }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects an invalid converted alias before changing any standalone file', () => {
+  test('rejects an invalid converted alias before changing any standalone file', () => {
     const tempDir = createTempDir();
     try {
       writeAgent(tempDir, 'a-valid.md', ['---', 'name: valid', 'tools: Read', '---', 'BODY'].join('\n'));
@@ -479,9 +462,9 @@ function runTests() {
       assert.match(result.stderr, /transformed YAML is invalid/);
       assert.deepStrictEqual(fs.readdirSync(tempDir).sort().map(name => [name, readAgent(tempDir, name)]), before);
     } finally { cleanupTempDir(tempDir); }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects uniformly indented mappings without changing neighboring metadata', () => {
+  test('rejects uniformly indented mappings without changing neighboring metadata', () => {
     const tempDir = createTempDir();
     try {
       const source = ['---', '  name: indented', '  description: Preserve me', '  tools:', '    - Read', '    - Grep', '  model: sonnet', '---', 'BODY'].join('\n');
@@ -493,9 +476,9 @@ function runTests() {
         assert.strictEqual(readAgent(tempDir, 'indented.md'), source);
       }
     } finally { cleanupTempDir(tempDir); }
-  })) passed++; else failed++;
+  });
 
-  if (test('preflights every managed Qwen transform before file or receipt writes', () => {
+  test('preflights every managed Qwen transform before file or receipt writes', () => {
     const { applyInstallPlan, previewInstallPlan } = require('../../scripts/lib/install/apply');
     const tempDir = createTempDir();
     const targetRoot = path.join(tempDir, 'installed');
@@ -531,9 +514,9 @@ function runTests() {
       assert.throws(() => applyInstallPlan(plan), /non-regular source file/);
       assert.deepStrictEqual(snapshot(), before);
     } finally { cleanupTempDir(tempDir); }
-  })) passed++; else failed++;
+  });
 
-  if (test('keeps an absent tools field absent through CLI adaptation and rerun', () => {
+  test('keeps an absent tools field absent through CLI adaptation and rerun', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.qwen', 'agents');
     const yaml = require('js-yaml');
@@ -551,10 +534,4 @@ function runTests() {
       assert.strictEqual(second.code, 0, second.stderr);
       assert.strictEqual(readAgent(agentsDir, 'inherit-tools.md'), adapted);
     } finally { cleanupTempDir(tempDir); }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

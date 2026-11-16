@@ -162,18 +162,20 @@ function migrate(source) {
   if (!/require\('node:assert'\)/.test(head)) {
     throw new MigrationError("no `require('assert')` line to anchor the node:test import");
   }
+  // Files without section headers never call describe(); import only what is used.
+  const hasSections = out.some(line => line.startsWith('describe('));
   head = head.replace(
     /^(const assert = require\('node:assert'\);)$/m,
-    "$1\nconst { describe, test } = require('node:test');"
+    `$1\nconst { ${hasSections ? 'describe, test' : 'test'} } = require('node:test');`
   );
   head = head.replace(/\n\/\/ Test suite\n*$/, '\n').replace(/\n{3,}/g, '\n\n').replace(/\n+$/, '\n');
 
-  const sectionHelper = [
+  const sectionHelper = hasSections ? [
     '',
     '/** Turn a legacy `console.log` section header into a describe() title. */',
     "const sectionTitle = title => String(title).trim().replace(/:$/, '');",
     ''
-  ].join('\n');
+  ].join('\n') : '';
 
   return `${head}${sectionHelper}\n${out.join('\n')}\n`;
 }

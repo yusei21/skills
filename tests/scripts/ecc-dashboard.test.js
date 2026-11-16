@@ -2,24 +2,13 @@
  * Behavioral tests for ecc_dashboard.py helper functions.
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
 const repoRoot = path.join(__dirname, '..', '..');
 const runtimeHelpersPath = path.join(repoRoot, 'scripts', 'lib', 'ecc_dashboard_runtime.py');
-
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  ✓ ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  ✗ ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
 
 function runPython(source) {
   const candidates = process.platform === 'win32' ? ['python', 'python3'] : ['python3', 'python'];
@@ -46,13 +35,7 @@ function runPython(source) {
   throw lastError || new Error('No Python interpreter available');
 }
 
-function runTests() {
-  console.log('\n=== Testing ecc_dashboard.py ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('build_terminal_launch keeps Linux path separate from shell command text', () => {
+  test('build_terminal_launch keeps Linux path separate from shell command text', () => {
     const output = runPython(`
 import importlib.util, json
 spec = importlib.util.spec_from_file_location("ecc_dashboard_runtime", r"""${runtimeHelpersPath}""")
@@ -67,9 +50,9 @@ print(json.dumps({'argv': argv, 'kwargs': kwargs}))
       ['x-terminal-emulator', '-e', 'bash', '-lc', 'cd -- "$1"; exec bash', 'bash', '/tmp/proj; rm -rf ~']
     );
     assert.deepStrictEqual(parsed.kwargs, {});
-  })) passed++; else failed++;
+  });
 
-  if (test('build_terminal_launch uses cwd + CREATE_NEW_CONSOLE style launch on Windows', () => {
+  test('build_terminal_launch uses cwd + CREATE_NEW_CONSOLE style launch on Windows', () => {
     const output = runPython(`
 import importlib.util, json
 spec = importlib.util.spec_from_file_location("ecc_dashboard_runtime", r"""${runtimeHelpersPath}""")
@@ -83,9 +66,9 @@ print(json.dumps({'argv': argv, 'kwargs': kwargs}))
     assert.ok(parsed.kwargs.cwd.includes('proj & del'), 'path should remain a literal cwd value');
     assert.ok(parsed.kwargs.cwd.includes('C:'), 'windows drive prefix should be preserved');
     assert.ok(Object.prototype.hasOwnProperty.call(parsed.kwargs, 'creationflags'));
-  })) passed++; else failed++;
+  });
 
-  if (test('launch_terminal rejects missing or non-directory paths', () => {
+  test('launch_terminal rejects missing or non-directory paths', () => {
     const output = runPython(`
 import importlib.util, json
 spec = importlib.util.spec_from_file_location("ecc_dashboard_runtime", r"""${runtimeHelpersPath}""")
@@ -98,9 +81,9 @@ except ValueError as exc:
 `);
     const parsed = JSON.parse(output);
     assert.ok(parsed.error.includes('Path is not a valid directory'));
-  })) passed++; else failed++;
+  });
 
-  if (test('maximize_window falls back to Linux zoom attribute when zoomed state is unsupported', () => {
+  test('maximize_window falls back to Linux zoom attribute when zoomed state is unsupported', () => {
     const output = runPython(`
 import importlib.util, json
 spec = importlib.util.spec_from_file_location("ecc_dashboard_runtime", r"""${runtimeHelpersPath}""")
@@ -133,10 +116,4 @@ print(json.dumps(window.calls))
       ['state', 'zoomed'],
       ['attributes', '-zoomed', true],
     ]);
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

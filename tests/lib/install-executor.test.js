@@ -4,7 +4,8 @@
 
 'use strict';
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
@@ -169,25 +170,7 @@ function writeManifestSourceFixture(root) {
   writeJson(root, path.join('.claude-plugin', 'plugin.json'), { name: 'fixture' });
 }
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  PASS ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  FAIL ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
-
-function runTests() {
-  console.log('\n=== Testing install-executor.js ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('lists legacy and local rule languages while ignoring common', () => {
+  test('lists legacy and local rule languages while ignoring common', () => {
     const sourceRoot = createTempDir('install-executor-source-');
     try {
       fs.mkdirSync(path.join(sourceRoot, 'rules', 'common'), { recursive: true });
@@ -204,9 +187,9 @@ function runTests() {
     } finally {
       cleanup(sourceRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('Claude settings write preserves unrelated changes made after preflight', () => {
+  test('Claude settings write preserves unrelated changes made after preflight', () => {
     const tempDir = createTempDir('install-executor-settings-race-');
     try {
       const homeDir = path.join(tempDir, 'home');
@@ -237,9 +220,9 @@ function runTests() {
     } finally {
       cleanup(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('failed hook disable checkpoints the previous enabled consent state', () => {
+  test('failed hook disable checkpoints the previous enabled consent state', () => {
     const tempDir = createTempDir('install-executor-disable-failure-');
     try {
       const homeDir = path.join(tempDir, 'home');
@@ -289,16 +272,16 @@ function runTests() {
     } finally {
       cleanup(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects unknown legacy install targets before planning', () => {
+  test('rejects unknown legacy install targets before planning', () => {
     assert.throws(
       () => createLegacyInstallPlan({ target: 'not-a-target' }),
       /Unknown install target: not-a-target/
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('plans Claude legacy rules with warnings and state preview', () => {
+  test('plans Claude legacy rules with warnings and state preview', () => {
     const sourceRoot = createTempDir('install-executor-source-');
     const homeDir = createTempDir('install-executor-home-');
     const projectRoot = createTempDir('install-executor-project-');
@@ -339,9 +322,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('plans Claude legacy rules under the default ECC-managed rules directory', () => {
+  test('plans Claude legacy rules under the default ECC-managed rules directory', () => {
     const sourceRoot = createTempDir('install-executor-source-');
     const homeDir = createTempDir('install-executor-home-');
     const projectRoot = createTempDir('install-executor-project-');
@@ -368,9 +351,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('plans Cursor legacy assets and JSON merge payloads', () => {
+  test('plans Cursor legacy assets and JSON merge payloads', () => {
     const sourceRoot = createTempDir('install-executor-source-');
     const projectRoot = createTempDir('install-executor-project-');
     const homeDir = createTempDir('install-executor-home-');
@@ -408,9 +391,9 @@ function runTests() {
       cleanup(projectRoot);
       cleanup(homeDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('surfaces invalid Cursor MCP JSON while planning legacy install', () => {
+  test('surfaces invalid Cursor MCP JSON while planning legacy install', () => {
     const sourceRoot = createTempDir('install-executor-source-');
     const projectRoot = createTempDir('install-executor-project-');
     const homeDir = createTempDir('install-executor-home-');
@@ -427,9 +410,9 @@ function runTests() {
       cleanup(projectRoot);
       cleanup(homeDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('plans Antigravity legacy files with flattened rule names', () => {
+  test('plans Antigravity legacy files with flattened rule names', () => {
     const sourceRoot = createTempDir('install-executor-source-');
     const projectRoot = createTempDir('install-executor-project-');
     const homeDir = createTempDir('install-executor-home-');
@@ -474,9 +457,9 @@ function runTests() {
       cleanup(projectRoot);
       cleanup(homeDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('materializes manifest scaffold operations and filters generated runtime state', () => {
+  test('materializes manifest scaffold operations and filters generated runtime state', () => {
     const sourceRoot = createTempDir('install-executor-source-');
     const homeDir = createTempDir('install-executor-home-');
     try {
@@ -531,9 +514,9 @@ function runTests() {
       cleanup(sourceRoot);
       cleanup(homeDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('plans one resolved Claude settings hook registration for home and project targets', () => {
+  test('plans one resolved Claude settings hook registration for home and project targets', () => {
     const tempDir = createTempDir('install-executor-claude-hooks-');
     try {
       for (const target of ['claude', 'claude-project']) {
@@ -606,9 +589,9 @@ function runTests() {
     } finally {
       cleanup(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('Claude commit-attribution atomic write failures abort installation', () => {
+  test('Claude commit-attribution atomic write failures abort installation', () => {
     const tempDir = createTempDir('install-executor-attribution-failure-');
     const originalRenameSync = fs.renameSync;
     try {
@@ -647,9 +630,9 @@ function runTests() {
       fs.renameSync = originalRenameSync;
       cleanup(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('creates legacy compatibility manifest plans from language selections', () => {
+  test('creates legacy compatibility manifest plans from language selections', () => {
     const projectRoot = createTempDir('install-executor-project-');
     const homeDir = createTempDir('install-executor-home-');
     try {
@@ -671,9 +654,9 @@ function runTests() {
       cleanup(projectRoot);
       cleanup(homeDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('applyInstallPlan re-export applies a manifest plan and writes install state', () => {
+  test('applyInstallPlan re-export applies a manifest plan and writes install state', () => {
     const sourceRoot = createTempDir('install-executor-source-');
     const homeDir = createTempDir('install-executor-home-');
     try {
@@ -713,9 +696,9 @@ function runTests() {
       cleanup(sourceRoot);
       cleanup(homeDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('per-operation guard runs after mkdir and immediately before a copy write', () => {
+  test('per-operation guard runs after mkdir and immediately before a copy write', () => {
     const tempDir = createTempDir('install-executor-write-guard-');
     try {
       const targetRoot = path.join(tempDir, 'target');
@@ -758,9 +741,9 @@ function runTests() {
     } finally {
       cleanup(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('OpenCode home installs resolve bundled skills inside the config root', () => {
+  test('OpenCode home installs resolve bundled skills inside the config root', () => {
     const tempDir = createTempDir('install-executor-opencode-skills-');
     try {
       const sourceRoot = path.join(tempDir, 'source');
@@ -835,9 +818,9 @@ function runTests() {
     } finally {
       cleanup(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('OpenCode pre-fix managed sources upgrade on repair and uninstall preserves user changes', () => {
+  test('OpenCode pre-fix managed sources upgrade on repair and uninstall preserves user changes', () => {
     const tempDir = createTempDir('install-executor-opencode-upgrade-');
     try {
       const sourceRoot = path.join(tempDir, 'source');
@@ -941,9 +924,9 @@ function runTests() {
     } finally {
       cleanup(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('dedupeCopyFileOperations keeps the last writer per destination (issue #2414)', () => {
+  test('dedupeCopyFileOperations keeps the last writer per destination (issue #2414)', () => {
     // Mirrors the OpenCode command scenario: a generic commands/<name>.md source
     // (preserve-relative-path) and an override .opencode/commands/<name>.md source
     // (sync-root-children) both write the same destination. Before the fix both
@@ -972,9 +955,9 @@ function runTests() {
       '.opencode/commands/build-fix.md',
       'the last writer (override) must win, not the generic source'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('dedupeCopyFileOperations leaves non copy-file operations and order intact', () => {
+  test('dedupeCopyFileOperations leaves non copy-file operations and order intact', () => {
     // merge-json operations legitimately accumulate into a shared config file, so
     // multiple writes to one destination must be preserved; only redundant
     // copy-file writes are collapsed, and surviving ops keep their relative order.
@@ -994,9 +977,9 @@ function runTests() {
       ['merge-json:a.json', 'merge-json:b.json', 'copy-file:other/x.md', 'remove:/home/legacy.md'],
       'both merge-json writes and the remove op survive; only the shadowed copy-file is dropped, order preserved'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('applyInstallPlan refuses generic install writes outside the target root', () => {
+  test('applyInstallPlan refuses generic install writes outside the target root', () => {
     const tempDir = createTempDir('install-executor-safety-');
     try {
       const sourceRoot = path.join(tempDir, 'source');
@@ -1040,9 +1023,9 @@ function runTests() {
     } finally {
       cleanup(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('Claude install without hooks-runtime leaves an existing hooks config untouched', () => {
+  test('Claude install without hooks-runtime leaves an existing hooks config untouched', () => {
     const tempDir = createTempDir('install-executor-no-hooks-');
     try {
       const targetRoot = path.join(tempDir, 'home', '.claude');
@@ -1075,9 +1058,9 @@ function runTests() {
     } finally {
       cleanup(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('OpenCode profile keeps plugin source dormant until hook opt-in is consented', () => {
+  test('OpenCode profile keeps plugin source dormant until hook opt-in is consented', () => {
     const homeDir = createTempDir('install-executor-opencode-boundary-');
     try {
       const planOptions = {
@@ -1212,9 +1195,9 @@ function runTests() {
     } finally {
       cleanup(homeDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('OpenCode disabled install refuses user-owned activation files before any writes', () => {
+  test('OpenCode disabled install refuses user-owned activation files before any writes', () => {
     for (const relativePath of ['opencode.json', path.join('plugins', 'ecc-hooks.ts'), path.join('plugins', 'index.ts')]) {
       const homeDir = createTempDir('install-opencode-user-owned-');
       try {
@@ -1229,9 +1212,9 @@ function runTests() {
         cleanup(homeDir);
       }
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('OpenCode disabled install refuses modified or unverifiable managed activation files before writes', () => {
+  test('OpenCode disabled install refuses modified or unverifiable managed activation files before writes', () => {
     for (const scenario of ['modified-plugin', 'modified-config', 'missing-digest', 'stale-entrypoint']) {
       const homeDir = createTempDir('install-opencode-managed-guard-');
       try {
@@ -1264,9 +1247,9 @@ function runTests() {
         cleanup(homeDir);
       }
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('OpenCode decline preserves activation changed at the install write boundary', () => {
+  test('OpenCode decline preserves activation changed at the install write boundary', () => {
     const homeDir = createTempDir('install-opencode-write-race-');
     try {
       const enabledPlan = createOpenCodePlan(homeDir, 'enabled', true);
@@ -1295,9 +1278,9 @@ function runTests() {
     } finally {
       cleanup(homeDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('Claude hooks install refuses a symlinked hooks destination', () => {
+  test('Claude hooks install refuses a symlinked hooks destination', () => {
     if (process.platform === 'win32') return;
 
     const tempDir = createTempDir('install-executor-hooks-symlink-');
@@ -1349,10 +1332,4 @@ function runTests() {
     } finally {
       cleanup(tempDir);
     }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

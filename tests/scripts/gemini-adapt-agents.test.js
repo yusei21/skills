@@ -2,7 +2,8 @@
  * Tests for scripts/gemini-adapt-agents.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -28,18 +29,6 @@ function run(args = [], options = {}) {
   }
 }
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  ✓ ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  ✗ ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
-
 function createTempDir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-gemini-adapt-'));
 }
@@ -53,20 +42,14 @@ function writeAgent(dirPath, name, body) {
   fs.writeFileSync(path.join(dirPath, name), body);
 }
 
-function runTests() {
-  console.log('\n=== Testing gemini-adapt-agents.js ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('shows help with an explicit help flag', () => {
+  test('shows help with an explicit help flag', () => {
     const result = run(['--help']);
     assert.strictEqual(result.code, 0, result.stderr);
     assert.ok(result.stdout.includes('Adapt ECC agent frontmatter for Gemini CLI'));
     assert.ok(result.stdout.includes('Usage:'));
-  })) passed++; else failed++;
+  });
 
-  if (test('adapts Claude Code tool names and strips unsupported color metadata', () => {
+  test('adapts Claude Code tool names and strips unsupported color metadata', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.gemini', 'agents');
 
@@ -97,9 +80,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('adapts comma-separated scalar Claude Code tools', () => {
+  test('adapts comma-separated scalar Claude Code tools', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.gemini', 'agents');
 
@@ -127,9 +110,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('defaults to the cwd .gemini/agents directory', () => {
+  test('defaults to the cwd .gemini/agents directory', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.gemini', 'agents');
 
@@ -157,9 +140,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('deduplicates MultiEdit/Edit and ReadFile/NotebookRead/Read', () => {
+  test('deduplicates MultiEdit/Edit and ReadFile/NotebookRead/Read', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.gemini', 'agents');
 
@@ -186,9 +169,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('adapts a CRLF agent on Windows and preserves its line endings', () => {
+  test('adapts a CRLF agent on Windows and preserves its line endings', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.gemini', 'agents');
 
@@ -211,9 +194,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects an unknown flag without modifying any file', () => {
+  test('rejects an unknown flag without modifying any file', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.gemini', 'agents');
 
@@ -232,9 +215,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('adapts multi-line YAML block list tools and is idempotent on rerun', () => {
+  test('adapts multi-line YAML block list tools and is idempotent on rerun', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.gemini', 'agents');
 
@@ -273,9 +256,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('strips unquoted inline YAML comments on block-list items while preserving quoted # literals', () => {
+  test('strips unquoted inline YAML comments on block-list items while preserving quoted # literals', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.gemini', 'agents');
 
@@ -308,9 +291,9 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('preserves mixed line endings in the body verbatim when adapting frontmatter', () => {
+  test('preserves mixed line endings in the body verbatim when adapting frontmatter', () => {
     const tempDir = createTempDir();
     const agentsDir = path.join(tempDir, '.gemini', 'agents');
     const mixedBody = '\nFirst LF line\nPasted CRLF line\r\nFinal LF line\n';
@@ -333,10 +316,4 @@ function runTests() {
     } finally {
       cleanupTempDir(tempDir);
     }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

@@ -2,7 +2,8 @@
  * Source-level tests for scripts/release.sh
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const path = require('path');
 
@@ -23,32 +24,14 @@ const reusableReleaseWorkflowSource = fs.readFileSync(reusableReleaseWorkflowPat
 const ciWorkflowSource = fs.readFileSync(ciWorkflowPath, 'utf8');
 const normalizedCiWorkflowSource = ciWorkflowSource.replace(/\r\n/g, '\n');
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  ✓ ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  ✗ ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
-
-function runTests() {
-  console.log('\n=== Testing release.sh ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('release script rejects untracked files when checking cleanliness', () => {
+  test('release script rejects untracked files when checking cleanliness', () => {
     assert.ok(
       source.includes('git status --porcelain --untracked-files=all'),
       'release.sh should use git status --porcelain --untracked-files=all for cleanliness checks'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('release script reruns release metadata sync validation before commit/tag', () => {
+  test('release script reruns release metadata sync validation before commit/tag', () => {
     const syncCheckIndex = source.lastIndexOf('node tests/plugin-manifest.test.js');
     const commitIndex = source.indexOf('git commit -m "chore: bump plugin version to $VERSION"');
 
@@ -58,9 +41,9 @@ function runTests() {
       syncCheckIndex < commitIndex,
       'plugin-manifest.test.js should run before the release commit is created'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('release script verifies npm pack payload after version updates and before commit/tag', () => {
+  test('release script verifies npm pack payload after version updates and before commit/tag', () => {
     const updateIndex = source.indexOf('update_version "$ROOT_PACKAGE_JSON"');
     const packCheckIndex = source.indexOf('node tests/scripts/build-opencode.test.js');
     const commitIndex = source.indexOf('git commit -m "chore: bump plugin version to $VERSION"');
@@ -76,9 +59,9 @@ function runTests() {
       packCheckIndex < commitIndex,
       'build-opencode.test.js should run before the release commit is created'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('release script supports prerelease semver', () => {
+  test('release script supports prerelease semver', () => {
     assert.ok(
       source.includes('2.0.0-rc.1'),
       'release.sh should document an accepted prerelease semver example'
@@ -89,9 +72,9 @@ function runTests() {
     );
     // README and translated release headings are gone, so release.sh no longer edits them.
     assert.ok(!source.includes('update_latest_release_heading'), 'release.sh must not edit README release headings');
-  })) passed++; else failed++;
+  });
 
-  if (test('release script rejects same-version reruns with direct tag guidance', () => {
+  test('release script rejects same-version reruns with direct tag guidance', () => {
     assert.ok(
       source.includes('if [[ "$OLD_VERSION" == "$VERSION" ]]'),
       'release.sh should detect metadata that already declares the requested version'
@@ -101,9 +84,9 @@ function runTests() {
         source.includes('echo "  git push origin \\"v$VERSION\\""'),
       'same-version guidance should point maintainers to the tag-driven publish path'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('release signs an annotated tag and stops before push if signing fails', () => {
+  test('release signs an annotated tag and stops before push if signing fails', () => {
     assert.match(source, /^set -euo pipefail$/m);
     const tagCommand = 'git tag -s "v$VERSION" -m "Release v$VERSION"';
     const tagIndex = source.indexOf('\n' + tagCommand + '\n');
@@ -111,9 +94,9 @@ function runTests() {
     assert.ok(tagIndex > source.indexOf('git commit -m'), 'sign after the release commit');
     assert.ok(pushIndex > tagIndex, 'push only after successful signing');
     assert.doesNotMatch(source.slice(tagIndex, pushIndex), /\|\||set \+e/);
-  })) passed++; else failed++;
+  });
 
-  if (test('release workflows mark prerelease tags as GitHub prereleases', () => {
+  test('release workflows mark prerelease tags as GitHub prereleases', () => {
     assert.ok(
       releaseWorkflowSource.includes('prerelease: ${{ contains(github.ref_name, \'-\') }}'),
       'release.yml should mark hyphenated tag pushes as GitHub prereleases'
@@ -130,9 +113,9 @@ function runTests() {
       reusableReleaseWorkflowSource.includes('make_latest: ${{ contains(inputs.tag, \'-\') && \'false\' || \'true\' }}'),
       'reusable-release.yml should avoid making hyphenated prereleases the latest GitHub release'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('reusable release checks out the requested tag before validating and publishing', () => {
+  test('reusable release checks out the requested tag before validating and publishing', () => {
     const checkoutIndex = reusableReleaseWorkflowSource.indexOf('uses: actions/checkout@');
     const refIndex = reusableReleaseWorkflowSource.indexOf('ref: refs/tags/${{ inputs.tag }}');
     const validateIndex = reusableReleaseWorkflowSource.indexOf('name: Validate version tag');
@@ -144,9 +127,9 @@ function runTests() {
       checkoutIndex < refIndex && refIndex < validateIndex,
       'reusable release should check out inputs.tag before tag validation and publish steps'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('CI runs for release branches and version tags before release workflows execute', () => {
+  test('CI runs for release branches and version tags before release workflows execute', () => {
     const pushBlockMatch = normalizedCiWorkflowSource.match(/on:\n\s+push:\n([\s\S]*?)\n\s+pull_request:/);
     const pushBlock = pushBlockMatch ? pushBlockMatch[1] : '';
 
@@ -161,10 +144,4 @@ function runTests() {
       /tags:\s*\[[^\]]*['"]v\*['"][^\]]*\]/,
       'ci.yml push tags should include v*'
     );
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

@@ -2,7 +2,8 @@
  * Tests for scripts/loop-status.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -123,25 +124,7 @@ function parsePayload(stdout) {
   return JSON.parse(stdout.trim());
 }
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  ✓ ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  ✗ ${name}`);
-    console.error(`    ${error.message}`);
-    return false;
-  }
-}
-
-function runTests() {
-  console.log('\n=== Testing loop-status.js ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('reports overdue ScheduleWakeup calls from Claude transcripts', () => {
+  test('reports overdue ScheduleWakeup calls from Claude transcripts', () => {
     const homeDir = createTempHome();
 
     try {
@@ -166,9 +149,9 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('analyzeTranscript applies default thresholds when called directly', () => {
+  test('analyzeTranscript applies default thresholds when called directly', () => {
     const homeDir = createTempHome();
 
     try {
@@ -186,9 +169,9 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('reports stale Bash tool_use entries without matching tool_result', () => {
+  test('reports stale Bash tool_use entries without matching tool_result', () => {
     const homeDir = createTempHome();
 
     try {
@@ -211,9 +194,9 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('does not flag Bash tool_use entries that have a matching tool_result', () => {
+  test('does not flag Bash tool_use entries that have a matching tool_result', () => {
     const homeDir = createTempHome();
 
     try {
@@ -234,9 +217,9 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('does not flag ScheduleWakeup when later assistant progress exists', () => {
+  test('does not flag ScheduleWakeup when later assistant progress exists', () => {
     const homeDir = createTempHome();
 
     try {
@@ -257,9 +240,9 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('supports inspecting one transcript path directly', () => {
+  test('supports inspecting one transcript path directly', () => {
     const homeDir = createTempHome();
 
     try {
@@ -279,9 +262,9 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('prints text output with state and recommended action', () => {
+  test('prints text output with state and recommended action', () => {
     const homeDir = createTempHome();
 
     try {
@@ -302,9 +285,9 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('continues when an explicit transcript path cannot be read', () => {
+  test('continues when an explicit transcript path cannot be read', () => {
     const missingTranscript = path.join(os.tmpdir(), `missing-loop-status-${Date.now()}.jsonl`);
 
     const result = run(['--transcript', missingTranscript, '--now', NOW, '--json']);
@@ -314,9 +297,9 @@ function runTests() {
     assert.deepStrictEqual(payload.sessions, []);
     assert.strictEqual(payload.errors.length, 1);
     assert.strictEqual(payload.errors[0].transcriptPath, missingTranscript);
-  })) passed++; else failed++;
+  });
 
-  if (test('text output distinguishes explicit transcript read failures from empty discovery', () => {
+  test('text output distinguishes explicit transcript read failures from empty discovery', () => {
     const missingTranscript = path.join(os.tmpdir(), `missing-loop-status-text-${Date.now()}.jsonl`);
 
     const result = run(['--transcript', missingTranscript, '--now', NOW]);
@@ -325,9 +308,9 @@ function runTests() {
     assert.match(result.stdout, /No readable Claude transcript JSONL files were found/);
     assert.match(result.stdout, /Skipped transcript errors/);
     assert.ok(!result.stdout.includes('No Claude transcript JSONL files found under'));
-  })) passed++; else failed++;
+  });
 
-  if (test('continues when one transcript directory cannot be read', () => {
+  test('continues when one transcript directory cannot be read', () => {
     const homeDir = createTempHome();
     const blockedDir = path.join(homeDir, '.claude', 'projects', '-blocked-project');
     const originalReaddirSync = fs.readdirSync;
@@ -357,9 +340,9 @@ function runTests() {
       fs.readdirSync = originalReaddirSync;
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('reports malformed JSONL lines as an attention signal', () => {
+  test('reports malformed JSONL lines as an attention signal', () => {
     const homeDir = createTempHome();
 
     try {
@@ -390,16 +373,16 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects non-integer limit values', () => {
+  test('rejects non-integer limit values', () => {
     const result = run(['--limit', '1.5']);
 
     assert.strictEqual(result.code, 1);
     assert.match(result.stderr, /--limit must be a positive integer/);
-  })) passed++; else failed++;
+  });
 
-  if (test('parses watch mode controls', () => {
+  test('parses watch mode controls', () => {
     const options = parseArgs([
       'node',
       'scripts/loop-status.js',
@@ -415,9 +398,9 @@ function runTests() {
     assert.strictEqual(options.watch, true);
     assert.strictEqual(options.watchCount, 2);
     assert.strictEqual(options.watchIntervalSeconds, 0.01);
-  })) passed++; else failed++;
+  });
 
-  if (test('parses write-dir snapshot option', () => {
+  test('parses write-dir snapshot option', () => {
     const options = parseArgs([
       'node',
       'scripts/loop-status.js',
@@ -426,9 +409,9 @@ function runTests() {
     ]);
 
     assert.strictEqual(options.writeDir, '/tmp/ecc-loop-snapshots');
-  })) passed++; else failed++;
+  });
 
-  if (test('exit-code mode returns 2 when attention signals are present', () => {
+  test('exit-code mode returns 2 when attention signals are present', () => {
     const homeDir = createTempHome();
 
     try {
@@ -446,9 +429,9 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('exit-code mode returns 1 for scan errors without attention signals', () => {
+  test('exit-code mode returns 1 for scan errors without attention signals', () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-loop-status-missing-'));
     const missingTranscript = path.join(tempDir, 'missing.jsonl');
     const result = run(['--transcript', missingTranscript, '--now', NOW, '--json', '--exit-code']);
@@ -461,25 +444,25 @@ function runTests() {
     } finally {
       fs.rmSync(tempDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('exit-code mode rejects unbounded watch mode', () => {
+  test('exit-code mode rejects unbounded watch mode', () => {
     const result = run(['--watch', '--exit-code']);
 
     assert.strictEqual(result.code, 1);
     assert.match(result.stderr, /--exit-code with --watch requires --watch-count/);
-  })) passed++; else failed++;
+  });
 
-  if (test('getStatusExitCode prioritizes attention signals over scan errors', () => {
+  test('getStatusExitCode prioritizes attention signals over scan errors', () => {
     const payload = {
       errors: [{ message: 'unreadable' }],
       sessions: [{ state: 'attention' }],
     };
 
     assert.strictEqual(getStatusExitCode(payload), 2);
-  })) passed++; else failed++;
+  });
 
-  if (test('watch mode emits repeated JSON status frames', () => {
+  test('watch mode emits repeated JSON status frames', () => {
     const homeDir = createTempHome();
 
     try {
@@ -513,9 +496,9 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('watch mode honors exit-code after bounded refreshes', () => {
+  test('watch mode honors exit-code after bounded refreshes', () => {
     const homeDir = createTempHome();
 
     try {
@@ -546,9 +529,9 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('writes per-session status snapshots and index when write-dir is set', () => {
+  test('writes per-session status snapshots and index when write-dir is set', () => {
     const homeDir = createTempHome();
     const snapshotDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-loop-status-snapshots-'));
 
@@ -595,9 +578,9 @@ function runTests() {
       fs.rmSync(homeDir, { recursive: true, force: true });
       fs.rmSync(snapshotDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('keeps index.json reserved when session id sanitizes to index', () => {
+  test('keeps index.json reserved when session id sanitizes to index', () => {
     const homeDir = createTempHome();
     const snapshotDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-loop-status-index-collision-'));
 
@@ -632,9 +615,9 @@ function runTests() {
       fs.rmSync(homeDir, { recursive: true, force: true });
       fs.rmSync(snapshotDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('avoids Windows reserved basenames for session snapshots', () => {
+  test('avoids Windows reserved basenames for session snapshots', () => {
     const homeDir = createTempHome();
     const snapshotDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-loop-status-windows-name-'));
 
@@ -675,9 +658,9 @@ function runTests() {
       fs.rmSync(homeDir, { recursive: true, force: true });
       fs.rmSync(snapshotDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('cleans temporary snapshot files when atomic rename fails', () => {
+  test('cleans temporary snapshot files when atomic rename fails', () => {
     const snapshotDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-loop-status-rename-failure-'));
     const originalRenameSync = fs.renameSync;
 
@@ -710,9 +693,9 @@ function runTests() {
       fs.renameSync = originalRenameSync;
       fs.rmSync(snapshotDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('write-dir failures do not suppress normal stdout', () => {
+  test('write-dir failures do not suppress normal stdout', () => {
     const homeDir = createTempHome();
 
     try {
@@ -740,10 +723,4 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

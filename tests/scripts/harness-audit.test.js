@@ -2,7 +2,8 @@
  * Tests for scripts/harness-audit.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -58,25 +59,7 @@ function runProcess(args = [], options = {}) {
   });
 }
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
-
-function runTests() {
-  console.log('\n=== Testing harness-audit.js ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('parseArgs accepts supported forms and rejects invalid arguments', () => {
+  test('parseArgs accepts supported forms and rejects invalid arguments', () => {
     const rootDir = createTempDir('harness-audit-args-root-');
 
     try {
@@ -101,9 +84,9 @@ function runTests() {
     } finally {
       cleanup(rootDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('cli help exits cleanly and invalid cli args exit with stderr', () => {
+  test('cli help exits cleanly and invalid cli args exit with stderr', () => {
     const help = runProcess(['--help']);
     assert.strictEqual(help.status, 0);
     assert.strictEqual(help.stderr, '');
@@ -114,16 +97,16 @@ function runTests() {
     assert.strictEqual(invalid.status, 1);
     assert.strictEqual(invalid.stdout, '');
     assert.ok(invalid.stderr.includes('Error: Invalid format: xml. Use text or json.'));
-  })) passed++; else failed++;
+  });
 
-  if (test('json output is deterministic between runs', () => {
+  test('json output is deterministic between runs', () => {
     const first = run(['repo', '--format', 'json']);
     const second = run(['repo', '--format', 'json']);
 
     assert.strictEqual(first, second);
-  })) passed++; else failed++;
+  });
 
-  if (test('report includes bounded scores and fixed categories', () => {
+  test('report includes bounded scores and fixed categories', () => {
     const parsed = JSON.parse(run(['repo', '--format', 'json']));
 
     assert.strictEqual(parsed.deterministic, true);
@@ -142,9 +125,9 @@ function runTests() {
     assert.ok(categoryNames.includes('Security Guardrails'));
     assert.ok(categoryNames.includes('Cost Efficiency'));
     assert.ok(categoryNames.includes('GitHub Integration'));
-  })) passed++; else failed++;
+  });
 
-  if (test('report exposes applicable_categories and category_count', () => {
+  test('report exposes applicable_categories and category_count', () => {
     const parsed = JSON.parse(run(['repo', '--format', 'json']));
 
     assert.ok(Array.isArray(parsed.applicable_categories), 'applicable_categories must be an array');
@@ -153,9 +136,9 @@ function runTests() {
     for (const name of parsed.applicable_categories) {
       assert.ok(parsed.categories[name].max > 0, `${name} must have max > 0 to be applicable`);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('GitHub Integration category scores against a fully-wired consumer fixture', () => {
+  test('GitHub Integration category scores against a fully-wired consumer fixture', () => {
     const homeDir = createTempDir('harness-audit-home-gh-');
     const projectRoot = createTempDir('harness-audit-project-gh-');
 
@@ -186,9 +169,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('provider categories are omitted unless a marker is present', () => {
+  test('provider categories are omitted unless a marker is present', () => {
     const homeDir = createTempDir('harness-audit-home-no-provider-');
     const projectRoot = createTempDir('harness-audit-project-no-provider-');
 
@@ -209,9 +192,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('Vercel Integration category scores when vercel.json present', () => {
+  test('Vercel Integration category scores when vercel.json present', () => {
     const homeDir = createTempDir('harness-audit-home-vercel-');
     const projectRoot = createTempDir('harness-audit-project-vercel-');
 
@@ -242,9 +225,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('detector map: Netlify, Cloudflare, Fly each trigger their category', () => {
+  test('detector map: Netlify, Cloudflare, Fly each trigger their category', () => {
     const homeDir = createTempDir('harness-audit-home-multi-');
 
     function probe(markerFile, markerContents, expectedCategory) {
@@ -275,9 +258,9 @@ function runTests() {
     } finally {
       cleanup(homeDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('max_score reflects only applicable categories', () => {
+  test('max_score reflects only applicable categories', () => {
     const homeDir = createTempDir('harness-audit-home-max-');
     const noVercel = createTempDir('harness-audit-project-max-novercel-');
     const withVercel = createTempDir('harness-audit-project-max-vercel-');
@@ -305,9 +288,9 @@ function runTests() {
       cleanup(noVercel);
       cleanup(withVercel);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('non-git directory does not crash the script', () => {
+  test('non-git directory does not crash the script', () => {
     const homeDir = createTempDir('harness-audit-home-bare-');
     const bare = createTempDir('harness-audit-project-bare-');
 
@@ -327,9 +310,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(bare);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('scope filtering changes max score and check list', () => {
+  test('scope filtering changes max score and check list', () => {
     const full = JSON.parse(run(['repo', '--format', 'json']));
     const scoped = JSON.parse(run(['hooks', '--format', 'json']));
 
@@ -337,15 +320,15 @@ function runTests() {
     assert.ok(scoped.max_score < full.max_score);
     assert.ok(scoped.checks.length < full.checks.length);
     assert.ok(scoped.checks.every(check => check.path.includes('hooks') || check.path.includes('scripts/hooks')));
-  })) passed++; else failed++;
+  });
 
-  if (test('text format includes summary header', () => {
+  test('text format includes summary header', () => {
     const output = run(['repo']);
     assert.ok(output.includes('Harness Audit (repo, repo):'));
     assert.ok(output.includes('Top 3 Actions:') || output.includes('Checks:'));
-  })) passed++; else failed++;
+  });
 
-  if (test('detects repo mode from structural markers when package name differs', () => {
+  test('detects repo mode from structural markers when package name differs', () => {
     const projectRoot = createTempDir('harness-audit-structural-repo-');
 
     try {
@@ -366,9 +349,9 @@ function runTests() {
     } finally {
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('audits consumer projects from cwd instead of the ECC repo root', () => {
+  test('audits consumer projects from cwd instead of the ECC repo root', () => {
     const homeDir = createTempDir('harness-audit-home-');
     const projectRoot = createTempDir('harness-audit-project-');
 
@@ -404,9 +387,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('scores empty consumer projects without plugin or harness signals as failing checks', () => {
+  test('scores empty consumer projects without plugin or harness signals as failing checks', () => {
     const homeDir = createTempDir('harness-audit-empty-home-');
     const projectRoot = createTempDir('harness-audit-empty-project-');
 
@@ -424,9 +407,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('combines Python and JavaScript tests for eval coverage', () => {
+  test('combines Python and JavaScript tests for eval coverage', () => {
     const homeDir = createTempDir('harness-audit-python-home-');
     const projectRoot = createTempDir('harness-audit-python-project-');
 
@@ -454,9 +437,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('recognizes standard pytest suite markers without JavaScript tests', () => {
+  test('recognizes standard pytest suite markers without JavaScript tests', () => {
     const homeDir = createTempDir('harness-audit-python-markers-home-');
     const fixtures = [
       ['pytest.toml', ''],
@@ -487,9 +470,9 @@ function runTests() {
     } finally {
       cleanup(homeDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('supports spaced testpaths, custom python_files, and empty-path fallback', () => {
+  test('supports spaced testpaths, custom python_files, and empty-path fallback', () => {
     const homeDir = createTempDir('harness-audit-python-options-home-');
     const projectRoot = createTempDir('harness-audit-python-options-project-');
 
@@ -524,9 +507,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('ignores non-string pytest TOML list entries without crashing', () => {
+  test('ignores non-string pytest TOML list entries without crashing', () => {
     const homeDir = createTempDir('harness-audit-python-invalid-home-');
     const projectRoot = createTempDir('harness-audit-python-invalid-project-');
 
@@ -544,9 +527,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('supports testpaths that point directly to a test file', () => {
+  test('supports testpaths that point directly to a test file', () => {
     const projectRoot = createTempDir('harness-audit-python-file-path-');
 
     try {
@@ -560,9 +543,9 @@ function runTests() {
     } finally {
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uses pytest default discovery and active config precedence', () => {
+  test('uses pytest default discovery and active config precedence', () => {
     const homeDir = createTempDir('harness-audit-python-default-home-');
     const projectRoot = createTempDir('harness-audit-python-default-project-');
 
@@ -597,9 +580,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('does not treat a lint-only tox configuration as a test suite', () => {
+  test('does not treat a lint-only tox configuration as a test suite', () => {
     const homeDir = createTempDir('harness-audit-tox-home-');
     const projectRoot = createTempDir('harness-audit-tox-project-');
 
@@ -614,9 +597,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('counts tests from INI testpaths without scanning ignored dependency roots', () => {
+  test('counts tests from INI testpaths without scanning ignored dependency roots', () => {
     const homeDir = createTempDir('harness-audit-python-ini-home-');
     const projectRoot = createTempDir('harness-audit-python-ini-project-');
 
@@ -640,9 +623,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('expands recursive glob patterns in pytest testpaths', () => {
+  test('expands recursive glob patterns in pytest testpaths', () => {
     const homeDir = createTempDir('harness-audit-python-glob-home-');
     const projectRoot = createTempDir('harness-audit-python-glob-project-');
 
@@ -663,9 +646,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('does not fall back when a recursive testpath matches an empty directory', () => {
+  test('does not fall back when a recursive testpath matches an empty directory', () => {
     const projectRoot = createTempDir('harness-audit-python-empty-glob-');
 
     try {
@@ -683,9 +666,9 @@ function runTests() {
     } finally {
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('secret hygiene requires an active gitignore rule for env files', () => {
+  test('secret hygiene requires an active gitignore rule for env files', () => {
     const homeDir = createTempDir('harness-audit-gitignore-home-');
     const cases = [
       ['# Do not commit .env files\nnode_modules/\n', false],
@@ -721,9 +704,9 @@ function runTests() {
     } finally {
       cleanup(homeDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('prints no top actions when consumer checks all pass', () => {
+  test('prints no top actions when consumer checks all pass', () => {
     const homeDir = createTempDir('harness-audit-passing-home-');
     const projectRoot = createTempDir('harness-audit-passing-project-');
 
@@ -772,9 +755,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('detects marketplace-installed Claude plugins under home marketplaces/', () => {
+  test('detects marketplace-installed Claude plugins under home marketplaces/', () => {
     const homeDir = createTempDir('harness-audit-marketplace-home-');
     const projectRoot = createTempDir('harness-audit-marketplace-project-');
 
@@ -805,9 +788,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('detects marketplace-installed Claude plugins under project marketplaces/', () => {
+  test('detects marketplace-installed Claude plugins under project marketplaces/', () => {
     const homeDir = createTempDir('harness-audit-marketplace-home-');
     const projectRoot = createTempDir('harness-audit-marketplace-project-');
 
@@ -838,9 +821,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('detects marketplace-installed Claude plugins from USERPROFILE fallback on Windows-style setups', () => {
+  test('detects marketplace-installed Claude plugins from USERPROFILE fallback on Windows-style setups', () => {
     const homeDir = createTempDir('harness-audit-marketplace-home-');
     const projectRoot = createTempDir('harness-audit-marketplace-project-');
 
@@ -875,9 +858,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('detects Claude plugin installs from installed_plugins.json', () => {
+  test('detects Claude plugin installs from installed_plugins.json', () => {
     const homeDir = createTempDir('harness-audit-manifest-home-');
     const projectRoot = createTempDir('harness-audit-manifest-project-');
     const pluginsDir = path.join(homeDir, '.claude', 'plugins');
@@ -917,9 +900,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('detects newest Claude plugin install from cache marketplace layout', () => {
+  test('detects newest Claude plugin install from cache marketplace layout', () => {
     const homeDir = createTempDir('harness-audit-cache-home-');
     const projectRoot = createTempDir('harness-audit-cache-project-');
     const pluginRoot = path.join(homeDir, '.claude', 'plugins', 'cache', 'everything-claude-code', 'ecc');
@@ -959,16 +942,10 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('compareVersionDesc orders numeric version components', () => {
+  test('compareVersionDesc orders numeric version components', () => {
     const versions = ['1.8.0', '1.10.0', '1.9.0', '2.0.0'].sort(compareVersionDesc);
     assert.deepStrictEqual(versions, ['2.0.0', '1.10.0', '1.9.0', '1.8.0']);
     assert.doesNotThrow(() => compareVersionDesc('1.0.0-rc.1', '1.0.0'));
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

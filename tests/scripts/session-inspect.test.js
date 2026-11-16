@@ -2,7 +2,8 @@
  * Tests for scripts/session-inspect.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -47,57 +48,39 @@ function run(args = [], options = {}) {
   }
 }
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
-
-function runTests() {
-  console.log('\n=== Testing session-inspect.js ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('does not mistake option values for the positional target', () => {
+  test('does not mistake option values for the positional target', () => {
     for (const flag of ['--adapter', '--target-type', '--skill', '--amendment-id', '--observations', '--write']) {
       for (const args of [[flag, 'value', 'claude:latest'], ['claude:latest', flag, 'value']]) {
         assert.strictEqual(parseArgs(['node', SCRIPT, ...args]).target, 'claude:latest');
       }
     }
     assert.strictEqual(parseArgs(['node', SCRIPT, '--adapter', 'claude-history']).target, undefined);
-  })) passed++; else failed++;
+  });
 
-  if (test('shows usage when no target is provided', () => {
+  test('shows usage when no target is provided', () => {
     const result = run();
     assert.strictEqual(result.code, 1);
     assert.ok(result.stdout.includes('Usage:'));
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects missing values for every value-taking option', () => {
+  test('rejects missing values for every value-taking option', () => {
     for (const flag of ['--adapter', '--target-type', '--skill', '--amendment-id', '--observations', '--write']) {
       for (const args of [[flag], [flag, '--write', 'out.json', 'claude:latest'], [flag, 'value', flag]]) {
         assert.throws(() => parseArgs(['node', SCRIPT, ...args]), { message: `Missing value for ${flag}` });
       }
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('lists registered adapters', () => {
+  test('lists registered adapters', () => {
     const result = run(['--list-adapters']);
     assert.strictEqual(result.code, 0, result.stderr);
     const payload = JSON.parse(result.stdout);
     assert.ok(Array.isArray(payload.adapters));
     assert.ok(payload.adapters.some(adapter => adapter.id === 'claude-history'));
     assert.ok(payload.adapters.some(adapter => adapter.id === 'dmux-tmux'));
-  })) passed++; else failed++;
+  });
 
-  if (test('prints canonical JSON for claude history targets', () => {
+  test('prints canonical JSON for claude history targets', () => {
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-inspect-home-'));
     const recordingDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-inspect-recordings-'));
     const sessionsDir = path.join(homeDir, '.claude', 'sessions');
@@ -129,9 +112,9 @@ function runTests() {
       fs.rmSync(homeDir, { recursive: true, force: true });
       fs.rmSync(recordingDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('supports explicit target types for structured registry routing', () => {
+  test('supports explicit target types for structured registry routing', () => {
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-inspect-home-'));
     const sessionsDir = path.join(homeDir, '.claude', 'sessions');
     fs.mkdirSync(sessionsDir, { recursive: true });
@@ -154,9 +137,9 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('writes snapshot JSON to disk when --write is provided', () => {
+  test('writes snapshot JSON to disk when --write is provided', () => {
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-inspect-home-'));
     const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-inspect-out-'));
     const sessionsDir = path.join(homeDir, '.claude', 'sessions');
@@ -193,9 +176,9 @@ function runTests() {
       fs.rmSync(homeDir, { recursive: true, force: true });
       fs.rmSync(outputDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('inspects skill health from recorded observations', () => {
+  test('inspects skill health from recorded observations', () => {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-inspect-skills-'));
     const observationsDir = path.join(projectRoot, '.claude', 'ecc', 'skills');
     fs.mkdirSync(observationsDir, { recursive: true });
@@ -232,9 +215,9 @@ function runTests() {
     } finally {
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('proposes skill amendments through session-inspect', () => {
+  test('proposes skill amendments through session-inspect', () => {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-inspect-amend-'));
     const observationsDir = path.join(projectRoot, '.claude', 'ecc', 'skills');
     fs.mkdirSync(observationsDir, { recursive: true });
@@ -263,9 +246,9 @@ function runTests() {
     } finally {
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('builds skill evaluation scaffolding through session-inspect', () => {
+  test('builds skill evaluation scaffolding through session-inspect', () => {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-inspect-eval-'));
     const observationsDir = path.join(projectRoot, '.claude', 'ecc', 'skills');
     fs.mkdirSync(observationsDir, { recursive: true });
@@ -320,10 +303,4 @@ function runTests() {
     } finally {
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

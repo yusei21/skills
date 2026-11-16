@@ -2,7 +2,8 @@
  * Tests for scripts/list-installed.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -59,25 +60,7 @@ function run(args = [], options = {}) {
   }
 }
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
-
-function runTests() {
-  console.log('\n=== Testing list-installed.js ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('reports when no install-state files are present', () => {
+  test('reports when no install-state files are present', () => {
     const homeDir = createTempDir('list-installed-home-');
     const projectRoot = createTempDir('list-installed-project-');
 
@@ -89,9 +72,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('emits JSON for discovered install-state records', () => {
+  test('emits JSON for discovered install-state records', () => {
     const homeDir = createTempDir('list-installed-home-');
     const projectRoot = createTempDir('list-installed-project-');
 
@@ -130,10 +113,4 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });
