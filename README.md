@@ -1,12 +1,9 @@
 # ECC
 
+**English** | [Português](README.pt-BR.md) | [中文](README.zh-CN.md)
+
 Agents, skills, hooks, rules and slash commands for Claude Code and other
 coding-agent harnesses (Codex, Cursor, OpenCode, Gemini, Kimi and more).
-
-This is a modernized fork of [affaan-m/ECC](https://github.com/affaan-m/ECC).
-It splits the skill library into departments you install one at a time,
-type-checks the Node.js runtime with TypeScript 7 and runs on current
-Node.js, Rust and Python toolchains.
 
 Access to 71 agents, 326 skills, and 98 legacy command shims, plus hooks,
 rules, memory and continuous-learning workflows.
@@ -137,22 +134,7 @@ npm run lint
   `manifests/skill-departments.json` and an install module, then run
   `node scripts/ci/generate-department-plugins.js --write`.
 
-## Third-party skills
-
-These skills are vendored from other projects at pinned commits, with their
-licenses kept beside them:
-
-| Skill | Source | License |
-|-------|--------|---------|
-| `web-design-guidelines` | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | MIT |
-| `agent-desktop` | [vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop) | Apache-2.0 |
-| `untangle-codebase` | [caldoai/skills](https://github.com/caldoai/skills) | MIT |
-| `ponytail`, `ponytail-*` | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | MIT |
-| `graphify` | [safishamsi/graphify](https://github.com/safishamsi/graphify) | Apache-2.0 |
-| `taste-skill` (installer pointer) | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | MIT |
-| `design-md-library` (reference pointer) | [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) | MIT |
-
 ## License
 
-MIT. ECC is created by Affaan Mustafa; see [LICENSE](LICENSE). Vendored
-skills keep their own licenses as listed above.
+MIT; see [LICENSE](LICENSE). Origin, attribution and the licenses of
+third-party skills are in [NOTICE.md](NOTICE.md).

@@ -21,6 +21,7 @@ const AGENTS_PATH = path.join(ROOT, 'AGENTS.md');
 const SOUL_PATH = path.join(ROOT, 'SOUL.md');
 const GEMINI_PATH = path.join(ROOT, '.gemini', 'GEMINI.md');
 const README_ZH_CN_PATH = path.join(ROOT, 'README.zh-CN.md');
+const README_PT_BR_PATH = path.join(ROOT, 'README.pt-BR.md');
 const DOCS_ZH_CN_README_PATH = path.join(ROOT, 'docs', 'zh-CN', 'README.md');
 const DOCS_ZH_CN_AGENTS_PATH = path.join(ROOT, 'docs', 'zh-CN', 'AGENTS.md');
 const PLUGIN_JSON_PATH = path.join(ROOT, '.claude-plugin', 'plugin.json');
@@ -165,6 +166,48 @@ function parseReadmeExpectations(readmeContent) {
   return expectations;
 }
 
+// Translated READMEs may carry a `| <label> | <count> |` table; when they do,
+// its rows are checked and synced like the summary sentence.
+const ZH_COUNT_ROW_LABELS = { agents: '代理', skills: '技能', commands: '命令' };
+const PT_COUNT_ROW_LABELS = { agents: 'Agentes', skills: 'Skills', commands: 'Comandos' };
+const PT_SUMMARY_RE = /(Acesso a\s+)(\d+)(\s+agentes,\s*)(\d+)(\s+skills\s+e\s+)(\d+)(\s+shims)/i;
+
+function countRowRegex(label) {
+  return new RegExp(`^(\\|\\s*${label}\\s*\\|\\s*)(\\d+)(\\s*\\|)`, 'gm');
+}
+
+function parseCountRows(content, labels, source) {
+  return Object.entries(labels).flatMap(([category, label]) => (
+    [...content.matchAll(countRowRegex(label))].map(match => ({
+      category, mode: 'exact', expected: Number(match[2]), source: `${source} count table (${category})`
+    }))
+  ));
+}
+
+function syncCountRows(content, catalog, labels) {
+  return Object.entries(labels).reduce((next, [category, label]) => (
+    next.replace(countRowRegex(label), (_, before, _count, after) => `${before}${catalog[category].count}${after}`)
+  ), content);
+}
+
+function parsePtReadmeExpectations(readmeContent) {
+  const match = readmeContent.match(PT_SUMMARY_RE);
+  if (!match) {
+    throw new Error('README.pt-BR.md is missing the quick-start catalog summary');
+  }
+  return [
+    { category: 'agents', mode: 'exact', expected: Number(match[2]), source: 'README.pt-BR.md quick-start summary' },
+    { category: 'skills', mode: 'exact', expected: Number(match[4]), source: 'README.pt-BR.md quick-start summary' },
+    { category: 'commands', mode: 'exact', expected: Number(match[6]), source: 'README.pt-BR.md quick-start summary' },
+    ...parseCountRows(readmeContent, PT_COUNT_ROW_LABELS, 'README.pt-BR.md'),
+  ];
+}
+
+function syncPtReadme(content, catalog) {
+  const next = replaceOrThrow(content, PT_SUMMARY_RE, catalogCountReplacer(catalog, 7, [2, 4, 6]), 'README.pt-BR.md quick-start summary');
+  return syncCountRows(next, catalog, PT_COUNT_ROW_LABELS);
+}
+
 function parseZhRootReadmeExpectations(readmeContent) {
   const match = readmeContent.match(/你现在可以使用\s+(\d+)\s+个代理、\s*(\d+)\s*个技能和\s*(\d+)\s*个命令/i);
   if (!match) {
@@ -174,7 +217,8 @@ function parseZhRootReadmeExpectations(readmeContent) {
   return [
     { category: 'agents', mode: 'exact', expected: Number(match[1]), source: 'README.zh-CN.md quick-start summary' },
     { category: 'skills', mode: 'exact', expected: Number(match[2]), source: 'README.zh-CN.md quick-start summary' },
-    { category: 'commands', mode: 'exact', expected: Number(match[3]), source: 'README.zh-CN.md quick-start summary' }
+    { category: 'commands', mode: 'exact', expected: Number(match[3]), source: 'README.zh-CN.md quick-start summary' },
+    ...parseCountRows(readmeContent, ZH_COUNT_ROW_LABELS, 'README.zh-CN.md')
   ];
 }
 
@@ -523,12 +567,13 @@ function syncEnglishAgents(content, catalog) {
 }
 
 function syncZhRootReadme(content, catalog) {
-  return replaceOrThrow(
+  const next = replaceOrThrow(
     content,
     /(你现在可以使用\s+)(\d+)(\s+个代理、\s*)(\d+)(\s*个技能和\s*)(\d+)(\s*个命令[。.!！]?)/i,
     catalogCountReplacer(catalog, 7, [2, 4, 6]),
     'README.zh-CN.md quick-start summary'
   );
+  return syncCountRows(next, catalog, ZH_COUNT_ROW_LABELS);
 }
 
 function syncZhDocsReadme(content, catalog) {
@@ -642,6 +687,7 @@ function createDocumentSpecs(paths = {}) {
     soulPath = SOUL_PATH,
     geminiPath = GEMINI_PATH,
     zhRootReadmePath = README_ZH_CN_PATH,
+    ptReadmePath = README_PT_BR_PATH,
     zhDocsReadmePath = DOCS_ZH_CN_README_PATH,
     zhDocsAgentsPath = DOCS_ZH_CN_AGENTS_PATH,
     pluginJsonPath = PLUGIN_JSON_PATH,
@@ -675,6 +721,13 @@ function createDocumentSpecs(paths = {}) {
       filePath: zhRootReadmePath,
       parseExpectations: parseZhRootReadmeExpectations,
       syncContent: syncZhRootReadme,
+    },
+    {
+      // Translated mirror: checked only while the file exists.
+      optional: true,
+      filePath: ptReadmePath,
+      parseExpectations: parsePtReadmeExpectations,
+      syncContent: syncPtReadme,
     },
     {
       // Translated mirror: checked only while the file exists.
@@ -730,6 +783,7 @@ function createDocumentSpecsForRoot(root) {
     soulPath: path.join(root, 'SOUL.md'),
     geminiPath: path.join(root, '.gemini', 'GEMINI.md'),
     zhRootReadmePath: path.join(root, 'README.zh-CN.md'),
+    ptReadmePath: path.join(root, 'README.pt-BR.md'),
     zhDocsReadmePath: path.join(root, 'docs', 'zh-CN', 'README.md'),
     zhDocsAgentsPath: path.join(root, 'docs', 'zh-CN', 'AGENTS.md'),
     pluginJsonPath: path.join(root, '.claude-plugin', 'plugin.json'),
@@ -843,6 +897,7 @@ module.exports = {
   parseReadmeExpectations,
   parseZhAgentsDocExpectations,
   parseZhDocsReadmeExpectations,
+  parsePtReadmeExpectations,
   parseZhRootReadmeExpectations,
   runCatalogCheck,
   syncCatalogDescription,
@@ -850,6 +905,7 @@ module.exports = {
   syncEnglishReadme,
   syncCrossHarnessIdentity,
   syncZhAgents,
+  syncPtReadme,
   syncZhDocsReadme,
   syncZhRootReadme,
 };

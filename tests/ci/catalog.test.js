@@ -13,7 +13,11 @@ const path = require('path');
 const {
   buildCatalog,
   formatExpectation,
+  parsePtReadmeExpectations,
+  parseZhRootReadmeExpectations,
   runCatalogCheck,
+  syncPtReadme,
+  syncZhRootReadme,
 } = require('../../scripts/ci/catalog');
 
 function createTestDir() {
@@ -402,3 +406,29 @@ function writeCatalogFixture(root, options = {}) {
       cleanupTestDir(testDir);
     }
   });
+
+test('README.pt-BR.md summary and count table are checked and synced', () => {
+  const catalog = { agents: { count: 7 }, skills: { count: 30 }, commands: { count: 4 } };
+  const stale = 'Acesso a 1 agentes, 2 skills e 3 shims de comandos.\n\n| Agentes | 1 | x |\n| Comandos | 3 | x |\n| Skills | 2 | x |\n';
+  const expectations = parsePtReadmeExpectations(stale);
+  assert.strictEqual(expectations.length, 6);
+  assert.deepStrictEqual(expectations.map(e => e.expected), [1, 2, 3, 1, 2, 3]);
+  const synced = syncPtReadme(stale, catalog);
+  assert.ok(synced.startsWith('Acesso a 7 agentes, 30 skills e 4 shims'));
+  assert.match(synced, /^\| Agentes \| 7 \|/m);
+  assert.match(synced, /^\| Comandos \| 4 \|/m);
+  assert.match(synced, /^\| Skills \| 30 \|/m);
+  assert.throws(() => parsePtReadmeExpectations('no summary here'), /README\.pt-BR\.md is missing/);
+});
+
+test('README.zh-CN.md count table is checked only when present', () => {
+  const catalog = { agents: { count: 7 }, skills: { count: 30 }, commands: { count: 4 } };
+  const summaryOnly = '你现在可以使用 1 个代理、2 个技能和 3 个命令。\n';
+  assert.strictEqual(parseZhRootReadmeExpectations(summaryOnly).length, 3);
+  const withTable = `${summaryOnly}\n| 代理 | 1 | x |\n| 技能 | 2 | x |\n`;
+  assert.strictEqual(parseZhRootReadmeExpectations(withTable).length, 5);
+  const synced = syncZhRootReadme(withTable, catalog);
+  assert.match(synced, /你现在可以使用 7 个代理、30 个技能和 4 个命令/);
+  assert.match(synced, /^\| 代理 \| 7 \|/m);
+  assert.match(synced, /^\| 技能 \| 30 \|/m);
+});
