@@ -694,6 +694,8 @@ def test_create_user(client):
 ### Testing Database Operations
 
 ```python
+from sqlalchemy import select
+
 @pytest.fixture
 def db_session():
     """Create a test database session."""
@@ -708,7 +710,7 @@ def test_create_user(db_session):
     db_session.add(user)
     db_session.commit()
 
-    retrieved = db_session.query(User).filter_by(name="Alice").first()
+    retrieved = db_session.scalars(select(User).filter_by(name="Alice")).first()
     assert retrieved.email == "alice@example.com"
 ```
 

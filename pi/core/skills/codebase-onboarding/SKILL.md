@@ -40,7 +40,7 @@ Gather raw signals about the project without reading every file. Run these check
      .git, dist, build, __pycache__, .next
 
 5. Config and tooling detection
-   → .eslintrc*, .prettierrc*, tsconfig.json, Makefile, Dockerfile,
+   → eslint.config.*, .eslintrc*, .prettierrc*, tsconfig.json, Makefile, Dockerfile,
      docker-compose*, .github/workflows/, .env.example, CI configs
 
 6. Test structure detection

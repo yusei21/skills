@@ -215,7 +215,7 @@ export ECC_QUALITY_GATE_STRICT=true
 
 During quality enforcement, flag changes to config files in same iteration:
 
-- `biome.json`, `.eslintrc*`, `prettier.config*`, `tsconfig.json`, `pyproject.toml`
+- `biome.json`, `eslint.config.*`, `.eslintrc*`, `prettier.config*`, `tsconfig.json`, `pyproject.toml`
 
 If config is changed to suppress violations, require explicit review before merge.
 
