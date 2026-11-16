@@ -1,0 +1,38 @@
+{
+  // Type-checks the plain CommonJS sources without changing how they run.
+  //
+  // ECC hooks execute under whatever `node` the user has installed, and Node
+  // refuses to strip types from files under node_modules, so runtime code stays
+  // `.js`. TypeScript 7 checks it through JSDoc instead: a file opts in with a
+  // `// @ts-check` header and is then held to `strict`. Files without the header
+  // are still parsed for inference but report nothing, which lets the codebase
+  // adopt types one module at a time.
+  //
+  // Run with: npm run typecheck
+  // (it calls TypeScript 7 by path: the @typescript/typescript6 API bridge also
+  // ships a `tsc` bin, so a bare `tsc` may resolve to 6.x after some installs)
+  "compilerOptions": {
+    "target": "es2023",
+    "lib": ["es2023"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+
+    "strict": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "useUnknownInCatchVariables": true,
+
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["scripts/**/*.js", "scripts/**/*.cjs", "scripts/**/*.d.ts", "tests/lib/package-manager.test.js"],
+  "exclude": ["node_modules", ".opencode/dist", "coverage"]
+}
