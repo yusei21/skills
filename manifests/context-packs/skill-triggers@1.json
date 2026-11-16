@@ -10,7 +10,7 @@
     "id": "hand-seeded",
     "source": "manual-curation-pending-regeneration"
   },
-  "registryDigest": "a6e9ff89fb6b3fa77bff8cd31465a2e71bceb5adbb7b7724597f986dac22534c",
+  "registryDigest": "40a90da38578137d0059e264c977dddb9ccf2db972a435699a2ff85e39913f07",
   "schemaVersion": 1,
   "triggers": {
     "skill:agent-desktop": [

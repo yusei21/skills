@@ -136,8 +136,11 @@ def validate_with_llm(
 ) -> ParsedItem:
     """Use LLM to fix low-confidence extractions."""
     response = client.messages.create(
-        model="claude-haiku-4-5-20251001",  # Cheapest model for validation
-        max_tokens=500,
+        model="claude-haiku-5-5",  # Cheapest model for validation
+        # Haiku 5.5 thinks by default and thinking counts toward max_tokens:
+        # low effort keeps it short, and the cap leaves room for the JSON.
+        output_config={"effort": "low"},
+        max_tokens=2048,
         messages=[{
             "role": "user",
             "content": (
