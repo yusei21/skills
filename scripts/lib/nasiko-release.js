@@ -59,7 +59,7 @@ function assertDigest(bytes, expectedDigest, label) {
 
 function validateManifest(bytes) {
   let manifest;
-  try { manifest = JSON.parse(bytes.toString('utf8')); } catch (_error) { throw new Error('Nasiko manifest is not valid JSON.'); }
+  try { manifest = JSON.parse(bytes.toString('utf8')); } catch (_error) { throw new Error('Nasiko manifest is not valid JSON.', { cause: _error }); }
   if (manifest.schemaVersion !== 2 || !Array.isArray(manifest.layers) || manifest.layers.length !== 1) {
     throw new Error('Nasiko manifest must contain exactly one OCI layer.');
   }
@@ -90,7 +90,7 @@ function readTarOctal(block, offset, length) {
 
 function gunzipArchive(archiveBytes) {
   try { return zlib.gunzipSync(archiveBytes, { maxOutputLength: MAX_BINARY_BYTES + 2048 }); }
-  catch (_error) { throw new Error('Nasiko archive is invalid or exceeds the decompressed size limit.'); }
+  catch (_error) { throw new Error('Nasiko archive is invalid or exceeds the decompressed size limit.', { cause: _error }); }
 }
 
 function isZeroBlock(bytes) {
@@ -256,7 +256,7 @@ function inspectInstalledNasiko(executable, resolveRelease = getQualifiedRelease
   try { binary = readBoundedRegularFile(executable, MAX_BINARY_BYTES); }
   catch (error) {
     if (error.code === 'ENOENT') return { installed: false, qualified: false, version: null, executable };
-    if (error.code === 'ELOOP') throw new Error('Nasiko executable must be a regular file, not a symlink.');
+    if (error.code === 'ELOOP') throw new Error('Nasiko executable must be a regular file, not a symlink.', { cause: error });
     throw error;
   }
   if (!binary) return { installed: true, qualified: false, version: null, executable, binaryDigest: null, metadataPath: metadataPathFor(executable) };
@@ -373,7 +373,7 @@ function acquireLifecycleLock(installDirectory, fileSystem = fs, options = {}) {
       try { return createLifecycleLock(lockPath, fileSystem); }
       catch (retryError) {
         if (retryError.code === 'EEXIST') {
-          throw new Error(`Another Nasiko lifecycle operation won lock acquisition: ${lockPath}.`);
+          throw new Error(`Another Nasiko lifecycle operation won lock acquisition: ${lockPath}.`, { cause: retryError });
         }
         throw retryError;
       }
@@ -391,7 +391,7 @@ function acquireLifecycleLock(installDirectory, fileSystem = fs, options = {}) {
     return createLifecycleLock(lockPath, fileSystem);
   } catch (error) {
     if (error.code === 'EEXIST') {
-      throw new Error(`Another Nasiko lifecycle operation won stale-lock recovery: ${lockPath}.`);
+      throw new Error(`Another Nasiko lifecycle operation won stale-lock recovery: ${lockPath}.`, { cause: error });
     }
     throw error;
   }

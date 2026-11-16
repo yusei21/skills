@@ -246,7 +246,7 @@ function removeContainedPath(destinationPath, trustedRoot, action, options = {})
       fs.rmdirSync(quarantineDir);
     } catch (_restoreError) {
       throw new Error(
-        `Refusing to ${action}: managed destination changed before removal; replacement preserved at ${quarantinePath}.`
+        `Refusing to ${action}: managed destination changed before removal; replacement preserved at ${quarantinePath}.`, { cause: _restoreError }
       );
     }
     throw createChangedDestinationError(action);

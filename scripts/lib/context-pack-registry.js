@@ -55,7 +55,7 @@ function parseMetadata(resource) {
   if (!match) throw new Error(`Missing skill metadata: ${resource.path}`);
   let metadata;
   try { metadata = yaml.load(match[1], { schema: yaml.JSON_SCHEMA }); } catch (error) {
-    throw new Error(`Invalid skill metadata: ${resource.path}: ${error.message}`);
+    throw new Error(`Invalid skill metadata: ${resource.path}: ${error.message}`, { cause: error });
   }
   return Object.fromEntries(['name', 'description'].map(key => [
     key, normalizeMetadataText(metadata && metadata[key], `Skill ${key} (${resource.path})`),
@@ -141,7 +141,7 @@ function loadSkillTriggers({ repoRoot = DEFAULT_REPO_ROOT } = {}) {
   if (!fs.existsSync(file) || !fs.statSync(file).isFile()) return { triggers: {}, manifest: null };
   let manifest;
   try { manifest = JSON.parse(fs.readFileSync(file, 'utf8')); }
-  catch (error) { throw new Error(`Invalid skill triggers manifest: ${error.message}`); }
+  catch (error) { throw new Error(`Invalid skill triggers manifest: ${error.message}`, { cause: error }); }
   if (!manifest || manifest.schemaVersion !== 1 || !manifest.triggers || typeof manifest.triggers !== 'object') {
     throw new Error('Invalid skill triggers manifest: expected schemaVersion 1 with a triggers object');
   }

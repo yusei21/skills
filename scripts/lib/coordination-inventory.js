@@ -233,7 +233,7 @@ function readBounded(file, limit = MAX_BYTES) {
 }
 function readJson(file) {
   try { return JSON.parse(readBounded(file).content); }
-  catch (error) { throw new Error(error.message === 'Input exceeds file limit.' ? error.message : 'Cannot read coordination JSON.'); }
+  catch (error) { throw new Error(error.message === 'Input exceeds file limit.' ? error.message : 'Cannot read coordination JSON.', { cause: error }); }
 }
 function collectTaskFiles(directory) {
   try {

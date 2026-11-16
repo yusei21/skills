@@ -236,7 +236,7 @@ async function collectDeliveries(sessions, port) {
 
 async function run(rawInput) {
   const passThrough = { stdout: rawInput || '', exitCode: 0 };
-  let payload = {};
+  let payload;
   try {
     payload = JSON.parse(rawInput || '{}');
   } catch {

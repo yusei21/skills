@@ -57,7 +57,7 @@ function parseJsoncConfig(content, sourceRelativePath) {
   try {
     config = JSON.parse(stripJsonc(content));
   } catch (error) {
-    throw new Error(`Failed to parse ${sourceRelativePath}: ${error.message}`);
+    throw new Error(`Failed to parse ${sourceRelativePath}: ${error.message}`, { cause: error });
   }
   if (!config || typeof config !== 'object' || Array.isArray(config)) {
     throw new Error(`Invalid ${sourceRelativePath}: expected a JSON object`);

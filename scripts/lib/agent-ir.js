@@ -85,7 +85,7 @@ function parseAgentFile(filePath) {
   try {
     content = fs.readFileSync(filePath, 'utf8');
   } catch (err) {
-    throw new Error(`${filename}: cannot read: ${err.message}`);
+    throw new Error(`${filename}: cannot read: ${err.message}`, { cause: err });
   }
 
   const { frontmatter, body } = splitFrontmatter(content);
@@ -97,7 +97,7 @@ function parseAgentFile(filePath) {
   try {
     raw = yaml.load(frontmatter);
   } catch (err) {
-    throw new Error(`${filename}: invalid YAML frontmatter: ${err.message}`);
+    throw new Error(`${filename}: invalid YAML frontmatter: ${err.message}`, { cause: err });
   }
   if (!raw || typeof raw !== 'object') {
     throw new Error(`${filename}: frontmatter must be a YAML mapping`);

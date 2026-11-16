@@ -175,7 +175,7 @@ function parseReviewOutput(text) {
   try {
     parsed = JSON.parse(stripCodeFences(String(text)));
   } catch (error) {
-    throw new Error(`reviewer output is not valid JSON: ${error.message}`);
+    throw new Error(`reviewer output is not valid JSON: ${error.message}`, { cause: error });
   }
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
     throw new Error('reviewer output is not a JSON object');

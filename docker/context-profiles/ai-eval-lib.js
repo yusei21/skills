@@ -393,7 +393,7 @@ function prepareEnvironments({ repoRoot, executable, root }) {
         }
       },
       verify() {
-        let ready = false;
+        let ready;
         try { ready = getNativeProfileStatus(options).ready; } catch { ready = false; }
         if (!ready) fail('environment-drift');
       } };
@@ -425,7 +425,7 @@ function claudeEnvironment({ name, binary, home, config, installed, profileId, s
     restore() {},
     verify() {
       if (fingerprintExecutable(binary.path).digest !== binary.digest) fail('environment-drift');
-      let observed = null;
+      let observed;
       try { observed = managed(); } catch { observed = null; }
       if (observed !== prepared) fail('environment-drift');
     } }];
@@ -898,7 +898,7 @@ function executeEvaluation(options, plan) {
   const temp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-ai-eval-')));
   const selection = [];
   const outcomes = [];
-  let installs = null;
+  let installs;
   let harvester = null;
   try {
     const installRoot = path.join(temp, 'installs');

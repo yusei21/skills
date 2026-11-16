@@ -66,7 +66,7 @@ function readFileOrThrow(filePath) {
   try {
     return fs.readFileSync(filePath, 'utf8');
   } catch (error) {
-    throw new Error(`Failed to read ${path.basename(filePath)}: ${error.message}`);
+    throw new Error(`Failed to read ${path.basename(filePath)}: ${error.message}`, { cause: error });
   }
 }
 
@@ -74,7 +74,7 @@ function writeFileOrThrow(filePath, content) {
   try {
     fs.writeFileSync(filePath, content, 'utf8');
   } catch (error) {
-    throw new Error(`Failed to write ${path.basename(filePath)}: ${error.message}`);
+    throw new Error(`Failed to write ${path.basename(filePath)}: ${error.message}`, { cause: error });
   }
 }
 
@@ -402,7 +402,7 @@ function parseCatalogDescriptionExpectations(content, source, getDescription) {
   try {
     parsed = JSON.parse(content);
   } catch (error) {
-    throw new Error(`${source} is not valid JSON: ${error.message}`);
+    throw new Error(`${source} is not valid JSON: ${error.message}`, { cause: error });
   }
 
   const description = getDescription(parsed);
@@ -616,7 +616,7 @@ function syncCatalogDescription(content, catalog, source, getDescription, setDes
   try {
     parsed = JSON.parse(content);
   } catch (error) {
-    throw new Error(`${source} is not valid JSON: ${error.message}`);
+    throw new Error(`${source} is not valid JSON: ${error.message}`, { cause: error });
   }
 
   const description = getDescription(parsed);

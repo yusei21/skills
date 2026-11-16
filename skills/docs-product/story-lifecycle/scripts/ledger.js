@@ -203,7 +203,7 @@ function breakStaleLock(dir) {
 function acquireLock(dir, waitMs) {
   const lock = path.join(dir, '.lock');
   const deadline = Date.now() + waitMs;
-  let accessError = null;
+  let accessError;
   for (;;) {
     try {
       // A live descriptor keeps this inode allocated, even if a foreign writer

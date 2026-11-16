@@ -119,6 +119,18 @@ const rename = manifest.skills.rename || {};
 const skillDescriptions = [];
 const seenNames = new Map();
 
+// Source skills live one level deeper (skills/<department>/<skill>/) than the
+// flat pi/core/skills/<skill>/ copy, so relative Markdown links are rewritten:
+// a sibling skill in any department becomes ../<skill>/, and a link that climbs
+// out of skills/ loses the extra ../ the department level added.
+const DEPARTMENT_IDS = require('../manifests/skill-departments.json').departments.map(d => d.id);
+const DEPARTMENT_LINK_RE = new RegExp(`\\]\\(\\.\\./\\.\\./(?:${DEPARTMENT_IDS.join('|')})/`, 'g');
+function flattenDepartmentLinks(text) {
+  return text
+    .replace(DEPARTMENT_LINK_RE, '](../')
+    .replace(/\]\(\.\.\/\.\.\/\.\.\//g, '](../../');
+}
+
 for (const dirName of manifest.skills.include) {
   const srcDir = skillDir(path.dirname(SKILLS_SRC), dirName);
   const outName = rename[dirName] || dirName;
@@ -140,11 +152,12 @@ for (const dirName of manifest.skills.include) {
     seenNames.set(outName, dirName);
   }
   for (const f of listFiles(srcDir, '')) {
-    let content = null;
-    if (rename[dirName] && f.rel === 'SKILL.md') {
-      // Rename the skill inside pi/core only; the root skill keeps its name.
-      content = fs.readFileSync(f.full, 'utf8')
-        .replace(/^name:\s*["']?[^\n"']+["']?\s*$/m, `name: ${outName}`);
+    if (f.rel.endsWith('.md') || (rename[dirName] && f.rel === 'SKILL.md')) {
+      let content = flattenDepartmentLinks(fs.readFileSync(f.full, 'utf8'));
+      if (rename[dirName] && f.rel === 'SKILL.md') {
+        // Rename the skill inside pi/core only; the root skill keeps its name.
+        content = content.replace(/^name:\s*["']?[^\n"']+["']?\s*$/m, `name: ${outName}`);
+      }
       fs.mkdirSync(path.dirname(path.join(destDir, f.rel)), { recursive: true });
       fs.writeFileSync(path.join(destDir, f.rel), content);
     } else {

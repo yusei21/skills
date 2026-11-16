@@ -163,7 +163,7 @@ function walkSourceDirectory(state, relativePath, depth = 0) {
 
 function readSourceJson(state, relativePath) {
   try { return JSON.parse(readSourceFile(state, relativePath).content.toString('utf8')); } catch (error) {
-    throw new Error(`Cannot read JSON source ${relativePath}: ${error.message}`);
+    throw new Error(`Cannot read JSON source ${relativePath}: ${error.message}`, { cause: error });
   }
 }
 

@@ -223,7 +223,7 @@ function adaptFrontmatter(text) {
   try {
     yaml.load(updatedLines.join('\n'));
   } catch (_error) {
-    throw new Error('Unsupported Qwen frontmatter conversion: transformed YAML is invalid; use a plain tools list');
+    throw new Error('Unsupported Qwen frontmatter conversion: transformed YAML is invalid; use a plain tools list', { cause: _error });
   }
 
   const adapted = `---\n${updatedLines.join('\n')}\n---${match[2]}${source.slice(match[0].length)}`;
@@ -253,7 +253,7 @@ function adaptAgents(dirPath) {
     try {
       adapted = adaptFrontmatter(original);
     } catch (error) {
-      throw new Error(`${entry.name}: ${error.message}`);
+      throw new Error(`${entry.name}: ${error.message}`, { cause: error });
     }
     prepared.push({ filePath, adapted });
   }

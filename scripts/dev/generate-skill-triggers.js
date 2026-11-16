@@ -15,6 +15,13 @@
 //     [--model gpt-5.6-sol] [--executable /path/to/codex] [--batch 25] [--dry-run]
 //   node scripts/dev/generate-skill-triggers.js --provider claude \
 //     [--model claude-sonnet-5] [--executable /path/to/claude] [--batch 40] [--dry-run]
+//   node scripts/dev/generate-skill-triggers.js --keep-triggers
+//
+// --keep-triggers makes no provider calls: it keeps the existing phrases,
+// drops those of removed skills, and re-stamps registryDigest. Use it after
+// edits that leave skill descriptions alone (scripts, examples, moves); the
+// digest covers skill content, so any such edit marks the manifest stale.
+// New or re-described skills still need a full run.
 //
 // Codex requires an isolated executable and a dedicated subscription login
 // home (the same lease rules as the outcome evaluator: never the user's own
@@ -39,6 +46,7 @@ function parseFlags(argv) {
   for (let index = 2; index < argv.length; index += 1) {
     const arg = argv[index];
     if (arg === '--dry-run') flags.dryRun = true;
+    else if (arg === '--keep-triggers') flags.keepTriggers = true;
     else if (['--auth-home', '--model', '--executable', '--batch', '--provider'].includes(arg)) {
       flags[arg.slice(2).replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = argv[index += 1];
     } else throw new Error(`Unknown flag: ${arg}`);
@@ -74,11 +82,34 @@ function cleanTriggers(value) {
   }).slice(0, MAX_TRIGGERS_PER_SKILL);
 }
 
+function keepTriggers(repoRoot, registry, entries) {
+  const target = path.join(repoRoot, MANIFEST_PATH);
+  const previous = JSON.parse(fs.readFileSync(target, 'utf8'));
+  const known = new Set(entries.map(entry => entry.id));
+  const triggers = {};
+  const dropped = [];
+  for (const [id, list] of Object.entries(previous.triggers || {})) {
+    if (known.has(id)) triggers[id] = list;
+    else dropped.push(id);
+  }
+  const manifest = { ...previous, registryDigest: registry.registryDigest,
+    coverage: { skills: entries.length, withTriggers: Object.keys(triggers).length },
+    triggers, triggersDigest: digestObject(triggers) };
+  // Same layout as the checked-in file: sorted keys, two-space indent.
+  fs.writeFileSync(target, `${JSON.stringify(JSON.parse(stableStringify(manifest)), null, 2)}\n`);
+  console.log(`re-stamped ${MANIFEST_PATH}: ${manifest.coverage.withTriggers}/${manifest.coverage.skills} skills keep triggers`
+    + (dropped.length ? `; dropped removed skills: ${dropped.join(', ')}` : ''));
+}
+
 function main() {
   const flags = parseFlags(process.argv);
   const repoRoot = path.join(__dirname, '..', '..');
   const registry = loadContextRegistry({ repoRoot });
   const entries = registry.entries.filter(entry => entry.id.startsWith('skill:'));
+  if (flags.keepTriggers) {
+    keepTriggers(repoRoot, registry, entries);
+    return;
+  }
   const executable = flags.executable || (flags.provider === 'claude' ? 'claude' : `${process.env.HOME}/.ecc-eval/codex/node_modules/.bin/codex`);
   const family = flags.provider || providerFamily(executable);
   const model = flags.model || DEFAULT_MODEL[family];

@@ -29,10 +29,18 @@ module.exports = [
             'complexity': ['warn', 20],
             'max-depth': ['warn', 5],
             'max-params': ['warn', 6],
-            // New in @eslint/js 10's recommended set. Existing code has ~100
-            // hits; warn until they are fixed (see docs/MODERNIZATION-STATUS.md).
-            'preserve-caught-error': 'warn',
-            'no-useless-assignment': 'warn'
+            // New in @eslint/js 10's recommended set; kept as errors.
+            'preserve-caught-error': 'error',
+            'no-useless-assignment': 'error'
+        }
+    },
+    {
+        // Eval scenarios and graders are copied verbatim into the eval corpora
+        // (docker/context-profiles/complex-corpus-v4.json); editing them here
+        // would desync the corpus, so this one style rule is off for them.
+        files: ['docker/context-profiles/complex-eval/**', 'docker/gateguard-effectiveness/scenarios/**'],
+        rules: {
+            'no-useless-assignment': 'off'
         }
     },
     {

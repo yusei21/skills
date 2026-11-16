@@ -109,7 +109,7 @@ function withOutputLock(out, work) {
   let fd;
   try { fd = fs.openSync(lock, 'wx', 0o600); }
   catch (error) {
-    if (error.code === 'EEXIST') throw new Error('Output is locked; concurrent workers must use separate --out directories. Remove .run.lock only after confirming its worker has stopped.');
+    if (error.code === 'EEXIST') throw new Error('Output is locked; concurrent workers must use separate --out directories. Remove .run.lock only after confirming its worker has stopped.', { cause: error });
     throw error;
   }
   try {

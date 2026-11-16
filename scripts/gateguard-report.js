@@ -66,7 +66,7 @@ function loadMetrics(dir) {
   for (const file of files) {
     for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
       if (!line.trim()) continue;
-      let parsed = null;
+      let parsed;
       try {
         parsed = JSON.parse(line);
       } catch (_) {

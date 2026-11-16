@@ -1,6 +1,6 @@
 # Curation
 
-pi/core includes 134 of 314 skills and 24 of 98 commands from the root of ECC.
+pi/core includes 134 of 326 skills and 24 of 98 commands from the root of ECC.
 Everything excluded is listed here with its reason.
 
 ## Rules
@@ -199,6 +199,18 @@ Exclude anything that:
 | `deepseek-harness-setup` | configures an external DeepSeek provider and Claude-Code-specific credentials and hook integration |
 | `story-lifecycle` | Requires ECC agent workflow handoffs and a local Node ledger; native Pi delivery has not been validated. |
 | `issue-review` | Requires authenticated GitHub reads and optional remote issue mutations through gh; outside the offline core profile. |
+| `agent-desktop` | drives desktop GUIs through the separately installed agent-desktop CLI |
+| `design-md-library` | pointer that downloads DESIGN.md files from GitHub at use time |
+| `graphify` | runs the external graphifyy Python tool (pip install) to build its graph |
+| `taste-skill` | bootstrap pointer that installs a third-party skill from GitHub |
+| `ponytail` | third-party skill vendored at a pinned commit in the 2026 modernization; not yet reviewed for the curated Pi profile |
+| `ponytail-audit` | third-party skill vendored at a pinned commit in the 2026 modernization; not yet reviewed for the curated Pi profile |
+| `ponytail-debt` | third-party skill vendored at a pinned commit in the 2026 modernization; not yet reviewed for the curated Pi profile |
+| `ponytail-gain` | third-party skill vendored at a pinned commit in the 2026 modernization; not yet reviewed for the curated Pi profile |
+| `ponytail-help` | third-party skill vendored at a pinned commit in the 2026 modernization; not yet reviewed for the curated Pi profile |
+| `ponytail-review` | third-party skill vendored at a pinned commit in the 2026 modernization; not yet reviewed for the curated Pi profile |
+| `untangle-codebase` | third-party skill vendored at a pinned commit in the 2026 modernization; not yet reviewed for the curated Pi profile |
+| `web-design-guidelines` | third-party skill vendored at a pinned commit in the 2026 modernization; not yet reviewed for the curated Pi profile |
 
 ## Excluded commands
 
