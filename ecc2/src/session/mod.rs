@@ -622,17 +622,13 @@ pub struct ContextGraphRecallEntry {
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "snake_case")]
+#[derive(Default)]
 pub enum ContextObservationPriority {
     Low,
+    #[default]
     Normal,
     High,
     Critical,
-}
-
-impl Default for ContextObservationPriority {
-    fn default() -> Self {
-        Self::Normal
-    }
 }
 
 impl fmt::Display for ContextObservationPriority {
@@ -749,8 +745,8 @@ mod tests {
     }
 
     #[test]
-    fn detect_session_harness_prefers_agent_type_and_collects_project_markers(
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn detect_session_harness_prefers_agent_type_and_collects_project_markers()
+    -> Result<(), Box<dyn std::error::Error>> {
         let repo = TestDir::new("session-harness-detect")?;
         fs::create_dir_all(repo.path().join(".codex"))?;
         fs::create_dir_all(repo.path().join(".claude"))?;
@@ -768,8 +764,8 @@ mod tests {
     }
 
     #[test]
-    fn detect_session_harness_falls_back_to_project_markers_when_agent_unspecified(
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn detect_session_harness_falls_back_to_project_markers_when_agent_unspecified()
+    -> Result<(), Box<dyn std::error::Error>> {
         let repo = TestDir::new("session-harness-markers")?;
         fs::create_dir_all(repo.path().join(".gemini"))?;
 
@@ -782,8 +778,8 @@ mod tests {
     }
 
     #[test]
-    fn detect_session_harness_collects_extended_builtin_markers(
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn detect_session_harness_collects_extended_builtin_markers()
+    -> Result<(), Box<dyn std::error::Error>> {
         let repo = TestDir::new("session-harness-extended-markers")?;
         fs::create_dir_all(repo.path().join(".zed"))?;
         fs::create_dir_all(repo.path().join(".factory-droid"))?;
@@ -831,8 +827,8 @@ mod tests {
     }
 
     #[test]
-    fn detect_session_harness_preserves_custom_agent_label_with_project_markers(
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn detect_session_harness_preserves_custom_agent_label_with_project_markers()
+    -> Result<(), Box<dyn std::error::Error>> {
         let repo = TestDir::new("session-harness-custom-markers")?;
         fs::create_dir_all(repo.path().join(".claude"))?;
         fs::create_dir_all(repo.path().join(".codex"))?;
@@ -849,8 +845,8 @@ mod tests {
     }
 
     #[test]
-    fn config_detection_adds_custom_markers_to_detected_summary(
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn config_detection_adds_custom_markers_to_detected_summary()
+    -> Result<(), Box<dyn std::error::Error>> {
         let repo = TestDir::new("session-harness-custom-config")?;
         fs::create_dir_all(repo.path().join(".acme"))?;
         let mut cfg = crate::config::Config::default();
@@ -872,8 +868,8 @@ mod tests {
     }
 
     #[test]
-    fn config_detection_preserves_custom_primary_label_and_appends_marker_matches(
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn config_detection_preserves_custom_primary_label_and_appends_marker_matches()
+    -> Result<(), Box<dyn std::error::Error>> {
         let repo = TestDir::new("session-harness-config-append")?;
         fs::create_dir_all(repo.path().join(".acme"))?;
         fs::create_dir_all(repo.path().join(".codex"))?;
@@ -905,8 +901,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_requested_agent_type_uses_detected_builtin_marker_for_auto(
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn resolve_requested_agent_type_uses_detected_builtin_marker_for_auto()
+    -> Result<(), Box<dyn std::error::Error>> {
         let repo = TestDir::new("session-harness-resolve-auto-built-in")?;
         fs::create_dir_all(repo.path().join(".codex"))?;
 
@@ -920,8 +916,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_requested_agent_type_uses_configured_marker_for_auto(
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn resolve_requested_agent_type_uses_configured_marker_for_auto()
+    -> Result<(), Box<dyn std::error::Error>> {
         let repo = TestDir::new("session-harness-resolve-auto-custom")?;
         fs::create_dir_all(repo.path().join(".acme"))?;
         let mut cfg = crate::config::Config::default();
@@ -939,8 +935,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_requested_agent_type_skips_nonlaunchable_builtin_markers_without_runner(
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn resolve_requested_agent_type_skips_nonlaunchable_builtin_markers_without_runner()
+    -> Result<(), Box<dyn std::error::Error>> {
         let repo = TestDir::new("session-harness-resolve-auto-nonlaunchable")?;
         fs::create_dir_all(repo.path().join(".zed"))?;
 
@@ -954,8 +950,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_requested_agent_type_uses_configured_runner_for_extended_builtin_markers(
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn resolve_requested_agent_type_uses_configured_runner_for_extended_builtin_markers()
+    -> Result<(), Box<dyn std::error::Error>> {
         let repo = TestDir::new("session-harness-resolve-auto-extended-runner")?;
         fs::create_dir_all(repo.path().join(".windsurf"))?;
         let mut cfg = crate::config::Config::default();

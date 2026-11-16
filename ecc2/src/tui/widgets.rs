@@ -209,11 +209,7 @@ impl Widget for TokenMeter<'_> {
 }
 
 pub(crate) fn budget_ratio(used: f64, budget: f64) -> f64 {
-    if budget <= 0.0 {
-        0.0
-    } else {
-        used / budget
-    }
+    if budget <= 0.0 { 0.0 } else { used / budget }
 }
 
 pub(crate) fn budget_state(
@@ -298,7 +294,7 @@ mod tests {
 
     use crate::config::{BudgetAlertThresholds, Config};
 
-    use super::{gradient_color, threshold_label, BudgetState, TokenMeter};
+    use super::{BudgetState, TokenMeter, gradient_color, threshold_label};
 
     #[test]
     fn budget_state_uses_alert_threshold_ladder() {

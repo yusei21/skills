@@ -7,9 +7,9 @@ use tokio::process::Command;
 use tokio::sync::{mpsc, oneshot};
 use tokio::time::{self, MissedTickBehavior};
 
+use super::SessionState;
 use super::output::{OutputStream, SessionOutputStore};
 use super::store::StateStore;
-use super::SessionState;
 
 type DbAck = std::result::Result<(), String>;
 
@@ -258,7 +258,7 @@ mod tests {
     use uuid::Uuid;
 
     use super::capture_command_output;
-    use crate::session::output::{SessionOutputStore, OUTPUT_BUFFER_LIMIT};
+    use crate::session::output::{OUTPUT_BUFFER_LIMIT, SessionOutputStore};
     use crate::session::store::StateStore;
     use crate::session::{Session, SessionMetrics, SessionState};
 

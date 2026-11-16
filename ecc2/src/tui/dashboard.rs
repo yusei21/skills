@@ -11,14 +11,14 @@ use regex::Regex;
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::time::UNIX_EPOCH;
 
-use super::widgets::{budget_state, format_currency, format_token_count, BudgetState, TokenMeter};
+use super::widgets::{BudgetState, TokenMeter, budget_state, format_currency, format_token_count};
 use crate::comms;
 use crate::config::{Config, PaneLayout, PaneNavigationAction, Theme};
 use crate::notifications::{DesktopNotifier, NotificationEvent, WebhookNotifier};
 use crate::observability::ToolLogEntry;
 use crate::session::manager;
 use crate::session::output::{
-    OutputLine, OutputStream, OUTPUT_BUFFER_LIMIT, OUTPUT_DELTA_BATCH_LIMIT,
+    OUTPUT_BUFFER_LIMIT, OUTPUT_DELTA_BATCH_LIMIT, OutputLine, OutputStream,
 };
 use crate::session::store::{DaemonActivity, FileActivityOverlap, SessionOutputRecord, StateStore};
 use crate::session::{
@@ -4516,9 +4516,7 @@ impl Dashboard {
         self.session_output_generations = active_session_generations;
 
         let batch = match self.output_cursor {
-            Some(cursor) => self
-                .db
-                .get_output_since(cursor, OUTPUT_DELTA_BATCH_LIMIT),
+            Some(cursor) => self.db.get_output_since(cursor, OUTPUT_DELTA_BATCH_LIMIT),
             None => self.db.get_output_snapshot(OUTPUT_BUFFER_LIMIT),
         };
         let batch = match batch {
@@ -5183,7 +5181,7 @@ impl Dashboard {
                 if message.to_session != session_id || message.msg_type != "task_handoff" {
                     return None;
                 }
-                manager::parse_task_handoff_task(&message.content).or_else(|| Some(message.content))
+                manager::parse_task_handoff_task(&message.content).or(Some(message.content))
             })
     }
 
@@ -6595,7 +6593,10 @@ impl Dashboard {
                     format!(" | {branch}")
                 }
             ));
-            lines.push(format!("Task {}", truncate_for_dashboard(&session.task, 48)));
+            lines.push(format!(
+                "Task {}",
+                truncate_for_dashboard(&session.task, 48)
+            ));
             if let Some(meta) = meta {
                 lines.push(format!(
                     "Progress {:>3}% {}",
@@ -6645,7 +6646,14 @@ impl Dashboard {
             }
         }
 
-        let lanes = ["Inbox", "In Progress", "Review", "Blocked", "Done", "Stopped"];
+        let lanes = [
+            "Inbox",
+            "In Progress",
+            "Review",
+            "Blocked",
+            "Done",
+            "Stopped",
+        ];
         for label in lanes {
             let mut lane_sessions = self
                 .sessions
@@ -6771,7 +6779,10 @@ impl Dashboard {
                     session.agent_type,
                     meta.progress_percent,
                     board_progress_bar(meta.progress_percent),
-                    truncate_for_dashboard(meta.status_detail.as_deref().unwrap_or(&session.task), 18),
+                    truncate_for_dashboard(
+                        meta.status_detail.as_deref().unwrap_or(&session.task),
+                        18
+                    ),
                     activity_suffix,
                     backlog_suffix,
                     branch_suffix
@@ -7113,7 +7124,6 @@ impl Dashboard {
         self.layout_panes()
             .into_iter()
             .filter(|pane| !self.collapsed_panes.contains(pane))
-            .into_iter()
             .filter(|pane| *pane != Pane::Sessions)
             .collect()
     }
@@ -7189,11 +7199,7 @@ impl Dashboard {
 
     fn log_field<'a>(&self, value: &'a str) -> &'a str {
         let trimmed = value.trim();
-        if trimmed.is_empty() {
-            "n/a"
-        } else {
-            trimmed
-        }
+        if trimmed.is_empty() { "n/a" } else { trimmed }
     }
 
     fn short_timestamp(&self, timestamp: &str) -> String {
@@ -8645,10 +8651,9 @@ fn board_codename(session: &Session) -> String {
         "Fox", "Kite", "Lynx", "Otter", "Rook", "Sprite", "Wisp", "Wolf",
     ];
 
-    let seed = session
-        .id
-        .bytes()
-        .fold(0usize, |acc, byte| acc.wrapping_mul(33).wrapping_add(byte as usize));
+    let seed = session.id.bytes().fold(0usize, |acc, byte| {
+        acc.wrapping_mul(33).wrapping_add(byte as usize)
+    });
     format!(
         "{} {}",
         ADJECTIVES[seed % ADJECTIVES.len()],
@@ -9493,7 +9498,7 @@ fn metrics_file_signature(path: &std::path::Path) -> Option<(u64, u128)> {
 mod tests {
     use anyhow::{Context, Result};
     use chrono::Utc;
-    use ratatui::{backend::TestBackend, Terminal};
+    use ratatui::{Terminal, backend::TestBackend};
     use std::fs;
     use std::path::{Path, PathBuf};
     use std::process::Command;
@@ -9501,6 +9506,15 @@ mod tests {
 
     use super::*;
     use crate::config::{Config, PaneLayout, Theme};
+
+    /// Edition 2024 makes `set_var`/`remove_var` unsafe because the test
+    /// harness runs tests on parallel threads. Hold this guard for the whole
+    /// test whenever it changes `HOME` or `PATH`.
+    fn env_lock() -> std::sync::MutexGuard<'static, ()> {
+        static LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+        LOCK.lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+    }
 
     #[test]
     fn render_sessions_shows_summary_headers_and_selected_row() {
@@ -10117,6 +10131,7 @@ mod tests {
 
     #[test]
     fn submit_pr_prompt_passes_custom_metadata_to_gh() -> Result<()> {
+        let _env = env_lock();
         let temp_root =
             std::env::temp_dir().join(format!("ecc2-dashboard-pr-submit-{}", Uuid::new_v4()));
         let root = temp_root.join("repo");
@@ -10162,17 +10177,20 @@ mod tests {
         fs::set_permissions(&gh_path, perms)?;
 
         let original_path = std::env::var_os("PATH");
-        std::env::set_var(
-            "PATH",
-            format!(
-                "{}:{}",
-                bin_dir.display(),
-                original_path
-                    .as_deref()
-                    .map(std::ffi::OsStr::to_string_lossy)
-                    .unwrap_or_default()
-            ),
-        );
+        // SAFETY: env_lock() serializes every test that mutates the process environment.
+        unsafe {
+            std::env::set_var(
+                "PATH",
+                format!(
+                    "{}:{}",
+                    bin_dir.display(),
+                    original_path
+                        .as_deref()
+                        .map(std::ffi::OsStr::to_string_lossy)
+                        .unwrap_or_default()
+                ),
+            )
+        };
 
         let mut session = sample_session(
             "focus-12345678",
@@ -10198,7 +10216,9 @@ mod tests {
 
         assert_eq!(
             dashboard.operator_note.as_deref(),
-            Some("created draft PR for focus-12 against release/2.0: https://github.com/example/repo/pull/789")
+            Some(
+                "created draft PR for focus-12 against release/2.0: https://github.com/example/repo/pull/789"
+            )
         );
         let gh_args = fs::read_to_string(&args_path)?;
         assert!(gh_args.contains("--base\nrelease/2.0"));
@@ -10208,9 +10228,11 @@ mod tests {
         assert!(gh_args.contains("--reviewer\nbob"));
 
         if let Some(path) = original_path {
-            std::env::set_var("PATH", path);
+            // SAFETY: env_lock() serializes every test that mutates the process environment.
+            unsafe { std::env::set_var("PATH", path) };
         } else {
-            std::env::remove_var("PATH");
+            // SAFETY: env_lock() serializes every test that mutates the process environment.
+            unsafe { std::env::remove_var("PATH") };
         }
         let _ = fs::remove_dir_all(temp_root);
         Ok(())
@@ -11402,10 +11424,12 @@ diff --git a/src/lib.rs b/src/lib.rs
 
     #[test]
     fn toggle_auto_worktree_policy_persists_config() {
+        let _env = env_lock();
         let tempdir = std::env::temp_dir().join(format!("ecc2-worktree-policy-{}", Uuid::new_v4()));
         std::fs::create_dir_all(&tempdir).unwrap();
         let previous_home = std::env::var_os("HOME");
-        std::env::set_var("HOME", &tempdir);
+        // SAFETY: env_lock() serializes every test that mutates the process environment.
+        unsafe { std::env::set_var("HOME", &tempdir) };
 
         let mut dashboard = test_dashboard(
             vec![sample_session(
@@ -11436,9 +11460,11 @@ diff --git a/src/lib.rs b/src/lib.rs
         assert!(saved.contains("auto_create_worktrees = false"));
 
         if let Some(home) = previous_home {
-            std::env::set_var("HOME", home);
+            // SAFETY: env_lock() serializes every test that mutates the process environment.
+            unsafe { std::env::set_var("HOME", home) };
         } else {
-            std::env::remove_var("HOME");
+            // SAFETY: env_lock() serializes every test that mutates the process environment.
+            unsafe { std::env::remove_var("HOME") };
         }
         let _ = std::fs::remove_dir_all(tempdir);
     }
@@ -11574,8 +11600,8 @@ diff --git a/src/lib.rs b/src/lib.rs
     }
 
     #[test]
-    fn selected_session_metrics_text_recommends_operator_escalation_when_chronic_saturation_is_stuck(
-    ) {
+    fn selected_session_metrics_text_recommends_operator_escalation_when_chronic_saturation_is_stuck()
+     {
         let mut dashboard = test_dashboard(
             vec![sample_session(
                 "focus-12345678",
@@ -11903,7 +11929,9 @@ diff --git a/src/lib.rs b/src/lib.rs
 
         assert_eq!(
             dashboard.selected_route_preview.as_deref(),
-            Some("for `Investigate auth callback recovery` reuse idle auth-wor | graph auth, callback, recovery")
+            Some(
+                "for `Investigate auth callback recovery` reuse idle auth-wor | graph auth, callback, recovery"
+            )
         );
     }
 
@@ -12500,17 +12528,21 @@ diff --git a/src/lib.rs b/src/lib.rs
             .list_context_observations(Some(session_entity.id), 10)?;
         assert!(!observations.is_empty());
         assert_eq!(observations[0].observation_type, "completion_summary");
-        assert!(observations[0]
-            .summary
-            .contains("Recover auth callback after wipe"));
+        assert!(
+            observations[0]
+                .summary
+                .contains("Recover auth callback after wipe")
+        );
         assert_eq!(
             observations[0].details.get("tests_run"),
             Some(&"1".to_string())
         );
-        assert!(observations[0]
-            .details
-            .get("recent_files")
-            .is_some_and(|value| value.contains("modify src/routes/auth/callback.ts")));
+        assert!(
+            observations[0]
+                .details
+                .get("recent_files")
+                .is_some_and(|value| value.contains("modify src/routes/auth/callback.ts"))
+        );
 
         let _ = fs::remove_dir_all(root);
         Ok(())
@@ -12705,7 +12737,9 @@ diff --git a/src/lib.rs b/src/lib.rs
 
         assert_eq!(
             dashboard.operator_note.as_deref(),
-            Some("file conflict detected | opened 1 incident(s), auto-paused 1 session(s) via escalation")
+            Some(
+                "file conflict detected | opened 1 incident(s), auto-paused 1 session(s) via escalation"
+            )
         );
         assert_eq!(
             dashboard
@@ -13017,14 +13051,18 @@ diff --git a/src/lib.rs b/src/lib.rs
             "unexpected operator note: {operator_note}"
         );
         assert_eq!(dashboard.sessions.len(), 2);
-        assert!(dashboard
-            .sessions
-            .iter()
-            .all(|session| session.project == "ecc2-smoke"));
-        assert!(dashboard
-            .sessions
-            .iter()
-            .all(|session| session.task_group == "stabilize auth callback"));
+        assert!(
+            dashboard
+                .sessions
+                .iter()
+                .all(|session| session.project == "ecc2-smoke")
+        );
+        assert!(
+            dashboard
+                .sessions
+                .iter()
+                .all(|session| session.task_group == "stabilize auth callback")
+        );
         let tasks = dashboard
             .sessions
             .iter()
@@ -13203,9 +13241,11 @@ diff --git a/src/lib.rs b/src/lib.rs
         db.append_output_line("session-1", OutputStream::Stdout, "persisted-before-open")?;
 
         let mut dashboard = Dashboard::new(db, Config::default());
-        assert!(dashboard
-            .selected_output_text()
-            .contains("persisted-before-open"));
+        assert!(
+            dashboard
+                .selected_output_text()
+                .contains("persisted-before-open")
+        );
         dashboard
             .session_output_cache
             .entry("session-1".to_string())
@@ -13266,9 +13306,11 @@ diff --git a/src/lib.rs b/src/lib.rs
         db.append_output_line("session-1", OutputStream::Stdout, "persisted-output")?;
 
         let mut dashboard = Dashboard::new(db, Config::default());
-        assert!(dashboard
-            .selected_output_text()
-            .contains("persisted-output"));
+        assert!(
+            dashboard
+                .selected_output_text()
+                .contains("persisted-output")
+        );
         dashboard
             .session_output_cache
             .entry("session-1".to_string())
@@ -13279,24 +13321,30 @@ diff --git a/src/lib.rs b/src/lib.rs
         schema.execute("ALTER TABLE sessions RENAME TO unavailable_sessions", [])?;
         dashboard.sync_from_store();
         assert!(dashboard.sessions.is_empty());
-        assert!(dashboard.session_output_cache["session-1"]
-            .iter()
-            .any(|line| line.text == "cache-only"));
+        assert!(
+            dashboard.session_output_cache["session-1"]
+                .iter()
+                .any(|line| line.text == "cache-only")
+        );
         assert!(dashboard.output_cursor.is_none());
 
         dashboard.sync_from_store();
-        assert!(dashboard.session_output_cache["session-1"]
-            .iter()
-            .any(|line| line.text == "cache-only"));
+        assert!(
+            dashboard.session_output_cache["session-1"]
+                .iter()
+                .any(|line| line.text == "cache-only")
+        );
         assert!(dashboard.output_cursor.is_none());
 
         schema.execute("ALTER TABLE unavailable_sessions RENAME TO sessions", [])?;
         dashboard.sync_from_store();
 
         assert_eq!(dashboard.sessions.len(), 1);
-        assert!(dashboard
-            .selected_output_text()
-            .contains("persisted-output"));
+        assert!(
+            dashboard
+                .selected_output_text()
+                .contains("persisted-output")
+        );
         assert!(!dashboard.selected_output_text().contains("cache-only"));
 
         let _ = std::fs::remove_file(db_path);
@@ -13331,10 +13379,12 @@ diff --git a/src/lib.rs b/src/lib.rs
         external.append_output_line("session-2", OutputStream::Stderr, "new-session")?;
         dashboard.sync_from_store();
 
-        assert!(dashboard
-            .sessions
-            .iter()
-            .any(|session| session.id == "session-2"));
+        assert!(
+            dashboard
+                .sessions
+                .iter()
+                .any(|session| session.id == "session-2")
+        );
         assert_eq!(
             dashboard.session_output_cache["session-2"][0].text,
             "new-session"
@@ -13389,9 +13439,11 @@ diff --git a/src/lib.rs b/src/lib.rs
         )?;
         dashboard.sync_output_cache();
         assert_eq!(dashboard.output_cursor, cursor);
-        assert!(dashboard.session_output_cache["session-1"]
-            .iter()
-            .any(|line| line.text == "cache-only"));
+        assert!(
+            dashboard.session_output_cache["session-1"]
+                .iter()
+                .any(|line| line.text == "cache-only")
+        );
 
         schema.execute(
             "ALTER TABLE unavailable_session_output RENAME TO session_output",
@@ -13558,11 +13610,13 @@ diff --git a/src/lib.rs b/src/lib.rs
         assert_eq!(dashboard.search_input.as_deref(), Some("("));
         assert!(dashboard.search_query.is_none());
         assert!(dashboard.search_matches.is_empty());
-        assert!(dashboard
-            .operator_note
-            .as_deref()
-            .unwrap_or_default()
-            .starts_with("invalid regex /(:"));
+        assert!(
+            dashboard
+                .operator_note
+                .as_deref()
+                .unwrap_or_default()
+                .starts_with("invalid regex /(:")
+        );
     }
 
     #[test]
@@ -14259,16 +14313,18 @@ diff --git a/src/lib.rs b/src/lib.rs
             dashboard.operator_note.as_deref(),
             Some("pruned 1 inactive worktree(s); skipped 1 active session(s)")
         );
-        assert!(db
-            .get_session("stopped-1")?
-            .expect("stopped session should exist")
-            .worktree
-            .is_none());
-        assert!(db
-            .get_session("running-1")?
-            .expect("running session should exist")
-            .worktree
-            .is_some());
+        assert!(
+            db.get_session("stopped-1")?
+                .expect("stopped session should exist")
+                .worktree
+                .is_none()
+        );
+        assert!(
+            db.get_session("running-1")?
+                .expect("running session should exist")
+                .worktree
+                .is_some()
+        );
 
         let _ = std::fs::remove_dir_all(active_path);
         let _ = std::fs::remove_dir_all(stopped_path);
@@ -14316,11 +14372,12 @@ diff --git a/src/lib.rs b/src/lib.rs
             dashboard.operator_note.as_deref(),
             Some("deferred 1 inactive worktree(s) within retention")
         );
-        assert!(db
-            .get_session("stopped-1")?
-            .expect("stopped session should exist")
-            .worktree
-            .is_some());
+        assert!(
+            db.get_session("stopped-1")?
+                .expect("stopped session should exist")
+                .worktree
+                .is_some()
+        );
 
         let _ = std::fs::remove_dir_all(retained_path);
         let _ = std::fs::remove_file(db_path);
@@ -14465,12 +14522,14 @@ diff --git a/src/lib.rs b/src/lib.rs
             .context("operator note should be set")?;
         assert!(note.contains("merged 1 ready worktree(s)"));
         assert!(note.contains("skipped 1 active"));
-        assert!(dashboard
-            .db
-            .get_session("merge-ready")?
-            .context("merged session should still exist")?
-            .worktree
-            .is_none());
+        assert!(
+            dashboard
+                .db
+                .get_session("merge-ready")?
+                .context("merged session should still exist")?
+                .worktree
+                .is_none()
+        );
         assert_eq!(
             std::fs::read_to_string(repo_root.join("merged.txt"))?,
             "dashboard bulk merge\n"
@@ -14900,10 +14959,12 @@ diff --git a/src/lib.rs b/src/lib.rs
 
     #[test]
     fn pane_command_mode_sets_layout() {
+        let _env = env_lock();
         let tempdir = std::env::temp_dir().join(format!("ecc2-pane-command-{}", Uuid::new_v4()));
         std::fs::create_dir_all(&tempdir).unwrap();
         let previous_home = std::env::var_os("HOME");
-        std::env::set_var("HOME", &tempdir);
+        // SAFETY: env_lock() serializes every test that mutates the process environment.
+        unsafe { std::env::set_var("HOME", &tempdir) };
 
         let mut dashboard = test_dashboard(Vec::new(), 0);
         dashboard.cfg.pane_layout = PaneLayout::Horizontal;
@@ -14915,25 +14976,31 @@ diff --git a/src/lib.rs b/src/lib.rs
         )));
 
         assert_eq!(dashboard.cfg.pane_layout, PaneLayout::Grid);
-        assert!(dashboard
-            .operator_note
-            .as_deref()
-            .is_some_and(|note| note.contains("pane layout set to grid | saved to ")));
+        assert!(
+            dashboard
+                .operator_note
+                .as_deref()
+                .is_some_and(|note| note.contains("pane layout set to grid | saved to "))
+        );
 
         if let Some(home) = previous_home {
-            std::env::set_var("HOME", home);
+            // SAFETY: env_lock() serializes every test that mutates the process environment.
+            unsafe { std::env::set_var("HOME", home) };
         } else {
-            std::env::remove_var("HOME");
+            // SAFETY: env_lock() serializes every test that mutates the process environment.
+            unsafe { std::env::remove_var("HOME") };
         }
         let _ = std::fs::remove_dir_all(tempdir);
     }
 
     #[test]
     fn cycle_pane_layout_rotates_and_hides_log_when_leaving_grid() {
+        let _env = env_lock();
         let tempdir = std::env::temp_dir().join(format!("ecc2-cycle-pane-{}", Uuid::new_v4()));
         std::fs::create_dir_all(&tempdir).unwrap();
         let previous_home = std::env::var_os("HOME");
-        std::env::set_var("HOME", &tempdir);
+        // SAFETY: env_lock() serializes every test that mutates the process environment.
+        unsafe { std::env::set_var("HOME", &tempdir) };
 
         let mut dashboard = test_dashboard(Vec::new(), 0);
         dashboard.cfg.pane_layout = PaneLayout::Grid;
@@ -14949,9 +15016,11 @@ diff --git a/src/lib.rs b/src/lib.rs
         assert_eq!(dashboard.selected_pane, Pane::Sessions);
 
         if let Some(home) = previous_home {
-            std::env::set_var("HOME", home);
+            // SAFETY: env_lock() serializes every test that mutates the process environment.
+            unsafe { std::env::set_var("HOME", home) };
         } else {
-            std::env::remove_var("HOME");
+            // SAFETY: env_lock() serializes every test that mutates the process environment.
+            unsafe { std::env::remove_var("HOME") };
         }
         let _ = std::fs::remove_dir_all(tempdir);
     }
@@ -15346,7 +15415,7 @@ diff --git a/src/lib.rs b/src/lib.rs
 
     fn init_git_repo(path: &Path) -> Result<()> {
         fs::create_dir_all(path)?;
-        run_git(path, &["init", "-q"])?;
+        run_git(path, &["init", "-q", "-b", "main"])?;
         run_git(path, &["config", "user.name", "ECC Tests"])?;
         run_git(path, &["config", "user.email", "ecc-tests@example.com"])?;
         // Keep fixtures hermetic: a global core.hooksPath (e.g. identity-checking

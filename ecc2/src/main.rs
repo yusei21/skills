@@ -4,6 +4,7 @@ mod harness_eval;
 mod notifications;
 mod observability;
 mod session;
+mod skills;
 mod tui;
 mod worktree;
 
@@ -109,6 +110,11 @@ impl OptionalWorktreePolicyArgs {
 
 #[derive(clap::Subcommand, Debug)]
 enum Commands {
+    /// Recommend skills and department plugins for a task
+    Skills {
+        #[command(subcommand)]
+        command: SkillsCommands,
+    },
     /// Run bounded, deterministic harness configuration evaluations
     HarnessEval {
         #[command(subcommand)]
@@ -440,6 +446,25 @@ enum Commands {
         agent: String,
         #[arg(long)]
         cwd: PathBuf,
+    },
+}
+
+#[derive(clap::Subcommand, Debug)]
+enum SkillsCommands {
+    /// Score skills against a task description and list the plugins to install
+    Suggest {
+        /// What you are about to do, e.g. "add a Stripe webhook"
+        #[arg(required = true, num_args = 1..)]
+        task: Vec<String>,
+        /// ECC checkout to read manifests from (default: ECC_ROOT or the nearest checkout)
+        #[arg(long)]
+        root: Option<PathBuf>,
+        /// Number of departments to show
+        #[arg(long, default_value_t = 3)]
+        limit: usize,
+        /// Print JSON instead of text
+        #[arg(long)]
+        json: bool,
     },
 }
 
@@ -1483,10 +1508,25 @@ async fn main() -> Result<()> {
 
     let cli = Cli::parse();
 
+    // Reads only the checkout's manifests: no config or session database needed.
+    if let Some(Commands::Skills {
+        command:
+            SkillsCommands::Suggest {
+                task,
+                root,
+                limit,
+                json,
+            },
+    }) = cli.command
+    {
+        return skills::run_suggest(&task.join(" "), root, limit, json);
+    }
+
     let cfg = config::Config::load()?;
     let db = session::store::StateStore::open(&cfg.db_path)?;
 
     match cli.command {
+        Some(Commands::Skills { .. }) => unreachable!("handled before config load"),
         Some(Commands::HarnessEval { command }) => match command {
             HarnessEvalCommands::Record {
                 config,
@@ -2719,14 +2759,20 @@ async fn main() -> Result<()> {
                     );
                 }
             }
-            ScheduleCommands::Update { schedule_id, task, json } => {
-                let schedule = session::manager::update_scheduled_task_text(&db, schedule_id, &task)?;
+            ScheduleCommands::Update {
+                schedule_id,
+                task,
+                json,
+            } => {
+                let schedule =
+                    session::manager::update_scheduled_task_text(&db, schedule_id, &task)?;
                 if json {
                     println!("{}", serde_json::to_string_pretty(&schedule)?);
                 } else {
                     println!(
                         "Updated schedule {} without changing its next run {}",
-                        schedule.id, schedule.next_run_at.to_rfc3339()
+                        schedule.id,
+                        schedule.next_run_at.to_rfc3339()
                     );
                 }
             }
@@ -5661,9 +5707,7 @@ fn load_legacy_remote_dispatch_jsonl_file(
     Ok(drafts)
 }
 
-fn extract_legacy_remote_dispatch_entries<'a>(
-    value: &'a serde_json::Value,
-) -> Vec<&'a serde_json::Value> {
+fn extract_legacy_remote_dispatch_entries(value: &serde_json::Value) -> Vec<&serde_json::Value> {
     match value {
         serde_json::Value::Array(items) => items
             .iter()
@@ -7594,12 +7638,10 @@ fn write_legacy_migration_scaffold(
 }
 
 fn render_legacy_migration_config_scaffold(plan: &LegacyMigrationPlanReport) -> String {
-    let mut sections = vec![
-        format!(
-            "# ECC2 migration scaffold generated from {}\n# Review every section before merging it into a real ecc2.toml.",
-            plan.source
-        ),
-    ];
+    let mut sections = vec![format!(
+        "# ECC2 migration scaffold generated from {}\n# Review every section before merging it into a real ecc2.toml.",
+        plan.source
+    )];
 
     for step in &plan.steps {
         if step.config_snippets.is_empty() {
@@ -8246,7 +8288,7 @@ fn format_graph_sync_stats_human(
     let scope = session_id
         .map(short_session)
         .unwrap_or_else(|| "all sessions".to_string());
-    vec![
+    [
         format!("Context graph sync complete for {scope}"),
         format!("- sessions scanned {}", stats.sessions_scanned),
         format!("- decisions processed {}", stats.decisions_processed),
@@ -8318,9 +8360,10 @@ fn build_otel_export(
     session_id: Option<&str>,
 ) -> Result<OtlpExport> {
     let sessions = if let Some(session_id) = session_id {
-        vec![db
-            .get_session(session_id)?
-            .ok_or_else(|| anyhow::anyhow!("Session not found: {session_id}"))?]
+        vec![
+            db.get_session(session_id)?
+                .ok_or_else(|| anyhow::anyhow!("Session not found: {session_id}"))?,
+        ]
     } else {
         db.list_sessions()?
     };
@@ -8761,16 +8804,18 @@ mod tests {
             }
             other => panic!("unexpected command: {other:?}"),
         }
-        assert!(Cli::try_parse_from([
-            "ecc",
-            "harness-eval",
-            "run",
-            "--candidate",
-            "c",
-            "--baseline",
-            "b"
-        ])
-        .is_err());
+        assert!(
+            Cli::try_parse_from([
+                "ecc",
+                "harness-eval",
+                "run",
+                "--candidate",
+                "c",
+                "--baseline",
+                "b"
+            ])
+            .is_err()
+        );
     }
 
     #[test]
@@ -8818,18 +8863,22 @@ mod tests {
         let mut cfg = Config::default();
         cfg.auto_create_worktrees = false;
 
-        assert!(WorktreePolicyArgs {
-            worktree: true,
-            no_worktree: false,
-        }
-        .resolve(&cfg));
+        assert!(
+            WorktreePolicyArgs {
+                worktree: true,
+                no_worktree: false,
+            }
+            .resolve(&cfg)
+        );
 
         cfg.auto_create_worktrees = true;
-        assert!(!WorktreePolicyArgs {
-            worktree: false,
-            no_worktree: true,
-        }
-        .resolve(&cfg));
+        assert!(
+            !WorktreePolicyArgs {
+                worktree: false,
+                no_worktree: true,
+            }
+            .resolve(&cfg)
+        );
     }
 
     #[test]
@@ -8953,7 +9002,10 @@ mod tests {
         let mut preview = Vec::new();
         write_message_inbox(&db, "lead", 2, false, &mut preview)?;
         let preview_text = String::from_utf8(preview)?;
-        assert!(!preview_text.contains(&full_question), "preview must remain short");
+        assert!(
+            !preview_text.contains(&full_question),
+            "preview must remain short"
+        );
         assert_eq!(
             db.unread_message_counts()?.get("lead"),
             Some(&3),
@@ -9051,13 +9103,23 @@ mod tests {
     #[test]
     fn cli_parses_native_schedule_update_without_identity_mutation_options() {
         let cli = Cli::try_parse_from([
-            "ecc", "schedule", "update", "16", "--task",
-            "Read original ECC native READY items", "--json",
+            "ecc",
+            "schedule",
+            "update",
+            "16",
+            "--task",
+            "Read original ECC native READY items",
+            "--json",
         ])
         .expect("native schedule update must parse");
         match cli.command {
             Some(Commands::Schedule {
-                command: ScheduleCommands::Update { schedule_id, task, json }
+                command:
+                    ScheduleCommands::Update {
+                        schedule_id,
+                        task,
+                        json,
+                    },
             }) => {
                 assert_eq!(schedule_id, 16);
                 assert!(task.contains("READY items"));
@@ -9065,14 +9127,34 @@ mod tests {
             }
             _ => panic!("expected native existing schedule update"),
         }
-        assert!(Cli::try_parse_from([
-            "ecc", "schedule", "update", "16", "--task",
-            "New instructions", "--cron", "* * * * *",
-        ]).is_err(), "schedule update must not mutate cron");
-        assert!(Cli::try_parse_from([
-            "ecc", "schedule", "update", "16", "--task",
-            "New instructions", "--agent", "codex",
-        ]).is_err(), "schedule update must not mutate the agent");
+        assert!(
+            Cli::try_parse_from([
+                "ecc",
+                "schedule",
+                "update",
+                "16",
+                "--task",
+                "New instructions",
+                "--cron",
+                "* * * * *",
+            ])
+            .is_err(),
+            "schedule update must not mutate cron"
+        );
+        assert!(
+            Cli::try_parse_from([
+                "ecc",
+                "schedule",
+                "update",
+                "16",
+                "--task",
+                "New instructions",
+                "--agent",
+                "codex",
+            ])
+            .is_err(),
+            "schedule update must not mutate the agent"
+        );
     }
 
     #[test]
@@ -10977,14 +11059,18 @@ mod tests {
         assert_eq!(report.summary.ready_now_categories, 4);
         assert_eq!(report.summary.manual_translation_categories, 3);
         assert_eq!(report.summary.local_auth_required_categories, 1);
-        assert!(report
-            .recommended_next_steps
-            .iter()
-            .any(|step| step.contains("ecc schedule add")));
-        assert!(report
-            .recommended_next_steps
-            .iter()
-            .any(|step| step.contains("ecc remote serve")));
+        assert!(
+            report
+                .recommended_next_steps
+                .iter()
+                .any(|step| step.contains("ecc schedule add"))
+        );
+        assert!(
+            report
+                .recommended_next_steps
+                .iter()
+                .any(|step| step.contains("ecc remote serve"))
+        );
 
         let scheduler = report
             .artifacts
@@ -11003,12 +11089,16 @@ mod tests {
             env_services.readiness,
             LegacyMigrationReadiness::LocalAuthRequired
         );
-        assert!(env_services
-            .source_paths
-            .contains(&"config.yaml".to_string()));
-        assert!(env_services
-            .source_paths
-            .contains(&".env.local".to_string()));
+        assert!(
+            env_services
+                .source_paths
+                .contains(&"config.yaml".to_string())
+        );
+        assert!(
+            env_services
+                .source_paths
+                .contains(&".env.local".to_string())
+        );
 
         Ok(())
     }
@@ -11099,56 +11189,70 @@ mod tests {
             .find(|step| step.category == "workspace_memory")
             .expect("workspace memory step");
         assert_eq!(workspace_step.readiness, LegacyMigrationReadiness::ReadyNow);
-        assert!(workspace_step
-            .config_snippets
-            .iter()
-            .any(|snippet| snippet.contains("[memory_connectors.hermes_workspace]")));
-        assert!(workspace_step
-            .command_snippets
-            .contains(&"ecc graph connector-sync hermes_workspace".to_string()));
+        assert!(
+            workspace_step
+                .config_snippets
+                .iter()
+                .any(|snippet| snippet.contains("[memory_connectors.hermes_workspace]"))
+        );
+        assert!(
+            workspace_step
+                .command_snippets
+                .contains(&"ecc graph connector-sync hermes_workspace".to_string())
+        );
 
         let scheduler_step = plan
             .steps
             .iter()
             .find(|step| step.category == "scheduler")
             .expect("scheduler step");
-        assert!(scheduler_step
-            .command_snippets
-            .iter()
-            .any(|command| command.contains("ecc schedule add --cron \"*/15 * * * *\"")));
-        assert!(!scheduler_step
-            .command_snippets
-            .iter()
-            .any(|command| command.contains("<legacy-cron>")));
-        assert!(scheduler_step
-            .notes
-            .iter()
-            .any(|note| note.contains("disabled")));
+        assert!(
+            scheduler_step
+                .command_snippets
+                .iter()
+                .any(|command| command.contains("ecc schedule add --cron \"*/15 * * * *\""))
+        );
+        assert!(
+            !scheduler_step
+                .command_snippets
+                .iter()
+                .any(|command| command.contains("<legacy-cron>"))
+        );
+        assert!(
+            scheduler_step
+                .notes
+                .iter()
+                .any(|note| note.contains("disabled"))
+        );
 
         let gateway_step = plan
             .steps
             .iter()
             .find(|step| step.category == "gateway_dispatch")
             .expect("gateway step");
-        assert!(gateway_step
-            .command_snippets
-            .iter()
-            .any(|command| command
-                .contains("ecc remote add --task \"Handle account recovery triage\"")));
-        assert!(gateway_step
-            .command_snippets
-            .iter()
-            .any(|command| command.contains(
-                "ecc remote computer-use --goal \"Verify the billing portal warning banner\""
-            )));
-        assert!(!gateway_step
-            .command_snippets
-            .iter()
-            .any(|command| command.contains("Translate legacy dispatch workflow")));
-        assert!(gateway_step
-            .notes
-            .iter()
-            .any(|note| note.contains("disabled")));
+        assert!(gateway_step.command_snippets.iter().any(|command| {
+            command.contains("ecc remote add --task \"Handle account recovery triage\"")
+        }));
+        assert!(
+            gateway_step
+                .command_snippets
+                .iter()
+                .any(|command| command.contains(
+                    "ecc remote computer-use --goal \"Verify the billing portal warning banner\""
+                ))
+        );
+        assert!(
+            !gateway_step
+                .command_snippets
+                .iter()
+                .any(|command| command.contains("Translate legacy dispatch workflow"))
+        );
+        assert!(
+            gateway_step
+                .notes
+                .iter()
+                .any(|note| note.contains("disabled"))
+        );
 
         let rendered = format_legacy_migration_plan_human(&plan);
         assert!(rendered.contains("Legacy migration plan"));
@@ -11158,37 +11262,45 @@ mod tests {
             .iter()
             .find(|step| step.category == "env_services")
             .expect("env services step");
-        assert!(env_step
-            .command_snippets
-            .iter()
-            .any(|command| command.contains("ecc migrate import-env --source")));
+        assert!(
+            env_step
+                .command_snippets
+                .iter()
+                .any(|command| command.contains("ecc migrate import-env --source"))
+        );
         let skills_step = plan
             .steps
             .iter()
             .find(|step| step.category == "skills")
             .expect("skills step");
-        assert!(skills_step
-            .command_snippets
-            .iter()
-            .any(|command| command.contains("ecc migrate import-skills --source")));
+        assert!(
+            skills_step
+                .command_snippets
+                .iter()
+                .any(|command| command.contains("ecc migrate import-skills --source"))
+        );
         let tools_step = plan
             .steps
             .iter()
             .find(|step| step.category == "tools")
             .expect("tools step");
-        assert!(tools_step
-            .command_snippets
-            .iter()
-            .any(|command| command.contains("ecc migrate import-tools --source")));
+        assert!(
+            tools_step
+                .command_snippets
+                .iter()
+                .any(|command| command.contains("ecc migrate import-tools --source"))
+        );
         let plugins_step = plan
             .steps
             .iter()
             .find(|step| step.category == "plugins")
             .expect("plugins step");
-        assert!(plugins_step
-            .command_snippets
-            .iter()
-            .any(|command| command.contains("ecc migrate import-plugins --source")));
+        assert!(
+            plugins_step
+                .command_snippets
+                .iter()
+                .any(|command| command.contains("ecc migrate import-plugins --source"))
+        );
 
         Ok(())
     }
@@ -11345,15 +11457,21 @@ Route existing installs to portal first before checkout.
         assert_eq!(report.report.observations_added, 4);
 
         let recalled = db.recall_context_entities(None, "charged twice portal reinstall", 10)?;
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "Billing incident"));
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "Billing recovery checklist"));
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "Repair before reinstall"));
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "Billing incident")
+        );
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "Billing recovery checklist")
+        );
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "Repair before reinstall")
+        );
 
         Ok(())
     }
@@ -11378,8 +11496,8 @@ Route existing installs to portal first before checkout.
     }
 
     #[test]
-    fn import_legacy_remote_dispatch_dry_run_reports_ready_disabled_and_invalid_requests(
-    ) -> Result<()> {
+    fn import_legacy_remote_dispatch_dry_run_reports_ready_disabled_and_invalid_requests()
+    -> Result<()> {
         let tempdir = TestDir::new("legacy-remote-import-dry-run")?;
         let root = tempdir.path();
         fs::create_dir_all(root.join("gateway"))?;
@@ -11489,10 +11607,12 @@ Route existing installs to portal first before checkout.
             report.requests[0].status,
             LegacyRemoteImportRequestStatus::Imported
         );
-        assert!(report
-            .requests
-            .iter()
-            .all(|request| request.imported_request_id.is_some()));
+        assert!(
+            report
+                .requests
+                .iter()
+                .all(|request| request.imported_request_id.is_some())
+        );
 
         let requests = db.list_pending_remote_dispatch_requests(10)?;
         assert_eq!(requests.len(), 2);
@@ -11603,15 +11723,21 @@ Route existing installs to portal first before checkout.
         }));
 
         let recalled = db.recall_context_entities(None, "stripe docs ecc.tools", 10)?;
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "STRIPE_SECRET_KEY"));
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "PUBLIC_BASE_URL"));
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "PUBLIC_DOCS_URL"));
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "STRIPE_SECRET_KEY")
+        );
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "PUBLIC_BASE_URL")
+        );
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "PUBLIC_DOCS_URL")
+        );
 
         let secret = recalled
             .iter()
@@ -11651,14 +11777,18 @@ Route existing installs to portal first before checkout.
         assert_eq!(report.skills_detected, 2);
         assert_eq!(report.templates_generated, 2);
         assert_eq!(report.files_written.len(), 2);
-        assert!(report
-            .skills
-            .iter()
-            .any(|skill| skill.template_name == "ecc_imports_research_md"));
-        assert!(report
-            .skills
-            .iter()
-            .any(|skill| skill.template_name == "ops_recovery_markdown"));
+        assert!(
+            report
+                .skills
+                .iter()
+                .any(|skill| skill.template_name == "ecc_imports_research_md")
+        );
+        assert!(
+            report
+                .skills
+                .iter()
+                .any(|skill| skill.template_name == "ops_recovery_markdown")
+        );
 
         let config_text = fs::read_to_string(output_dir.join("ecc2.imported-skills.toml"))?;
         assert!(config_text.contains("[orchestration_templates.ecc_imports_research_md]"));
@@ -11693,22 +11823,30 @@ Route existing installs to portal first before checkout.
         assert_eq!(report.tools_detected, 2);
         assert_eq!(report.templates_generated, 2);
         assert_eq!(report.files_written.len(), 2);
-        assert!(report
-            .tools
-            .iter()
-            .any(|tool| tool.template_name == "tool_browser_check_portal_py"));
-        assert!(report
-            .tools
-            .iter()
-            .any(|tool| tool.template_name == "tool_hooks_preflight_sh"));
-        assert!(report
-            .tools
-            .iter()
-            .any(|tool| tool.suggested_surface == "command"));
-        assert!(report
-            .tools
-            .iter()
-            .any(|tool| tool.suggested_surface == "hook"));
+        assert!(
+            report
+                .tools
+                .iter()
+                .any(|tool| tool.template_name == "tool_browser_check_portal_py")
+        );
+        assert!(
+            report
+                .tools
+                .iter()
+                .any(|tool| tool.template_name == "tool_hooks_preflight_sh")
+        );
+        assert!(
+            report
+                .tools
+                .iter()
+                .any(|tool| tool.suggested_surface == "command")
+        );
+        assert!(
+            report
+                .tools
+                .iter()
+                .any(|tool| tool.suggested_surface == "hook")
+        );
 
         let config_text = fs::read_to_string(output_dir.join("ecc2.imported-tools.toml"))?;
         assert!(config_text.contains("[orchestration_templates.tool_browser_check_portal_py]"));
@@ -11744,22 +11882,30 @@ Route existing installs to portal first before checkout.
         assert_eq!(report.plugins_detected, 2);
         assert_eq!(report.templates_generated, 2);
         assert_eq!(report.files_written.len(), 2);
-        assert!(report
-            .plugins
-            .iter()
-            .any(|plugin| plugin.template_name == "plugin_hooks_review_py"));
-        assert!(report
-            .plugins
-            .iter()
-            .any(|plugin| plugin.template_name == "plugin_skills_recovery_py"));
-        assert!(report
-            .plugins
-            .iter()
-            .any(|plugin| plugin.suggested_surface == "hook"));
-        assert!(report
-            .plugins
-            .iter()
-            .any(|plugin| plugin.suggested_surface == "skill"));
+        assert!(
+            report
+                .plugins
+                .iter()
+                .any(|plugin| plugin.template_name == "plugin_hooks_review_py")
+        );
+        assert!(
+            report
+                .plugins
+                .iter()
+                .any(|plugin| plugin.template_name == "plugin_skills_recovery_py")
+        );
+        assert!(
+            report
+                .plugins
+                .iter()
+                .any(|plugin| plugin.suggested_surface == "hook")
+        );
+        assert!(
+            report
+                .plugins
+                .iter()
+                .any(|plugin| plugin.suggested_surface == "skill")
+        );
 
         let config_text = fs::read_to_string(output_dir.join("ecc2.imported-plugins.toml"))?;
         assert!(config_text.contains("[orchestration_templates.plugin_hooks_review_py]"));
@@ -12226,12 +12372,16 @@ Customer wiped setup and got charged twice after reinstalling.
 
         let recalled = db.recall_context_entities(None, "charged twice routing", 5)?;
         assert_eq!(recalled.len(), 2);
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "Auth callback recovery"));
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "callback.ts"));
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "Auth callback recovery")
+        );
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "callback.ts")
+        );
 
         Ok(())
     }
@@ -12366,15 +12516,21 @@ Customer wiped setup and got charged twice after reinstalling.
 
         let recalled = db.recall_context_entities(None, "charged twice portal billing", 10)?;
         assert_eq!(recalled.len(), 3);
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "Auth callback recovery"));
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "Portal routing"));
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "Billing UX note"));
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "Auth callback recovery")
+        );
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "Portal routing")
+        );
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "Billing UX note")
+        );
 
         Ok(())
     }
@@ -12434,9 +12590,11 @@ Guide users to repair before reinstall so wiped setups do not buy twice.
         assert_eq!(stats.skipped_records, 0);
 
         let recalled = db.recall_context_entities(None, "charged twice reinstall", 10)?;
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "Billing incident"));
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "Billing incident")
+        );
         assert!(recalled.iter().any(|entry| entry.entity.name == "Docs fix"));
 
         let billing = recalled
@@ -12458,10 +12616,12 @@ Guide users to repair before reinstall so wiped setups do not buy twice.
                 .map(String::as_str),
             Some(expected_source_path.as_str())
         );
-        assert!(observations[0]
-            .details
-            .get("body")
-            .is_some_and(|value: &String| value.contains("charged twice")));
+        assert!(
+            observations[0]
+                .details
+                .get("body")
+                .is_some_and(|value: &String| value.contains("charged twice"))
+        );
 
         Ok(())
     }
@@ -12527,12 +12687,16 @@ Guide users to repair before reinstall so wiped setups do not buy twice.
         assert_eq!(stats.skipped_records, 0);
 
         let recalled = db.recall_context_entities(None, "charged twice portal docs", 10)?;
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "Billing incident"));
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "Portal routing"));
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "Billing incident")
+        );
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "Portal routing")
+        );
         assert!(recalled.iter().any(|entry| entry.entity.name == "Docs fix"));
 
         let docs_fix = recalled
@@ -12607,21 +12771,31 @@ INVALID LINE
         assert_eq!(stats.skipped_records, 0);
 
         let recalled = db.recall_context_entities(None, "stripe ecc.tools", 10)?;
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "STRIPE_SECRET_KEY"));
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "STRIPE_PRO_PRICE_ID"));
-        assert!(recalled
-            .iter()
-            .any(|entry| entry.entity.name == "PUBLIC_BASE_URL"));
-        assert!(!recalled
-            .iter()
-            .any(|entry| entry.entity.name == "STRIPE_WEBHOOK_SECRET"));
-        assert!(!recalled
-            .iter()
-            .any(|entry| entry.entity.name == "GITHUB_TOKEN"));
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "STRIPE_SECRET_KEY")
+        );
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "STRIPE_PRO_PRICE_ID")
+        );
+        assert!(
+            recalled
+                .iter()
+                .any(|entry| entry.entity.name == "PUBLIC_BASE_URL")
+        );
+        assert!(
+            !recalled
+                .iter()
+                .any(|entry| entry.entity.name == "STRIPE_WEBHOOK_SECRET")
+        );
+        assert!(
+            !recalled
+                .iter()
+                .any(|entry| entry.entity.name == "GITHUB_TOKEN")
+        );
 
         let secret = recalled
             .iter()

@@ -13,15 +13,15 @@ use crate::config::Config;
 use crate::harness_eval::{CandidateSpec, HealthEvidenceSnapshot, PairedSample, PromotionPolicy};
 use crate::observability::{ToolCallEvent, ToolLogEntry, ToolLogPage};
 
-use super::output::{OutputLine, OutputStream, OUTPUT_BUFFER_LIMIT};
+use super::output::{OUTPUT_BUFFER_LIMIT, OutputLine, OutputStream};
 use super::{
-    default_project_label, default_task_group_label, normalize_group_label,
     ContextGraphCompactionStats, ContextGraphEntity, ContextGraphEntityDetail,
     ContextGraphObservation, ContextGraphRecallEntry, ContextGraphRelation, ContextGraphSyncStats,
     ContextObservationPriority, DecisionLogEntry, FileActivityAction, FileActivityEntry,
     HarnessKind, RemoteDispatchKind, RemoteDispatchRequest, RemoteDispatchStatus, ScheduledTask,
     Session, SessionAgentProfile, SessionBoardMeta, SessionHarnessInfo, SessionMessage,
-    SessionMetrics, SessionState, WorktreeInfo,
+    SessionMetrics, SessionState, WorktreeInfo, default_project_label, default_task_group_label,
+    normalize_group_label,
 };
 
 pub struct StateStore {
@@ -554,10 +554,12 @@ impl StateStore {
     // a safe in-place schema upgrade, while tagging all new messages.
     fn ensure_message_columns(&self) -> Result<()> {
         if !self.has_column("messages", "provenance")? {
-            self.conn.execute(
-                "ALTER TABLE messages ADD COLUMN provenance TEXT NOT NULL DEFAULT 'legacy'",
-                [],
-            ).context("Failed to add message provenance column")?;
+            self.conn
+                .execute(
+                    "ALTER TABLE messages ADD COLUMN provenance TEXT NOT NULL DEFAULT 'legacy'",
+                    [],
+                )
+                .context("Failed to add message provenance column")?;
         }
         Ok(())
     }
@@ -2659,7 +2661,12 @@ impl StateStore {
 
     /// Only the native dispatcher uses this operation for generated notices;
     /// user-supplied task context cannot grant internal provenance.
-    pub(crate) fn send_native_assignment_notice(&self, from: &str, to: &str, content: &str) -> Result<()> {
+    pub(crate) fn send_native_assignment_notice(
+        &self,
+        from: &str,
+        to: &str,
+        content: &str,
+    ) -> Result<()> {
         self.send_message_with_provenance(from, to, content, "task_handoff", "native_assignment")
     }
 
@@ -2916,14 +2923,15 @@ impl StateStore {
     pub fn unread_task_handoff_count(&self, session_id: &str) -> Result<usize> {
         // Load, board and rebalance count all unread assignments; only the
         // dispatch target query suppresses ECC-generated notifications.
-        self.conn.query_row(
-            "SELECT COUNT(*) FROM messages
+        self.conn
+            .query_row(
+                "SELECT COUNT(*) FROM messages
              WHERE to_session = ?1 AND msg_type = 'task_handoff' AND read = 0",
-            rusqlite::params![session_id],
-            |row| row.get::<_, i64>(0),
-        )
-        .map(|count| count as usize)
-        .map_err(Into::into)
+                rusqlite::params![session_id],
+                |row| row.get::<_, i64>(0),
+            )
+            .map(|count| count as usize)
+            .map_err(Into::into)
     }
 
     pub fn unread_task_handoff_targets(&self, limit: usize) -> Result<Vec<(String, usize)>> {
@@ -2944,7 +2952,9 @@ impl StateStore {
             ))
         })?;
         let mut aggregated: HashMap<String, (usize, comms::TaskPriority, i64)> = HashMap::new();
-        for (to_session, content, id, sender, provenance) in targets.collect::<Result<Vec<_>, _>>()? {
+        for (to_session, content, id, sender, provenance) in
+            targets.collect::<Result<Vec<_>, _>>()?
+        {
             if is_assignment_handoff(&content, &sender, &provenance) {
                 continue;
             }
@@ -4155,11 +4165,7 @@ impl StateStore {
     }
 
     /// Returns at most `limit` output rows newer than `cursor` in insertion order.
-    pub(crate) fn get_output_since(
-        &self,
-        cursor: i64,
-        limit: usize,
-    ) -> Result<SessionOutputBatch> {
+    pub(crate) fn get_output_since(&self, cursor: i64, limit: usize) -> Result<SessionOutputBatch> {
         let cursor = cursor.max(0);
         let limit = i64::try_from(limit.max(1)).unwrap_or(i64::MAX);
         let mut stmt = self.conn.prepare(
@@ -5059,8 +5065,10 @@ fn is_assignment_handoff(content: &str, sender: &str, provenance: &str) -> bool 
     };
     // The native delegate CLI uses a short sender ID, and does not append a
     // routing reason. Both forms are internal notifications, not new work.
-    if context.starts_with(&format!("Delegated from {} [", sender.chars().take(8).collect::<String>()))
-        && context.contains("] | cwd ")
+    if context.starts_with(&format!(
+        "Delegated from {} [",
+        sender.chars().take(8).collect::<String>()
+    )) && context.contains("] | cwd ")
     {
         return true;
     }
@@ -5687,7 +5695,9 @@ impl StateStore {
             || evidence_ref.trim().is_empty()
             || evidence_ref.len() > 4096
         {
-            anyhow::bail!("valid candidate ids, recorded-v1 evaluator, and bounded evidence reference are required");
+            anyhow::bail!(
+                "valid candidate ids, recorded-v1 evaluator, and bounded evidence reference are required"
+            );
         }
         health_evidence.verify()?;
         if health_evidence.candidate_id != candidate_id || health_evidence.evaluator != evaluator {
@@ -5921,9 +5931,11 @@ mod tests {
             .update_state("done", &SessionState::Running)
             .expect_err("completed sessions must not transition back to running");
 
-        assert!(error
-            .to_string()
-            .contains("Invalid session state transition"));
+        assert!(
+            error
+                .to_string()
+                .contains("Invalid session state transition")
+        );
         Ok(())
     }
 
@@ -5967,12 +5979,16 @@ mod tests {
         assert!(column_names.iter().any(|column| column == "input_tokens"));
         assert!(column_names.iter().any(|column| column == "output_tokens"));
         assert!(column_names.iter().any(|column| column == "harness"));
-        assert!(column_names
-            .iter()
-            .any(|column| column == "detected_harnesses_json"));
-        assert!(column_names
-            .iter()
-            .any(|column| column == "last_heartbeat_at"));
+        assert!(
+            column_names
+                .iter()
+                .any(|column| column == "detected_harnesses_json")
+        );
+        assert!(
+            column_names
+                .iter()
+                .any(|column| column == "last_heartbeat_at")
+        );
         Ok(())
     }
 
@@ -6440,9 +6456,7 @@ mod tests {
         let metrics_path = metrics_dir.join("tool-usage.jsonl");
         fs::write(
             &metrics_path,
-            concat!(
-                "{\"id\":\"evt-1\",\"session_id\":\"session-1\",\"tool_name\":\"Edit\",\"input_summary\":\"Edit src/config.ts\",\"output_summary\":\"updated config\",\"file_paths\":[\"src/config.ts\"],\"file_events\":[{\"path\":\"src/config.ts\",\"action\":\"modify\",\"diff_preview\":\"API_URL=http://localhost:3000 -> API_URL=https://api.example.com\",\"patch_preview\":\"@@\\n- API_URL=http://localhost:3000\\n+ API_URL=https://api.example.com\"}],\"timestamp\":\"2026-04-09T00:00:00Z\"}\n"
-            ),
+            "{\"id\":\"evt-1\",\"session_id\":\"session-1\",\"tool_name\":\"Edit\",\"input_summary\":\"Edit src/config.ts\",\"output_summary\":\"updated config\",\"file_paths\":[\"src/config.ts\"],\"file_events\":[{\"path\":\"src/config.ts\",\"action\":\"modify\",\"diff_preview\":\"API_URL=http://localhost:3000 -> API_URL=https://api.example.com\",\"patch_preview\":\"@@\\n- API_URL=http://localhost:3000\\n+ API_URL=https://api.example.com\"}],\"timestamp\":\"2026-04-09T00:00:00Z\"}\n",
         )?;
 
         db.sync_tool_activity_metrics(&metrics_path)?;
@@ -7061,10 +7075,12 @@ mod tests {
         assert_eq!(results.len(), 2);
         assert_eq!(results[0].entity.id, recovery.id);
         assert!(results[0].matched_terms.iter().any(|term| term == "auth"));
-        assert!(results[0]
-            .matched_terms
-            .iter()
-            .any(|term| term == "recovery"));
+        assert!(
+            results[0]
+                .matched_terms
+                .iter()
+                .any(|term| term == "recovery")
+        );
         assert_eq!(results[0].observation_count, 1);
         assert_eq!(
             results[0].max_observation_priority,
@@ -7072,14 +7088,18 @@ mod tests {
         );
         assert!(results[0].has_pinned_observation);
         assert_eq!(results[1].entity.id, callback.id);
-        assert!(results[1]
-            .matched_terms
-            .iter()
-            .any(|term| term == "callback"));
-        assert!(results[1]
-            .matched_terms
-            .iter()
-            .any(|term| term == "recovery"));
+        assert!(
+            results[1]
+                .matched_terms
+                .iter()
+                .any(|term| term == "callback")
+        );
+        assert!(
+            results[1]
+                .matched_terms
+                .iter()
+                .any(|term| term == "recovery")
+        );
         assert_eq!(results[1].relation_count, 2);
         assert_eq!(results[1].observation_count, 0);
         assert_eq!(
@@ -7149,12 +7169,16 @@ mod tests {
         let observations = db.list_context_observations(Some(entity.id), 10)?;
         assert_eq!(observations.len(), 2);
         assert!(observations.iter().any(|entry| entry.pinned));
-        assert!(observations
-            .iter()
-            .any(|entry| entry.summary == "Pinned billing recovery memory"));
-        assert!(observations
-            .iter()
-            .any(|entry| entry.summary == "Newest unpinned memory"));
+        assert!(
+            observations
+                .iter()
+                .any(|entry| entry.summary == "Pinned billing recovery memory")
+        );
+        assert!(
+            observations
+                .iter()
+                .any(|entry| entry.summary == "Newest unpinned memory")
+        );
 
         Ok(())
     }
@@ -7266,10 +7290,14 @@ mod tests {
         db.send_native_assignment_notice("lead", "worker", &template_notice)?;
         assert_eq!(db.unread_task_handoff_count("worker")?, 3);
         assert!(db.unread_task_handoff_targets(10)?.is_empty());
-        assert_eq!(db.unread_task_handoffs_for_rebalance("worker", 10)?.len(), 3);
-        assert!(db
-            .unread_task_handoffs_for_session("worker", 10)?
-            .is_empty());
+        assert_eq!(
+            db.unread_task_handoffs_for_rebalance("worker", 10)?.len(),
+            3
+        );
+        assert!(
+            db.unread_task_handoffs_for_session("worker", 10)?
+                .is_empty()
+        );
         assert_eq!(
             db.latest_task_handoff_source("worker")?.as_deref(),
             Some("lead")
@@ -7299,13 +7327,21 @@ mod tests {
             "task_handoff",
         )?;
         assert_eq!(db.unread_task_handoff_count("worker")?, 7);
-        assert_eq!(db.unread_task_handoff_targets(10)?, vec![("worker".to_string(), 3)]);
+        assert_eq!(
+            db.unread_task_handoff_targets(10)?,
+            vec![("worker".to_string(), 3)]
+        );
         assert_eq!(db.unread_task_handoffs_for_session("worker", 10)?.len(), 3);
 
         // The original notification remains available to the human/agent inbox,
         // even though it never spawns a recursive grandchild.
         let all = db.list_messages_for_session("worker", 10)?;
-        assert_eq!(all.iter().filter(|message| message.msg_type == "task_handoff").count(), 7);
+        assert_eq!(
+            all.iter()
+                .filter(|message| message.msg_type == "task_handoff")
+                .count(),
+            7
+        );
         Ok(())
     }
 
@@ -7321,8 +7357,7 @@ mod tests {
         // User content is not reliable proof of native internal provenance.
         let manual = serde_json::to_string(&comms::MessageType::TaskHandoff {
             task: "Implement an independent requested change".to_string(),
-            context: "Assigned by lead [claude] | cwd /repo | template release | build"
-                .to_string(),
+            context: "Assigned by lead [claude] | cwd /repo | template release | build".to_string(),
             priority: comms::TaskPriority::Normal,
         })?;
         db.send_message("lead", "worker", &manual, "task_handoff")?;
@@ -7350,8 +7385,7 @@ mod tests {
         let path = tempdir.path().join("state.db");
         let old_notice = serde_json::to_string(&comms::MessageType::TaskHandoff {
             task: "Old template task".to_string(),
-            context: "Assigned by lead [claude] | cwd /repo | template release | build"
-                .to_string(),
+            context: "Assigned by lead [claude] | cwd /repo | template release | build".to_string(),
             priority: comms::TaskPriority::Normal,
         })?;
         {
@@ -7377,17 +7411,20 @@ mod tests {
         db.insert_session(&build_session("lead", SessionState::Running))?;
         db.insert_session(&build_session("worker", SessionState::Idle))?;
         assert!(db.has_column("messages", "provenance")?);
-        let old_provenance: String = db.conn.query_row(
-            "SELECT provenance FROM messages WHERE id = 1",
-            [],
-            |row| row.get(0),
-        )?;
+        let old_provenance: String =
+            db.conn
+                .query_row("SELECT provenance FROM messages WHERE id = 1", [], |row| {
+                    row.get(0)
+                })?;
         assert_eq!(old_provenance, "legacy");
         assert!(db.unread_task_handoff_targets(10)?.is_empty());
 
         // The same content sent AFTER migration is explicitly external work.
         db.send_message("lead", "worker", &old_notice, "task_handoff")?;
-        assert_eq!(db.unread_task_handoff_targets(10)?, vec![("worker".to_string(), 1)]);
+        assert_eq!(
+            db.unread_task_handoff_targets(10)?,
+            vec![("worker".to_string(), 1)]
+        );
         Ok(())
     }
 
@@ -7458,7 +7495,9 @@ mod tests {
         assert_eq!(original.last_run_at, Some(previous_run));
 
         let updated = crate::session::manager::update_scheduled_task_text(
-            &db, original.id, "Read ECC native READY items",
+            &db,
+            original.id,
+            "Read ECC native READY items",
         )?;
         assert_eq!(updated.id, original.id);
         assert_eq!(updated.task, "Read ECC native READY items");
@@ -7472,9 +7511,21 @@ mod tests {
         assert_eq!(updated.task_group, original.task_group);
         assert_eq!(updated.use_worktree, original.use_worktree);
         assert_eq!(db.list_scheduled_tasks()?.len(), 1);
-        assert!(crate::session::manager::update_scheduled_task_text(&db, original.id, " ").is_err());
-        assert!(crate::session::manager::update_scheduled_task_text(&db, original.id, &"x".repeat(16385)).is_err());
-        assert!(crate::session::manager::update_scheduled_task_text(&db, original.id + 1, "valid task").is_err());
+        assert!(
+            crate::session::manager::update_scheduled_task_text(&db, original.id, " ").is_err()
+        );
+        assert!(
+            crate::session::manager::update_scheduled_task_text(
+                &db,
+                original.id,
+                &"x".repeat(16385)
+            )
+            .is_err()
+        );
+        assert!(
+            crate::session::manager::update_scheduled_task_text(&db, original.id + 1, "valid task")
+                .is_err()
+        );
         assert_eq!(db.list_scheduled_tasks()?.len(), 1);
         Ok(())
     }
@@ -7598,9 +7649,11 @@ mod tests {
             entities[0].metadata.get("alternatives_count"),
             Some(&"2".to_string())
         );
-        assert!(entities[0]
-            .summary
-            .contains("SQLite keeps the graph queryable"));
+        assert!(
+            entities[0]
+                .summary
+                .contains("SQLite keeps the graph queryable")
+        );
 
         let session_entities = db.list_context_entities(Some("session-1"), Some("session"), 10)?;
         assert_eq!(session_entities.len(), 1);
@@ -7663,9 +7716,11 @@ mod tests {
             entities[0].metadata.get("last_tool"),
             Some(&"Edit".to_string())
         );
-        assert!(entities[0]
-            .summary
-            .contains("Last activity: modify via Edit"));
+        assert!(
+            entities[0]
+                .summary
+                .contains("Last activity: modify via Edit")
+        );
 
         let session_entities = db.list_context_entities(Some("session-1"), Some("session"), 10)?;
         assert_eq!(session_entities.len(), 1);
@@ -7751,10 +7806,12 @@ mod tests {
         assert_eq!(stats.messages_processed, 1);
 
         let entities = db.list_context_entities(Some("session-1"), None, 10)?;
-        assert!(entities
-            .iter()
-            .any(|entity| entity.entity_type == "decision"
-                && entity.name == "Backfill historical decision"));
+        assert!(
+            entities
+                .iter()
+                .any(|entity| entity.entity_type == "decision"
+                    && entity.name == "Backfill historical decision")
+        );
         assert!(entities.iter().any(|entity| entity.entity_type == "file"
             && entity.path.as_deref() == Some("src/backfill.rs")));
         let session_entity = entities
@@ -7763,15 +7820,21 @@ mod tests {
             .expect("session entity should exist");
         let relations = db.list_context_relations(Some(session_entity.id), 10)?;
         assert_eq!(relations.len(), 3);
-        assert!(relations
-            .iter()
-            .any(|relation| relation.relation_type == "decided"));
-        assert!(relations
-            .iter()
-            .any(|relation| relation.relation_type == "modify"));
-        assert!(relations
-            .iter()
-            .any(|relation| relation.relation_type == "delegates_to"));
+        assert!(
+            relations
+                .iter()
+                .any(|relation| relation.relation_type == "decided")
+        );
+        assert!(
+            relations
+                .iter()
+                .any(|relation| relation.relation_type == "modify")
+        );
+        assert!(
+            relations
+                .iter()
+                .any(|relation| relation.relation_type == "delegates_to")
+        );
 
         Ok(())
     }
@@ -7953,9 +8016,11 @@ mod tests {
                 row.get::<_, String>(3)
             })?
             .collect::<Result<Vec<_>, _>>()?;
-        assert!(query_plan
-            .iter()
-            .any(|detail| detail.contains("INTEGER PRIMARY KEY") && detail.contains("rowid>?")));
+        assert!(
+            query_plan
+                .iter()
+                .any(|detail| detail.contains("INTEGER PRIMARY KEY") && detail.contains("rowid>?"))
+        );
 
         Ok(())
     }
@@ -8044,12 +8109,16 @@ mod tests {
         );
         let worker_4_handoffs = db.unread_task_handoffs_for_session("worker-4", 10)?;
         assert_eq!(worker_4_handoffs.len(), 2);
-        assert!(worker_4_handoffs[0]
-            .content
-            .contains("Critical production incident"));
-        assert!(worker_4_handoffs[1]
-            .content
-            .contains("Low priority follow-up"));
+        assert!(
+            worker_4_handoffs[0]
+                .content
+                .contains("Critical production incident")
+        );
+        assert!(
+            worker_4_handoffs[1]
+                .content
+                .contains("Low priority follow-up")
+        );
 
         let planner_entities = db.list_context_entities(Some("planner"), Some("session"), 10)?;
         assert_eq!(planner_entities.len(), 1);
@@ -8340,14 +8409,16 @@ mod tests {
             rollback.health_evidence_sha256.as_deref().map(str::len),
             Some(64)
         );
-        assert!(db
-            .connection_for_test()
-            .execute("UPDATE harness_eval_audit SET event_type = 'tampered'", [])
-            .is_err());
-        assert!(db
-            .connection_for_test()
-            .execute("DELETE FROM harness_candidates", [])
-            .is_err());
+        assert!(
+            db.connection_for_test()
+                .execute("UPDATE harness_eval_audit SET event_type = 'tampered'", [])
+                .is_err()
+        );
+        assert!(
+            db.connection_for_test()
+                .execute("DELETE FROM harness_candidates", [])
+                .is_err()
+        );
         Ok(())
     }
 
@@ -8409,11 +8480,13 @@ mod tests {
             rusqlite::params![candidate.id, chrono::Utc::now().to_rfc3339()],
         )?;
         drop(db);
-        assert!(StateStore::open(&db_path)
-            .err()
-            .expect("mismatched v2 collision must be rejected")
-            .to_string()
-            .contains("candidate content address"));
+        assert!(
+            StateStore::open(&db_path)
+                .err()
+                .expect("mismatched v2 collision must be rejected")
+                .to_string()
+                .contains("candidate content address")
+        );
         Ok(())
     }
 
@@ -8458,11 +8531,12 @@ mod tests {
         assert!(db.harness_audit_entries().is_ok());
 
         db.connection_for_test().execute_batch("DROP TRIGGER harness_eval_audit_no_update; UPDATE harness_eval_audit SET health_evidence_json = NULL, health_evidence_sha256 = NULL, asserted_health = NULL, health_check_status = NULL WHERE event_type = 'promoted';")?;
-        assert!(db
-            .harness_audit_entries()
-            .unwrap_err()
-            .to_string()
-            .contains("integrity"));
+        assert!(
+            db.harness_audit_entries()
+                .unwrap_err()
+                .to_string()
+                .contains("integrity")
+        );
         Ok(())
     }
 
@@ -8525,8 +8599,8 @@ mod tests {
     }
 
     #[test]
-    fn open_aliases_exact_legacy_candidate_and_supports_v2_promotion_without_history_rewrite(
-    ) -> Result<()> {
+    fn open_aliases_exact_legacy_candidate_and_supports_v2_promotion_without_history_rewrite()
+    -> Result<()> {
         use crate::harness_eval::{CandidateSpec, PairedSample, PromotionPolicy};
         use serde_json::json;
         let tempdir = TestDir::new("store-harness-v1-alias-migration")?;
@@ -8653,11 +8727,13 @@ mod tests {
             rusqlite::params![candidate.legacy_id(), "{\"prompt\":\"tampered\"}", serde_json::to_string(&candidate.trace_refs)?, serde_json::to_string(&candidate.evidence_refs)?, chrono::Utc::now().to_rfc3339()],
         )?;
         drop(db);
-        assert!(StateStore::open(&db_path)
-            .err()
-            .expect("tampered legacy candidate must be rejected")
-            .to_string()
-            .contains("candidate content address"));
+        assert!(
+            StateStore::open(&db_path)
+                .err()
+                .expect("tampered legacy candidate must be rejected")
+                .to_string()
+                .contains("candidate content address")
+        );
 
         let collision_path = tempdir.path().join("collision.db");
         let db = StateStore::open(&collision_path)?;
@@ -8676,11 +8752,13 @@ mod tests {
             rusqlite::params![candidate.id, other.id, chrono::Utc::now().to_rfc3339()],
         )?;
         drop(db);
-        assert!(StateStore::open(&collision_path)
-            .err()
-            .expect("mismatched alias must be rejected")
-            .to_string()
-            .contains("alias collision"));
+        assert!(
+            StateStore::open(&collision_path)
+                .err()
+                .expect("mismatched alias must be rejected")
+                .to_string()
+                .contains("alias collision")
+        );
         Ok(())
     }
 

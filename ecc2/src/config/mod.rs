@@ -36,7 +36,9 @@ pub struct BudgetAlertThresholds {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
+#[derive(Default)]
 pub enum ConflictResolutionStrategy {
+    #[default]
     Escalate,
     LastWriteWins,
     Merge,
@@ -52,6 +54,7 @@ pub struct ConflictResolutionConfig {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default)]
+#[derive(Default)]
 pub struct ComputerUseDispatchConfig {
     pub agent: Option<String>,
     pub profile: Option<String>,
@@ -525,8 +528,8 @@ impl Config {
 
         impl TestConfigRoot {
             fn new() -> Self {
-                let path = std::env::temp_dir()
-                    .join(format!("ecc2-test-config-{}", uuid::Uuid::new_v4()));
+                let path =
+                    std::env::temp_dir().join(format!("ecc2-test-config-{}", uuid::Uuid::new_v4()));
                 std::fs::create_dir(&path).expect("create private ECC 2 test config root");
                 #[cfg(unix)]
                 {
@@ -779,12 +782,6 @@ impl Default for BudgetAlertThresholds {
     }
 }
 
-impl Default for ConflictResolutionStrategy {
-    fn default() -> Self {
-        Self::Escalate
-    }
-}
-
 impl Default for ConflictResolutionConfig {
     fn default() -> Self {
         Self {
@@ -847,18 +844,6 @@ impl Default for HarnessRunnerConfig {
             append_system_prompt_flag: None,
             inline_system_prompt_for_task: true,
             env: BTreeMap::new(),
-        }
-    }
-}
-
-impl Default for ComputerUseDispatchConfig {
-    fn default() -> Self {
-        Self {
-            agent: None,
-            profile: None,
-            use_worktree: false,
-            project: None,
-            task_group: None,
         }
     }
 }
@@ -941,11 +926,7 @@ impl BudgetAlertThresholds {
             && self.warning < self.critical
             && self.critical < 1.0;
 
-        if valid {
-            self
-        } else {
-            Self::default()
-        }
+        if valid { self } else { Self::default() }
     }
 }
 
@@ -1438,9 +1419,11 @@ inherits = "a"
         let error = config
             .resolve_agent_profile("a")
             .expect_err("profile inheritance cycles must fail");
-        assert!(error
-            .to_string()
-            .contains("agent profile inheritance cycle"));
+        assert!(
+            error
+                .to_string()
+                .contains("agent profile inheritance cycle")
+        );
     }
 
     #[test]
@@ -1565,8 +1548,10 @@ task = "Plan {{task}} for {{component}}"
             )
             .expect_err("missing template variables must fail");
         let error_text = format!("{error:#}");
-        assert!(error_text
-            .contains("resolve task for orchestration template feature_development step 1"));
+        assert!(
+            error_text
+                .contains("resolve task for orchestration template feature_development step 1")
+        );
         assert!(error_text.contains("missing orchestration template variable(s): component"));
     }
 

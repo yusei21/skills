@@ -87,11 +87,13 @@ mod tests {
 
         candidate.verify_persisted_id(&candidate.id).unwrap();
         candidate.verify_persisted_id(&legacy_id).unwrap();
-        assert!(candidate
-            .verify_persisted_id(&"a".repeat(64))
-            .unwrap_err()
-            .to_string()
-            .contains("content address"));
+        assert!(
+            candidate
+                .verify_persisted_id(&"a".repeat(64))
+                .unwrap_err()
+                .to_string()
+                .contains("content address")
+        );
     }
 
     #[test]
@@ -111,10 +113,12 @@ mod tests {
         let too_few = vec![paired(7, 1.0, 0.0), paired(8, 1.0, 0.0)];
         let decision = policy.compare(&too_few).unwrap();
         assert!(!decision.passed);
-        assert!(decision
-            .failures
-            .iter()
-            .any(|failure| failure.contains("minimum sample")));
+        assert!(
+            decision
+                .failures
+                .iter()
+                .any(|failure| failure.contains("minimum sample"))
+        );
     }
 
     #[test]
@@ -136,10 +140,12 @@ mod tests {
         assert_eq!(first, second);
         assert!(!first.passed);
         assert_eq!(first.win_rate, 0.75);
-        assert!(first
-            .failures
-            .iter()
-            .any(|failure| failure.contains("mean delta")));
+        assert!(
+            first
+                .failures
+                .iter()
+                .any(|failure| failure.contains("mean delta"))
+        );
     }
 
     #[test]
@@ -175,7 +181,7 @@ mod tests {
         }
     }
 }
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sha2::{Digest, Sha256};

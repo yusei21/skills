@@ -2,7 +2,7 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyModifiers},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::prelude::*;
 use std::io;
@@ -57,10 +57,8 @@ pub async fn run(db: StateStore, cfg: Config) -> Result<()> {
                     continue;
                 }
 
-                if dashboard.is_pane_command_mode() {
-                    if dashboard.handle_pane_command_key(key) {
-                        continue;
-                    }
+                if dashboard.is_pane_command_mode() && dashboard.handle_pane_command_key(key) {
+                    continue;
                 }
 
                 match (key.modifiers, key.code) {
