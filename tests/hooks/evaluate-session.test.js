@@ -7,7 +7,8 @@
  * Run with: node tests/hooks/evaluate-session.test.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { describe, test } = require('node:test');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -26,17 +27,6 @@ function isolatedEnv(extra = {}) {
 }
 
 // Test helpers
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (err) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${err.message}`);
-    return false;
-  }
-}
 
 function createTestDir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'eval-session-test-'));
@@ -81,16 +71,12 @@ function runEvaluate(stdinJson) {
   };
 }
 
-function runTests() {
-  console.log('\n=== Testing evaluate-session.js ===\n');
+/** Turn a legacy `console.log` section header into a describe() title. */
+const sectionTitle = title => String(title).trim().replace(/:$/, '');
 
-  let passed = 0;
-  let failed = 0;
-
-  // Threshold boundary tests (default minSessionLength = 10)
-  console.log('Threshold boundary (default min=10):');
-
-  if (test('skips session with 9 user messages (below threshold)', () => {
+// Threshold boundary tests (default minSessionLength = 10)
+describe(sectionTitle('Threshold boundary (default min=10):'), () => {
+  test('skips session with 9 user messages (below threshold)', () => {
     const testDir = createTestDir();
     const transcript = createTranscript(testDir, 9);
     const result = runEvaluate({ transcript_path: transcript });
@@ -101,9 +87,9 @@ function runTests() {
       'Should indicate session too short'
     );
     cleanupTestDir(testDir);
-  })) passed++; else failed++;
+  });
 
-  if (test('evaluates session with exactly 10 user messages (at threshold)', () => {
+  test('evaluates session with exactly 10 user messages (at threshold)', () => {
     const testDir = createTestDir();
     const transcript = createTranscript(testDir, 10);
     const result = runEvaluate({ transcript_path: transcript });
@@ -115,9 +101,9 @@ function runTests() {
       'Should indicate evaluation'
     );
     cleanupTestDir(testDir);
-  })) passed++; else failed++;
+  });
 
-  if (test('evaluates session with 11 user messages (above threshold)', () => {
+  test('evaluates session with 11 user messages (above threshold)', () => {
     const testDir = createTestDir();
     const transcript = createTranscript(testDir, 11);
     const result = runEvaluate({ transcript_path: transcript });
@@ -125,22 +111,22 @@ function runTests() {
     assert.ok(!result.stderr.includes('too short'), 'Should NOT say too short');
     assert.ok(result.stderr.includes('evaluate'), 'Should trigger evaluation');
     cleanupTestDir(testDir);
-  })) passed++; else failed++;
+  });
+});
 
-  // Edge cases
-  console.log('\nEdge cases:');
-
-  if (test('exits 0 with missing transcript_path', () => {
+// Edge cases
+describe(sectionTitle('\nEdge cases:'), () => {
+  test('exits 0 with missing transcript_path', () => {
     const result = runEvaluate({});
     assert.strictEqual(result.code, 0, 'Should exit 0 gracefully');
-  })) passed++; else failed++;
+  });
 
-  if (test('exits 0 with non-existent transcript file', () => {
+  test('exits 0 with non-existent transcript file', () => {
     const result = runEvaluate({ transcript_path: '/nonexistent/path/transcript.jsonl' });
     assert.strictEqual(result.code, 0, 'Should exit 0 gracefully');
-  })) passed++; else failed++;
+  });
 
-  if (test('exits 0 with invalid stdin JSON', () => {
+  test('exits 0 with invalid stdin JSON', () => {
     // Pass raw string instead of JSON
     const result = spawnSync('node', [evaluateScript], {
       encoding: 'utf8',
@@ -149,9 +135,9 @@ function runTests() {
       env: isolatedEnv(),
     });
     assert.strictEqual(result.status, 0, 'Should exit 0 even on bad stdin');
-  })) passed++; else failed++;
+  });
 
-  if (test('skips empty transcript file (0 user messages)', () => {
+  test('skips empty transcript file (0 user messages)', () => {
     const testDir = createTestDir();
     const filePath = path.join(testDir, 'empty.jsonl');
     fs.writeFileSync(filePath, '');
@@ -163,9 +149,9 @@ function runTests() {
       'Empty transcript should be too short'
     );
     cleanupTestDir(testDir);
-  })) passed++; else failed++;
+  });
 
-  if (test('counts only user messages (ignores assistant messages)', () => {
+  test('counts only user messages (ignores assistant messages)', () => {
     const testDir = createTestDir();
     const filePath = path.join(testDir, 'mixed.jsonl');
     // 5 user messages + 50 assistant messages — should still be "too short"
@@ -185,12 +171,12 @@ function runTests() {
       'Should count only user messages'
     );
     cleanupTestDir(testDir);
-  })) passed++; else failed++;
+  });
+});
 
-  // ── Round 28: config file parsing ──
-  console.log('\nConfig file parsing:');
-
-  if (test('uses custom min_session_length from config file', () => {
+// ── Round 28: config file parsing ──
+describe(sectionTitle('\nConfig file parsing:'), () => {
+  test('uses custom min_session_length from config file', () => {
     const testDir = createTestDir();
     // Create a config that sets min_session_length to 3
     const configDir = path.join(testDir, 'skills', 'admin', 'continuous-learning');
@@ -215,9 +201,9 @@ function runTests() {
       'With default config, 4 messages should be too short'
     );
     cleanupTestDir(testDir);
-  })) passed++; else failed++;
+  });
 
-  if (test('handles transcript with only assistant messages (0 user match)', () => {
+  test('handles transcript with only assistant messages (0 user match)', () => {
     const testDir = createTestDir();
     const filePath = path.join(testDir, 'assistant-only.jsonl');
     const lines = [];
@@ -234,9 +220,9 @@ function runTests() {
       'Should report too short with 0 user messages'
     );
     cleanupTestDir(testDir);
-  })) passed++; else failed++;
+  });
 
-  if (test('handles transcript with malformed JSON lines (still counts valid ones)', () => {
+  test('handles transcript with malformed JSON lines (still counts valid ones)', () => {
     const testDir = createTestDir();
     const filePath = path.join(testDir, 'mixed.jsonl');
     // 12 valid user lines + 5 invalid lines
@@ -258,9 +244,9 @@ function runTests() {
       'Should evaluate session with 12 valid user messages'
     );
     cleanupTestDir(testDir);
-  })) passed++; else failed++;
+  });
 
-  if (test('handles empty stdin (no input) gracefully', () => {
+  test('handles empty stdin (no input) gracefully', () => {
     const result = spawnSync('node', [evaluateScript], {
       encoding: 'utf8',
       input: '',
@@ -269,12 +255,12 @@ function runTests() {
     });
     // Empty stdin → JSON.parse('') throws → fallback to env var (unset) → null → exit 0
     assert.strictEqual(result.status, 0, 'Should exit 0 on empty stdin');
-  })) passed++; else failed++;
+  });
+});
 
-  // ── Round 53: env var fallback path ──
-  console.log('\nRound 53: CLAUDE_TRANSCRIPT_PATH fallback:');
-
-  if (test('falls back to CLAUDE_TRANSCRIPT_PATH env var when stdin is invalid JSON', () => {
+// ── Round 53: env var fallback path ──
+describe(sectionTitle('\nRound 53: CLAUDE_TRANSCRIPT_PATH fallback:'), () => {
+  test('falls back to CLAUDE_TRANSCRIPT_PATH env var when stdin is invalid JSON', () => {
     const testDir = createTestDir();
     const transcript = createTranscript(testDir, 15);
 
@@ -295,12 +281,12 @@ function runTests() {
       'Should indicate session evaluation'
     );
     cleanupTestDir(testDir);
-  })) passed++; else failed++;
+  });
+});
 
-  // ── Round 65: regex whitespace tolerance in countInFile ──
-  console.log('\nRound 65: regex whitespace tolerance around colon:');
-
-  if (test('counts user messages when JSON has spaces around colon ("type" : "user")', () => {
+// ── Round 65: regex whitespace tolerance in countInFile ──
+describe(sectionTitle('\nRound 65: regex whitespace tolerance around colon:'), () => {
+  test('counts user messages when JSON has spaces around colon ("type" : "user")', () => {
     const testDir = createTestDir();
     const filePath = path.join(testDir, 'spaced.jsonl');
     // Manually write JSON with spaces around the colon — NOT JSON.stringify
@@ -322,12 +308,12 @@ function runTests() {
       `Should evaluate session with spaced-colon JSON. Got stderr: ${result.stderr}`
     );
     cleanupTestDir(testDir);
-  })) passed++; else failed++;
+  });
+});
 
-  // ── Round 85: config file parse error (corrupt JSON) ──
-  console.log('\nRound 85: config parse error catch block:');
-
-  if (test('falls back to defaults when config file contains invalid JSON', () => {
+// ── Round 85: config file parse error (corrupt JSON) ──
+describe(sectionTitle('\nRound 85: config parse error catch block:'), () => {
+  test('falls back to defaults when config file contains invalid JSON', () => {
     // The evaluate-session.js script reads config from:
     //   path.join(__dirname, '..', '..', 'skills', 'admin', 'continuous-learning', 'config.json')
     // where __dirname = scripts/hooks/ → config = repo_root/skills/continuous-learning/config.json
@@ -371,12 +357,12 @@ function runTests() {
         try { fs.unlinkSync(configPath); } catch { /* best-effort */ }
       }
     }
-  })) passed++; else failed++;
+  });
+});
 
-  // ── Round 86: config learned_skills_path override with ~ expansion ──
-  console.log('\nRound 86: config learned_skills_path override:');
-
-  if (test('uses learned_skills_path from config with ~ expansion', () => {
+// ── Round 86: config learned_skills_path override with ~ expansion ──
+describe(sectionTitle('\nRound 86: config learned_skills_path override:'), () => {
+  test('uses learned_skills_path from config with ~ expansion', () => {
     // evaluate-session.js lines 69-72:
     //   if (config.learned_skills_path) {
     //     learnedSkillsPath = config.learned_skills_path.replace(/^~/, require('os').homedir());
@@ -422,11 +408,5 @@ function runTests() {
         try { fs.unlinkSync(configPath); } catch { /* best-effort */ }
       }
     }
-  })) passed++; else failed++;
-
-  // Summary
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });
+});

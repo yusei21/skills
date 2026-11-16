@@ -10,22 +10,11 @@
  * dedicated test below; do not expect `~/.claude` while cwd is the ECC tree.
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  ✓ ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  ✗ ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
 
 function withEnv(overrides, fn) {
   const previous = {};
@@ -82,12 +71,7 @@ function captureConsoleErrors(fn) {
   }
 }
 
-function runTests() {
-  console.log('\n=== Testing agent-data-home.js ===\n');
-  let passed = 0;
-  let failed = 0;
-
-  if (test('defaults to ~/.claude outside Cursor (isolated cwd)', () => {
+  test('defaults to ~/.claude outside Cursor (isolated cwd)', () => {
     withIsolatedCwd(() => {
       withEnv({
         ECC_AGENT_DATA_HOME: undefined,
@@ -103,9 +87,9 @@ function runTests() {
         );
       });
     });
-  })) passed++; else failed++;
+  });
 
-  if (test('resolveAgentDataHome uses projectDir + .cursor/ecc-agent-data.json', () => {
+  test('resolveAgentDataHome uses projectDir + .cursor/ecc-agent-data.json', () => {
     const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-project-'));
     const cursorDir = path.join(projectDir, '.cursor');
     fs.mkdirSync(cursorDir, { recursive: true });
@@ -133,9 +117,9 @@ function runTests() {
     } finally {
       fs.rmSync(projectDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('defaults to ~/.cursor/ecc in Cursor hook runtime (isolated cwd)', () => {
+  test('defaults to ~/.cursor/ecc in Cursor hook runtime (isolated cwd)', () => {
     withIsolatedCwd(() => {
       withEnv({
         ECC_AGENT_DATA_HOME: undefined,
@@ -150,9 +134,9 @@ function runTests() {
         );
       });
     });
-  })) passed++; else failed++;
+  });
 
-  if (test('honors ECC_AGENT_DATA_HOME over Cursor default', () => {
+  test('honors ECC_AGENT_DATA_HOME over Cursor default', () => {
     const override = path.join(os.tmpdir(), `ecc-override-${Date.now()}`);
     withEnv({
       ECC_AGENT_DATA_HOME: override,
@@ -161,9 +145,9 @@ function runTests() {
       const agentDataHome = require('../../scripts/lib/agent-data-home');
       assert.strictEqual(agentDataHome.resolveAgentDataHome(), path.resolve(override));
     });
-  })) passed++; else failed++;
+  });
 
-  if (test('reads project ecc-agent-data.json config file', () => {
+  test('reads project ecc-agent-data.json config file', () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-read-'));
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-user-'));
     const configPath = path.join(tmpDir, '.cursor', 'ecc-agent-data.json');
@@ -192,9 +176,9 @@ function runTests() {
       fs.rmSync(tmpDir, { recursive: true, force: true });
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('allows the documented ~/.claude project sharing root and its descendants', () => {
+  test('allows the documented ~/.claude project sharing root and its descendants', () => {
     const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-claude-'));
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-claude-user-'));
     const configPath = path.join(projectDir, '.cursor', 'ecc-agent-data.json');
@@ -235,9 +219,9 @@ function runTests() {
       fs.rmSync(projectDir, { recursive: true, force: true });
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects a relative agentDataHome that redirects into the project', () => {
+  test('rejects a relative agentDataHome that redirects into the project', () => {
     const stamp = Date.now();
     const projectDir = path.join(os.tmpdir(), `ecc-agent-data-home-relative-${stamp}`);
     const cursorDir = path.join(projectDir, '.cursor');
@@ -283,9 +267,9 @@ function runTests() {
       fs.rmSync(otherCwd, { recursive: true, force: true });
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects relative project config paths even when the project is beneath the trusted root', () => {
+  test('rejects relative project config paths even when the project is beneath the trusted root', () => {
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-nested-user-'));
     const projectDir = path.join(homeDir, '.cursor', 'ecc', 'checked-out-project');
     const configPath = path.join(projectDir, '.cursor', 'ecc-agent-data.json');
@@ -310,9 +294,9 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects traversal and absolute project config paths outside the allowed data roots', () => {
+  test('rejects traversal and absolute project config paths outside the allowed data roots', () => {
     const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-unsafe-'));
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-unsafe-user-'));
     const configPath = path.join(projectDir, '.cursor', 'ecc-agent-data.json');
@@ -349,9 +333,9 @@ function runTests() {
       fs.rmSync(projectDir, { recursive: true, force: true });
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects a Claude project config destination that escapes through a symlink', () => {
+  test('rejects a Claude project config destination that escapes through a symlink', () => {
     const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-claude-link-'));
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-claude-link-user-'));
     const outsideDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-claude-link-outside-'));
@@ -389,9 +373,9 @@ function runTests() {
       fs.rmSync(homeDir, { recursive: true, force: true });
       fs.rmSync(outsideDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('allows a non-existent project config destination beneath the Cursor data root', () => {
+  test('allows a non-existent project config destination beneath the Cursor data root', () => {
     const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-safe-'));
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-safe-user-'));
     const configPath = path.join(projectDir, '.cursor', 'ecc-agent-data.json');
@@ -415,9 +399,9 @@ function runTests() {
       fs.rmSync(projectDir, { recursive: true, force: true });
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects a project config destination that escapes through a symlink', () => {
+  test('rejects a project config destination that escapes through a symlink', () => {
     const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-link-'));
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-link-user-'));
     const outsideDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-link-outside-'));
@@ -455,9 +439,9 @@ function runTests() {
       fs.rmSync(homeDir, { recursive: true, force: true });
       fs.rmSync(outsideDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('readProjectConfigAt logs parse failures', () => {
+  test('readProjectConfigAt logs parse failures', () => {
     const tmpDir = path.join(os.tmpdir(), `ecc-agent-data-home-log-${Date.now()}`);
     fs.mkdirSync(tmpDir, { recursive: true });
     const configPath = path.join(tmpDir, 'ecc-agent-data.json');
@@ -485,9 +469,9 @@ function runTests() {
       console.error = originalError;
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uses CLAUDE_CONFIG_DIR outside Cursor when ECC_AGENT_DATA_HOME is unset', () => {
+  test('uses CLAUDE_CONFIG_DIR outside Cursor when ECC_AGENT_DATA_HOME is unset', () => {
     withIsolatedCwd(() => {
       const configDir = path.join(os.tmpdir(), 'ecc-claude-config-profile');
       withEnv({
@@ -503,9 +487,9 @@ function runTests() {
         assert.strictEqual(utils.getClaudeDir(), configDir);
       });
     });
-  })) passed++; else failed++;
+  });
 
-  if (test('ECC_AGENT_DATA_HOME takes precedence over CLAUDE_CONFIG_DIR', () => {
+  test('ECC_AGENT_DATA_HOME takes precedence over CLAUDE_CONFIG_DIR', () => {
     withIsolatedCwd(() => {
       const explicitHome = path.join(os.tmpdir(), 'ecc-explicit-agent-data-home');
       withEnv({
@@ -518,9 +502,9 @@ function runTests() {
         assert.strictEqual(agentDataHome.resolveAgentDataHome(), explicitHome);
       });
     });
-  })) passed++; else failed++;
+  });
 
-  if (test('CLAUDE_CONFIG_DIR does not override the Cursor default', () => {
+  test('CLAUDE_CONFIG_DIR does not override the Cursor default', () => {
     withIsolatedCwd(() => {
       withEnv({
         ECC_AGENT_DATA_HOME: undefined,
@@ -534,9 +518,9 @@ function runTests() {
         );
       });
     });
-  })) passed++; else failed++;
+  });
 
-  if (test('project config may select ~/.claude/shared when CLAUDE_CONFIG_DIR points elsewhere', () => {
+  test('project config may select ~/.claude/shared when CLAUDE_CONFIG_DIR points elsewhere', () => {
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-data-home-claude-root-'));
     const projectDir = path.join(homeDir, 'project');
     const configPath = path.join(projectDir, '.cursor', 'ecc-agent-data.json');
@@ -557,9 +541,9 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('ensureAgentDataHomeEnv sets process.env when unset', () => {
+  test('ensureAgentDataHomeEnv sets process.env when unset', () => {
     withEnv({
       ECC_AGENT_DATA_HOME: undefined,
       CURSOR_VERSION: '1.0.0',
@@ -569,9 +553,9 @@ function runTests() {
       assert.ok(process.env.ECC_AGENT_DATA_HOME);
       assert.strictEqual(process.env.ECC_AGENT_DATA_HOME, resolved);
     });
-  })) passed++; else failed++;
+  });
 
-  if (test('getDefaultClaudeAgentDataHome follows CLAUDE_CONFIG_DIR', () => {
+  test('getDefaultClaudeAgentDataHome follows CLAUDE_CONFIG_DIR', () => {
     // Claude Code points every profile-local path at CLAUDE_CONFIG_DIR. Ignoring
     // it writes this profile's session data, logs and metrics into the default
     // ~/.claude, where another profile reads them back.
@@ -587,9 +571,9 @@ function runTests() {
         );
       });
     });
-  })) passed++; else failed++;
+  });
 
-  if (test('getDefaultClaudeAgentDataHome falls back to ~/.claude without the env', () => {
+  test('getDefaultClaudeAgentDataHome falls back to ~/.claude without the env', () => {
     withIsolatedCwd(() => {
       withEnv({ CLAUDE_CONFIG_DIR: undefined, ECC_AGENT_DATA_HOME: undefined }, () => {
         const agentDataHome = require('../../scripts/lib/agent-data-home');
@@ -599,9 +583,9 @@ function runTests() {
         );
       });
     });
-  })) passed++; else failed++;
+  });
 
-  if (test('a blank CLAUDE_CONFIG_DIR is ignored rather than resolving to cwd', () => {
+  test('a blank CLAUDE_CONFIG_DIR is ignored rather than resolving to cwd', () => {
     // An empty or whitespace value would otherwise resolve to the process cwd and
     // scatter profile data through whatever directory the session started in.
     withIsolatedCwd(() => {
@@ -613,9 +597,9 @@ function runTests() {
         );
       });
     });
-  })) passed++; else failed++;
+  });
 
-  if (test('security: CLAUDE_CONFIG_DIR adds a trusted profile root while preserving explicit sharing', () => {
+  test('security: CLAUDE_CONFIG_DIR adds a trusted profile root while preserving explicit sharing', () => {
     // getDefaultClaudeAgentDataHome() is not only a default: it is one of the two
     // roots resolveAllowedProjectConfigHome() will accept. Following
     // CLAUDE_CONFIG_DIR moves that boundary with the profile, so the containment
@@ -670,10 +654,4 @@ function runTests() {
       fs.rmSync(projectDir, { recursive: true, force: true });
       fs.rmSync(homeDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
-
-  console.log(`\n=== Test Results ===\nPassed: ${passed}\nFailed: ${failed}\n`);
-  if (failed > 0) process.exit(1);
-}
-
-runTests();
+  });

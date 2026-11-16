@@ -2,7 +2,8 @@
  * Tests for scripts/lib/install-lifecycle.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
@@ -38,18 +39,6 @@ const CURRENT_PACKAGE_VERSION = JSON.parse(
 const CURRENT_MANIFEST_VERSION = JSON.parse(
   fs.readFileSync(path.join(REPO_ROOT, 'manifests', 'install-modules.json'), 'utf8')
 ).version;
-
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
 
 function createTempDir(prefix) {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
@@ -331,13 +320,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
   return operation;
 }
 
-function runTests() {
-  console.log('\n=== Testing install-lifecycle.js ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('managed-operation digest never follows a final symlink', () => {
+  test('managed-operation digest never follows a final symlink', () => {
     const tempDir = createTempDir('install-lifecycle-symlink-digest-');
     const victimPath = path.join(tempDir, 'victim.md');
     const symlinkPath = path.join(tempDir, 'managed.md');
@@ -354,9 +337,9 @@ function runTests() {
     } finally {
       cleanup(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('normalizes default targets and dedupes adapter aliases', () => {
+  test('normalizes default targets and dedupes adapter aliases', () => {
     const defaultTargets = normalizeTargets();
 
     assert.ok(defaultTargets.includes('claude'));
@@ -366,9 +349,9 @@ function runTests() {
       normalizeTargets(['cursor-project', 'cursor', 'claude-home', 'claude']),
       ['cursor', 'claude']
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('discovers installed states for multiple targets in the current context', () => {
+  test('discovers installed states for multiple targets in the current context', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -435,9 +418,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('discovers missing and invalid install-state records', () => {
+  test('discovers missing and invalid install-state records', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -471,9 +454,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('OpenCode discovery, doctor, and uninstall honor the explicit config root', () => {
+  test('OpenCode discovery, doctor, and uninstall honor the explicit config root', () => {
     const homeDir = createTempDir('install-lifecycle-opencode-home-');
     const projectRoot = createTempDir('install-lifecycle-opencode-project-');
     const targetRoot = path.join(homeDir, 'custom-opencode');
@@ -552,9 +535,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor reports missing managed files as an error', () => {
+  test('doctor reports missing managed files as an error', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -609,9 +592,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor reports target mismatches, missing sources, unverified operations, and version drift', () => {
+  test('doctor reports target mismatches, missing sources, unverified operations, and version drift', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -676,9 +659,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor verifies render-template and merge-json operations by content', () => {
+  test('doctor verifies render-template and merge-json operations by content', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -724,9 +707,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor classifies remove, unverified template/json, and invalid JSON operation health', () => {
+  test('doctor classifies remove, unverified template/json, and invalid JSON operation health', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -768,9 +751,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor reports invalid install-state files as errors', () => {
+  test('doctor reports invalid install-state files as errors', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -792,9 +775,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor reports a healthy legacy install when managed files are present', () => {
+  test('doctor reports a healthy legacy install when managed files are present', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -852,9 +835,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair dry-run reports planned copy repairs without writing files', () => {
+  test('repair dry-run reports planned copy repairs without writing files', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -886,9 +869,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('no-op repair preserves recorded source metadata until upgraded bytes are installed', () => {
+  test('no-op repair preserves recorded source metadata until upgraded bytes are installed', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -939,9 +922,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('Claude repair and dry-run preserve user-owned flat skills during legacy migration', () => {
+  test('Claude repair and dry-run preserve user-owned flat skills during legacy migration', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -1036,9 +1019,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('Claude repair migration derives roots from the adapter and removes only the managed legacy file', () => {
+  test('Claude repair migration derives roots from the adapter and removes only the managed legacy file', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
     const outsideRoot = createTempDir('install-lifecycle-outside-');
@@ -1123,9 +1106,9 @@ function runTests() {
       cleanup(projectRoot);
       cleanup(outsideRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair copies missing managed files from recorded source paths', () => {
+  test('repair copies missing managed files from recorded source paths', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -1155,9 +1138,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair reads source content and mode from one no-follow descriptor', () => {
+  test('repair reads source content and mode from one no-follow descriptor', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
     const sourcePath = path.join(REPO_ROOT, 'rules', 'common', 'coding-style.md');
@@ -1196,9 +1179,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair reports invalid states, missing sources, unsupported operations, and no-op refreshes', () => {
+  test('repair reports invalid states, missing sources, unsupported operations, and no-op refreshes', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const invalidProjectRoot = createTempDir('install-lifecycle-invalid-');
     const missingSourceProjectRoot = createTempDir('install-lifecycle-missing-source-');
@@ -1271,9 +1254,9 @@ function runTests() {
       cleanup(unsupportedProjectRoot);
       cleanup(okProjectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair dry-run reports ok when no managed operations need changes', () => {
+  test('repair dry-run reports ok when no managed operations need changes', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -1295,9 +1278,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair builds the OpenCode payload and clears the missing-payload warning', () => {
+  test('repair builds the OpenCode payload and clears the missing-payload warning', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -1372,9 +1355,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair dry-run plans the OpenCode payload build without creating it', () => {
+  test('repair dry-run plans the OpenCode payload build without creating it', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -1415,9 +1398,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('withTemporarilyMovedPath cleans up newly created paths when nothing was pre-existing', () => {
+  test('withTemporarilyMovedPath cleans up newly created paths when nothing was pre-existing', () => {
     const filePath = path.join(REPO_ROOT, '.opencode', 'dist');
     const backupPath = `${filePath}.backup-${process.pid}-test`;
 
@@ -1439,9 +1422,9 @@ function runTests() {
       fs.rmSync(filePath, { recursive: true, force: true });
       fs.rmSync(backupPath, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair surfaces OpenCode build failures without blocking other targets', () => {
+  test('repair surfaces OpenCode build failures without blocking other targets', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -1517,9 +1500,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair surfaces missing source errors from execution when destination is absent', () => {
+  test('repair surfaces missing source errors from execution when destination is absent', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -1547,9 +1530,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair rejects absolute and parent-relative source metadata outside the repository', () => {
+  test('repair rejects absolute and parent-relative source metadata outside the repository', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const outsideRoot = createTempDir('install-lifecycle-source-outside-');
     const outsideSourcePath = path.join(outsideRoot, 'secret.txt');
@@ -1605,9 +1588,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(outsideRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor and repair reject unsafe destinations before health inspection reads them', () => {
+  test('doctor and repair reject unsafe destinations before health inspection reads them', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const outsideRoot = createTempDir('install-lifecycle-destination-outside-');
     const copySource = fs.readFileSync(
@@ -1703,9 +1686,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(outsideRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor reports drifted managed files as a warning', () => {
+  test('doctor reports drifted managed files as a warning', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -1764,9 +1747,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor reproduces install-time link rewrites for managed copy files', () => {
+  test('doctor reproduces install-time link rewrites for managed copy files', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -1856,9 +1839,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor trusts a recorded installed digest before comparing a newer source tree', () => {
+  test('doctor trusts a recorded installed digest before comparing a newer source tree', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -1898,9 +1881,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor reports manifest resolution drift for non-legacy installs', () => {
+  test('doctor reports manifest resolution drift for non-legacy installs', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -1945,9 +1928,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor honors a recorded declined hook decision for manifest installs', () => {
+  test('doctor honors a recorded declined hook decision for manifest installs', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -1982,9 +1965,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor dispatches the OpenCode hook-disable content transform consistently', () => {
+  test('doctor dispatches the OpenCode hook-disable content transform consistently', () => {
     const projectRoot = createTempDir('install-lifecycle-opencode-transform-');
 
     try {
@@ -2032,9 +2015,9 @@ function runTests() {
     } finally {
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('OpenCode doctor and repair keep auto-discovered plugin entrypoints inert after declined consent', () => {
+  test('OpenCode doctor and repair keep auto-discovered plugin entrypoints inert after declined consent', () => {
     const homeDir = createTempDir('install-lifecycle-opencode-inert-');
     try {
       withTemporarilyMovedPath(path.join(REPO_ROOT, '.opencode', 'dist'), () => {
@@ -2084,9 +2067,9 @@ function runTests() {
     } finally {
       cleanup(homeDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('OpenCode repair disables older auto-discovered activation without inferring consent', () => {
+  test('OpenCode repair disables older auto-discovered activation without inferring consent', () => {
     const homeDir = createTempDir('install-lifecycle-opencode-old-activation-');
     try {
       withTemporarilyMovedPath(path.join(REPO_ROOT, '.opencode', 'dist'), () => {
@@ -2117,9 +2100,9 @@ function runTests() {
     } finally {
       cleanup(homeDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('OpenCode repair refuses modified activation before building or restoring missing files', () => {
+  test('OpenCode repair refuses modified activation before building or restoring missing files', () => {
     const homeDir = createTempDir('install-lifecycle-opencode-modified-activation-');
     try {
       withTemporarilyMovedPath(path.join(REPO_ROOT, '.opencode', 'dist'), () => {
@@ -2148,9 +2131,9 @@ function runTests() {
     } finally {
       cleanup(homeDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('OpenCode repair rejects recorded non-plugin sources at missing activation destinations before building', () => {
+  test('OpenCode repair rejects recorded non-plugin sources at missing activation destinations before building', () => {
     for (const kind of ['render-template', 'copy-file']) {
       const homeDir = createTempDir('install-lifecycle-opencode-disguised-');
       try {
@@ -2184,9 +2167,9 @@ function runTests() {
         cleanup(homeDir);
       }
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('OpenCode repair preserves activation bytes changed between health inspection and write', () => {
+  test('OpenCode repair preserves activation bytes changed between health inspection and write', () => {
     const homeDir = createTempDir('install-lifecycle-opencode-health-race-');
     const fileSystem = { ...fs };
     const cacheEntry = require.cache[require.resolve('../../scripts/lib/install-lifecycle')];
@@ -2262,9 +2245,9 @@ function runTests() {
       assert.strictEqual(fs.closeSync, originalCloseSync);
       assert.strictEqual(require.cache[require.resolve('../../scripts/lib/install-lifecycle')], cacheEntry);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('OpenCode repair rejects an active alias introduced during writes before refreshing state', () => {
+  test('OpenCode repair rejects an active alias introduced during writes before refreshing state', () => {
     const homeDir = createTempDir('install-lifecycle-opencode-alias-race-');
     const fileSystem = { ...fs };
     const cacheEntry = require.cache[require.resolve('../../scripts/lib/install-lifecycle')];
@@ -2337,9 +2320,9 @@ function runTests() {
       assert.strictEqual(fs.closeSync, originalCloseSync);
       assert.strictEqual(require.cache[require.resolve('../../scripts/lib/install-lifecycle')], cacheEntry);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor infers enabled hooks from older manifest install-state records', () => {
+  test('doctor infers enabled hooks from older manifest install-state records', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -2375,9 +2358,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair restores render-template outputs from recorded rendered content', () => {
+  test('repair restores render-template outputs from recorded rendered content', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -2434,9 +2417,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair reapplies merge-json operations without clobbering unrelated keys', () => {
+  test('repair reapplies merge-json operations without clobbering unrelated keys', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -2509,9 +2492,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair re-applies managed remove operations when files reappear', () => {
+  test('repair re-applies managed remove operations when files reappear', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -2567,9 +2550,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair rejects a symlink inserted while creating a missing destination parent', () => {
+  test('repair rejects a symlink inserted while creating a missing destination parent', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
     const outsideRoot = createTempDir('install-lifecycle-outside-');
@@ -2627,9 +2610,9 @@ function runTests() {
       cleanup(projectRoot);
       cleanup(outsideRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair rejects an in-root final symlink without overwriting its victim', () => {
+  test('repair rejects an in-root final symlink without overwriting its victim', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -2669,9 +2652,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair uses no-follow writes when a final destination becomes a symlink', () => {
+  test('repair uses no-follow writes when a final destination becomes a symlink', () => {
     if (!fs.constants.O_NOFOLLOW) {
       console.log('    (O_NOFOLLOW unsupported on this platform; skipping)');
       return;
@@ -2730,9 +2713,9 @@ function runTests() {
       cleanup(projectRoot);
       cleanup(outsideRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair revalidates a pinned write before a swapped parent can truncate outside files', () => {
+  test('repair revalidates a pinned write before a swapped parent can truncate outside files', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
     const outsideRoot = createTempDir('install-lifecycle-outside-');
@@ -2820,9 +2803,9 @@ function runTests() {
       cleanup(projectRoot);
       cleanup(outsideRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair refreshes only the adapter-derived install-state path', () => {
+  test('repair refreshes only the adapter-derived install-state path', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
     const outsideRoot = createTempDir('install-lifecycle-outside-');
@@ -2858,9 +2841,9 @@ function runTests() {
       cleanup(projectRoot);
       cleanup(outsideRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall restores JSON merged files from recorded previous content', () => {
+  test('uninstall restores JSON merged files from recorded previous content', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -2927,9 +2910,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall restores rendered template files from recorded previous content', () => {
+  test('uninstall restores rendered template files from recorded previous content', () => {
     const tempDir = createTempDir('install-lifecycle-');
 
     try {
@@ -2987,9 +2970,9 @@ function runTests() {
     } finally {
       cleanup(tempDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall restores files removed during install when previous content is recorded', () => {
+  test('uninstall restores files removed during install when previous content is recorded', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -3045,9 +3028,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall dry-run reports deduped managed removals without deleting files', () => {
+  test('uninstall dry-run reports deduped managed removals without deleting files', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -3082,9 +3065,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall reports invalid install states as errors', () => {
+  test('uninstall reports invalid install states as errors', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -3106,9 +3089,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall removes only the adapter-derived install-state path', () => {
+  test('uninstall removes only the adapter-derived install-state path', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
     const outsideRoot = createTempDir('install-lifecycle-outside-');
@@ -3140,9 +3123,9 @@ function runTests() {
       cleanup(projectRoot);
       cleanup(outsideRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall removes copied files and cleans empty parent directories', () => {
+  test('uninstall removes copied files and cleans empty parent directories', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -3172,9 +3155,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall preserves drifted canonical copied files and install-state', () => {
+  test('uninstall preserves drifted canonical copied files and install-state', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -3206,9 +3189,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall cleanup stops at the adapter-derived target root', () => {
+  test('uninstall cleanup stops at the adapter-derived target root', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const cleanupBoundaryRoot = createTempDir('install-lifecycle-boundary-');
     const projectRoot = path.join(cleanupBoundaryRoot, 'project');
@@ -3242,9 +3225,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(cleanupBoundaryRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall handles merge-json subset removal and full-file deletion', () => {
+  test('uninstall handles merge-json subset removal and full-file deletion', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const partialProjectRoot = createTempDir('install-lifecycle-partial-');
     const fullProjectRoot = createTempDir('install-lifecycle-full-');
@@ -3311,9 +3294,9 @@ function runTests() {
       cleanup(partialProjectRoot);
       cleanup(fullProjectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall handles merge-json edge shapes and absent destinations', () => {
+  test('uninstall handles merge-json edge shapes and absent destinations', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projects = [
       createTempDir('install-lifecycle-current-primitive-'),
@@ -3411,9 +3394,9 @@ function runTests() {
         cleanup(projectRoot);
       }
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall removes generated render-template files and no-backup remove operations are no-ops', () => {
+  test('uninstall removes generated render-template files and no-backup remove operations are no-ops', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -3447,9 +3430,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall preserves a managed path replaced by a symlink and its victim', () => {
+  test('uninstall preserves a managed path replaced by a symlink and its victim', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -3485,9 +3468,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall rejects a symlink inserted after initial destination validation', () => {
+  test('uninstall rejects a symlink inserted after initial destination validation', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
     const outsideRoot = createTempDir('install-lifecycle-outside-');
@@ -3549,9 +3532,9 @@ function runTests() {
       cleanup(projectRoot);
       cleanup(outsideRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall quarantine prevents an ancestor swap from deleting outside-root content', () => {
+  test('uninstall quarantine prevents an ancestor swap from deleting outside-root content', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
     const outsideRoot = createTempDir('install-lifecycle-outside-');
@@ -3609,9 +3592,9 @@ function runTests() {
       cleanup(projectRoot);
       cleanup(outsideRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall restores previous JSON snapshots for template and remove operations', () => {
+  test('uninstall restores previous JSON snapshots for template and remove operations', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -3651,9 +3634,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall reports unsupported operations and missing merge payloads as errors', () => {
+  test('uninstall reports unsupported operations and missing merge payloads as errors', () => {
     const homeDir = createTempDir('install-lifecycle-home-');
     const unsupportedProjectRoot = createTempDir('install-lifecycle-unsupported-');
     const missingPayloadProjectRoot = createTempDir('install-lifecycle-missing-payload-');
@@ -3699,9 +3682,9 @@ function runTests() {
       cleanup(unsupportedProjectRoot);
       cleanup(missingPayloadProjectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor inspects update-claude-settings hooks by event and id', () => {
+  test('doctor inspects update-claude-settings hooks by event and id', () => {
     const homeDir = createTempDir('install-lifecycle-claude-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -3778,9 +3761,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor and repair surface malformed Claude settings errors', () => {
+  test('doctor and repair surface malformed Claude settings errors', () => {
     const homeDir = createTempDir('install-lifecycle-claude-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -3826,9 +3809,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair restores managed Claude hooks while preserving user settings and hooks', () => {
+  test('repair restores managed Claude hooks while preserving user settings and hooks', () => {
     const homeDir = createTempDir('install-lifecycle-claude-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -3884,9 +3867,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair creates missing Claude settings with private permissions', () => {
+  test('repair creates missing Claude settings with private permissions', () => {
     if (process.platform === 'win32') {
       console.log('    (POSIX file modes unsupported on this platform; skipping)');
       return;
@@ -3928,9 +3911,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair removes retired managed hooks using the recorded ownership snapshot', () => {
+  test('repair removes retired managed hooks using the recorded ownership snapshot', () => {
     const homeDir = createTempDir('install-lifecycle-claude-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -3976,9 +3959,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall removes only unchanged managed Claude hooks and reports drift as partial', () => {
+  test('uninstall removes only unchanged managed Claude hooks and reports drift as partial', () => {
     const homeDir = createTempDir('install-lifecycle-claude-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -4032,9 +4015,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall clears empty hook containers but preserves unrelated Claude settings', () => {
+  test('uninstall clears empty hook containers but preserves unrelated Claude settings', () => {
     const homeDir = createTempDir('install-lifecycle-claude-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -4074,9 +4057,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('Claude settings lifecycle refuses a final-symlink destination', () => {
+  test('Claude settings lifecycle refuses a final-symlink destination', () => {
     const homeDir = createTempDir('install-lifecycle-claude-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -4139,9 +4122,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('Claude settings path validation refuses a non-canonical destination', () => {
+  test('Claude settings path validation refuses a non-canonical destination', () => {
     const homeDir = createTempDir('install-lifecycle-claude-home-');
     const projectRoot = createTempDir('install-lifecycle-project-');
 
@@ -4158,10 +4141,4 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

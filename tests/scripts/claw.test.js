@@ -6,7 +6,8 @@
  * Run with: node tests/scripts/claw.test.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { describe, test } = require('node:test');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -30,18 +31,6 @@ const {
 } = require(path.join(__dirname, '..', '..', 'scripts', 'claw.js'));
 
 // Test helper — matches ECC's custom test pattern
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (err) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${err.message}`);
-    if (err.stack) { console.log(`    Stack: ${err.stack}`); }
-    return false;
-  }
-}
 
 function makeTmpDir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'claw-test-'));
@@ -78,29 +67,25 @@ function writeClaudeStub(binDir, lines) {
   fs.writeFileSync(path.join(binDir, 'claude'), ['#!/bin/sh', ...lines, ''].join('\n'), { mode: 0o755 });
 }
 
-function runTests() {
-  console.log('\n=== Testing claw.js ===\n');
-
-  let passed = 0;
-  let failed = 0;
+/** Turn a legacy `console.log` section header into a describe() title. */
+const sectionTitle = title => String(title).trim().replace(/:$/, '');
 
   // ── Storage tests (6) ──────────────────────────────────────────────────
 
-  console.log('Storage:');
-
-  if (test('getClawDir() returns path ending in .claude/claw', () => {
+describe(sectionTitle('Storage:'), () => {
+  test('getClawDir() returns path ending in .claude/claw', () => {
     const dir = getClawDir();
     assert.ok(dir.endsWith(path.join('.claude', 'claw')),
       `Expected path ending in .claude/claw, got: ${dir}`);
-  })) passed++; else failed++;
+  });
 
-  if (test('getSessionPath("foo") returns correct .md path', () => {
+  test('getSessionPath("foo") returns correct .md path', () => {
     const p = getSessionPath('foo');
     assert.ok(p.endsWith(path.join('.claude', 'claw', 'foo.md')),
       `Expected path ending in .claude/claw/foo.md, got: ${p}`);
-  })) passed++; else failed++;
+  });
 
-  if (test('listSessions() returns empty array for empty dir', () => {
+  test('listSessions() returns empty array for empty dir', () => {
     const tmpDir = makeTmpDir();
     try {
       const sessions = listSessions(tmpDir);
@@ -108,9 +93,9 @@ function runTests() {
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('listSessions() finds .md files and strips extension', () => {
+  test('listSessions() finds .md files and strips extension', () => {
     const tmpDir = makeTmpDir();
     try {
       fs.writeFileSync(path.join(tmpDir, 'alpha.md'), 'test');
@@ -123,14 +108,14 @@ function runTests() {
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('loadHistory() returns "" for non-existent file', () => {
+  test('loadHistory() returns "" for non-existent file', () => {
     const result = loadHistory('/tmp/claw-test-nonexistent-' + Date.now() + '.md');
     assert.strictEqual(result, '');
-  })) passed++; else failed++;
+  });
 
-  if (test('appendTurn() writes correct markdown format', () => {
+  test('appendTurn() writes correct markdown format', () => {
     const tmpDir = makeTmpDir();
     const filePath = path.join(tmpDir, 'test.md');
     try {
@@ -143,23 +128,23 @@ function runTests() {
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
+});
 
   // ── Context tests (3) ─────────────────────────────────────────────────
 
-  console.log('\nContext:');
-
-  if (test('loadECCContext() returns "" when no skills specified', () => {
+describe(sectionTitle('\nContext:'), () => {
+  test('loadECCContext() returns "" when no skills specified', () => {
     const result = loadECCContext('');
     assert.strictEqual(result, '');
-  })) passed++; else failed++;
+  });
 
-  if (test('loadECCContext() skips missing skill directories gracefully', () => {
+  test('loadECCContext() skips missing skill directories gracefully', () => {
     const result = loadECCContext('nonexistent-skill-xyz');
     assert.strictEqual(result, '');
-  })) passed++; else failed++;
+  });
 
-  if (test('loadECCContext() concatenates multiple skill files', () => {
+  test('loadECCContext() concatenates multiple skill files', () => {
     // Use real skills from the ECC repo if they exist
     const skillsDir = path.join(process.cwd(), 'skills');
     if (!fs.existsSync(skillsDir)) {
@@ -189,13 +174,13 @@ function runTests() {
           `Should include content from skill ${name}`);
       }
     }
-  })) passed++; else failed++;
+  });
+});
 
   // ── Delegation tests (4) ──────────────────────────────────────────────
 
-  console.log('\nDelegation:');
-
-  if (test('buildPrompt() constructs correct prompt structure', () => {
+describe(sectionTitle('\nDelegation:'), () => {
+  test('buildPrompt() constructs correct prompt structure', () => {
     const prompt = buildPrompt('system info', 'chat history', 'user question');
     assert.ok(prompt.includes('=== SYSTEM CONTEXT ==='), 'Should have system section');
     assert.ok(prompt.includes('system info'), 'Should include system prompt');
@@ -209,9 +194,9 @@ function runTests() {
     const userIdx = prompt.indexOf('USER MESSAGE');
     assert.ok(sysIdx < histIdx, 'System should come before history');
     assert.ok(histIdx < userIdx, 'History should come before user message');
-  })) passed++; else failed++;
+  });
 
-  if (test('askClaude() returns an error string when claude is not on PATH', () => {
+  test('askClaude() returns an error string when claude is not on PATH', () => {
     const binDir = makeTmpDir();
     try {
       const result = withEnv({ [pathEnvKey()]: binDir }, () => askClaude('sys', 'hist', 'msg'));
@@ -219,9 +204,9 @@ function runTests() {
     } finally {
       fs.rmSync(binDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('askClaude() sends the prompt on stdin and returns trimmed stdout', () => {
+  test('askClaude() sends the prompt on stdin and returns trimmed stdout', () => {
     if (process.platform === 'win32') {
       console.log('    (skipped on Windows: the claude stub is a POSIX shell script)');
       return;
@@ -248,9 +233,9 @@ function runTests() {
     } finally {
       fs.rmSync(binDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('askClaude() reports a non-zero exit with its stderr', () => {
+  test('askClaude() reports a non-zero exit with its stderr', () => {
     if (process.platform === 'win32') {
       console.log('    (skipped on Windows: the claude stub is a POSIX shell script)');
       return;
@@ -264,13 +249,13 @@ function runTests() {
     } finally {
       fs.rmSync(binDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
+});
 
   // ── REPL/Meta tests (3) ───────────────────────────────────────────────
 
-  console.log('\nREPL/Meta:');
-
-  if (test('module exports all required functions', () => {
+describe(sectionTitle('\nREPL/Meta:'), () => {
+  test('module exports all required functions', () => {
     const claw = require(path.join(__dirname, '..', '..', 'scripts', 'claw.js'));
     const required = [
       'getClawDir', 'getSessionPath', 'listSessions', 'loadHistory',
@@ -280,9 +265,9 @@ function runTests() {
       assert.strictEqual(typeof claw[fn], 'function',
         `Should export function ${fn}`);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('/clear truncates session file', () => {
+  test('/clear truncates session file', () => {
     const tmpDir = makeTmpDir();
     const filePath = path.join(tmpDir, 'session.md');
     try {
@@ -294,9 +279,9 @@ function runTests() {
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('isValidSessionName rejects invalid characters', () => {
+  test('isValidSessionName rejects invalid characters', () => {
     assert.strictEqual(isValidSessionName('my-project'), true);
     assert.strictEqual(isValidSessionName('default'), true);
     assert.strictEqual(isValidSessionName('test123'), true);
@@ -308,11 +293,11 @@ function runTests() {
     assert.strictEqual(isValidSessionName('-starts-dash'), false);
     assert.strictEqual(isValidSessionName(null), false);
     assert.strictEqual(isValidSessionName(undefined), false);
-  })) passed++; else failed++;
+  });
+});
 
-  console.log('\nNanoClaw v2:');
-
-  if (test('getSessionMetrics returns non-zero token estimate for populated history', () => {
+describe(sectionTitle('\nNanoClaw v2:'), () => {
+  test('getSessionMetrics returns non-zero token estimate for populated history', () => {
     const tmpDir = makeTmpDir();
     const filePath = path.join(tmpDir, 'metrics.md');
     try {
@@ -324,9 +309,9 @@ function runTests() {
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('searchSessions finds query in saved session', () => {
+  test('searchSessions finds query in saved session', () => {
     const tmpDir = makeTmpDir();
     try {
       const clawDir = path.join(tmpDir, '.claude', 'claw');
@@ -339,9 +324,9 @@ function runTests() {
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('branchSession copies history into new branch session', () => {
+  test('branchSession copies history into new branch session', () => {
     const tmpDir = makeTmpDir();
     try {
       const clawDir = path.join(tmpDir, '.claude', 'claw');
@@ -355,9 +340,9 @@ function runTests() {
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('exportSession writes JSON export', () => {
+  test('exportSession writes JSON export', () => {
     const tmpDir = makeTmpDir();
     const filePath = path.join(tmpDir, 'export.md');
     const outPath = path.join(tmpDir, 'export.json');
@@ -372,9 +357,9 @@ function runTests() {
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('compactSession reduces long histories', () => {
+  test('compactSession reduces long histories', () => {
     const tmpDir = makeTmpDir();
     const filePath = path.join(tmpDir, 'compact.md');
     try {
@@ -390,12 +375,5 @@ function runTests() {
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
-
-  // ── Summary ───────────────────────────────────────────────────────────
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });
+});

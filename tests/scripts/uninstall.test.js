@@ -2,7 +2,8 @@
  * Tests for scripts/uninstall.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
@@ -74,25 +75,7 @@ function run(args = [], options = {}) {
   }
 }
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
-
-function runTests() {
-  console.log('\n=== Testing uninstall.js ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('uninstalls files from a real install-apply state and preserves unrelated files', () => {
+  test('uninstalls files from a real install-apply state and preserves unrelated files', () => {
     const homeDir = createTempDir('uninstall-home-');
     const projectRoot = createTempDir('uninstall-project-');
 
@@ -130,9 +113,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstalls the project hook module boundary and preserves user Claude package data', () => {
+  test('uninstalls the project hook module boundary and preserves user Claude package data', () => {
     const homeDir = createTempDir('uninstall-claude-project-esm-home-');
     const projectRoot = createTempDir('uninstall-claude-project-esm-');
     const claudeRoot = path.join(projectRoot, '.claude');
@@ -183,9 +166,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('reverses non-copy operations and keeps unrelated files', () => {
+  test('reverses non-copy operations and keeps unrelated files', () => {
     const homeDir = createTempDir('uninstall-home-');
     const projectRoot = createTempDir('uninstall-project-');
 
@@ -282,9 +265,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('supports dry-run without mutating managed files', () => {
+  test('supports dry-run without mutating managed files', () => {
     const homeDir = createTempDir('uninstall-home-');
     const projectRoot = createTempDir('uninstall-project-');
 
@@ -346,11 +329,11 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
   // #2952: the global `ecc --dry-run uninstall` prefix sets ECC_DRY_RUN=1.
   // The uninstaller must honor it exactly like the subcommand-level flag.
-  if (test('honors global ECC_DRY_RUN=1 without mutating managed files (#2952)', () => {
+  test('honors global ECC_DRY_RUN=1 without mutating managed files (#2952)', () => {
     const homeDir = createTempDir('uninstall-home-');
     const projectRoot = createTempDir('uninstall-project-');
 
@@ -414,9 +397,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('phrases dry-run human output as an unmistakable preview (#2952)', () => {
+  test('phrases dry-run human output as an unmistakable preview (#2952)', () => {
     const homeDir = createTempDir('uninstall-home-');
     const projectRoot = createTempDir('uninstall-project-');
 
@@ -478,9 +461,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('reports preserved legacy Antigravity files as an incomplete uninstall', () => {
+  test('reports preserved legacy Antigravity files as an incomplete uninstall', () => {
     const homeDir = createTempDir('uninstall-home-');
     const projectRoot = createTempDir('uninstall-project-');
 
@@ -549,9 +532,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('auto-detects legacy sync-ecc-to-codex.sh install and removes artifacts without touching conversations or unrelated config keys', () => {
+  test('auto-detects legacy sync-ecc-to-codex.sh install and removes artifacts without touching conversations or unrelated config keys', () => {
     const homeDir = createTempDir('uninstall-legacy-codex-home-');
     const projectRoot = createTempDir('uninstall-legacy-codex-project-');
 
@@ -602,9 +585,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('global dry-run environment previews legacy Codex cleanup without removing artifacts', () => {
+  test('global dry-run environment previews legacy Codex cleanup without removing artifacts', () => {
     const homeDir = createTempDir('uninstall-legacy-codex-dry-run-home-');
     const projectRoot = createTempDir('uninstall-legacy-codex-dry-run-project-');
 
@@ -637,9 +620,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects an invalid global dry-run value before legacy cleanup', () => {
+  test('rejects an invalid global dry-run value before legacy cleanup', () => {
     const homeDir = createTempDir('uninstall-legacy-codex-invalid-dry-run-home-');
     const projectRoot = createTempDir('uninstall-legacy-codex-invalid-dry-run-project-');
 
@@ -670,9 +653,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('does not misclassify a clean Codex home as a legacy install', () => {
+  test('does not misclassify a clean Codex home as a legacy install', () => {
     const homeDir = createTempDir('uninstall-clean-codex-home-');
     const projectRoot = createTempDir('uninstall-clean-codex-project-');
 
@@ -696,9 +679,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('explicit --legacy-codex-sync on a clean home reports not-found without removing files', () => {
+  test('explicit --legacy-codex-sync on a clean home reports not-found without removing files', () => {
     const homeDir = createTempDir('uninstall-legacy-clean-home-');
     const projectRoot = createTempDir('uninstall-legacy-clean-project-');
 
@@ -720,9 +703,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('does not auto-fallback to a marker-only AGENTS.md without a legacy ownership manifest', () => {
+  test('does not auto-fallback to a marker-only AGENTS.md without a legacy ownership manifest', () => {
     const homeDir = createTempDir('uninstall-marker-only-codex-home-');
     const projectRoot = createTempDir('uninstall-marker-only-codex-project-');
 
@@ -752,9 +735,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('explicit --legacy-codex-sync removes a marker-only AGENTS.md block', () => {
+  test('explicit --legacy-codex-sync removes a marker-only AGENTS.md block', () => {
     const homeDir = createTempDir('uninstall-explicit-marker-codex-home-');
     const projectRoot = createTempDir('uninstall-explicit-marker-codex-project-');
 
@@ -777,10 +760,4 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

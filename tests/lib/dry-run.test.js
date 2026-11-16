@@ -4,33 +4,18 @@
  * Run with: node tests/lib/dry-run.test.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { describe, test } = require('node:test');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  ✓ ${name}`);
-    return true;
-  } catch (err) {
-    console.log(`  ✗ ${name}`);
-    console.log(`    Error: ${err.message}`);
-    return false;
-  }
-}
+/** Turn a legacy `console.log` section header into a describe() title. */
+const sectionTitle = title => String(title).trim().replace(/:$/, '');
 
-function runTests() {
-  console.log('\n=== Testing dry-run mode ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  console.log('isDryRun():');
-
-  if (test('returns false when ECC_DRY_RUN is unset', () => {
+describe(sectionTitle('isDryRun():'), () => {
+  test('returns false when ECC_DRY_RUN is unset', () => {
     const env = { ...process.env };
     delete env.ECC_DRY_RUN;
     const result = spawnSync(process.execPath, [
@@ -38,29 +23,29 @@ function runTests() {
       'const { isDryRun } = require("./scripts/lib/hook-flags"); process.exit(isDryRun() ? 1 : 0)',
     ], { cwd: path.resolve(__dirname, '..', '..'), env });
     assert.strictEqual(result.status, 0);
-  })) passed++; else failed++;
+  });
 
-  if (test('returns true when ECC_DRY_RUN=1', () => {
+  test('returns true when ECC_DRY_RUN=1', () => {
     const env = { ...process.env, ECC_DRY_RUN: '1' };
     const result = spawnSync(process.execPath, [
       '-e',
       'const { isDryRun } = require("./scripts/lib/hook-flags"); process.exit(isDryRun() ? 1 : 0)',
     ], { cwd: path.resolve(__dirname, '..', '..'), env });
     assert.strictEqual(result.status, 1);
-  })) passed++; else failed++;
+  });
 
-  if (test('returns false when ECC_DRY_RUN=0', () => {
+  test('returns false when ECC_DRY_RUN=0', () => {
     const env = { ...process.env, ECC_DRY_RUN: '0' };
     const result = spawnSync(process.execPath, [
       '-e',
       'const { isDryRun } = require("./scripts/lib/hook-flags"); process.exit(isDryRun() ? 1 : 0)',
     ], { cwd: path.resolve(__dirname, '..', '..'), env });
     assert.strictEqual(result.status, 0);
-  })) passed++; else failed++;
+  });
+});
 
-  console.log('\nrun-with-flags.js dry-run gating:');
-
-  if (test('skips hook execution and logs preview when ECC_DRY_RUN=1', () => {
+describe(sectionTitle('\nrun-with-flags.js dry-run gating:'), () => {
+  test('skips hook execution and logs preview when ECC_DRY_RUN=1', () => {
     const runWithFlags = path.resolve(__dirname, '..', '..', 'scripts', 'hooks', 'run-with-flags.js');
     const hookScript = 'scripts/hooks/doc-file-warning.js';
     const input = JSON.stringify({ tool: 'Write', tool_input: { file_path: '/tmp/test.md' } });
@@ -95,9 +80,9 @@ function runTests() {
       `Expected stderr to contain target file path, got: ${result.stderr}`
     );
     assert.strictEqual(result.stdout, '', 'Dry-run hooks must not echo stdin');
-  })) passed++; else failed++;
+  });
 
-  if (test('flushes a large dry-run preview when oversized stdout is suppressed', () => {
+  test('flushes a large dry-run preview when oversized stdout is suppressed', () => {
     const runWithFlags = path.resolve(__dirname, '..', '..', 'scripts', 'hooks', 'run-with-flags.js');
     const hookScript = 'scripts/hooks/block-no-verify.js';
     const command = 'x'.repeat(900 * 1024);
@@ -123,9 +108,9 @@ function runTests() {
       result.stderr.endsWith(`command=${command}\n`),
       `Expected the complete dry-run preview on stderr, got ${result.stderr.length} characters`
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('dry-run preview includes command for bash hooks', () => {
+  test('dry-run preview includes command for bash hooks', () => {
     const runWithFlags = path.resolve(__dirname, '..', '..', 'scripts', 'hooks', 'run-with-flags.js');
     const hookScript = 'scripts/hooks/block-no-verify.js';
     const input = JSON.stringify({ tool: 'Bash', tool_input: { command: 'git commit --no-verify -m "test"' } });
@@ -152,9 +137,9 @@ function runTests() {
       `Expected stderr to contain command, got: ${result.stderr}`
     );
     assert.strictEqual(result.stdout, '', 'Dry-run hooks must not echo stdin');
-  })) passed++; else failed++;
+  });
 
-  if (test('dry-run preview handles non-JSON stdin gracefully', () => {
+  test('dry-run preview handles non-JSON stdin gracefully', () => {
     const runWithFlags = path.resolve(__dirname, '..', '..', 'scripts', 'hooks', 'run-with-flags.js');
     const hookScript = 'scripts/hooks/session-start.js';
     const input = 'not valid json at all';
@@ -181,9 +166,9 @@ function runTests() {
       'Expected no tool= when stdin is not JSON'
     );
     assert.strictEqual(result.stdout, '', 'Dry-run hooks must not echo stdin');
-  })) passed++; else failed++;
+  });
 
-  if (test('dry-run preview handles empty stdin gracefully', () => {
+  test('dry-run preview handles empty stdin gracefully', () => {
     const runWithFlags = path.resolve(__dirname, '..', '..', 'scripts', 'hooks', 'run-with-flags.js');
     const hookScript = 'scripts/hooks/session-start.js';
 
@@ -208,9 +193,9 @@ function runTests() {
       !result.stderr.includes('target='),
       'Expected no target= when stdin is empty'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('executes hook normally when ECC_DRY_RUN is not set', () => {
+  test('executes hook normally when ECC_DRY_RUN is not set', () => {
     const runWithFlags = path.resolve(__dirname, '..', '..', 'scripts', 'hooks', 'run-with-flags.js');
     const hookScript = 'scripts/hooks/doc-file-warning.js';
     const input = JSON.stringify({ tool: 'Write', tool_input: { file_path: '/tmp/test.txt' } });
@@ -235,11 +220,11 @@ function runTests() {
       !result.stderr.includes('[DryRun]'),
       'Expected no [DryRun] tag in normal execution'
     );
-  })) passed++; else failed++;
+  });
+});
 
-  console.log('\necc.js --dry-run flag parsing:');
-
-  if (test('--dry-run sets ECC_DRY_RUN env var for child commands', () => {
+describe(sectionTitle('\necc.js --dry-run flag parsing:'), () => {
+  test('--dry-run sets ECC_DRY_RUN env var for child commands', () => {
     const eccJs = path.resolve(__dirname, '..', '..', 'scripts', 'ecc.js');
     const result = spawnSync(process.execPath, [eccJs, '--dry-run', '--help'], {
       encoding: 'utf8',
@@ -247,9 +232,9 @@ function runTests() {
     });
     assert.strictEqual(result.status, 0);
     assert.ok(result.stdout.includes('--dry-run'), 'Help text should mention --dry-run');
-  })) passed++; else failed++;
+  });
 
-  if (test('--dry-run is stripped from args so command routing works', () => {
+  test('--dry-run is stripped from args so command routing works', () => {
     const eccJs = path.resolve(__dirname, '..', '..', 'scripts', 'ecc.js');
     const result = spawnSync(process.execPath, [eccJs, '--dry-run', 'doctor'], {
       encoding: 'utf8',
@@ -259,9 +244,9 @@ function runTests() {
       !result.stderr.includes('Unknown command: --dry-run'),
       'Global --dry-run must not be treated as an unknown command'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('--dry-run works with implicit install routing', () => {
+  test('--dry-run works with implicit install routing', () => {
     const eccJs = path.resolve(__dirname, '..', '..', 'scripts', 'ecc.js');
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-dry-run-home-'));
     try {
@@ -282,12 +267,5 @@ function runTests() {
     } finally {
       fs.rmSync(homeDir, { force: true, recursive: true });
     }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: ${passed} passed, ${failed} failed`);
-  console.log(`Passed: ${passed}`);
-  console.log(`Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });
+});

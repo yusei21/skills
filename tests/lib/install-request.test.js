@@ -2,32 +2,15 @@
  * Tests for scripts/lib/install/request.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 
 const {
   normalizeInstallRequest,
   parseInstallArgs,
 } = require('../../scripts/lib/install/request');
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
-
-function runTests() {
-  console.log('\n=== Testing install/request.js ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('parses manifest-mode CLI arguments', () => {
+  test('parses manifest-mode CLI arguments', () => {
     const parsed = parseInstallArgs([
       'node',
       'scripts/install-apply.js',
@@ -50,9 +33,9 @@ function runTests() {
     assert.strictEqual(parsed.dryRun, true);
     assert.strictEqual(parsed.json, true);
     assert.deepStrictEqual(parsed.languages, []);
-  })) passed++; else failed++;
+  });
 
-  if (test('parses --locale argument', () => {
+  test('parses --locale argument', () => {
     const parsed = parseInstallArgs([
       'node',
       'scripts/install-apply.js',
@@ -61,9 +44,9 @@ function runTests() {
 
     assert.strictEqual(parsed.locale, 'ja');
     assert.deepStrictEqual(parsed.languages, []);
-  })) passed++; else failed++;
+  });
 
-  if (test('parses explicit hook consent flags', () => {
+  test('parses explicit hook consent flags', () => {
     const enabled = parseInstallArgs([
       'node',
       'scripts/install-apply.js',
@@ -81,9 +64,9 @@ function runTests() {
     assert.strictEqual(enabled.noHooks, false);
     assert.strictEqual(declined.enableHooks, false);
     assert.strictEqual(declined.noHooks, true);
-  })) passed++; else failed++;
+  });
 
-  if (test('requires a --locale value', () => {
+  test('requires a --locale value', () => {
     assert.throws(
       () => parseInstallArgs([
         'node',
@@ -93,9 +76,9 @@ function runTests() {
       ]),
       /Missing value for --locale/
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('normalizes legacy language installs into a canonical request', () => {
+  test('normalizes legacy language installs into a canonical request', () => {
     const request = normalizeInstallRequest({
       target: 'claude',
       profileId: null,
@@ -108,9 +91,9 @@ function runTests() {
     assert.deepStrictEqual(request.legacyLanguages, ['typescript', 'python']);
     assert.deepStrictEqual(request.moduleIds, []);
     assert.strictEqual(request.profileId, null);
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects every --locale value because this build ships no translations', () => {
+  test('rejects every --locale value because this build ships no translations', () => {
     for (const locale of ['ja', 'ja-JP', 'zh-cn', 'pt-BR']) {
       for (const languages of [[], ['typescript']]) {
         assert.throws(
@@ -120,9 +103,9 @@ function runTests() {
         );
       }
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('treats locale components as ordinary manifest selections next to legacy languages', () => {
+  test('treats locale components as ordinary manifest selections next to legacy languages', () => {
     for (const target of ['claude', 'claude-project']) {
       assert.throws(() => normalizeInstallRequest(parseInstallArgs([
         'node', 'install-apply.js', '--target', target,
@@ -133,9 +116,9 @@ function runTests() {
       languages: ['typescript'],
       config: { target: 'claude', includeComponentIds: ['locale:zh-cn'] },
     }), /cannot be combined/);
-  })) passed++; else failed++;
+  });
 
-  if (test('keeps non-locale manifest selections incompatible with legacy languages', () => {
+  test('keeps non-locale manifest selections incompatible with legacy languages', () => {
     const invalidSelections = [
       { profileId: 'core' },
       { moduleIds: ['rules-core'] },
@@ -153,9 +136,9 @@ function runTests() {
         includeComponentIds: ['locale:zh-cn'], ...selection,
       }), /cannot be combined/, JSON.stringify(selection));
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('locale components without legacy languages retain manifest mode', () => {
+  test('locale components without legacy languages retain manifest mode', () => {
     for (const profileId of [null, 'core']) {
       const request = normalizeInstallRequest({
         target: 'claude', profileId, includeComponentIds: ['locale:zh-cn'],
@@ -164,9 +147,9 @@ function runTests() {
       assert.strictEqual(request.profileId, profileId);
       assert.deepStrictEqual(request.includeComponentIds, ['locale:zh-cn']);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects unsupported locale codes', () => {
+  test('rejects unsupported locale codes', () => {
     assert.throws(
       () => normalizeInstallRequest({
         target: 'claude',
@@ -179,16 +162,16 @@ function runTests() {
       }),
       /Unsupported locale/
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects --locale for non-Claude targets', () => {
+  test('rejects --locale for non-Claude targets', () => {
     assert.throws(
       () => normalizeInstallRequest({ target: 'cursor', languages: [], locale: 'ja' }),
       /Unsupported locale/
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('normalizes manifest installs into a canonical request', () => {
+  test('normalizes manifest installs into a canonical request', () => {
     const request = normalizeInstallRequest({
       target: 'cursor',
       profileId: 'developer',
@@ -206,9 +189,9 @@ function runTests() {
     assert.deepStrictEqual(request.includeComponentIds, ['lang:typescript']);
     assert.deepStrictEqual(request.excludeComponentIds, ['capability:media']);
     assert.deepStrictEqual(request.legacyLanguages, []);
-  })) passed++; else failed++;
+  });
 
-  if (test('merges config-backed component selections with CLI overrides', () => {
+  test('merges config-backed component selections with CLI overrides', () => {
     const request = normalizeInstallRequest({
       target: 'cursor',
       profileId: null,
@@ -234,9 +217,9 @@ function runTests() {
     assert.deepStrictEqual(request.includeComponentIds, ['lang:typescript', 'framework:nextjs']);
     assert.deepStrictEqual(request.excludeComponentIds, ['capability:orchestration', 'capability:media']);
     assert.strictEqual(request.configPath, '/workspace/app/ecc-install.json');
-  })) passed++; else failed++;
+  });
 
-  if (test('validates explicit module IDs against the manifest catalog', () => {
+  test('validates explicit module IDs against the manifest catalog', () => {
     assert.throws(
       () => normalizeInstallRequest({
         target: 'cursor',
@@ -248,9 +231,9 @@ function runTests() {
       }),
       /Unknown install module: ghost-module/
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects mixing legacy languages with manifest flags', () => {
+  test('rejects mixing legacy languages with manifest flags', () => {
     assert.throws(
       () => normalizeInstallRequest({
         target: 'claude',
@@ -262,9 +245,9 @@ function runTests() {
       }),
       /cannot be combined/
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects --no-hooks with an explicit hooks-runtime selection', () => {
+  test('rejects --no-hooks with an explicit hooks-runtime selection', () => {
     assert.throws(
       () => normalizeInstallRequest({
         target: 'claude',
@@ -277,9 +260,9 @@ function runTests() {
       }),
       /--no-hooks cannot be combined/
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects empty install requests when not asking for help', () => {
+  test('rejects empty install requests when not asking for help', () => {
     assert.throws(
       () => normalizeInstallRequest({
         target: 'claude',
@@ -292,10 +275,4 @@ function runTests() {
       }),
       /No install profile, module IDs, included components, or legacy languages/
     );
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

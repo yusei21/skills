@@ -4,7 +4,8 @@
  * Run with: node tests/ci/validate-agents-tools.test.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -13,18 +14,6 @@ const { execFileSync } = require('child_process');
 const validatorsDir = path.join(__dirname, '..', '..', 'scripts', 'ci');
 const repoRoot = path.join(__dirname, '..', '..');
 const canonicalAgentsDir = path.join(repoRoot, 'agents');
-
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (err) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${err.message}`);
-    return false;
-  }
-}
 
 function createTestDir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'validate-agents-tools-test-'));
@@ -85,13 +74,7 @@ function readCanonicalAgent(file) {
   return fs.readFileSync(resolvedPath, 'utf8');
 }
 
-function runTests() {
-  console.log('\n=== Testing validate-agents tools frontmatter ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('canonical agents declare tools as comma-separated scalars', () => {
+  test('canonical agents declare tools as comma-separated scalars', () => {
     const agentFiles = fs.readdirSync(canonicalAgentsDir).filter(file => file.endsWith('.md'));
 
     for (const file of agentFiles) {
@@ -106,9 +89,9 @@ function runTests() {
         `${file} should use comma-separated scalar tools, not a YAML sequence`
       );
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('accepts comma-separated scalar agent tools', () => {
+  test('accepts comma-separated scalar agent tools', () => {
     const testDir = createTestDir();
     try {
       fs.writeFileSync(path.join(testDir, 'scalar-tools.md'), '---\nmodel: sonnet\ntools: Read, Glob, Grep\n---\n# Agent');
@@ -118,9 +101,9 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects YAML sequence-form agent tools', () => {
+  test('rejects YAML sequence-form agent tools', () => {
     const testDir = createTestDir();
     try {
       fs.writeFileSync(path.join(testDir, 'sequence-tools.md'), '---\nmodel: sonnet\ntools: [Read, Glob, Grep]\n---\n# Agent');
@@ -134,9 +117,9 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects block sequence-form agent tools', () => {
+  test('rejects block sequence-form agent tools', () => {
     const testDir = createTestDir();
     try {
       fs.writeFileSync(path.join(testDir, 'block-sequence-tools.md'), '---\nmodel: sonnet\ntools:\n  - Read\n  - Glob\n  - Grep\n---\n# Agent');
@@ -150,9 +133,9 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('rejects explicitly tagged YAML sequence-form agent tools', () => {
+  test('rejects explicitly tagged YAML sequence-form agent tools', () => {
     const testDir = createTestDir();
     try {
       fs.writeFileSync(path.join(testDir, 'tagged-sequence-tools.md'), '---\nmodel: sonnet\ntools: !!seq [Read, Glob, Grep]\n---\n# Agent');
@@ -166,10 +149,4 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

@@ -4,7 +4,8 @@
 
 'use strict';
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -54,25 +55,7 @@ Call subagent_type: test-writer and skills/core/tdd-workflow/SKILL.md.
 `);
 }
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  PASS ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  FAIL ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
-
-function runTests() {
-  console.log('\n=== Testing command registry generation ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('generates deterministic command metadata and usage statistics', () => {
+  test('generates deterministic command metadata and usage statistics', () => {
     const testDir = createTestDir();
     try {
       writeFixture(testDir);
@@ -94,9 +77,9 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('write and check modes use stable JSON without timestamps', () => {
+  test('write and check modes use stable JSON without timestamps', () => {
     const testDir = createTestDir();
     try {
       writeFixture(testDir);
@@ -114,9 +97,9 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('check mode fails when the registry file is stale', () => {
+  test('check mode fails when the registry file is stale', () => {
     const testDir = createTestDir();
     try {
       writeFixture(testDir);
@@ -133,9 +116,9 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('CLI reports unknown arguments and supports check output', () => {
+  test('CLI reports unknown arguments and supports check output', () => {
     const testDir = createTestDir();
     try {
       writeFixture(testDir);
@@ -167,10 +150,4 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
     }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

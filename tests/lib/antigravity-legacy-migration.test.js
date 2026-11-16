@@ -2,7 +2,8 @@
  * Focused coverage for migrating Antigravity installs from .agent to .agents.
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
@@ -24,18 +25,6 @@ const {
 const REPO_ROOT = path.join(__dirname, '..', '..');
 const PACKAGE_VERSION = require('../../package.json').version;
 const MANIFEST_VERSION = require('../../manifests/install-modules.json').version;
-
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
 
 function digest(content) {
   return crypto.createHash('sha256').update(content).digest('hex');
@@ -124,13 +113,7 @@ function createCanonicalPlan(projectRoot, sourcePath) {
   };
 }
 
-function runTests() {
-  console.log('\n=== Testing Antigravity legacy migration ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('writes canonical state before removing unchanged legacy-managed files', () => {
+  test('writes canonical state before removing unchanged legacy-managed files', () => {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-migrate-'));
     try {
       const legacy = seedLegacyState(projectRoot, [{
@@ -160,9 +143,9 @@ function runTests() {
     } finally {
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('does not clean legacy files when canonical state persistence fails', () => {
+  test('does not clean legacy files when canonical state persistence fails', () => {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-migrate-fail-'));
     try {
       const legacy = seedLegacyState(projectRoot, [{
@@ -190,9 +173,9 @@ function runTests() {
     } finally {
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('preserves recorded legacy content when the current ECC source has changed', () => {
+  test('preserves recorded legacy content when the current ECC source has changed', () => {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-source-drift-'));
     try {
       const legacy = seedLegacyState(projectRoot, [{
@@ -213,9 +196,9 @@ function runTests() {
     } finally {
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('preserves drifted and unmanaged legacy files and retains legacy state', () => {
+  test('preserves drifted and unmanaged legacy files and retains legacy state', () => {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-migrate-partial-'));
     try {
       const legacy = seedLegacyState(projectRoot, [
@@ -281,9 +264,9 @@ function runTests() {
     } finally {
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('does not trust a forged legacy digest to delete customer content', () => {
+  test('does not trust a forged legacy digest to delete customer content', () => {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-migrate-forged-'));
     try {
       const legacy = seedLegacyState(projectRoot, [
@@ -322,9 +305,9 @@ function runTests() {
     } finally {
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('warns when digestless legacy files require manual migration', () => {
+  test('warns when digestless legacy files require manual migration', () => {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-migrate-digestless-'));
     try {
       const legacy = seedLegacyState(projectRoot, [{
@@ -352,9 +335,9 @@ function runTests() {
     } finally {
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('preserves unrelated empty legacy directories after complete cleanup', () => {
+  test('preserves unrelated empty legacy directories after complete cleanup', () => {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-migrate-empty-dir-'));
     try {
       const legacy = seedLegacyState(projectRoot, [{
@@ -377,9 +360,9 @@ function runTests() {
     } finally {
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('list discovery and doctor report both canonical and remaining legacy states', () => {
+  test('list discovery and doctor report both canonical and remaining legacy states', () => {
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-home-'));
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-discover-'));
     try {
@@ -429,9 +412,9 @@ function runTests() {
       fs.rmSync(homeDir, { recursive: true, force: true });
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('uninstall discovers and removes both canonical and legacy states', () => {
+  test('uninstall discovers and removes both canonical and legacy states', () => {
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-home-'));
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-uninstall-'));
     try {
@@ -465,9 +448,9 @@ function runTests() {
       fs.rmSync(homeDir, { recursive: true, force: true });
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('does not repair residual legacy state over preserved customer edits', () => {
+  test('does not repair residual legacy state over preserved customer edits', () => {
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-home-'));
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-repair-'));
     try {
@@ -503,9 +486,9 @@ function runTests() {
       fs.rmSync(homeDir, { recursive: true, force: true });
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('does not discover mismatched or symlinked legacy state', () => {
+  test('does not discover mismatched or symlinked legacy state', () => {
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-home-'));
     const mismatchedProject = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-mismatch-'));
     const symlinkProject = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-symlink-'));
@@ -563,9 +546,9 @@ function runTests() {
       fs.rmSync(symlinkProject, { recursive: true, force: true });
       fs.rmSync(externalRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('reports corrupt legacy state instead of treating it as absent', () => {
+  test('reports corrupt legacy state instead of treating it as absent', () => {
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-home-'));
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-corrupt-'));
     try {
@@ -594,9 +577,9 @@ function runTests() {
       fs.rmSync(homeDir, { recursive: true, force: true });
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('doctor and repair compare Antigravity agents using transformed content', () => {
+  test('doctor and repair compare Antigravity agents using transformed content', () => {
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-home-'));
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-transform-health-'));
     try {
@@ -650,9 +633,9 @@ function runTests() {
       fs.rmSync(homeDir, { recursive: true, force: true });
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('applies a declared Antigravity transform without link-index metadata', () => {
+  test('applies a declared Antigravity transform without link-index metadata', () => {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-transform-only-'));
     try {
       const sourcePath = path.join(REPO_ROOT, 'agents', 'architect.md');
@@ -689,10 +672,4 @@ function runTests() {
     } finally {
       fs.rmSync(projectRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

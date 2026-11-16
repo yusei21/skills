@@ -2,7 +2,8 @@
  * Tests for scripts/lib/install-targets/registry.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -20,25 +21,7 @@ function normalizedRelativePath(value) {
   return String(value || '').replace(/\\/g, '/');
 }
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
-
-function runTests() {
-  console.log('\n=== Testing install-target adapters ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('lists supported target adapters', () => {
+  test('lists supported target adapters', () => {
     const adapters = listInstallTargetAdapters();
     const targets = adapters.map(adapter => adapter.target);
     assert.ok(targets.includes('claude'), 'Should include claude target');
@@ -52,9 +35,9 @@ function runTests() {
     assert.ok(targets.includes('joycode'), 'Should include joycode target');
     assert.ok(targets.includes('qwen'), 'Should include qwen target');
     assert.ok(targets.includes('zed'), 'Should include zed target');
-  })) passed++; else failed++;
+  });
 
-  if (test('resolves cursor adapter root and install-state path from project root', () => {
+  test('resolves cursor adapter root and install-state path from project root', () => {
     const adapter = getInstallTargetAdapter('cursor');
     const projectRoot = '/workspace/app';
     const root = adapter.resolveRoot({ projectRoot });
@@ -62,9 +45,9 @@ function runTests() {
 
     assert.strictEqual(root, path.join(projectRoot, '.cursor'));
     assert.strictEqual(statePath, path.join(projectRoot, '.cursor', 'ecc-install-state.json'));
-  })) passed++; else failed++;
+  });
 
-  if (test('resolves claude adapter root and install-state path from home dir', () => {
+  test('resolves claude adapter root and install-state path from home dir', () => {
     const adapter = getInstallTargetAdapter('claude');
     const homeDir = path.resolve('/Users/example');
     const root = adapter.resolveRoot({ homeDir, repoRoot: '/repo/ecc' });
@@ -72,9 +55,9 @@ function runTests() {
 
     assert.strictEqual(root, path.join(homeDir, '.claude'));
     assert.strictEqual(statePath, path.join(homeDir, '.claude', 'ecc', 'install-state.json'));
-  })) passed++; else failed++;
+  });
 
-  if (test('plans current Kimi Code project instructions, skills, and MCP config under .kimi-code', () => {
+  test('plans current Kimi Code project instructions, skills, and MCP config under .kimi-code', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -148,9 +131,9 @@ function runTests() {
       )),
       'Should keep every managed operation inside .kimi-code'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('Kimi MCP planning requires an explicit ECC source root', () => {
+  test('Kimi MCP planning requires an explicit ECC source root', () => {
     assert.throws(
       () => planInstallTargetScaffold({
         target: 'kimi',
@@ -159,9 +142,9 @@ function runTests() {
       }),
       /repoRoot is required to plan Kimi MCP configuration/
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('plans namespaced Claude rules and flat discoverable skills', () => {
+  test('plans namespaced Claude rules and flat discoverable skills', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const homeDir = path.resolve('/Users/example');
 
@@ -195,9 +178,9 @@ function runTests() {
       )),
       'Should install bundled Claude skills under skills'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('plans scaffold operations and flattens native target roots', () => {
+  test('plans scaffold operations and flattens native target roots', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
     const modules = [
@@ -248,9 +231,9 @@ function runTests() {
       preserved.destinationPath,
       path.join(projectRoot, '.cursor', 'rules', 'common-coding-style.mdc')
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('plans cursor rules with flat namespaced filenames to avoid rule collisions', () => {
+  test('plans cursor rules with flat namespaced filenames to avoid rule collisions', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -298,9 +281,9 @@ function runTests() {
       )),
       'Should not install Cursor README docs as runtime rule files'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('does not install root AGENTS.md into Cursor nested context', () => {
+  test('does not install root AGENTS.md into Cursor nested context', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -328,9 +311,9 @@ function runTests() {
       )),
       'Cursor installs should not create .cursor/AGENTS.md'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('plans cursor agents with ecc-prefixed filenames to avoid agent collisions', () => {
+  test('plans cursor agents with ecc-prefixed filenames to avoid agent collisions', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -366,9 +349,9 @@ function runTests() {
       )),
       'Should not plan a whole-directory Cursor agent copy'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('plans cursor platform rule files as .mdc and excludes rule README docs', () => {
+  test('plans cursor platform rule files as .mdc and excludes rule README docs', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -417,9 +400,9 @@ function runTests() {
       )),
       'Should not emit Cursor rule README docs as .mdc files'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('deduplicates cursor rule destinations when rules-core and platform-configs overlap', () => {
+  test('deduplicates cursor rule destinations when rules-core and platform-configs overlap', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -449,9 +432,9 @@ function runTests() {
       '.cursor/rules/common-agents.md',
       'Should prefer native .cursor/rules content when cursor platform rules would collide'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('prefers native cursor hooks when hooks-runtime and platform-configs overlap', () => {
+  test('prefers native cursor hooks when hooks-runtime and platform-configs overlap', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -489,9 +472,9 @@ function runTests() {
       '.cursor/hooks.json',
       'Should register the native Cursor hook config through hooks-runtime'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('plans native Antigravity 2.0 rules, workflows, skills, and agents', () => {
+  test('plans native Antigravity 2.0 rules, workflows, skills, and agents', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -569,9 +552,9 @@ function runTests() {
       plan.operations.every(operation => !['.agents', 'AGENTS.md'].includes(operation.sourceRelativePath)),
       'Should exclude Codex-only .agents metadata and root AGENTS.md'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('exposes validate and planOperations on adapters', () => {
+  test('exposes validate and planOperations on adapters', () => {
     const claudeAdapter = getInstallTargetAdapter('claude');
     const cursorAdapter = getInstallTargetAdapter('cursor');
 
@@ -588,16 +571,16 @@ function runTests() {
       cursorAdapter.validate({ projectRoot: '/workspace/app', repoRoot: '/repo/ecc' }),
       []
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('throws on unknown target adapter', () => {
+  test('throws on unknown target adapter', () => {
     assert.throws(
       () => getInstallTargetAdapter('ghost-target'),
       /Unknown install target adapter/
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('resolves codebuddy adapter root and install-state path from project root', () => {
+  test('resolves codebuddy adapter root and install-state path from project root', () => {
     const adapter = getInstallTargetAdapter('codebuddy');
     const projectRoot = '/workspace/app';
     const root = adapter.resolveRoot({ projectRoot });
@@ -608,9 +591,9 @@ function runTests() {
     assert.strictEqual(adapter.kind, 'project');
     assert.strictEqual(root, path.join(projectRoot, '.codebuddy'));
     assert.strictEqual(statePath, path.join(projectRoot, '.codebuddy', 'ecc-install-state.json'));
-  })) passed++; else failed++;
+  });
 
-  if (test('resolves gemini adapter root and install-state path from project root', () => {
+  test('resolves gemini adapter root and install-state path from project root', () => {
     const adapter = getInstallTargetAdapter('gemini');
     const projectRoot = '/workspace/app';
     const root = adapter.resolveRoot({ projectRoot });
@@ -621,9 +604,9 @@ function runTests() {
     assert.strictEqual(adapter.kind, 'project');
     assert.strictEqual(root, path.join(projectRoot, '.gemini'));
     assert.strictEqual(statePath, path.join(projectRoot, '.gemini', 'ecc-install-state.json'));
-  })) passed++; else failed++;
+  });
 
-  if (test('codebuddy adapter supports lookup by target and adapter id', () => {
+  test('codebuddy adapter supports lookup by target and adapter id', () => {
     const byTarget = getInstallTargetAdapter('codebuddy');
     const byId = getInstallTargetAdapter('codebuddy-project');
 
@@ -631,9 +614,9 @@ function runTests() {
     assert.strictEqual(byId.id, 'codebuddy-project');
     assert.ok(byTarget.supports('codebuddy'));
     assert.ok(byTarget.supports('codebuddy-project'));
-  })) passed++; else failed++;
+  });
 
-  if (test('resolves joycode adapter root and install-state path from project root', () => {
+  test('resolves joycode adapter root and install-state path from project root', () => {
     const adapter = getInstallTargetAdapter('joycode');
     const projectRoot = '/workspace/app';
     const root = adapter.resolveRoot({ projectRoot });
@@ -644,9 +627,9 @@ function runTests() {
     assert.strictEqual(adapter.kind, 'project');
     assert.strictEqual(root, path.join(projectRoot, '.joycode'));
     assert.strictEqual(statePath, path.join(projectRoot, '.joycode', 'ecc-install-state.json'));
-  })) passed++; else failed++;
+  });
 
-  if (test('joycode adapter supports lookup by target and adapter id', () => {
+  test('joycode adapter supports lookup by target and adapter id', () => {
     const byTarget = getInstallTargetAdapter('joycode');
     const byId = getInstallTargetAdapter('joycode-project');
 
@@ -654,9 +637,9 @@ function runTests() {
     assert.strictEqual(byId.id, 'joycode-project');
     assert.ok(byTarget.supports('joycode'));
     assert.ok(byTarget.supports('joycode-project'));
-  })) passed++; else failed++;
+  });
 
-  if (test('resolves qwen adapter root and install-state path from home dir', () => {
+  test('resolves qwen adapter root and install-state path from home dir', () => {
     const adapter = getInstallTargetAdapter('qwen');
     const homeDir = '/Users/example';
     const root = adapter.resolveRoot({ homeDir, env: {} });
@@ -667,9 +650,9 @@ function runTests() {
     assert.strictEqual(adapter.kind, 'home');
     assert.strictEqual(root, path.join(homeDir, '.qwen'));
     assert.strictEqual(statePath, path.join(homeDir, '.qwen', 'ecc-install-state.json'));
-  })) passed++; else failed++;
+  });
 
-  if (test('opencode adapter honors config overrides in priority order', () => {
+  test('opencode adapter honors config overrides in priority order', () => {
     const adapter = getInstallTargetAdapter('opencode');
     const homeDir = '/Users/example';
     const xdgRoot = path.join(homeDir, 'xdg');
@@ -696,9 +679,9 @@ function runTests() {
       }),
       path.join(path.resolve(explicitRoot), 'ecc-install-state.json')
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('opencode adapter isolates an explicit home from ambient config overrides', () => {
+  test('opencode adapter isolates an explicit home from ambient config overrides', () => {
     const homeDir = '/Users/isolated';
     const registryPath = path.join(__dirname, '..', '..', 'scripts', 'lib', 'install-targets', 'registry.js');
     const child = spawnSync(process.execPath, ['-e', [
@@ -721,9 +704,9 @@ function runTests() {
       JSON.parse(child.stdout),
       path.join(path.resolve(homeDir), '.config', 'opencode')
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('claude adapter honors CLAUDE_CONFIG_DIR over the default home directory', () => {
+  test('claude adapter honors CLAUDE_CONFIG_DIR over the default home directory', () => {
     const adapter = getInstallTargetAdapter('claude');
     const homeDir = '/Users/example';
     const claudeConfigDir = '/private/claude-profile';
@@ -736,9 +719,9 @@ function runTests() {
       adapter.getInstallStatePath({ homeDir, env: { CLAUDE_CONFIG_DIR: claudeConfigDir } }),
       path.join(path.resolve(claudeConfigDir), 'ecc', 'install-state.json')
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('claude adapter falls back to home/.claude when CLAUDE_CONFIG_DIR is unset or blank', () => {
+  test('claude adapter falls back to home/.claude when CLAUDE_CONFIG_DIR is unset or blank', () => {
     const adapter = getInstallTargetAdapter('claude');
     const homeDir = path.resolve('/Users/example');
 
@@ -750,9 +733,9 @@ function runTests() {
       adapter.resolveRoot({ homeDir, env: { CLAUDE_CONFIG_DIR: '   ' } }),
       path.join(homeDir, '.claude')
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('plans claude install under CLAUDE_CONFIG_DIR, keeping operations in the redirected root', () => {
+  test('plans claude install under CLAUDE_CONFIG_DIR, keeping operations in the redirected root', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const homeDir = '/Users/example';
     const claudeConfigDir = '/private/claude-profile';
@@ -776,9 +759,9 @@ function runTests() {
       )),
       'Should keep every managed operation inside the CLAUDE_CONFIG_DIR root'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('invocation environments are immutable snapshots', () => {
+  test('invocation environments are immutable snapshots', () => {
     const source = { OPENCODE_CONFIG_DIR: '/custom/opencode' };
     const selected = resolveInvocationEnvironment({ env: source });
     const ambient = resolveInvocationEnvironment();
@@ -786,9 +769,9 @@ function runTests() {
     assert.notStrictEqual(ambient, process.env);
     selected.OPENCODE_CONFIG_DIR = '/mutated';
     assert.strictEqual(source.OPENCODE_CONFIG_DIR, '/custom/opencode');
-  })) passed++; else failed++;
+  });
 
-  if (test('qwen adapter supports lookup by target and adapter id', () => {
+  test('qwen adapter supports lookup by target and adapter id', () => {
     const byTarget = getInstallTargetAdapter('qwen');
     const byId = getInstallTargetAdapter('qwen-home');
 
@@ -796,9 +779,9 @@ function runTests() {
     assert.strictEqual(byId.id, 'qwen-home');
     assert.ok(byTarget.supports('qwen'));
     assert.ok(byTarget.supports('qwen-home'));
-  })) passed++; else failed++;
+  });
 
-  if (test('resolves zed adapter root and install-state path from project root', () => {
+  test('resolves zed adapter root and install-state path from project root', () => {
     const adapter = getInstallTargetAdapter('zed');
     const projectRoot = '/workspace/app';
     const root = adapter.resolveRoot({ projectRoot });
@@ -809,9 +792,9 @@ function runTests() {
     assert.strictEqual(adapter.kind, 'project');
     assert.strictEqual(root, path.join(projectRoot, '.zed'));
     assert.strictEqual(statePath, path.join(projectRoot, '.zed', 'ecc-install-state.json'));
-  })) passed++; else failed++;
+  });
 
-  if (test('zed adapter supports lookup by target and adapter id', () => {
+  test('zed adapter supports lookup by target and adapter id', () => {
     const byTarget = getInstallTargetAdapter('zed');
     const byId = getInstallTargetAdapter('zed-project');
 
@@ -819,9 +802,9 @@ function runTests() {
     assert.strictEqual(byId.id, 'zed-project');
     assert.ok(byTarget.supports('zed'));
     assert.ok(byTarget.supports('zed-project'));
-  })) passed++; else failed++;
+  });
 
-  if (test('plans codebuddy rules with flat namespaced filenames', () => {
+  test('plans codebuddy rules with flat namespaced filenames', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -854,9 +837,9 @@ function runTests() {
       )),
       'Should not preserve nested rule directories for codebuddy installs'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('plans joycode commands, agents, skills, and flattened rules', () => {
+  test('plans joycode commands, agents, skills, and flattened rules', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -916,9 +899,9 @@ function runTests() {
       )),
       'Should install skills under .joycode/skills'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('plans qwen commands, agents, skills, and native config under home root', () => {
+  test('plans qwen commands, agents, skills, and native config under home root', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const homeDir = '/Users/example';
 
@@ -979,9 +962,9 @@ function runTests() {
       )),
       'Should install skills under ~/.qwen/skills'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('plans zed project settings, commands, agents, skills, and flattened rules', () => {
+  test('plans zed project settings, commands, agents, skills, and flattened rules', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -1056,9 +1039,9 @@ function runTests() {
       !plan.operations.some(operation => normalizedRelativePath(operation.sourceRelativePath) === '.cursor'),
       'Should skip foreign Cursor platform config paths'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('resolves adal adapter root and install-state path from project root', () => {
+  test('resolves adal adapter root and install-state path from project root', () => {
     const adapter = getInstallTargetAdapter('adal');
     const projectRoot = '/workspace/app';
     const root = adapter.resolveRoot({ projectRoot });
@@ -1069,9 +1052,9 @@ function runTests() {
     assert.strictEqual(adapter.kind, 'project');
     assert.strictEqual(root, path.join(projectRoot, '.adal'));
     assert.strictEqual(statePath, path.join(projectRoot, '.adal', 'ecc-install-state.json'));
-  })) passed++; else failed++;
+  });
 
-  if (test('adal adapter supports lookup by target and adapter id', () => {
+  test('adal adapter supports lookup by target and adapter id', () => {
     const byTarget = getInstallTargetAdapter('adal');
     const byId = getInstallTargetAdapter('adal-project');
 
@@ -1079,9 +1062,9 @@ function runTests() {
     assert.strictEqual(byId.id, 'adal-project');
     assert.ok(byTarget.supports('adal'));
     assert.ok(byTarget.supports('adal-project'));
-  })) passed++; else failed++;
+  });
 
-  if (test('plans adal project rules, skills, and native root sync', () => {
+  test('plans adal project rules, skills, and native root sync', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -1130,9 +1113,9 @@ function runTests() {
       )),
       'Should sync native .adal root children in place'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('adal adapter skips foreign platform source paths', () => {
+  test('adal adapter skips foreign platform source paths', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -1169,9 +1152,9 @@ function runTests() {
       )),
       'Should skip foreign Zed platform paths'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('exposes validate and planOperations on codebuddy adapter', () => {
+  test('exposes validate and planOperations on codebuddy adapter', () => {
     const codebuddyAdapter = getInstallTargetAdapter('codebuddy');
 
     assert.strictEqual(typeof codebuddyAdapter.planOperations, 'function');
@@ -1180,9 +1163,9 @@ function runTests() {
       codebuddyAdapter.validate({ projectRoot: '/workspace/app', repoRoot: '/repo/ecc' }),
       []
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('every schema target enum value has a matching adapter (regression guard)', () => {
+  test('every schema target enum value has a matching adapter (regression guard)', () => {
     const schemaPath = path.join(__dirname, '..', '..', 'schemas', 'ecc-install-config.schema.json');
     const schema = JSON.parse(require('fs').readFileSync(schemaPath, 'utf8'));
     const schemaTargets = schema.properties.target.enum;
@@ -1196,9 +1179,9 @@ function runTests() {
         `Available adapter targets: ${adapterTargets.join(', ')}`
       );
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('every adapter target is listed in the schema enum (regression guard)', () => {
+  test('every adapter target is listed in the schema enum (regression guard)', () => {
     const schemaPath = path.join(__dirname, '..', '..', 'schemas', 'ecc-install-config.schema.json');
     const schema = JSON.parse(require('fs').readFileSync(schemaPath, 'utf8'));
     const schemaTargets = schema.properties.target.enum;
@@ -1211,9 +1194,9 @@ function runTests() {
         `Schema targets: ${schemaTargets.join(', ')}`
       );
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('every adapter target is in SUPPORTED_INSTALL_TARGETS (regression guard)', () => {
+  test('every adapter target is in SUPPORTED_INSTALL_TARGETS (regression guard)', () => {
     const { SUPPORTED_INSTALL_TARGETS } = require('../../scripts/lib/install-manifests');
     const adapters = listInstallTargetAdapters();
 
@@ -1224,9 +1207,9 @@ function runTests() {
         `Supported: ${SUPPORTED_INSTALL_TARGETS.join(', ')}`
       );
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('resolves claude-project adapter root and install-state path from project root', () => {
+  test('resolves claude-project adapter root and install-state path from project root', () => {
     const adapter = getInstallTargetAdapter('claude-project');
     const projectRoot = '/workspace/app';
     const root = adapter.resolveRoot({ projectRoot });
@@ -1237,18 +1220,18 @@ function runTests() {
     assert.strictEqual(adapter.kind, 'project');
     assert.strictEqual(root, path.join(projectRoot, '.claude'));
     assert.strictEqual(statePath, path.join(projectRoot, '.claude', 'ecc', 'install-state.json'));
-  })) passed++; else failed++;
+  });
 
-  if (test('claude-project adapter supports lookup by target and adapter id', () => {
+  test('claude-project adapter supports lookup by target and adapter id', () => {
     const byTarget = getInstallTargetAdapter('claude-project');
     const byId = getInstallTargetAdapter('claude-project');
 
     assert.strictEqual(byTarget.id, 'claude-project');
     assert.strictEqual(byId.id, 'claude-project');
     assert.ok(byTarget.supports('claude-project'));
-  })) passed++; else failed++;
+  });
 
-  if (test('plans project-scoped namespaced Claude rules and flat skills', () => {
+  test('plans project-scoped namespaced Claude rules and flat skills', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -1285,9 +1268,9 @@ function runTests() {
       )),
       'Should install bundled skills under project-scope skills'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('claude-project skips foreign platform source paths', () => {
+  test('claude-project skips foreign platform source paths', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -1324,9 +1307,9 @@ function runTests() {
       )),
       'Should skip foreign Zed platform paths'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('opencode adapter skips the foreign Pi harness directory', () => {
+  test('opencode adapter skips the foreign Pi harness directory', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const homeDir = path.join(os.tmpdir(), 'ecc-opencode-pi-home');
 
@@ -1356,9 +1339,9 @@ function runTests() {
       )),
       'Should skip the Pi harness directory, which Pi consumes via `pi install`'
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('every install target treats .pi as a foreign platform path', () => {
+  test('every install target treats .pi as a foreign platform path', () => {
     for (const adapter of listInstallTargetAdapters()) {
       for (const sourcePath of ['.pi', '.pi/extensions/index.ts', '.pi/README.md']) {
         assert.strictEqual(
@@ -1368,9 +1351,9 @@ function runTests() {
         );
       }
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('resolves opencode adapter root and install-state path from home dir', () => {
+  test('resolves opencode adapter root and install-state path from home dir', () => {
     const adapter = getInstallTargetAdapter('opencode');
     const homeDir = '/Users/example';
     const root = adapter.resolveRoot({ homeDir });
@@ -1384,9 +1367,9 @@ function runTests() {
       statePath,
       path.join(path.resolve(homeDir), '.config', 'opencode', 'ecc-install-state.json')
     );
-  })) passed++; else failed++;
+  });
 
-  if (test('opencode adapter validate reports an error when compiled plugin is missing', () => {
+  test('opencode adapter validate reports an error when compiled plugin is missing', () => {
     const adapter = getInstallTargetAdapter('opencode');
     const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'install-targets-opencode-missing-'));
     try {
@@ -1407,9 +1390,9 @@ function runTests() {
     } finally {
       fs.rmSync(repoRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('opencode adapter validate reports a partial build (entry present, runtime dirs absent)', () => {
+  test('opencode adapter validate reports a partial build (entry present, runtime dirs absent)', () => {
     const adapter = getInstallTargetAdapter('opencode');
     const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'install-targets-opencode-partial-'));
     try {
@@ -1428,9 +1411,9 @@ function runTests() {
     } finally {
       fs.rmSync(repoRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('opencode adapter validate rejects wrong artefact type (file where directory expected)', () => {
+  test('opencode adapter validate rejects wrong artefact type (file where directory expected)', () => {
     const adapter = getInstallTargetAdapter('opencode');
     const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'install-targets-opencode-wrongtype-'));
     try {
@@ -1451,9 +1434,9 @@ function runTests() {
     } finally {
       fs.rmSync(repoRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('opencode adapter validate handles ENOTDIR (intermediate path is a file) without throwing', () => {
+  test('opencode adapter validate handles ENOTDIR (intermediate path is a file) without throwing', () => {
     const adapter = getInstallTargetAdapter('opencode');
     const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'install-targets-opencode-enotdir-'));
     try {
@@ -1481,9 +1464,9 @@ function runTests() {
     } finally {
       fs.rmSync(repoRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('opencode adapter validate passes once compiled plugin payload exists', () => {
+  test('opencode adapter validate passes once compiled plugin payload exists', () => {
     const adapter = getInstallTargetAdapter('opencode');
     const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'install-targets-opencode-built-'));
     try {
@@ -1497,9 +1480,9 @@ function runTests() {
     } finally {
       fs.rmSync(repoRoot, { recursive: true, force: true });
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('planInstallTargetScaffold only exempts explicitly allowed validation codes', () => {
+  test('planInstallTargetScaffold only exempts explicitly allowed validation codes', () => {
     const registryPath = require.resolve('../../scripts/lib/install-targets/registry');
     const opencodeHomePath = require.resolve('../../scripts/lib/install-targets/opencode-home');
     const originalRegistryEntry = require.cache[registryPath];
@@ -1566,9 +1549,9 @@ function runTests() {
         delete require.cache[registryPath];
       }
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('convertWindowsPathToWSL converts Windows paths on WSL', () => {
+  test('convertWindowsPathToWSL converts Windows paths on WSL', () => {
     const { convertWindowsPathToWSL, resetWSLDetection, setWSLForTesting } = require('../../scripts/lib/install-targets/helpers');
     setWSLForTesting(true);
     try {
@@ -1578,9 +1561,9 @@ function runTests() {
     } finally {
       resetWSLDetection();
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('convertWindowsPathToWSL returns original path when not on WSL', () => {
+  test('convertWindowsPathToWSL returns original path when not on WSL', () => {
     const { convertWindowsPathToWSL, resetWSLDetection, setWSLForTesting } = require('../../scripts/lib/install-targets/helpers');
     setWSLForTesting(false);
     try {
@@ -1589,9 +1572,9 @@ function runTests() {
     } finally {
       resetWSLDetection();
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('convertWindowsPathToWSL handles non-string input', () => {
+  test('convertWindowsPathToWSL handles non-string input', () => {
     const { convertWindowsPathToWSL, resetWSLDetection, setWSLForTesting } = require('../../scripts/lib/install-targets/helpers');
     setWSLForTesting(true);
     try {
@@ -1601,9 +1584,9 @@ function runTests() {
     } finally {
       resetWSLDetection();
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('claude adapter converts CLAUDE_CONFIG_DIR Windows path to WSL path on WSL', () => {
+  test('claude adapter converts CLAUDE_CONFIG_DIR Windows path to WSL path on WSL', () => {
     const adapter = getInstallTargetAdapter('claude');
     const homeDir = '/home/user';
     const windowsConfigDir = 'C:\\Users\\test\\.claude';
@@ -1620,10 +1603,4 @@ function runTests() {
     } finally {
       setWSLForTesting(null);
     }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });

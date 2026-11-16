@@ -2,7 +2,8 @@
  * Tests for scripts/repair.js
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
+const { test } = require('node:test');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -78,25 +79,7 @@ function pathListIncludes(paths, expectedPath) {
   return paths.some(filePath => normalizeComparablePath(filePath) === normalizedExpected);
 }
 
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (error) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${error.message}`);
-    return false;
-  }
-}
-
-function runTests() {
-  console.log('\n=== Testing repair.js ===\n');
-
-  let passed = 0;
-  let failed = 0;
-
-  if (test('repairs drifted files from a real install-apply state', () => {
+  test('repairs drifted files from a real install-apply state', () => {
     const homeDir = createTempDir('repair-home-');
     const projectRoot = createTempDir('repair-project-');
 
@@ -138,9 +121,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repair preserves a declined hook decision and does not reinstall hooks', () => {
+  test('repair preserves a declined hook decision and does not reinstall hooks', () => {
     const homeDir = createTempDir('repair-home-');
     const projectRoot = createTempDir('repair-project-');
 
@@ -184,9 +167,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('repairs drifted non-copy managed operations and refreshes install-state', () => {
+  test('repairs drifted non-copy managed operations and refreshes install-state', () => {
     const homeDir = createTempDir('repair-home-');
     const projectRoot = createTempDir('repair-project-');
 
@@ -304,9 +287,9 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
+  });
 
-  if (test('supports dry-run without mutating drifted non-copy operations', () => {
+  test('supports dry-run without mutating drifted non-copy operations', () => {
     const homeDir = createTempDir('repair-home-');
     const projectRoot = createTempDir('repair-project-');
 
@@ -366,10 +349,4 @@ function runTests() {
       cleanup(homeDir);
       cleanup(projectRoot);
     }
-  })) passed++; else failed++;
-
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
-  process.exit(failed > 0 ? 1 : 0);
-}
-
-runTests();
+  });
