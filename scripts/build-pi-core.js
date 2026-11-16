@@ -123,11 +123,15 @@ const seenNames = new Map();
 // flat pi/core/skills/<skill>/ copy, so relative Markdown links are rewritten:
 // a sibling skill in any department becomes ../<skill>/, and a link that climbs
 // out of skills/ loses the extra ../ the department level added.
-const DEPARTMENT_IDS = require('../manifests/skill-departments.json').departments.map(d => d.id);
-const DEPARTMENT_LINK_RE = new RegExp(`\\]\\(\\.\\./\\.\\./(?:${DEPARTMENT_IDS.join('|')})/`, 'g');
+const DEPARTMENTS_FILE = path.join(ROOT, 'manifests', 'skill-departments.json');
+const DEPARTMENT_IDS = fs.existsSync(DEPARTMENTS_FILE)
+  ? JSON.parse(fs.readFileSync(DEPARTMENTS_FILE, 'utf8')).departments.map(d => d.id)
+  : [];
+const DEPARTMENT_LINK_RE = DEPARTMENT_IDS.length
+  ? new RegExp(`\\]\\(\\.\\./\\.\\./(?:${DEPARTMENT_IDS.join('|')})/`, 'g')
+  : null;
 function flattenDepartmentLinks(text) {
-  return text
-    .replace(DEPARTMENT_LINK_RE, '](../')
+  return (DEPARTMENT_LINK_RE ? text.replace(DEPARTMENT_LINK_RE, '](../') : text)
     .replace(/\]\(\.\.\/\.\.\/\.\.\//g, '](../../');
 }
 

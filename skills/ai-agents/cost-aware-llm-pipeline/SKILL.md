@@ -23,8 +23,8 @@ Patterns for controlling LLM API costs while maintaining quality. Combines model
 Automatically select cheaper models for simple tasks, reserving expensive models for complex ones.
 
 ```python
-MODEL_SONNET = "claude-sonnet-5"
-MODEL_HAIKU = "claude-haiku-4-5-20251001"
+MODEL_SONNET = "claude-sonnet-5-5"
+MODEL_HAIKU = "claude-haiku-5-5"
 
 _SONNET_TEXT_THRESHOLD = 10_000  # chars
 _SONNET_ITEM_THRESHOLD = 30     # items
@@ -39,7 +39,7 @@ def select_model(
         return force_model
     if text_length >= _SONNET_TEXT_THRESHOLD or item_count >= _SONNET_ITEM_THRESHOLD:
         return MODEL_SONNET  # Complex task
-    return MODEL_HAIKU  # Simple task (3-4x cheaper)
+    return MODEL_HAIKU  # Simple task (~20x cheaper per token)
 ```
 
 ### 2. Immutable Cost Tracking
@@ -142,6 +142,7 @@ def process(text: str, config: Config, tracker: CostTracker) -> tuple[Result, Co
     # 3. Call with retry + caching
     response = call_with_retry(lambda: client.messages.create(
         model=model,
+        max_tokens=16000,
         messages=build_cached_messages(system_prompt, text),
     ))
 
@@ -152,17 +153,21 @@ def process(text: str, config: Config, tracker: CostTracker) -> tuple[Result, Co
     return parse_result(response), tracker
 ```
 
-## Pricing Reference (2026)
+## Pricing Reference (November 2026)
+
+First-party API list prices; check the pricing page before budgeting.
 
 | Model | Input ($/1M tokens) | Output ($/1M tokens) | Relative Cost |
 |-------|---------------------|----------------------|---------------|
-| Haiku 3.5 (legacy) | $0.80 | $4.00 | 0.8x |
-| Haiku 4.5 | $1.00 | $5.00 | 1x |
-| Sonnet 5 | $2.00 | $10.00 | 2x |
-| Sonnet 4.6 | $3.00 | $15.00 | 3x |
-| Opus 4.8 | $5.00 | $25.00 | 5x |
-| Fable 5 / Mythos 5 | $10.00 | $50.00 | 10x |
-| Opus 4.0 / 4.1 (legacy) | $15.00 | $75.00 | 15x |
+| Haiku 5.5 (prompts up to 100K) | $0.10 | $0.50 | 0.05x |
+| Haiku 4.5 | $1.00 | $5.00 | 0.5x |
+| Sonnet 5.5 / Sonnet 5 | $2.00 | $10.00 | 1x |
+| Opus 5.5 | $4.00 | $20.00 | 2x |
+| Opus 5 / Opus 4.8 | $5.00 | $25.00 | 2.5x |
+| Fable 5.2 | $8.00 | $40.00 | 4x |
+| Fable 5.1 / Fable 5 | $10.00 | $50.00 | 5x |
+
+Haiku 5.5 costs $0.50 / $2.50 per 1M tokens for prompts over 100K tokens.
 
 ## Best Practices
 

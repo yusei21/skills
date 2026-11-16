@@ -642,9 +642,9 @@ jobs:
   e2e:
     runs-on: windows-latest   # real GUI environment, no Xvfb needed
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with: { python-version: "3.11" }
 
       - name: Install deps
@@ -660,7 +660,7 @@ jobs:
           CI: "true"
         run: pytest tests/ --html=artifacts/report.html --self-contained-html --junitxml=artifacts/results.xml -v
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: e2e-artifacts

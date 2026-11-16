@@ -21,7 +21,14 @@ falta, em ordem. Atualize ao terminar cada item.
 - **Instalação continua plana.** O instalador remove o nível do departamento no
   destino (`skills/<skill>/`), em `scripts/lib/install-targets/helpers.js`.
   Código de runtime que procura uma skill usa `scripts/lib/skill-layout.js`,
-  que aceita os dois layouts.
+  que aceita os dois layouts. O `pi/core` também é plano: `build-pi-core.js`
+  reescreve os links relativos ao copiar.
+- **Rust:** edition 2024, MSRV 1.85 (`rust-version`), toolchain fixada em 1.99
+  (`ecc2/rust-toolchain.toml`). Clippy no nível padrão (`all`); o `pedantic`
+  gera milhares de avisos neste crate de 55 mil linhas e ficou de fora.
+- **Python:** uv. `[dependency-groups] dev`, backend `uv_build`, `uv.lock`,
+  `.python-version` 3.14, mínimo 3.11. O ruff só olha `src/` e `tests/`: o
+  ruff 0.16 também formata blocos Python dentro de Markdown e scripts das skills.
 - **Fora do escopo por pedido:** renomear ECC, trazer as skills do repositório
   Harnesses (só a ideia), traduções e patrocínios (removidos).
 
@@ -40,9 +47,34 @@ falta, em ordem. Atualize ao terminar cada item.
   `npm run departments:sync` e checados por `npm run departments:check`.
 - Skills novas (revisadas, commit fixado, licença ao lado):
   `web-design-guidelines`, `agent-desktop`, `untangle-codebase`, `ponytail*`,
-  `graphify`, `taste-skill` (ponte), `design-md-library` (ponte).
+  `graphify`, `taste-skill` (ponte), `design-md-library` (ponte). Ficam fora do
+  `pi/core` (motivo em `manifests/pi-core.json`).
 - README novo; traduções, `SPONSORS.md`, `SPONSORING.md` e assets de
   patrocínio removidos; `--locale` do instalador desativado com mensagem clara.
+- **Testes:** as 6 suítes que falhavam foram corrigidas. O
+  `audit-closed-references` não dependia de rede: uma data fixa tinha saído da
+  janela de 30 dias.
+- **Rust (`ecc2/`):** edition 2024, `[lints]`, `cargo fix`/`clippy --fix`/`fmt`.
+  Os testes que mudam `HOME`/`PATH` usam uma trava comum; os repositórios de
+  teste usam `git init -b main`. Comando novo `ecc skills suggest "<tarefa>"`
+  (ver `ecc2/README.md`).
+- **Python (`src/llm/`):** migrado para uv. Três testes ainda apontavam para
+  caminhos de skills antigos, escondidos por um erro de coleta.
+- **CI:** matriz Node 22/24/26, jobs fixos em 24, `typecheck` e
+  `departments:check` no job de validação, job de Rust, job de Python com
+  `astral-sh/setup-uv` (SHA fixado) em 3.11 e 3.14.
+- **ESLint 10:** `preserve-caught-error` (63) e `no-useless-assignment` (24)
+  corrigidas e de volta a `error`. A segunda fica desligada só para os cenários
+  de avaliação, que são copiados literalmente para os corpora.
+- **pi/core:** o build voltou a passar (allowlist com caminho plano e as 12
+  skills novas classificadas).
+- **Varredura das skills:** exemplos de CI com actions atuais (`checkout@v7`,
+  `setup-node@v7`, `setup-python@v7`, `setup-java@v6`, `setup-go@v7`,
+  `cache@v6`, `upload-artifact@v7`), Node 24, Go 1.27; IDs de modelo
+  `claude-haiku-5-5` / `claude-sonnet-5-5` e tabela de preços atualizada.
+- `node scripts/dev/generate-skill-triggers.js --keep-triggers` atualiza o
+  `registryDigest` sem chamar modelo. Use depois de editar skills sem mudar a
+  `description`; com descrição nova ou skill nova, rode a geração completa.
 
 ## Falta, em ordem
 
@@ -51,29 +83,16 @@ falta, em ordem. Atualize ao terminar cada item.
    `ecc-modernized`, sem histórico comum. Falta autenticar: a chave SSH local
    não está cadastrada no GitHub. Depois de autenticar:
    `git push yusei ecc-modernized`.
-2. **Testes restantes.** Ver a seção "Último resultado" abaixo.
-3. **Rust (`ecc2/`).** `edition = "2024"`, `rust-version`, `rust-toolchain.toml`
-   para 1.99, tabela `[lints]` (clippy pedantic com exceções) e
-   `cargo fmt`/`clippy --fix`. Depois, o comando `ecc skills suggest "<tarefa>"`
-   (ideia do Harnesses): lê `manifests/skill-departments.json` e
-   `manifests/context-packs/skill-triggers@1.json`, pontua gatilhos e recomenda
-   quais plugins `ecc-<departamento>` instalar.
-4. **Python (`src/llm/`).** `[dependency-groups]` no lugar de
-   `[project.optional-dependencies] dev`, `uv.lock`, `ruff format` (28 arquivos a
-   formatar), backend `uv_build`. Linha de base: 600 testes passando, ruff e
-   mypy limpos.
-5. **CI (`.github/workflows/`).** Matriz Node 18/20/22 → 22/24/26; jobs fixos em
-   `20.x` → `24.x`; adicionar `npm run typecheck` e `npm run departments:check`;
-   job de Rust (não existe); job de Python com `astral-sh/setup-uv`.
-6. **ESLint 10.** `preserve-caught-error` (63) e `no-useless-assignment` (35)
-   estão como `warn` em `eslint.config.js`; corrigir e voltar para `error`.
-7. **Varredura das skills.** Procurar versões e APIs desatualizadas (Node 18/20,
-   React/Next antigos, comandos obsoletos), começando por `core`, `frontend` e
-   `backend`.
-8. **Migração para `node:test`.** 48 arquivos convertíveis pelo codemod
+2. **Migração para `node:test`.** 48 arquivos convertíveis pelo codemod
    (validado: 46 com resultado idêntico, 2 que antes não imprimiam contagem).
-9. **Tipagem gradual.** Próximo candidato: `scripts/lib/utils.js` (ainda usa
+3. **Tipagem gradual.** Próximo candidato: `scripts/lib/utils.js` (ainda usa
    `scripts/lib/utils.d.ts` escrito à mão).
+4. **Gatilhos das skills.** Só 46 de 326 skills têm frases de gatilho; o
+   `skills suggest` usa nome e descrição para as outras. Uma geração completa
+   (`generate-skill-triggers.js --provider claude`) melhora as sugestões.
+5. **Varredura das skills, segunda passada.** A primeira cobriu versões de
+   actions, runtimes e IDs de modelo. Faltam APIs de bibliotecas por domínio
+   (React/Next, ORMs, SDKs de nuvem), skill por skill.
 
 ## Limitações conhecidas
 
@@ -82,6 +101,9 @@ falta, em ordem. Atualize ao terminar cada item.
   do departamento; os snippets já mostram erro e pedem o caminho de um checkout.
 - Usar `ecc-all-departments` **ou** plugins individuais, nunca os dois.
 - `.agents/skills/` (cópias para Codex) e `.cursor/skills/` continuam planos.
+- O job de Yarn no CI usa Corepack, que o Node 25+ não traz mais; por isso as
+  linhas de gerenciador de pacotes da matriz ficam no Node 24.
+- O `ecc-tui` ainda tem ~20 avisos de código morto (`dead_code`) do upstream.
 
 ## Como verificar
 
@@ -89,9 +111,16 @@ falta, em ordem. Atualize ao terminar cada item.
 npm ci && npm test        # validadores + suíte JS
 npm run typecheck
 npm run lint
+uv sync && uv run pytest && uv run ruff check && uv run mypy src
+(cd ecc2 && cargo fmt --check && cargo clippy --all-targets && cargo test)
 claude plugin validate .
 ```
 
 ## Último resultado
 
-Preenchido ao final da sessão de 16/11/2026.
+Sessão de 16/11/2026 (tarde), commit final no branch `modernize-2026`:
+
+- `npm test`: 9216 testes em 453 arquivos; a única falha da última rodada completa (`build-pi-core.test.js`) foi corrigida e o arquivo passa sozinho, com os validadores verdes
+- `npm run lint`: 0 erros (198 avisos de complexidade e `prefer-const`, herdados); `npm run typecheck`: ok.
+- Python: 639 passaram, 3 pulados; ruff e mypy limpos.
+- Rust: 516 passaram, 1 ignorado; fmt e clippy sem erros.
