@@ -112,7 +112,7 @@ function normalizeInstallRequest(options = {}) {
   const localeComponentId = locale ? LOCALE_ALIAS_TO_COMPONENT_ID[locale] : null;
   if (locale && !localeComponentId) {
     throw new Error(
-      `Unsupported locale: "${locale}". Supported locales: ${listSupportedLocales().join(', ')}`
+      `Unsupported locale: "${locale}". ${listSupportedLocales().length ? `Supported locales: ${listSupportedLocales().join(', ')}` : 'This ECC build ships no translated documentation.'}`
     );
   }
   if (locale && !supportsLocale) {
