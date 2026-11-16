@@ -75,10 +75,11 @@ falta, em ordem. Atualize ao terminar cada item.
 - **node:test:** mais 48 suítes convertidas pelo codemod (mesma contagem de
   testes antes e depois).
 - **Tipagem:** `scripts/lib/utils.js` em `strict`, sem o `utils.d.ts`.
-- **Publicado** em `github.com/yusei21/skills` (`main`, 16/11/2026), no lugar
-  do projeto anterior. O `main` antigo (96 commits, `22151ba`) está no branch
-  local `backup/yusei-skills-main` e em
-  `~/Documents/yusei-skills-backup-2026-11-16.bundle`.
+- **Publicado** em `github.com/yusei21/skills` (`main`, 16/11/2026). Os 96
+  commits do projeto anterior (coleção de skills derivada do ECC, até
+  `22151ba`) continuam no histórico; o commit "restart from ECC upstream"
+  troca o conteúdo pelo ECC original e a modernização vem depois. Skills que
+  só existiam no projeto anterior estão no histórico (`git show 22151ba:skills/`).
 - `node scripts/dev/generate-skill-triggers.js --keep-triggers` atualiza o
   `registryDigest` sem chamar modelo. Use depois de editar skills sem mudar a
   `description`; com descrição nova ou skill nova, rode a geração completa.
