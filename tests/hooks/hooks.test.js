@@ -3958,7 +3958,7 @@ async function runTests() {
     // Patch require to use absolute path (the temp dir doesn't have ../lib/utils)
     src = src.replace(/require\('\.\.\/lib\/utils'\)/, `require(${JSON.stringify(realUtilsPath)})`);
     // Patch config file path to point to our test config
-    src = src.replace(/const configFile = path\.join\(scriptDir.*?config\.json'\);/, `const configFile = ${JSON.stringify(configPath)};`);
+    src = src.replace(/const configFile = [^\n]*config\.json'\);/, `const configFile = ${JSON.stringify(configPath)};`);
     fs.writeFileSync(wrapperScript, src);
     return wrapperScript;
   }

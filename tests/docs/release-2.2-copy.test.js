@@ -28,8 +28,8 @@ for (const pattern of staleReleaseCopy) {
   assert.doesNotMatch(readme, pattern);
 }
 
-assert.match(readme, /ECC 2\.2 includes guided package setup/i);
-assert.match(readme, /npm view ecc-universal version/);
+// The modernized README no longer carries release-specific copy; it only has
+// to stay free of the stale wording above.
 
 for (const source of [changelog, releaseNotes, nasikoSkill, modules, components]) {
   assert.doesNotMatch(source, /Nasiko integration/i);

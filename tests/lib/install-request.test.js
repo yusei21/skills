@@ -110,60 +110,29 @@ function runTests() {
     assert.strictEqual(request.profileId, null);
   })) passed++; else failed++;
 
-  if (test('normalizes locale-only installs as manifest component requests', () => {
-    const request = normalizeInstallRequest({
-      target: 'claude',
-      profileId: null,
-      moduleIds: [],
-      includeComponentIds: [],
-      excludeComponentIds: [],
-      languages: [],
-      locale: 'ja',
-    });
-
-    assert.strictEqual(request.mode, 'manifest');
-    assert.strictEqual(request.target, 'claude');
-    assert.deepStrictEqual(request.includeComponentIds, ['locale:ja']);
-    assert.deepStrictEqual(request.legacyLanguages, []);
-  })) passed++; else failed++;
-
-  if (test('allows legacy language installs to include a locale component', () => {
-    const request = normalizeInstallRequest({
-      target: 'claude',
-      profileId: null,
-      moduleIds: [],
-      includeComponentIds: [],
-      excludeComponentIds: [],
-      languages: ['typescript'],
-      locale: 'ja-JP',
-    });
-
-    assert.strictEqual(request.mode, 'legacy-compat');
-    assert.deepStrictEqual(request.legacyLanguages, ['typescript']);
-    assert.deepStrictEqual(request.includeComponentIds, ['locale:ja']);
-  })) passed++; else failed++;
-
-  if (test('accepts canonical locale components with legacy languages on Claude targets', () => {
-    for (const target of ['claude', 'claude-project']) {
-      const request = normalizeInstallRequest(parseInstallArgs([
-        'node', 'install-apply.js', '--target', target,
-        '--with', 'locale:zh-cn', '--with', 'locale:ja',
-        'typescript', '--no-hooks',
-      ]));
-      assert.strictEqual(request.mode, 'legacy-compat');
-      assert.deepStrictEqual(request.includeComponentIds, ['locale:zh-cn', 'locale:ja']);
-      assert.deepStrictEqual(request.legacyLanguages, ['typescript']);
-      assert.strictEqual(request.hookConsent, 'declined');
+  if (test('rejects every --locale value because this build ships no translations', () => {
+    for (const locale of ['ja', 'ja-JP', 'zh-cn', 'pt-BR']) {
+      for (const languages of [[], ['typescript']]) {
+        assert.throws(
+          () => normalizeInstallRequest({ target: 'claude', languages, locale }),
+          /Unsupported locale: .*ships no translated documentation/,
+          `${locale} ${languages.join(',')}`
+        );
+      }
     }
   })) passed++; else failed++;
 
-  if (test('accepts config-backed locale components with legacy languages', () => {
-    const request = normalizeInstallRequest({
+  if (test('treats locale components as ordinary manifest selections next to legacy languages', () => {
+    for (const target of ['claude', 'claude-project']) {
+      assert.throws(() => normalizeInstallRequest(parseInstallArgs([
+        'node', 'install-apply.js', '--target', target,
+        '--with', 'locale:zh-cn', 'typescript', '--no-hooks',
+      ])), /cannot be combined/);
+    }
+    assert.throws(() => normalizeInstallRequest({
       languages: ['typescript'],
       config: { target: 'claude', includeComponentIds: ['locale:zh-cn'] },
-    });
-    assert.strictEqual(request.mode, 'legacy-compat');
-    assert.deepStrictEqual(request.includeComponentIds, ['locale:zh-cn']);
+    }), /cannot be combined/);
   })) passed++; else failed++;
 
   if (test('keeps non-locale manifest selections incompatible with legacy languages', () => {
@@ -214,16 +183,8 @@ function runTests() {
 
   if (test('rejects --locale for non-Claude targets', () => {
     assert.throws(
-      () => normalizeInstallRequest({
-        target: 'cursor',
-        profileId: null,
-        moduleIds: [],
-        includeComponentIds: [],
-        excludeComponentIds: [],
-        languages: [],
-        locale: 'ja',
-      }),
-      /--locale can only be used with --target claude/
+      () => normalizeInstallRequest({ target: 'cursor', languages: [], locale: 'ja' }),
+      /Unsupported locale/
     );
   })) passed++; else failed++;
 
