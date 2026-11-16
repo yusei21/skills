@@ -101,11 +101,7 @@ impl Default for QuietHoursConfig {
 impl QuietHoursConfig {
     pub fn sanitized(self) -> Self {
         let valid = self.start_hour <= 23 && self.end_hour <= 23;
-        if valid {
-            self
-        } else {
-            Self::default()
-        }
+        if valid { self } else { Self::default() }
     }
 
     pub fn is_active(&self, now: DateTime<Local>) -> bool {
@@ -435,9 +431,9 @@ fn sanitize_osascript(value: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::{
-        notification_command, webhook_payload, CompletionSummaryDelivery,
-        DesktopNotificationConfig, DesktopNotifier, NotificationEvent, QuietHoursConfig,
-        WebhookNotificationConfig, WebhookNotifier, WebhookProvider, WebhookTarget,
+        CompletionSummaryDelivery, DesktopNotificationConfig, DesktopNotifier, NotificationEvent,
+        QuietHoursConfig, WebhookNotificationConfig, WebhookNotifier, WebhookProvider,
+        WebhookTarget, notification_command, webhook_payload,
     };
     use chrono::{Local, TimeZone};
     use serde_json::json;
@@ -488,14 +484,16 @@ mod tests {
         };
         let notifier = DesktopNotifier::new(config);
 
-        assert!(!notifier
-            .try_notify(
-                NotificationEvent::ApprovalRequest,
-                "ECC 2.0: Approval needed",
-                "worker-123 needs review",
-                Local.with_ymd_and_hms(2026, 4, 9, 23, 0, 0).unwrap(),
-            )
-            .unwrap());
+        assert!(
+            !notifier
+                .try_notify(
+                    NotificationEvent::ApprovalRequest,
+                    "ECC 2.0: Approval needed",
+                    "worker-123 needs review",
+                    Local.with_ymd_and_hms(2026, 4, 9, 23, 0, 0).unwrap(),
+                )
+                .unwrap()
+        );
     }
 
     #[test]

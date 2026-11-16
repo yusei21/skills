@@ -1,7 +1,8 @@
 [package]
 name = "ecc-tui"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
+rust-version = "1.85"
 description = "ECC 2.0 — Agentic IDE control plane with TUI dashboard"
 license = "MIT"
 authors = ["Affaan Mustafa <me@affaanmustafa.com>"]
@@ -54,6 +55,18 @@ uuid = { version = "1", features = ["v4"] }
 
 # Directory paths
 dirs = "7"
+
+[lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+# Pedantic is not enabled: it reports thousands of style findings on this
+# 55k-line crate. These two defaults are allowed on purpose: session and
+# dashboard constructors take many plain arguments, and tests build configs
+# by assigning fields after Default::default().
+too_many_arguments = "allow"
+field_reassign_with_default = "allow"
 
 [profile.release]
 lto = true

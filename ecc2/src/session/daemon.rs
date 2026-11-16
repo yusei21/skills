@@ -3,9 +3,9 @@ use std::future::Future;
 use std::time::Duration;
 use tokio::time;
 
+use super::SessionState;
 use super::manager;
 use super::store::StateStore;
-use super::SessionState;
 use crate::config::Config;
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
@@ -815,8 +815,8 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn coordinate_backlog_cycle_rebalances_first_after_unrecovered_deferred_pressure(
-    ) -> Result<()> {
+    async fn coordinate_backlog_cycle_rebalances_first_after_unrecovered_deferred_pressure()
+    -> Result<()> {
         let cfg = Config {
             auto_dispatch_unread_handoffs: true,
             ..Config::default()
@@ -881,8 +881,8 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn coordinate_backlog_cycle_records_recovery_when_rebalance_first_dispatch_routes_work(
-    ) -> Result<()> {
+    async fn coordinate_backlog_cycle_records_recovery_when_rebalance_first_dispatch_routes_work()
+    -> Result<()> {
         let cfg = Config {
             auto_dispatch_unread_handoffs: true,
             ..Config::default()
@@ -939,8 +939,8 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn coordinate_backlog_cycle_skips_dispatch_during_chronic_cooloff_when_rebalance_does_not_help(
-    ) -> Result<()> {
+    async fn coordinate_backlog_cycle_skips_dispatch_during_chronic_cooloff_when_rebalance_does_not_help()
+    -> Result<()> {
         let cfg = Config {
             auto_dispatch_unread_handoffs: true,
             ..Config::default()
@@ -998,8 +998,8 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn coordinate_backlog_cycle_skips_dispatch_when_persistent_saturation_streak_hits_cooloff(
-    ) -> Result<()> {
+    async fn coordinate_backlog_cycle_skips_dispatch_when_persistent_saturation_streak_hits_cooloff()
+    -> Result<()> {
         let cfg = Config {
             auto_dispatch_unread_handoffs: true,
             ..Config::default()
@@ -1057,8 +1057,8 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn coordinate_backlog_cycle_skips_rebalance_when_stabilized_and_dispatch_is_healthy(
-    ) -> Result<()> {
+    async fn coordinate_backlog_cycle_skips_rebalance_when_stabilized_and_dispatch_is_healthy()
+    -> Result<()> {
         let cfg = Config {
             auto_dispatch_unread_handoffs: true,
             ..Config::default()

@@ -14,13 +14,13 @@ use super::output::SessionOutputStore;
 use super::runtime::capture_command_output;
 use super::store::StateStore;
 use super::{
-    default_project_label, default_task_group_label, normalize_group_label, HarnessKind,
-    RemoteDispatchKind, ScheduledTask, Session, SessionAgentProfile, SessionGrouping,
-    SessionHarnessInfo, SessionMetrics, SessionState,
+    HarnessKind, RemoteDispatchKind, ScheduledTask, Session, SessionAgentProfile, SessionGrouping,
+    SessionHarnessInfo, SessionMetrics, SessionState, default_project_label,
+    default_task_group_label, normalize_group_label,
 };
 use crate::comms::{self, MessageType, TaskPriority};
 use crate::config::Config;
-use crate::observability::{log_tool_call, ToolCallEvent, ToolLogEntry, ToolLogPage, ToolLogger};
+use crate::observability::{ToolCallEvent, ToolLogEntry, ToolLogPage, ToolLogger, log_tool_call};
 use crate::worktree;
 
 pub async fn create_session(
@@ -406,7 +406,7 @@ fn create_remote_dispatch_request_inner(
         .project
         .as_deref()
         .and_then(normalize_group_label)
-        .unwrap_or_else(|| default_project_label(&working_dir));
+        .unwrap_or_else(|| default_project_label(working_dir));
     let task_group = grouping
         .task_group
         .as_deref()
@@ -429,7 +429,7 @@ fn create_remote_dispatch_request_inner(
         priority,
         &agent_type,
         profile_name,
-        &working_dir,
+        working_dir,
         &project,
         &task_group,
         use_worktree,
@@ -508,7 +508,7 @@ async fn run_remote_dispatch_requests_with_runner_program(
                 &request.agent_type,
                 request.use_worktree,
                 &request.working_dir,
-                &runner_program,
+                runner_program,
                 request.profile_name.as_deref(),
                 grouping,
             )
@@ -559,7 +559,7 @@ async fn run_remote_dispatch_requests_with_runner_program(
                 &request.agent_type,
                 request.use_worktree,
                 &request.working_dir,
-                &runner_program,
+                runner_program,
                 request.profile_name.as_deref(),
                 None,
                 grouping,
@@ -2629,7 +2629,7 @@ async fn queue_session_with_resolved_profile_and_runner_program(
     let session = build_session_record(
         db,
         task,
-        &effective_agent_type,
+        effective_agent_type,
         use_worktree,
         cfg,
         repo_root,
@@ -3090,7 +3090,9 @@ fn configure_background_runner_command(command: &mut Command) {
     {
         use std::os::windows::process::CommandExt;
 
-        command.as_std_mut().creation_flags(detached_creation_flags());
+        command
+            .as_std_mut()
+            .creation_flags(detached_creation_flags());
     }
 }
 
@@ -5117,7 +5119,7 @@ mod tests {
 
     fn init_git_repo(path: &Path) -> Result<()> {
         fs::create_dir_all(path)?;
-        run_git(path, ["init", "-q"])?;
+        run_git(path, ["init", "-q", "-b", "main"])?;
         run_git(path, ["config", "user.name", "ECC Tests"])?;
         run_git(path, ["config", "user.email", "ecc-tests@example.com"])?;
         // Keep fixtures hermetic: a global core.hooksPath (e.g. identity-checking
@@ -5249,8 +5251,7 @@ mod tests {
 
     #[test]
     fn background_runner_stderr_log_path_is_session_scoped() {
-        let path =
-            background_runner_stderr_log_path(Path::new("/tmp/ecc-repo"), "session-123");
+        let path = background_runner_stderr_log_path(Path::new("/tmp/ecc-repo"), "session-123");
         assert_eq!(
             path,
             PathBuf::from("/tmp/ecc-repo/.claude/ecc2/logs/session-123.runner-stderr.log")
@@ -5647,12 +5648,16 @@ mod tests {
         assert!(!request.use_worktree);
         assert!(request.task.contains("Computer-use task."));
         assert!(request.task.contains("Goal: Open the billing portal"));
-        assert!(request
-            .task
-            .contains("Target URL: https://ecc.tools/account"));
-        assert!(request
-            .task
-            .contains("Context: Use the production account flow"));
+        assert!(
+            request
+                .task
+                .contains("Target URL: https://ecc.tools/account")
+        );
+        assert!(
+            request
+                .task
+                .contains("Context: Use the production account flow")
+        );
         Ok(())
     }
 
@@ -6128,13 +6133,15 @@ mod tests {
         assert!(log.contains("--session-id"));
         assert!(log.contains("deadbeef"));
         assert!(log.contains("resume previous task"));
-        assert!(log.contains(
-            tempdir
-                .path()
-                .join("resume-working-dir")
-                .to_string_lossy()
-                .as_ref()
-        ));
+        assert!(
+            log.contains(
+                tempdir
+                    .path()
+                    .join("resume-working-dir")
+                    .to_string_lossy()
+                    .as_ref()
+            )
+        );
 
         Ok(())
     }
@@ -6482,21 +6489,24 @@ mod tests {
             fs::read_to_string(repo_root.join("merged.txt"))?,
             "bulk merge\n"
         );
-        assert!(db
-            .get_session("merge-ready")?
-            .context("merged session should still exist")?
-            .worktree
-            .is_none());
-        assert!(db
-            .get_session("active-worktree")?
-            .context("active session should still exist")?
-            .worktree
-            .is_some());
-        assert!(db
-            .get_session("dirty-worktree")?
-            .context("dirty session should still exist")?
-            .worktree
-            .is_some());
+        assert!(
+            db.get_session("merge-ready")?
+                .context("merged session should still exist")?
+                .worktree
+                .is_none()
+        );
+        assert!(
+            db.get_session("active-worktree")?
+                .context("active session should still exist")?
+                .worktree
+                .is_some()
+        );
+        assert!(
+            db.get_session("dirty-worktree")?
+                .context("dirty session should still exist")?
+                .worktree
+                .is_some()
+        );
         assert!(!merged_worktree.path.exists());
         assert!(active_worktree.path.exists());
         assert!(dirty_worktree.path.exists());
@@ -6582,16 +6592,18 @@ mod tests {
             fs::read_to_string(repo_root.join("README.md"))?,
             "hello\nalpha\nbeta\n"
         );
-        assert!(db
-            .get_session("alpha")?
-            .context("alpha should still exist")?
-            .worktree
-            .is_none());
-        assert!(db
-            .get_session("beta")?
-            .context("beta should still exist")?
-            .worktree
-            .is_none());
+        assert!(
+            db.get_session("alpha")?
+                .context("alpha should still exist")?
+                .worktree
+                .is_none()
+        );
+        assert!(
+            db.get_session("beta")?
+                .context("beta should still exist")?
+                .worktree
+                .is_none()
+        );
 
         Ok(())
     }
@@ -6663,11 +6675,12 @@ mod tests {
         assert_eq!(outcome.failures.len(), 1);
         assert_eq!(outcome.failures[0].session_id, "beta");
         assert!(outcome.failures[0].reason.contains("git rebase failed"));
-        assert!(db
-            .get_session("beta")?
-            .context("beta should still exist")?
-            .worktree
-            .is_some());
+        assert!(
+            db.get_session("beta")?
+                .context("beta should still exist")?
+                .worktree
+                .is_some()
+        );
 
         Ok(())
     }
@@ -6755,9 +6768,11 @@ mod tests {
         assert_eq!(blocked.session_id, "beta");
         assert_eq!(blocked.blocked_by.len(), 1);
         assert_eq!(blocked.blocked_by[0].session_id, "alpha");
-        assert!(blocked.blocked_by[0]
-            .conflicts
-            .contains(&"README.md".to_string()));
+        assert!(
+            blocked.blocked_by[0]
+                .conflicts
+                .contains(&"README.md".to_string())
+        );
         assert!(blocked.suggested_action.contains("merge after alpha"));
 
         Ok(())
@@ -7014,7 +7029,9 @@ mod tests {
             SessionGrouping::default(),
         )
         .await;
-        let error = result.err().context("relative Lead path must fail closed")?;
+        let error = result
+            .err()
+            .context("relative Lead path must fail closed")?;
         assert!(
             format!("{error:#}").contains("must be absolute"),
             "error must describe the invalid persisted Lead working directory"
@@ -7307,8 +7324,8 @@ mod tests {
     }
 
     #[tokio::test(flavor = "current_thread")]
-    async fn assign_session_reuses_idle_delegate_when_only_non_handoff_messages_are_unread(
-    ) -> Result<()> {
+    async fn assign_session_reuses_idle_delegate_when_only_non_handoff_messages_are_unread()
+    -> Result<()> {
         let tempdir = TestDir::new("manager-assign-reuse-idle-info-inbox")?;
         let repo_root = tempdir.path().join("repo");
         init_git_repo(&repo_root)?;
@@ -7657,7 +7674,10 @@ mod tests {
             .context("assigned worker must have an explicit profile")?;
         assert_eq!(worker.profile_name, "pace_dev");
         assert_eq!(worker.model.as_deref(), Some("dev-model"));
-        assert_eq!(db.get_session(&routed[0].session_id)?.unwrap().state, SessionState::Pending);
+        assert_eq!(
+            db.get_session(&routed[0].session_id)?.unwrap().state,
+            SessionState::Pending
+        );
 
         // Preserve the original inheritance behavior when no worker default
         // is configured; do not silently change other deployments.
@@ -7941,9 +7961,9 @@ mod tests {
         );
         let db = StateStore::open(&cfg.db_path)?;
         let _cwd_guard = crate::test_support::CurrentDirGuard::enter(&repo_root)?;
-        let launch = launch_orchestration_template(
-            &db, &cfg, "two-step", None, None, BTreeMap::new(),
-        ).await?;
+        let launch =
+            launch_orchestration_template(&db, &cfg, "two-step", None, None, BTreeMap::new())
+                .await?;
         assert_eq!(launch.created.len(), 2);
         let second_id = &launch.created[1].session_id;
         assert_eq!(db.unread_task_handoff_count(second_id)?, 1);
@@ -7987,7 +8007,8 @@ mod tests {
             "task_handoff",
         )?;
 
-        let first_tick = auto_dispatch_backlog(&db, &cfg, "claude", cfg.auto_create_worktrees, 10).await?;
+        let first_tick =
+            auto_dispatch_backlog(&db, &cfg, "claude", cfg.auto_create_worktrees, 10).await?;
         assert_eq!(first_tick.len(), 1);
         assert_eq!(first_tick[0].routed.len(), 1);
         let child_id = first_tick[0].routed[0].session_id.clone();
@@ -8008,7 +8029,8 @@ mod tests {
         })?;
         db.send_native_assignment_notice("parent", &child_id, &native_notice)?;
         assert_eq!(db.unread_task_handoff_count(&child_id)?, 2);
-        let second_tick = auto_dispatch_backlog(&db, &cfg, "claude", cfg.auto_create_worktrees, 10).await?;
+        let second_tick =
+            auto_dispatch_backlog(&db, &cfg, "claude", cfg.auto_create_worktrees, 10).await?;
         assert!(second_tick.is_empty());
         assert_eq!(db.delegated_children("parent", 10)?, vec![child_id.clone()]);
         assert!(db.delegated_children(&child_id, 10)?.is_empty());
@@ -8024,10 +8046,13 @@ mod tests {
             "task_handoff",
         )?;
         assert_eq!(db.unread_task_handoff_count(&child_id)?, 3);
-        let explicit_tick = auto_dispatch_backlog(&db, &cfg, "claude", cfg.auto_create_worktrees, 10).await?;
-        assert!(explicit_tick
-            .iter()
-            .any(|outcome| { outcome.lead_session_id == child_id && outcome.routed.len() == 1 }));
+        let explicit_tick =
+            auto_dispatch_backlog(&db, &cfg, "claude", cfg.auto_create_worktrees, 10).await?;
+        assert!(
+            explicit_tick.iter().any(|outcome| {
+                outcome.lead_session_id == child_id && outcome.routed.len() == 1
+            })
+        );
         let grandchildren = db.delegated_children(&child_id, 10)?;
         assert_eq!(grandchildren.len(), 1);
         let grandchild_id = grandchildren[0].clone();
@@ -8095,7 +8120,10 @@ mod tests {
         assert_eq!(outcome.remaining_saturated_sessions, 0);
         let child_id = &outcome.dispatched[0].routed[0].session_id;
         assert_eq!(db.unread_task_handoff_count(child_id)?, 1);
-        assert!(db.unread_task_handoffs_for_session(child_id, 10)?.is_empty());
+        assert!(
+            db.unread_task_handoffs_for_session(child_id, 10)?
+                .is_empty()
+        );
 
         Ok(())
     }
@@ -8174,7 +8202,10 @@ mod tests {
         assert_eq!(outcome.remaining_absorbable_sessions, 0);
         assert_eq!(outcome.remaining_saturated_sessions, 1);
         assert_eq!(db.unread_task_handoff_count("delegate")?, 1);
-        assert!(db.unread_task_handoffs_for_session("delegate", 10)?.is_empty());
+        assert!(
+            db.unread_task_handoffs_for_session("delegate", 10)?
+                .is_empty()
+        );
 
         Ok(())
     }
@@ -8569,9 +8600,11 @@ mod tests {
         assert!(db.has_open_conflict_incident("src/lib.rs::session-a::session-b")?);
 
         let decisions = db.list_decisions_for_session("session-b", 10)?;
-        assert!(decisions
-            .iter()
-            .any(|entry| entry.decision == "Pause work due to conflict on src/lib.rs"));
+        assert!(
+            decisions
+                .iter()
+                .any(|entry| entry.decision == "Pause work due to conflict on src/lib.rs")
+        );
 
         let approval_counts = db.unread_approval_counts()?;
         assert_eq!(approval_counts.get("session-b"), Some(&1usize));

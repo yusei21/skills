@@ -1,4 +1,5 @@
 [toolchain]
-# Minimum 1.85 required: several dependencies use edition2024.
-channel = "1.96"
+# Pinned for reproducible fmt/clippy output. The crate's MSRV is the
+# `rust-version` in Cargo.toml (edition 2024 needs 1.85+).
+channel = "1.99"
 components = ["rustfmt", "clippy"]

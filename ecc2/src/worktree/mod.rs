@@ -362,9 +362,13 @@ pub fn git_status_patch_view(
         return Ok(None);
     }
 
-    let staged_patch =
-        git_diff_patch_text_for_paths(&worktree.path, &["--cached"], &[entry.path.clone()])?;
-    let unstaged_patch = git_diff_patch_text_for_paths(&worktree.path, &[], &[entry.path.clone()])?;
+    let staged_patch = git_diff_patch_text_for_paths(
+        &worktree.path,
+        &["--cached"],
+        std::slice::from_ref(&entry.path),
+    )?;
+    let unstaged_patch =
+        git_diff_patch_text_for_paths(&worktree.path, &[], std::slice::from_ref(&entry.path))?;
 
     let mut sections = Vec::new();
     let mut hunks = Vec::new();
@@ -1371,7 +1375,7 @@ fn is_symlink_to(path: &Path, target: &Path) -> Result<bool> {
         Err(error) => {
             return Err(error).with_context(|| {
                 format!("Failed to inspect dependency cache link {}", path.display())
-            })
+            });
         }
     };
     if !metadata.file_type().is_symlink() {
@@ -1790,12 +1794,16 @@ mod tests {
         };
 
         let preview = diff_file_preview(&info, 6)?;
-        assert!(preview
-            .iter()
-            .any(|line| line.contains("Branch A") && line.contains("src.txt")));
-        assert!(preview
-            .iter()
-            .any(|line| line.contains("Working M") && line.contains("README.md")));
+        assert!(
+            preview
+                .iter()
+                .any(|line| line.contains("Branch A") && line.contains("src.txt"))
+        );
+        assert!(
+            preview
+                .iter()
+                .any(|line| line.contains("Working M") && line.contains("README.md"))
+        );
 
         let _ = Command::new("git")
             .arg("-C")
@@ -2119,14 +2127,18 @@ mod tests {
         let preview =
             branch_conflict_preview(&left, &right, 12)?.expect("expected branch conflict preview");
         assert_eq!(preview.conflicts, vec!["README.md".to_string()]);
-        assert!(preview
-            .left_patch_preview
-            .as_ref()
-            .is_some_and(|preview| preview.contains("README.md")));
-        assert!(preview
-            .right_patch_preview
-            .as_ref()
-            .is_some_and(|preview| preview.contains("README.md")));
+        assert!(
+            preview
+                .left_patch_preview
+                .as_ref()
+                .is_some_and(|preview| preview.contains("README.md"))
+        );
+        assert!(
+            preview
+                .right_patch_preview
+                .as_ref()
+                .is_some_and(|preview| preview.contains("README.md"))
+        );
 
         let _ = Command::new("git")
             .arg("-C")
@@ -2244,10 +2256,12 @@ mod tests {
         let patch =
             git_status_patch_view(&worktree, &entry)?.expect("selected-file patch view for notes");
         assert_eq!(patch.hunks.len(), 2);
-        assert!(patch
-            .hunks
-            .iter()
-            .all(|hunk| hunk.section == GitPatchSectionKind::Unstaged));
+        assert!(
+            patch
+                .hunks
+                .iter()
+                .all(|hunk| hunk.section == GitPatchSectionKind::Unstaged)
+        );
 
         stage_hunk(&worktree, &patch.hunks[0])?;
 
@@ -2351,12 +2365,16 @@ mod tests {
             .expect("staged hunk");
         reset_hunk(&worktree, &entry, &staged_hunk)?;
 
-        assert!(git_stdout(&repo, &["diff", "--cached", "--", "notes.txt"])?
-            .trim()
-            .is_empty());
-        assert!(git_stdout(&repo, &["diff", "--", "notes.txt"])?
-            .trim()
-            .is_empty());
+        assert!(
+            git_stdout(&repo, &["diff", "--cached", "--", "notes.txt"])?
+                .trim()
+                .is_empty()
+        );
+        assert!(
+            git_stdout(&repo, &["diff", "--", "notes.txt"])?
+                .trim()
+                .is_empty()
+        );
         assert_eq!(
             fs::read_to_string(repo.join("notes.txt"))?,
             format!("{original}\n")
@@ -2612,9 +2630,11 @@ mod tests {
         let worktree = create_for_session_in_repo("worker-123", &cfg, &repo)?;
 
         let node_modules = worktree.path.join("node_modules");
-        assert!(fs::symlink_metadata(&node_modules)?
-            .file_type()
-            .is_symlink());
+        assert!(
+            fs::symlink_metadata(&node_modules)?
+                .file_type()
+                .is_symlink()
+        );
         assert_eq!(fs::read_link(&node_modules)?, repo.join("node_modules"));
 
         remove(&worktree)?;
@@ -2642,9 +2662,11 @@ mod tests {
         let worktree = create_for_session_in_repo("worker-123", &cfg, &repo)?;
 
         let node_modules = worktree.path.join("node_modules");
-        assert!(fs::symlink_metadata(&node_modules)?
-            .file_type()
-            .is_symlink());
+        assert!(
+            fs::symlink_metadata(&node_modules)?
+                .file_type()
+                .is_symlink()
+        );
 
         fs::write(
             worktree.path.join("package-lock.json"),
@@ -2653,9 +2675,11 @@ mod tests {
         let applied = sync_shared_dependency_dirs(&worktree)?;
         assert!(applied.is_empty());
         assert!(node_modules.is_dir());
-        assert!(!fs::symlink_metadata(&node_modules)?
-            .file_type()
-            .is_symlink());
+        assert!(
+            !fs::symlink_metadata(&node_modules)?
+                .file_type()
+                .is_symlink()
+        );
         assert!(repo.join("node_modules/.cache-marker").exists());
 
         remove(&worktree)?;

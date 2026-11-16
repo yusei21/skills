@@ -76,6 +76,26 @@ cargo run -- resume <session-id>
 cargo run -- daemon
 ```
 
+## Skill Suggestions
+
+`skills suggest` tells you which skills fit a task and which department plugin
+ships them. It reads `manifests/skill-departments.json`, the optional trigger
+phrases in `manifests/context-packs/skill-triggers@1.json` and each skill's
+`description`. It needs no session database and makes no network calls.
+
+```bash
+cargo run -- skills suggest "train a pytorch model and deploy it"
+cargo run -- skills suggest --limit 1 --json "build a SwiftUI screen"
+cargo run -- skills suggest --root /path/to/ecc "kubernetes rollout"
+```
+
+The checkout is found from `--root`, then `ECC_ROOT`, then the nearest parent
+of the working directory or of the binary. Scoring is lexical and
+deterministic: exact trigger phrases score highest, then rare words in skill
+names, then rare words in descriptions. Words that appear in more than a tenth
+of all descriptions score nothing. The core department maps to the `ecc`
+plugin; every other department maps to `ecc-<department>`.
+
 ## Bounded Harness Evaluation
 
 ECC2 now has an operator-driven configuration registry and promotion gate. Candidate JSON is canonicalized and addressed by its SHA-256 digest, with immutable trace/evidence references. Evaluation uses the same explicit unique seeds for candidate and active baseline through a pluggable Rust trait. The CLI exposes only a deterministic local recorded-measurements evaluator; it makes no network or process calls.
@@ -95,8 +115,13 @@ Limitations: this performs one bounded deterministic comparison. It does not aut
 
 ```bash
 cd ecc2
+cargo fmt --check
+cargo clippy --all-targets
 cargo test
 ```
+
+The crate uses edition 2024 (MSRV 1.85, `rust-version` in `Cargo.toml`);
+`rust-toolchain.toml` pins 1.99 so fmt and clippy output stay reproducible.
 
 ## What Is Still Missing
 

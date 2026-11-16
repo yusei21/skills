@@ -1,4 +1,4 @@
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use serde::{Deserialize, Serialize};
 
 use crate::config::{Config, RiskThresholds};
@@ -338,10 +338,12 @@ mod tests {
 
         assert!(assessment.score >= Config::RISK_THRESHOLDS.review);
         assert_eq!(assessment.suggested_action, SuggestedAction::Review);
-        assert!(assessment
-            .reasons
-            .iter()
-            .any(|reason| reason.contains("sensitive file")));
+        assert!(
+            assessment
+                .reasons
+                .iter()
+                .any(|reason| reason.contains("sensitive file"))
+        );
     }
 
     #[test]
@@ -354,10 +356,12 @@ mod tests {
 
         assert!(assessment.score >= Config::RISK_THRESHOLDS.review);
         assert_eq!(assessment.suggested_action, SuggestedAction::Review);
-        assert!(assessment
-            .reasons
-            .iter()
-            .any(|reason| reason.contains("blast radius")));
+        assert!(
+            assessment
+                .reasons
+                .iter()
+                .any(|reason| reason.contains("blast radius"))
+        );
     }
 
     #[test]
@@ -373,10 +377,12 @@ mod tests {
             assessment.suggested_action,
             SuggestedAction::RequireConfirmation,
         );
-        assert!(assessment
-            .reasons
-            .iter()
-            .any(|reason| reason.contains("irreversible")));
+        assert!(
+            assessment
+                .reasons
+                .iter()
+                .any(|reason| reason.contains("irreversible"))
+        );
     }
 
     #[test]
