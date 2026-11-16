@@ -33,20 +33,20 @@ jobs:
       matrix:
         include:
           # Full suite: Linux on every supported Node line, current LTS on Windows and macOS.
-          - { os: ubuntu-latest, node: '18.x', pm: npm, scope: full }
-          - { os: ubuntu-latest, node: '20.x', pm: npm, scope: full }
           - { os: ubuntu-latest, node: '22.x', pm: npm, scope: full }
-          - { os: windows-latest, node: '22.x', pm: npm, scope: full }
-          - { os: macos-latest, node: '22.x', pm: npm, scope: full }
+          - { os: ubuntu-latest, node: '24.x', pm: npm, scope: full }
+          - { os: ubuntu-latest, node: '26.x', pm: npm, scope: full }
+          - { os: windows-latest, node: '24.x', pm: npm, scope: full }
+          - { os: macos-latest, node: '24.x', pm: npm, scope: full }
           # Package-manager lanes on current LTS. Bun has limited Windows support.
-          - { os: ubuntu-latest, node: '22.x', pm: pnpm, scope: pm }
-          - { os: ubuntu-latest, node: '22.x', pm: yarn, scope: pm }
-          - { os: ubuntu-latest, node: '22.x', pm: bun, scope: pm }
-          - { os: windows-latest, node: '22.x', pm: pnpm, scope: pm }
-          - { os: windows-latest, node: '22.x', pm: yarn, scope: pm }
-          - { os: macos-latest, node: '22.x', pm: pnpm, scope: pm }
-          - { os: macos-latest, node: '22.x', pm: yarn, scope: pm }
-          - { os: macos-latest, node: '22.x', pm: bun, scope: pm }
+          - { os: ubuntu-latest, node: '24.x', pm: pnpm, scope: pm }
+          - { os: ubuntu-latest, node: '24.x', pm: yarn, scope: pm }
+          - { os: ubuntu-latest, node: '24.x', pm: bun, scope: pm }
+          - { os: windows-latest, node: '24.x', pm: pnpm, scope: pm }
+          - { os: windows-latest, node: '24.x', pm: yarn, scope: pm }
+          - { os: macos-latest, node: '24.x', pm: pnpm, scope: pm }
+          - { os: macos-latest, node: '24.x', pm: yarn, scope: pm }
+          - { os: macos-latest, node: '24.x', pm: bun, scope: pm }
 
     steps:
       - name: Checkout
@@ -112,18 +112,11 @@ jobs:
 
       # Package manager setup
       - name: Setup pnpm
-        if: matrix.pm == 'pnpm' && matrix.node != '18.x'
+        if: matrix.pm == 'pnpm'
         uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
         with:
           # Keep an explicit pnpm major because this repo's packageManager is Yarn.
           version: 10
-
-      - name: Setup pnpm (via Corepack)
-        if: matrix.pm == 'pnpm' && matrix.node == '18.x'
-        shell: bash
-        run: |
-          corepack enable
-          corepack prepare pnpm@9 --activate
 
       - name: Setup Yarn (via Corepack)
         if: matrix.pm == 'yarn'
@@ -217,7 +210,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20.x'
+          node-version: '24.x'
 
       - name: Install dependencies
         run: npm ci --ignore-scripts
@@ -254,7 +247,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20.x'
+          node-version: '24.x'
 
       - name: Download exact installer artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -282,7 +275,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20.x'
+          node-version: '24.x'
 
       - name: Install validation dependencies
         run: npm ci --ignore-scripts
@@ -327,6 +320,14 @@ jobs:
         run: npm run command-registry:check
         continue-on-error: false
 
+      - name: Validate department plugins
+        run: npm run departments:check
+        continue-on-error: false
+
+      - name: Type check (TypeScript over JSDoc)
+        run: npm run typecheck
+        continue-on-error: false
+
       - name: Check unicode safety
         run: node scripts/ci/check-unicode-safety.js
         continue-on-error: false
@@ -349,7 +350,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20.x'
+          node-version: '24.x'
 
       # Rebuild runs frontmatter validation and the pi/core safety checks
       # (no callable endpoints, no runtime downloads, no secrets, no absolute
@@ -374,9 +375,14 @@ jobs:
           node scripts/ci/pi-core-load-test.js
 
   python-tests:
-    name: Python Lint, Type Check & Test
+    name: Python Lint, Type Check & Test (${{ matrix.python }})
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        # Oldest supported (requires-python) and the pinned .python-version.
+        python: ['3.11', '3.14']
 
     steps:
       - name: Checkout
@@ -384,27 +390,59 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup Python
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      - name: Setup uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
-          python-version: '3.11'
+          python-version: ${{ matrix.python }}
 
-      - name: Install Python dependencies
-        run: python -m pip install --upgrade pip && python -m pip install -e '.[dev]'
+      - name: Install locked dependencies
+        run: uv sync --locked
 
-      - name: Run ruff (lint)
-        run: python -m ruff check src tests
+      - name: Run ruff (lint and format)
+        run: |
+          uv run ruff check
+          uv run ruff format --check
 
       - name: Run mypy (type check)
-        run: python -m mypy src
+        run: uv run mypy src
 
       - name: Run Python tests
-        run: python -m pytest tests/test_*.py -m "not integration"
+        run: uv run pytest tests -m "not integration"
 
       - name: Test minimum supported OpenAI SDK
         run: |
-          python -m pip install 'openai==2.34.0'
-          python -m pytest tests/test_provider_tools.py tests/test_atlas_provider.py tests/test_astraflow_provider.py tests/test_resolver.py
+          uv pip install 'openai==2.34.0'
+          uv run --no-sync pytest tests/test_provider_tools.py tests/test_atlas_provider.py tests/test_astraflow_provider.py tests/test_resolver.py
+
+  rust:
+    name: Rust (ecc2) fmt, clippy & test
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: ecc2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # rustup on the runner reads ecc2/rust-toolchain.toml and installs the
+      # pinned toolchain with rustfmt and clippy on first use.
+      - name: Install pinned toolchain
+        run: |
+          rustup toolchain install
+          rustup show active-toolchain
+
+      - name: Check formatting
+        run: cargo fmt --check
+
+      - name: Clippy
+        run: cargo clippy --all-targets --locked
+
+      - name: Test
+        run: cargo test --locked
 
   security:
     name: Security Scan
@@ -420,7 +458,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20.x'
+          node-version: '24.x'
 
       - name: Install audit dependencies
         run: npm ci --ignore-scripts
@@ -449,7 +487,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20.x'
+          node-version: '24.x'
 
       - name: Install dependencies
         run: npm ci --ignore-scripts
@@ -468,7 +506,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: coverage-ubuntu-node20-npm
+          name: coverage-ubuntu-node24-npm
           path: coverage/
 
   lint:
@@ -485,7 +523,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20.x'
+          node-version: '24.x'
 
       - name: Install dependencies
         run: npm ci --ignore-scripts

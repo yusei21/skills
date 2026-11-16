@@ -165,7 +165,7 @@ for (const workflowPath of workflowPaths) {
     assert.match(lifecycle, /needs:\s*verify/);
     assert.match(lifecycle, /os:\s*\[ubuntu-latest, macos-latest, windows-latest\]/);
     assert.match(lifecycle, /runs-on:\s*\$\{\{ matrix\.os \}\}/);
-    assert.match(lifecycle, /node-version:\s*['"]20\.x['"]/);
+    assert.match(lifecycle, /node-version:\s*['"]24\.x['"]/);
     assert.match(lifecycle, /uses:\s*actions\/download-artifact@/);
     assert.match(lifecycle, /name:\s*ecc-release-artifacts/);
     assert.match(lifecycle, /ECC_RELEASE_PACKAGE:\s*release-artifacts\/\$\{\{ needs\.verify\.outputs\.package_file \}\}/);
@@ -650,7 +650,7 @@ test('pull-request CI runs the same packed installer on Linux, macOS, and Window
   const lifecycle = jobBlock(source, 'packed-install-lifecycle', 'validate');
   assert.match(lifecycle, /needs:\s*pack-installer/);
   assert.match(lifecycle, /os:\s*\[ubuntu-latest, macos-latest, windows-latest\]/);
-  assert.match(lifecycle, /node-version:\s*['"]20\.x['"]/);
+  assert.match(lifecycle, /node-version:\s*['"]24\.x['"]/);
   assert.match(lifecycle, /name:\s*ecc-ci-installer-artifact/);
   assert.match(lifecycle, /ECC_RELEASE_PACKAGE:\s*release-artifacts\/\$\{\{ needs\.pack-installer\.outputs\.package_file \}\}/);
   assert.match(lifecycle, /ECC_RELEASE_SHA256:\s*\$\{\{ needs\.pack-installer\.outputs\.package_sha256 \}\}/);
