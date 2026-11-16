@@ -48,7 +48,36 @@ function run(result, filename = 'sample.test.js', actions = true) {
   return { status, logs, annotations: logs.filter(line => line.startsWith('::error ')) };
 }
 
+const nodeTestSummary = (pass, fail) => [
+  '\u2714 a passing test (0.1ms)',
+  `\u2139 tests ${pass + fail}`,
+  '\u2139 suites 1',
+  `\u2139 pass ${pass}`,
+  `\u2139 fail ${fail}`,
+  '\u2139 cancelled 0',
+  '\u2139 skipped 0',
+  '\u2139 todo 0',
+  '\u2139 duration_ms 12.5',
+].join('\n');
+
 const tests = [
+  ['node:test spec summaries are counted', () => {
+    const result = run({ status: 0, stdout: nodeTestSummary(117, 0) });
+    assert.strictEqual(result.status, 0);
+    assert.ok(result.logs.some(line => /Total Tests:\s+117\s/.test(line)), result.logs.join('\n'));
+    assert.ok(result.logs.some(line => /Passed:\s+117\s/.test(line)));
+  }],
+  ['node:test spec failures are counted and fail the run', () => {
+    const result = run({ status: 1, stdout: nodeTestSummary(5, 2) });
+    assert.strictEqual(result.status, 1);
+    assert.ok(result.logs.some(line => /Failed:\s+2\s/.test(line)), result.logs.join('\n'));
+  }],
+  ['the last node:test summary owns the totals', () => {
+    const nested = `${nodeTestSummary(1, 1)}\n${nodeTestSummary(9, 0)}`;
+    const result = run({ status: 0, stdout: nested });
+    assert.strictEqual(result.status, 0);
+    assert.ok(result.logs.some(line => /Passed:\s+9\s/.test(line)), result.logs.join('\n'));
+  }],
   ['named suite summaries retain their actual totals', () => {
     const result = run({ status: 0, stdout: 'eval-harness package: Results: Passed: 4, Failed: 0' });
     assert.strictEqual(result.status, 0);

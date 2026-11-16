@@ -1,17 +1,56 @@
+// @ts-check
 /**
  * Package Manager Detection and Selection
  * Automatically detects the preferred package manager or lets user choose
  *
  * Supports: npm, pnpm, yarn, bun
+ *
+ * Types live in the JSDoc below and are enforced by `npm run typecheck`
+ * (TypeScript, strict). This file is the single source of truth for them.
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const { commandExists, getClaudeDir, readFile, writeFile } = require('./utils');
 
-// Package manager definitions
-const PACKAGE_MANAGERS = {
-  npm: {
+/** @typedef {'npm' | 'pnpm' | 'yarn' | 'bun'} PackageManagerName */
+
+/**
+ * @typedef {object} PackageManagerConfig
+ * @property {PackageManagerName} name
+ * @property {string} lockFile Lock file name (e.g. "package-lock.json")
+ * @property {readonly string[]} [lockFileAliases] Older lock file names that still identify this manager
+ * @property {string} installCmd Install command (e.g. "npm install")
+ * @property {string} runCmd Run-script prefix (e.g. "npm run", "pnpm")
+ * @property {string} execCmd Execute-binary prefix (e.g. "npx", "pnpm dlx")
+ * @property {string} testCmd
+ * @property {string} buildCmd
+ * @property {string} devCmd
+ */
+
+/** @typedef {'environment' | 'project-config' | 'package.json' | 'lock-file' | 'global-config' | 'default'} DetectionSource */
+
+/**
+ * @typedef {object} PackageManagerResult
+ * @property {PackageManagerName} name
+ * @property {Readonly<PackageManagerConfig>} config
+ * @property {DetectionSource} source
+ */
+
+/**
+ * @typedef {object} PackageManagerOptions
+ * @property {string} [projectDir] Directory to detect from (default: process.cwd())
+ */
+
+/**
+ * @typedef {object} SavedPreference
+ * @property {PackageManagerName} packageManager
+ * @property {string} setAt ISO-8601 timestamp
+ */
+
+/** @type {Readonly<Record<PackageManagerName, Readonly<PackageManagerConfig>>>} */
+const PACKAGE_MANAGERS = Object.freeze({
+  npm: Object.freeze({
     name: 'npm',
     lockFile: 'package-lock.json',
     installCmd: 'npm install',
@@ -20,8 +59,8 @@ const PACKAGE_MANAGERS = {
     testCmd: 'npm test',
     buildCmd: 'npm run build',
     devCmd: 'npm run dev'
-  },
-  pnpm: {
+  }),
+  pnpm: Object.freeze({
     name: 'pnpm',
     lockFile: 'pnpm-lock.yaml',
     installCmd: 'pnpm install',
@@ -30,8 +69,8 @@ const PACKAGE_MANAGERS = {
     testCmd: 'pnpm test',
     buildCmd: 'pnpm build',
     devCmd: 'pnpm dev'
-  },
-  yarn: {
+  }),
+  yarn: Object.freeze({
     name: 'yarn',
     lockFile: 'yarn.lock',
     installCmd: 'yarn',
@@ -40,62 +79,104 @@ const PACKAGE_MANAGERS = {
     testCmd: 'yarn test',
     buildCmd: 'yarn build',
     devCmd: 'yarn dev'
-  },
-  bun: {
+  }),
+  bun: Object.freeze({
     name: 'bun',
     lockFile: 'bun.lock',
     // Bun switched its default lockfile from the binary bun.lockb to the
     // text-based bun.lock. Keep recognizing the legacy file too.
-    lockFileAliases: ['bun.lockb'],
+    lockFileAliases: Object.freeze(['bun.lockb']),
     installCmd: 'bun install',
     runCmd: 'bun run',
     execCmd: 'bunx',
     testCmd: 'bun test',
     buildCmd: 'bun run build',
     devCmd: 'bun run dev'
+  })
+});
+
+/**
+ * Priority order for detection
+ * @type {readonly PackageManagerName[]}
+ */
+const DETECTION_PRIORITY = Object.freeze(['pnpm', 'bun', 'yarn', 'npm']);
+
+/**
+ * Own-property check, so inherited keys such as "toString" or "constructor"
+ * coming from env vars or JSON are never mistaken for a package manager.
+ * @param {unknown} value
+ * @returns {value is PackageManagerName}
+ */
+function isPackageManagerName(value) {
+  return typeof value === 'string' && Object.hasOwn(PACKAGE_MANAGERS, value);
+}
+
+/**
+ * @param {PackageManagerName} name
+ * @param {DetectionSource} source
+ * @returns {PackageManagerResult}
+ */
+function result(name, source) {
+  return { name, config: PACKAGE_MANAGERS[name], source };
+}
+
+/**
+ * Parse JSON, returning null instead of throwing on malformed input.
+ * @param {string | null} content
+ * @returns {unknown}
+ */
+function parseJsonOrNull(content) {
+  if (!content) return null;
+  try {
+    return JSON.parse(content);
+  } catch {
+    return null;
   }
-};
+}
 
-// Priority order for detection
-const DETECTION_PRIORITY = ['pnpm', 'bun', 'yarn', 'npm'];
+/**
+ * Read the `packageManager` key of a parsed config object, if it names a known manager.
+ * @param {unknown} parsed
+ * @returns {PackageManagerName | null}
+ */
+function configuredManager(parsed) {
+  if (parsed && typeof parsed === 'object' && 'packageManager' in parsed && isPackageManagerName(parsed.packageManager)) {
+    return parsed.packageManager;
+  }
+  return null;
+}
 
-// Config file path
+/** Global config file path */
 function getConfigPath() {
   return path.join(getClaudeDir(), 'package-manager.json');
 }
 
 /**
  * Load saved package manager configuration
+ * @returns {Record<string, unknown> | null}
  */
 function loadConfig() {
-  const configPath = getConfigPath();
-  const content = readFile(configPath);
-
-  if (content) {
-    try {
-      return JSON.parse(content);
-    } catch {
-      return null;
-    }
-  }
-  return null;
+  const parsed = parseJsonOrNull(readFile(getConfigPath()));
+  return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? /** @type {Record<string, unknown>} */ (parsed) : null;
 }
 
 /**
  * Save package manager configuration
+ * @param {Record<string, unknown>} config
  */
 function saveConfig(config) {
-  const configPath = getConfigPath();
-  writeFile(configPath, JSON.stringify(config, null, 2));
+  writeFile(getConfigPath(), JSON.stringify(config, null, 2));
 }
 
 /**
  * Detect package manager from lock file in project directory
+ * @param {string} [projectDir]
+ * @returns {PackageManagerName | null}
  */
 function detectFromLockFile(projectDir = process.cwd()) {
   for (const pmName of DETECTION_PRIORITY) {
     const pm = PACKAGE_MANAGERS[pmName];
-    const lockFileNames = [pm.lockFile, ...(pm.lockFileAliases || [])];
+    const lockFileNames = [pm.lockFile, ...(pm.lockFileAliases ?? [])];
 
     if (lockFileNames.some(lockFileName => fs.existsSync(path.join(projectDir, lockFileName)))) {
       return pmName;
@@ -106,26 +187,17 @@ function detectFromLockFile(projectDir = process.cwd()) {
 
 /**
  * Detect package manager from package.json packageManager field
+ * @param {string} [projectDir]
+ * @returns {PackageManagerName | null}
  */
 function detectFromPackageJson(projectDir = process.cwd()) {
-  const packageJsonPath = path.join(projectDir, 'package.json');
-  const content = readFile(packageJsonPath);
-
-  if (content) {
-    try {
-      const pkg = JSON.parse(content);
-      if (pkg.packageManager) {
-        // Format: "pnpm@8.6.0" or just "pnpm"
-        const pmName = pkg.packageManager.split('@')[0];
-        if (PACKAGE_MANAGERS[pmName]) {
-          return pmName;
-        }
-      }
-    } catch {
-      // Invalid package.json
-    }
+  const pkg = parseJsonOrNull(readFile(path.join(projectDir, 'package.json')));
+  if (!pkg || typeof pkg !== 'object' || !('packageManager' in pkg) || typeof pkg.packageManager !== 'string') {
+    return null;
   }
-  return null;
+  // Format: "pnpm@8.6.0" or just "pnpm"
+  const [pmName] = pkg.packageManager.split('@');
+  return isPackageManagerName(pmName) ? pmName : null;
 }
 
 /**
@@ -135,17 +207,11 @@ function detectFromPackageJson(projectDir = process.cwd()) {
  * for each package manager. Do NOT call this during session startup hooks —
  * it can exceed Bun's spawn limit on Windows and freeze the plugin.
  * Use detectFromLockFile() or detectFromPackageJson() for hot paths.
+ *
+ * @returns {PackageManagerName[]}
  */
 function getAvailablePackageManagers() {
-  const available = [];
-
-  for (const pmName of Object.keys(PACKAGE_MANAGERS)) {
-    if (commandExists(pmName)) {
-      available.push(pmName);
-    }
-  }
-
-  return available;
+  return /** @type {PackageManagerName[]} */ (Object.keys(PACKAGE_MANAGERS)).filter(pmName => commandExists(pmName));
 }
 
 /**
@@ -159,69 +225,40 @@ function getAvailablePackageManagers() {
  * 5. Global user preference (in ~/.claude/package-manager.json)
  * 6. Default to npm (no child processes spawned)
  *
- * @param {object} options - Options
- * @param {string} options.projectDir - Project directory to detect from (default: cwd)
- * @returns {object} - { name, config, source }
+ * @param {PackageManagerOptions} [options]
+ * @returns {PackageManagerResult}
  */
 function getPackageManager(options = {}) {
   const { projectDir = process.cwd() } = options;
 
   // 1. Check environment variable
   const envPm = process.env.CLAUDE_PACKAGE_MANAGER;
-  if (envPm && PACKAGE_MANAGERS[envPm]) {
-    return {
-      name: envPm,
-      config: PACKAGE_MANAGERS[envPm],
-      source: 'environment'
-    };
+  if (isPackageManagerName(envPm)) {
+    return result(envPm, 'environment');
   }
 
   // 2. Check project-specific config
-  const projectConfigPath = path.join(projectDir, '.claude', 'package-manager.json');
-  const projectConfig = readFile(projectConfigPath);
-  if (projectConfig) {
-    try {
-      const config = JSON.parse(projectConfig);
-      if (config.packageManager && PACKAGE_MANAGERS[config.packageManager]) {
-        return {
-          name: config.packageManager,
-          config: PACKAGE_MANAGERS[config.packageManager],
-          source: 'project-config'
-        };
-      }
-    } catch {
-      // Invalid config
-    }
+  const fromProjectConfig = configuredManager(parseJsonOrNull(readFile(path.join(projectDir, '.claude', 'package-manager.json'))));
+  if (fromProjectConfig) {
+    return result(fromProjectConfig, 'project-config');
   }
 
   // 3. Check package.json packageManager field
   const fromPackageJson = detectFromPackageJson(projectDir);
   if (fromPackageJson) {
-    return {
-      name: fromPackageJson,
-      config: PACKAGE_MANAGERS[fromPackageJson],
-      source: 'package.json'
-    };
+    return result(fromPackageJson, 'package.json');
   }
 
   // 4. Check lock file
   const fromLockFile = detectFromLockFile(projectDir);
   if (fromLockFile) {
-    return {
-      name: fromLockFile,
-      config: PACKAGE_MANAGERS[fromLockFile],
-      source: 'lock-file'
-    };
+    return result(fromLockFile, 'lock-file');
   }
 
   // 5. Check global user preference
-  const globalConfig = loadConfig();
-  if (globalConfig && globalConfig.packageManager && PACKAGE_MANAGERS[globalConfig.packageManager]) {
-    return {
-      name: globalConfig.packageManager,
-      config: PACKAGE_MANAGERS[globalConfig.packageManager],
-      source: 'global-config'
-    };
+  const fromGlobalConfig = configuredManager(loadConfig());
+  if (fromGlobalConfig) {
+    return result(fromGlobalConfig, 'global-config');
   }
 
   // 6. Default to npm (always available with Node.js)
@@ -231,29 +268,42 @@ function getPackageManager(options = {}) {
   // and the spawned processes exceed Bun's spawn limit.
   // Steps 1-5 already cover all config-based and file-based detection.
   // If none matched, npm is the safe default.
-  return {
-    name: 'npm',
-    config: PACKAGE_MANAGERS.npm,
-    source: 'default'
-  };
+  return result('npm', 'default');
+}
+
+/**
+ * @param {unknown} pmName
+ * @returns {asserts pmName is PackageManagerName}
+ */
+function assertPackageManagerName(pmName) {
+  if (!isPackageManagerName(pmName)) {
+    throw new Error(`Unknown package manager: ${pmName}`);
+  }
+}
+
+/**
+ * @param {unknown} err
+ * @returns {string}
+ */
+function messageOf(err) {
+  return err instanceof Error ? err.message : String(err);
 }
 
 /**
  * Set user's preferred package manager (global)
+ * @param {string} pmName
+ * @returns {Record<string, unknown> & SavedPreference}
+ * @throws {Error} If pmName is unknown or the preference cannot be saved
  */
 function setPreferredPackageManager(pmName) {
-  if (!PACKAGE_MANAGERS[pmName]) {
-    throw new Error(`Unknown package manager: ${pmName}`);
-  }
+  assertPackageManagerName(pmName);
 
-  const config = loadConfig() || {};
-  config.packageManager = pmName;
-  config.setAt = new Date().toISOString();
+  const config = { ...loadConfig(), packageManager: pmName, setAt: new Date().toISOString() };
 
   try {
     saveConfig(config);
   } catch (err) {
-    throw new Error(`Failed to save package manager preference: ${err.message}`);
+    throw new Error(`Failed to save package manager preference: ${messageOf(err)}`, { cause: err });
   }
 
   return config;
@@ -261,15 +311,16 @@ function setPreferredPackageManager(pmName) {
 
 /**
  * Set project's preferred package manager
+ * @param {string} pmName
+ * @param {string} [projectDir]
+ * @returns {SavedPreference}
+ * @throws {Error} If pmName is unknown or the config cannot be written
  */
 function setProjectPackageManager(pmName, projectDir = process.cwd()) {
-  if (!PACKAGE_MANAGERS[pmName]) {
-    throw new Error(`Unknown package manager: ${pmName}`);
-  }
+  assertPackageManagerName(pmName);
 
-  const configDir = path.join(projectDir, '.claude');
-  const configPath = path.join(configDir, 'package-manager.json');
-
+  const configPath = path.join(projectDir, '.claude', 'package-manager.json');
+  /** @type {SavedPreference} */
   const config = {
     packageManager: pmName,
     setAt: new Date().toISOString()
@@ -278,7 +329,7 @@ function setProjectPackageManager(pmName, projectDir = process.cwd()) {
   try {
     writeFile(configPath, JSON.stringify(config, null, 2));
   } catch (err) {
-    throw new Error(`Failed to save package manager config to ${configPath}: ${err.message}`);
+    throw new Error(`Failed to save package manager config to ${configPath}: ${messageOf(err)}`, { cause: err });
   }
   return config;
 }
@@ -289,8 +340,9 @@ const SAFE_NAME_REGEX = /^[@a-zA-Z0-9_./-]+$/;
 
 /**
  * Get the command to run a script
- * @param {string} script - Script name (e.g., "dev", "build", "test")
- * @param {object} options - { projectDir }
+ * @param {string} script Script name (e.g., "dev", "build", "test")
+ * @param {PackageManagerOptions} [options]
+ * @returns {string}
  * @throws {Error} If script name contains unsafe characters
  */
 function getRunCommand(script, options = {}) {
@@ -301,30 +353,34 @@ function getRunCommand(script, options = {}) {
     throw new Error(`Script name contains unsafe characters: ${script}`);
   }
 
-  const pm = getPackageManager(options);
+  const { config } = getPackageManager(options);
 
   switch (script) {
     case 'install':
-      return pm.config.installCmd;
+      return config.installCmd;
     case 'test':
-      return pm.config.testCmd;
+      return config.testCmd;
     case 'build':
-      return pm.config.buildCmd;
+      return config.buildCmd;
     case 'dev':
-      return pm.config.devCmd;
+      return config.devCmd;
     default:
-      return `${pm.config.runCmd} ${script}`;
+      return `${config.runCmd} ${script}`;
   }
 }
 
-// Allowed characters in arguments: alphanumeric, whitespace, dashes, dots, slashes,
+// Allowed characters in arguments: alphanumeric, spaces/tabs, dashes, dots, slashes,
 // equals, colons, commas, quotes, @. Rejects shell metacharacters like ; | & ` $ ( ) { } < > !
-const SAFE_ARGS_REGEX = /^[@a-zA-Z0-9\s_./:=,'"*+-]+$/;
+// Line breaks are rejected too: a shell treats "\n" exactly like ";", so
+// "file.js\necho injected" would run a second command.
+const SAFE_ARGS_REGEX = /^[@a-zA-Z0-9 \t_./:=,'"*+-]+$/;
 
 /**
  * Get the command to execute a package binary
- * @param {string} binary - Binary name (e.g., "prettier", "eslint")
- * @param {string} args - Arguments to pass
+ * @param {string} binary Binary name (e.g., "prettier", "eslint")
+ * @param {string} [args] Arguments to pass
+ * @param {PackageManagerOptions} [options]
+ * @returns {string}
  * @throws {Error} If binary name or args contain unsafe characters
  */
 function getExecCommand(binary, args = '', options = {}) {
@@ -338,8 +394,8 @@ function getExecCommand(binary, args = '', options = {}) {
     throw new Error(`Arguments contain unsafe characters: ${args}`);
   }
 
-  const pm = getPackageManager(options);
-  return `${pm.config.execCmd} ${binary}${args ? ' ' + args : ''}`;
+  const { config } = getPackageManager(options);
+  return `${config.execCmd} ${binary}${args ? ' ' + args : ''}`;
 }
 
 /**
@@ -348,72 +404,53 @@ function getExecCommand(binary, args = '', options = {}) {
  *
  * NOTE: Does NOT spawn child processes to check availability.
  * Lists all supported PMs and shows how to configure preference.
+ *
+ * @returns {string}
  */
 function getSelectionPrompt() {
-  let message = '[PackageManager] No package manager preference detected.\n';
-  message += 'Supported package managers: ' + Object.keys(PACKAGE_MANAGERS).join(', ') + '\n';
-  message += '\nTo set your preferred package manager:\n';
-  message += '  - Global: Set CLAUDE_PACKAGE_MANAGER environment variable\n';
-  message += '  - Or add to ~/.claude/package-manager.json: {"packageManager": "pnpm"}\n';
-  message += '  - Or add to package.json: {"packageManager": "pnpm@8"}\n';
-  message += '  - Or add a lock file to your project (e.g., pnpm-lock.yaml)\n';
-
-  return message;
+  return [
+    '[PackageManager] No package manager preference detected.',
+    `Supported package managers: ${Object.keys(PACKAGE_MANAGERS).join(', ')}`,
+    '',
+    'To set your preferred package manager:',
+    '  - Global: Set CLAUDE_PACKAGE_MANAGER environment variable',
+    '  - Or add to ~/.claude/package-manager.json: {"packageManager": "pnpm"}',
+    '  - Or add to package.json: {"packageManager": "pnpm@8"}',
+    '  - Or add a lock file to your project (e.g., pnpm-lock.yaml)',
+    ''
+  ].join('\n');
 }
 
-// Escape regex metacharacters in a string before interpolating into a pattern
+/**
+ * Escape regex metacharacters in a string before interpolating into a pattern
+ * @param {string} str
+ * @returns {string}
+ */
 function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/** @type {Readonly<Record<string, readonly string[]>>} */
+const COMMAND_PATTERNS = Object.freeze({
+  dev: ['npm run dev', 'pnpm( run)? dev', 'yarn dev', 'bun run dev'],
+  install: ['npm install', 'pnpm install', 'yarn( install)?', 'bun install'],
+  test: ['npm test', 'pnpm test', 'yarn test', 'bun test'],
+  build: ['npm run build', 'pnpm( run)? build', 'yarn build', 'bun run build']
+});
+
 /**
  * Generate a regex pattern that matches commands for all package managers
- * @param {string} action - Action pattern (e.g., "run dev", "install", "test")
+ * @param {string} action Action pattern (e.g., "run dev", "install", "test")
+ * @returns {string} Parenthesized alternation, e.g. "(npm run dev|pnpm( run)? dev|...)"
  */
 function getCommandPattern(action) {
-  const patterns = [];
-
   // Trim spaces from action to handle leading/trailing whitespace gracefully
   const trimmedAction = action.trim();
+  const known = Object.hasOwn(COMMAND_PATTERNS, trimmedAction) ? COMMAND_PATTERNS[trimmedAction] : undefined;
 
-  if (trimmedAction === 'dev') {
-    patterns.push(
-      'npm run dev',
-      'pnpm( run)? dev',
-      'yarn dev',
-      'bun run dev'
-    );
-  } else if (trimmedAction === 'install') {
-    patterns.push(
-      'npm install',
-      'pnpm install',
-      'yarn( install)?',
-      'bun install'
-    );
-  } else if (trimmedAction === 'test') {
-    patterns.push(
-      'npm test',
-      'pnpm test',
-      'yarn test',
-      'bun test'
-    );
-  } else if (trimmedAction === 'build') {
-    patterns.push(
-      'npm run build',
-      'pnpm( run)? build',
-      'yarn build',
-      'bun run build'
-    );
-  } else {
-    // Generic run command — escape regex metacharacters in action
-    const escaped = escapeRegex(trimmedAction);
-    patterns.push(
-      `npm run ${escaped}`,
-      `pnpm( run)? ${escaped}`,
-      `yarn ${escaped}`,
-      `bun run ${escaped}`
-    );
-  }
+  // Generic run command — escape regex metacharacters in action
+  const escaped = escapeRegex(trimmedAction);
+  const patterns = known ?? [`npm run ${escaped}`, `pnpm( run)? ${escaped}`, `yarn ${escaped}`, `bun run ${escaped}`];
 
   return `(${patterns.join('|')})`;
 }

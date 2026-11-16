@@ -97,6 +97,17 @@ function parseCounts(combined) {
     }
     return { passed, failed, definite: true };
   }
+  // node:test's default `spec` reporter ends with an "(info) pass N" / "(info) fail N"
+  // block. As with the legacy summaries, the last block in the output wins.
+  const nodeTestPass = [...combined.matchAll(/^\u2139 pass (\d+)\r?$/gm)];
+  const nodeTestFail = [...combined.matchAll(/^\u2139 fail (\d+)\r?$/gm)];
+  if (nodeTestPass.length && nodeTestFail.length) {
+    return {
+      passed: Number(nodeTestPass[nodeTestPass.length - 1][1]),
+      failed: Number(nodeTestFail[nodeTestFail.length - 1][1]),
+      definite: true
+    };
+  }
   const lines = combined.split(/\r?\n/);
   let tapPassed = 0;
   let tapFailed = 0;
