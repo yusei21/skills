@@ -72,27 +72,32 @@ falta, em ordem. Atualize ao terminar cada item.
   `setup-node@v7`, `setup-python@v7`, `setup-java@v6`, `setup-go@v7`,
   `cache@v6`, `upload-artifact@v7`), Node 24, Go 1.27; IDs de modelo
   `claude-haiku-5-5` / `claude-sonnet-5-5` e tabela de preços atualizada.
+- **node:test:** mais 48 suítes convertidas pelo codemod (mesma contagem de
+  testes antes e depois).
+- **Tipagem:** `scripts/lib/utils.js` em `strict`, sem o `utils.d.ts`.
 - `node scripts/dev/generate-skill-triggers.js --keep-triggers` atualiza o
   `registryDigest` sem chamar modelo. Use depois de editar skills sem mudar a
   `description`; com descrição nova ou skill nova, rode a geração completa.
 
 ## Falta, em ordem
 
-1. **Enviar para `github.com/yusei21/skills`.** Esse repositório já tem outro
-   projeto em `main`; o trabalho daqui vai num branch separado,
-   `ecc-modernized`, sem histórico comum. Falta autenticar: a chave SSH local
-   não está cadastrada no GitHub. Depois de autenticar:
-   `git push yusei ecc-modernized`.
-2. **Migração para `node:test`.** 48 arquivos convertíveis pelo codemod
-   (validado: 46 com resultado idêntico, 2 que antes não imprimiam contagem).
-3. **Tipagem gradual.** Próximo candidato: `scripts/lib/utils.js` (ainda usa
-   `scripts/lib/utils.d.ts` escrito à mão).
-4. **Gatilhos das skills.** Só 46 de 326 skills têm frases de gatilho; o
-   `skills suggest` usa nome e descrição para as outras. Uma geração completa
-   (`generate-skill-triggers.js --provider claude`) melhora as sugestões.
-5. **Varredura das skills, segunda passada.** A primeira cobriu versões de
+1. **Enviar para `github.com/yusei21/skills`, no lugar do `main`.** Pedido em
+   16/11/2026: o projeto anterior desse repositório é substituído por este. O
+   `main` antigo (96 commits, `22151ba`) está guardado no branch local
+   `backup/yusei-skills-main` e em
+   `~/Documents/yusei-skills-backup-2026-11-16.bundle`. Falta autenticar (a
+   chave SSH tem senha e não está cadastrada no GitHub). Depois:
+   `git push --force-with-lease=main:22151ba yusei ecc-modernized:main`.
+2. **Gatilhos das skills.** Só 46 de 326 skills têm frases de gatilho; o
+   `skills suggest` usa nome e descrição para as outras. A geração completa
+   precisa de `CLAUDE_CODE_OAUTH_TOKEN` (crie com `claude setup-token`) e roda
+   `node scripts/dev/generate-skill-triggers.js --provider claude`.
+3. **Varredura das skills, segunda passada.** A primeira cobriu versões de
    actions, runtimes e IDs de modelo. Faltam APIs de bibliotecas por domínio
    (React/Next, ORMs, SDKs de nuvem), skill por skill.
+4. **Tipagem gradual, próximos módulos.** `utils.js` já está em strict; os
+   próximos são `session-manager.js` e `session-aliases.js` (ainda com `.d.ts`
+   escrito à mão).
 
 ## Limitações conhecidas
 
