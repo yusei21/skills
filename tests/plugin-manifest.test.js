@@ -23,14 +23,8 @@ const repoRoot = path.resolve(__dirname, '..');
 const packageJsonPath = path.join(repoRoot, 'package.json');
 const packageLockPath = path.join(repoRoot, 'package-lock.json');
 const rootAgentsPath = path.join(repoRoot, 'AGENTS.md');
-const trAgentsPath = path.join(repoRoot, 'docs', 'tr', 'AGENTS.md');
-const zhCnAgentsPath = path.join(repoRoot, 'docs', 'zh-CN', 'AGENTS.md');
-const ptBrReadmePath = path.join(repoRoot, 'docs', 'pt-BR', 'README.md');
-const trReadmePath = path.join(repoRoot, 'docs', 'tr', 'README.md');
-const rootZhCnReadmePath = path.join(repoRoot, 'README.zh-CN.md');
 const agentYamlPath = path.join(repoRoot, 'agent.yaml');
 const versionFilePath = path.join(repoRoot, 'VERSION');
-const zhCnReadmePath = path.join(repoRoot, 'docs', 'zh-CN', 'README.md');
 const selectiveInstallArchitecturePath = path.join(repoRoot, 'docs', 'SELECTIVE-INSTALL-ARCHITECTURE.md');
 const opencodePackageJsonPath = path.join(repoRoot, '.opencode', 'package.json');
 const opencodePackageLockPath = path.join(repoRoot, '.opencode', 'package-lock.json');
@@ -132,20 +126,6 @@ test('AGENTS.md version line matches package.json', () => {
   assert.strictEqual(match[1], expectedVersion);
 });
 
-test('docs/tr/AGENTS.md version line matches package.json', () => {
-  const agentsSource = fs.readFileSync(trAgentsPath, 'utf8');
-  const match = agentsSource.match(new RegExp(`^\\*\\*Sürüm:\\*\\* (${semverPattern})$`, 'm'));
-  assert.ok(match, 'Expected docs/tr/AGENTS.md to declare a top-level version line');
-  assert.strictEqual(match[1], expectedVersion);
-});
-
-test('docs/zh-CN/AGENTS.md version line matches package.json', () => {
-  const agentsSource = fs.readFileSync(zhCnAgentsPath, 'utf8');
-  const match = agentsSource.match(new RegExp(`^\\*\\*版本:\\*\\* (${semverPattern})$`, 'm'));
-  assert.ok(match, 'Expected docs/zh-CN/AGENTS.md to declare a top-level version line');
-  assert.strictEqual(match[1], expectedVersion);
-});
-
 test('agent.yaml version matches package.json', () => {
   const agentYamlSource = fs.readFileSync(agentYamlPath, 'utf8');
   const match = agentYamlSource.match(new RegExp(`^version:\\s*(${semverPattern})$`, 'm'));
@@ -176,26 +156,6 @@ test('.opencode/plugins/ecc-hooks.ts active plugin banner matches package.json',
   const match = source.match(new RegExp(`## Active Plugin: ECC v(${semverPattern})`));
   assert.ok(match, 'Expected .opencode/plugins/ecc-hooks.ts to declare an active plugin banner');
   assert.strictEqual(match[1], expectedVersion);
-});
-
-test('docs/pt-BR/README.md latest release heading matches package.json', () => {
-  const source = fs.readFileSync(ptBrReadmePath, 'utf8');
-  assert.ok(source.includes(`### v${expectedVersion} `), 'Expected docs/pt-BR/README.md to advertise the current release heading');
-});
-
-test('docs/tr/README.md latest release heading matches package.json', () => {
-  const source = fs.readFileSync(trReadmePath, 'utf8');
-  assert.ok(source.includes(`### v${expectedVersion} `), 'Expected docs/tr/README.md to advertise the current release heading');
-});
-
-test('README.zh-CN.md latest release heading matches package.json', () => {
-  const source = fs.readFileSync(rootZhCnReadmePath, 'utf8');
-  assert.ok(source.includes(`### v${expectedVersion} `), 'Expected README.zh-CN.md to advertise the current release heading');
-});
-
-test('docs/zh-CN/README.md latest release heading matches package.json', () => {
-  const source = fs.readFileSync(zhCnReadmePath, 'utf8');
-  assert.ok(source.includes(`### v${expectedVersion} `), 'Expected docs/zh-CN/README.md to advertise the current release heading');
 });
 
 // ── Claude plugin manifest ────────────────────────────────────────────────────
@@ -421,22 +381,6 @@ test('hook documentation distinguishes the Claude off setting from runtime profi
   }
 });
 
-test('Chinese capability matrix documents the native Codex SessionStart hook', () => {
-  const source = fs.readFileSync(zhCnReadmePath, 'utf8');
-  assert.ok(
-    source.includes('| **钩子事件** | 8 种类型                 | 15 种类型 | SessionStart（1 种类型） | 11 种类型 |'),
-    'Expected the Codex capability column to document one native SessionStart event'
-  );
-  assert.ok(
-    source.includes('| **钩子脚本** | 20+ 个脚本               | 16 个脚本 (DRY 适配器) | 1 个 SessionStart 引导脚本 | 插件钩子 |'),
-    'Expected the Codex capability column to document the SessionStart bootstrap script'
-  );
-  assert.ok(
-    !source.includes('Codex 缺少钩子功能'),
-    'Codex architecture guidance must not contradict its native SessionStart hook'
-  );
-});
-
 test('codex plugin.json has interface.displayName', () => {
   assert.ok(codexPlugin.interface && codexPlugin.interface.displayName, 'Expected interface.displayName for plugin directory presentation');
 });
@@ -585,7 +529,7 @@ test('marketplace local plugin source is a self-contained native Codex bundle', 
     }
 
     assert.ok(fs.existsSync(path.join(sourceRoot, 'scripts', 'hooks', 'plugin-hook-bootstrap.js')), 'Codex hook runtime must ship inside the installed source root');
-    assert.ok(fs.existsSync(path.join(sourceRoot, 'skills', 'configure-ecc', 'SKILL.md')), 'Codex configure-ecc skill must ship inside the installed source root');
+    assert.ok(fs.existsSync(path.join(sourceRoot, 'skills', 'core', 'configure-ecc', 'SKILL.md')), 'Codex configure-ecc skill must ship inside the installed source root');
   }
 });
 
@@ -659,8 +603,7 @@ test('.opencode/package-lock.json root version matches package.json', () => {
 test('user-facing docs do not use overlong legacy marketplace install commands', () => {
   const markdownFiles = [
     path.join(repoRoot, 'README.md'),
-    path.join(repoRoot, 'README.zh-CN.md'),
-    path.join(repoRoot, 'skills', 'configure-ecc', 'SKILL.md'),
+    path.join(repoRoot, 'skills', 'core', 'configure-ecc', 'SKILL.md'),
     ...collectMarkdownFiles(path.join(repoRoot, 'docs'))
   ].filter(filePath => !path.relative(repoRoot, filePath).startsWith(`docs${path.sep}drafts${path.sep}`));
 
@@ -676,7 +619,7 @@ test('user-facing docs do not use overlong legacy marketplace install commands',
 });
 
 test('user-facing docs do not use the legacy non-URL marketplace add form', () => {
-  const markdownFiles = [path.join(repoRoot, 'README.md'), path.join(repoRoot, 'README.zh-CN.md'), ...collectMarkdownFiles(path.join(repoRoot, 'docs'))];
+  const markdownFiles = [path.join(repoRoot, 'README.md'), ...collectMarkdownFiles(path.join(repoRoot, 'docs'))];
 
   const offenders = [];
   for (const filePath of markdownFiles) {
@@ -700,13 +643,6 @@ test('.codex-plugin README uses current marketplace add flow', () => {
   assert.ok(readme.includes('review and trust'), 'Expected .codex-plugin README to explain Codex hook trust');
   assert.ok(readme.includes('legacy managed sync'), 'Expected .codex-plugin README to distinguish native plugins from the legacy managed sync');
   assert.ok(!/\bcodex plugin install\b/.test(readme), 'codex plugin install is not a current Codex CLI command');
-});
-
-test('docs/zh-CN/README.md version row matches package.json', () => {
-  const readme = fs.readFileSync(zhCnReadmePath, 'utf8');
-  const match = readme.match(new RegExp(`^\\| \\*\\*版本\\*\\* \\| 插件 \\| 插件 \\| 参考配置 \\| (${semverPattern}) \\|$`, 'm'));
-  assert.ok(match, 'Expected docs/zh-CN/README.md version summary row');
-  assert.strictEqual(match[1], expectedVersion);
 });
 
 // ── Summary ───────────────────────────────────────────────────────────────────

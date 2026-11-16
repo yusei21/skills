@@ -152,7 +152,7 @@ Delete and rewrite any of these:
 
 ## Reference
 
-Use `skills/marketing-campaign` for the full campaign planning and orchestration workflow.
+Use `skills/business/marketing-campaign` for the full campaign planning and orchestration workflow.
 Delegate voice capture to `brand-voice`.
 Delegate platform-native content production to `content-engine`.
 Delegate multi-platform distribution to `crosspost`.

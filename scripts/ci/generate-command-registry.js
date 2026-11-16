@@ -46,14 +46,7 @@ function listKnownSkills(root) {
     return new Set();
   }
 
-  return new Set(
-    fs.readdirSync(skillsDir, { withFileTypes: true })
-      .filter(entry => (
-        entry.isDirectory() && fs.existsSync(path.join(skillsDir, entry.name, 'SKILL.md'))
-      ))
-      .map(entry => entry.name)
-      .sort()
-  );
+  return new Set(require('../lib/skill-layout').listSkillNames(root));
 }
 
 function cleanYamlScalar(value) {

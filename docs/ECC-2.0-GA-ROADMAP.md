@@ -44,9 +44,9 @@ Existing implementation anchors:
 - `scripts/lib/worktree-lifecycle/` and `scripts/worktree-lifecycle.js`
   classify worktree state and produce conflict and cleanup plans.
 - `scripts/lib/skill-evolution/` records skill runs, health, and provenance;
-  `skills/continuous-learning-v2/` and `skills/eval-harness/` provide the
+  `skills/admin/continuous-learning-v2/` and `skills/quality/eval-harness/` provide the
   learning and evaluation substrate.
-- `skills/security-scan/`, `schemas/provenance.schema.json`, and
+- `skills/security/security-scan/`, `schemas/provenance.schema.json`, and
   `docs/architecture/agentshield-enterprise-research-roadmap.md` provide the
   current policy and supply-chain substrate.
 

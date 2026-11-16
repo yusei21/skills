@@ -2,6 +2,7 @@
 'use strict';
 
 const assert = require('assert');
+const { findSkill } = require('../../scripts/lib/skill-layout');
 const fs = require('fs');
 const path = require('path');
 const { listInstallComponents, resolveInstallPlan } = require('../../scripts/lib/install-manifests');
@@ -33,7 +34,7 @@ for (const target of ['claude', 'codex']) {
     });
     const paths = new Set(plan.selectedModules.flatMap(module => module.paths));
     for (const owner of OWNERS) {
-      assert.ok(paths.has(`skills/${owner}`), `missing ${owner}`);
+      assert.ok(paths.has(findSkill(ROOT, owner)?.relDir ?? `skills/${owner}`), `missing ${owner}`);
     }
   });
 }
@@ -53,7 +54,7 @@ for (const target of ['claude', 'claude-project', 'cursor', 'antigravity', 'code
     });
     for (const owner of OWNERS) {
       assert.ok(plan.operations.some(operation => operation.kind === 'copy-file'
-        && operation.sourceRelativePath.replace(/\\/g, '/').endsWith(`skills/${owner}/SKILL.md`)),
+        && operation.sourceRelativePath.replace(/\\/g, '/').endsWith(`${findSkill(ROOT, owner)?.relDir ?? `skills/${owner}`}/SKILL.md`)),
       `missing ${owner} copy on ${target}`);
     }
   });
@@ -79,7 +80,7 @@ for (const target of ['hermes', 'openclaw', 'kimi', 'adal', 'copilot']) {
 
 test('Codex module workflow is the canonical implementation', () => {
   assert.strictEqual(
-    fs.readFileSync(path.join(ROOT, 'skills/module-governance/SKILL.md'), 'utf8'),
+    fs.readFileSync(path.join(ROOT, 'skills/docs-product/module-governance/SKILL.md'), 'utf8'),
     fs.readFileSync(path.join(ROOT, '.agents/skills/module-governance/SKILL.md'), 'utf8')
   );
 });

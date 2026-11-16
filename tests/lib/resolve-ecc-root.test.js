@@ -26,7 +26,7 @@ const {
 // Sentinel ECC skill that resolveEccRoot() requires (alongside the script tree)
 // before accepting a root for skill consumers. Kept in sync with the module's
 // DEFAULT_SKILL_PROBE; the #2544 regression test guards the behaviour.
-const ECC_SKILL_SENTINEL = path.join('skills', 'continuous-learning-v2');
+const ECC_SKILL_SENTINEL = path.join('skills', 'admin', 'continuous-learning-v2');
 
 function test(name, fn) {
   try {

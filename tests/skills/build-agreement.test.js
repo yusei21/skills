@@ -7,9 +7,9 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const repoRoot = path.resolve(__dirname, '..', '..');
-const scriptPath = path.join(repoRoot, 'skills/master-agreement-generator/scripts/build-agreement.js');
-const templatePath = path.join(repoRoot, 'skills/master-agreement-generator/references/master-template.example.md');
-const specPath = path.join(repoRoot, 'skills/master-agreement-generator/references/spec.example.json');
+const scriptPath = path.join(repoRoot, 'skills/operations/master-agreement-generator/scripts/build-agreement.js');
+const templatePath = path.join(repoRoot, 'skills/operations/master-agreement-generator/references/master-template.example.md');
+const specPath = path.join(repoRoot, 'skills/operations/master-agreement-generator/references/spec.example.json');
 const builder = require(scriptPath);
 
 let passed = 0;

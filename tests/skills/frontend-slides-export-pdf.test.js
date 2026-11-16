@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Stubbed run of skills/frontend-slides/scripts/export-pdf.sh: npm, npx and
+ * Stubbed run of skills/frontend/frontend-slides/scripts/export-pdf.sh: npm, npx and
  * node are replaced by stubs, so no network or browser is needed.
  *
  * Run with: node tests/skills/frontend-slides-export-pdf.test.js
@@ -14,7 +14,7 @@ const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
-const SCRIPT = path.join(__dirname, '..', '..', 'skills', 'frontend-slides', 'scripts', 'export-pdf.sh');
+const SCRIPT = path.join(__dirname, '..', '..', 'skills', 'frontend', 'frontend-slides', 'scripts', 'export-pdf.sh');
 
 function test(name, fn) {
   try {

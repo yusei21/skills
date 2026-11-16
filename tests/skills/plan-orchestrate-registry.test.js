@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Registry fixtures for skills/plan-orchestrate/SKILL.md.
+ * Registry fixtures for skills/ai-agents/plan-orchestrate/SKILL.md.
  *
  * The skill is a router over the current ECC command surface. These fixtures
  * validate the router's claims against the command registry itself — the
@@ -31,7 +31,7 @@ const fs = require('fs');
 const path = require('path');
 
 const REPO_ROOT = path.join(__dirname, '..', '..');
-const SKILL_PATH = path.join(REPO_ROOT, 'skills', 'plan-orchestrate', 'SKILL.md');
+const SKILL_PATH = path.join(REPO_ROOT, 'skills', 'ai-agents', 'plan-orchestrate', 'SKILL.md');
 const REGISTRY_PATH = path.join(REPO_ROOT, 'docs', 'COMMAND-REGISTRY.json');
 const COMMANDS_DIR = path.join(REPO_ROOT, 'commands');
 const SHIMS_DIR = path.join(REPO_ROOT, 'legacy-command-shims');

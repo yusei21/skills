@@ -45,7 +45,12 @@ const PLUGIN_ROOT_SEGMENTS = [
 // ships in every ECC root and is exactly what the failing skill commands need.
 // If that skill is ever renamed, move this sentinel with it.
 const DEFAULT_SCRIPT_PROBE = path.join('scripts', 'lib', 'utils.js');
-const DEFAULT_SKILL_PROBE = path.join('skills', 'continuous-learning-v2');
+// A checkout or plugin root nests skills by department; an installed root
+// (~/.claude, ~/.codex) keeps them flat. Either location proves an ECC root.
+const DEFAULT_SKILL_PROBES = [
+  path.join('skills', 'admin', 'continuous-learning-v2'),
+  path.join('skills', 'continuous-learning-v2'),
+];
 
 /**
  * Resolve the ECC source root directory.
@@ -103,7 +108,7 @@ function resolveEccRoot(options = {}) {
   const isRoot = options.probe
     ? (dir) => fs.existsSync(path.join(dir, options.probe))
     : (dir) => fs.existsSync(path.join(dir, DEFAULT_SCRIPT_PROBE))
-            && fs.existsSync(path.join(dir, DEFAULT_SKILL_PROBE));
+            && DEFAULT_SKILL_PROBES.some(probe => fs.existsSync(path.join(dir, probe)));
 
   // Standard install — files are copied directly into ~/.claude/
   if (isRoot(claudeDir)) {

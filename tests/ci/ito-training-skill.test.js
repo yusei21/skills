@@ -25,7 +25,7 @@ const tests = [];
 function test(name, fn) { tests.push([name, fn]); }
 
 test("has valid discoverable frontmatter and trigger phrases", () => {
-  const skill = read("skills/ito-training/SKILL.md");
+  const skill = read("skills/verticals/ito-training/SKILL.md");
   assert.match(skill, /^---\nname: ito-training\ndescription: [^\n]+\nmetadata:\n {2}origin: ECC\n {2}status: scaffold\n---\n/);
   assert.match(skill, /completed Itô compute booking/i);
   assert.match(skill, /pre-training, fine-tuning, or RL/i);
@@ -33,7 +33,7 @@ test("has valid discoverable frontmatter and trigger phrases", () => {
 });
 
 test("is fail-closed today and forbids substitutes", () => {
-  const skill = read("skills/ito-training/SKILL.md");
+  const skill = read("skills/verticals/ito-training/SKILL.md");
   assert.match(skill, /training is unavailable today/i);
   assert.match(skill, /no\s+`train` verb/);
   assert.match(skill, /rejects\s+`train` before resolving or spawning/i);
@@ -44,7 +44,7 @@ test("is fail-closed today and forbids substitutes", () => {
 });
 
 test("requires server-verified booking entitlement before any confirmation", () => {
-  const skill = read("skills/ito-training/SKILL.md");
+  const skill = read("skills/verticals/ito-training/SKILL.md");
   assert.match(skill, /server-verified completed\s+booking/i);
   assert.match(skill, /not proof\s+of entitlement/i);
   assert.match(skill, /fail\s+closed before confirmation/i);
@@ -52,7 +52,7 @@ test("requires server-verified booking entitlement before any confirmation", () 
 });
 
 test("specifies the future manifest, confirmation, and idempotency contract without secrets", () => {
-  const skill = read("skills/ito-training/SKILL.md");
+  const skill = read("skills/verticals/ito-training/SKILL.md");
   for (const gate of [
     /--booking <server-verified-booking-id>/i,
     /--manifest <absolute-reviewed-json-file>/i,
@@ -71,7 +71,7 @@ test("specifies the future manifest, confirmation, and idempotency contract with
 });
 
 test("labels backend stages as future and keeps eval gates human-honest", () => {
-  const skill = read("skills/ito-training/SKILL.md");
+  const skill = read("skills/verticals/ito-training/SKILL.md");
   assert.match(skill, /describe the future backend \(Layer 0\.3\), not code that exists in\s+ECC/i);
   assert.match(skill, /never override a failed eval gate/i);
   assert.match(skill, /Loss-spike restart is a proposed, human-gated action/i);
@@ -110,13 +110,13 @@ test("ships through the existing opt-in compute module and npm package", () => {
   const module = modules.find((candidate) => candidate.id === "ito-compute");
   assert.ok(module, "ito-compute install module is missing");
   assert.deepStrictEqual(module.paths, [
-    "skills/ito-compute",
-    "skills/ito-inference",
-    "skills/ito-training",
+    "skills/verticals/ito-compute",
+    "skills/verticals/ito-inference",
+    "skills/verticals/ito-training",
   ]);
   assert.strictEqual(module.defaultInstall, false);
   const packed = readJson("package.json").files;
-  assert.ok(packed.includes("skills/ito-training/"), "ito-training missing from npm files");
+  assert.ok(packed.includes("skills/verticals/ito-training/"), "ito-training missing from npm files");
 });
 
 (async () => {

@@ -22,12 +22,7 @@ function test(name, fn) {
 }
 
 const skillDocs = [
-  'skills/continuous-learning-v2/SKILL.md',
-  'docs/zh-CN/skills/continuous-learning-v2/SKILL.md',
-  'docs/tr/skills/continuous-learning-v2/SKILL.md',
-  'docs/ko-KR/skills/continuous-learning-v2/SKILL.md',
-  'docs/ja-JP/skills/continuous-learning-v2/SKILL.md',
-  'docs/zh-TW/skills/continuous-learning-v2/SKILL.md',
+  'skills/admin/continuous-learning-v2/SKILL.md',
 ];
 
 console.log('\n=== Testing continuous-learning-v2 install docs ===\n');
@@ -37,14 +32,14 @@ for (const relativePath of skillDocs) {
 
   test(`${relativePath} does not tell plugin users to register observe.sh through CLAUDE_PLUGIN_ROOT`, () => {
     assert.ok(
-      !content.includes('${CLAUDE_PLUGIN_ROOT}/skills/continuous-learning-v2/hooks/observe.sh'),
+      !content.includes('${CLAUDE_PLUGIN_ROOT}/skills/admin/continuous-learning-v2/hooks/observe.sh'),
       'Plugin quick start should not tell users to copy observe.sh into settings.json'
     );
   });
 }
 
 const englishSkill = fs.readFileSync(
-  path.join(repoRoot, 'skills/continuous-learning-v2/SKILL.md'),
+  path.join(repoRoot, 'skills/admin/continuous-learning-v2/SKILL.md'),
   'utf8'
 );
 

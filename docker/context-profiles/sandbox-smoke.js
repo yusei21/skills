@@ -13,15 +13,13 @@ const { spawnSync } = require('node:child_process');
 const NAME = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function discoverPublishedSkills(packageRoot) {
-  const skillsRoot = path.join(packageRoot, 'skills');
   const nativeNames = new Set();
-  return fs.readdirSync(skillsRoot, { withFileTypes: true }).filter(entry => {
-    if (!entry.isDirectory()) return false;
-    assert.equal(entry.isSymbolicLink(), false, 'Published skill directory must not be a symlink');
-    return fs.existsSync(path.join(skillsRoot, entry.name, 'SKILL.md'));
-  }).map(entry => {
+  // skills/<department>/<skill>/ (or flat skills/<skill>/)
+  return require('../../scripts/lib/skill-layout').listSkills(packageRoot).map(skill => {
+    const entry = { name: skill.name };
+    assert.equal(fs.lstatSync(skill.dir).isSymbolicLink(), false, 'Published skill directory must not be a symlink');
     assert.match(entry.name, NAME, 'Canonical skill directory has an invalid name');
-    const source = fs.readFileSync(path.join(skillsRoot, entry.name, 'SKILL.md'), 'utf8')
+    const source = fs.readFileSync(skill.skillFile, 'utf8')
       .replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n');
     const frontmatter = source.match(/^---\n([\s\S]*?)\n---(?:\n|$)/);
     assert.ok(frontmatter, `Missing skill metadata: ${entry.name}`);
@@ -161,7 +159,7 @@ function smoke(packageRoot, workspace) {
 
   // A user edit inside managed content must block a switch, preserving bytes.
   const current = profile(['status']).store;
-  const ownedFile = path.join(current.generationRoot, 'skills/ecc-guide/SKILL.md');
+  const ownedFile = path.join(current.generationRoot, 'skills/core/ecc-guide/SKILL.md');
   fs.appendFileSync(ownedFile, '\nUser customization\n');
   profile(['set', 'full'], 1);
   assert.match(fs.readFileSync(ownedFile, 'utf8'), /User customization/);

@@ -5,7 +5,7 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 
-const source = fs.readFileSync(path.resolve(__dirname, '../../skills/autonomous-agent-harness/SKILL.md'), 'utf8');
+const source = fs.readFileSync(path.resolve(__dirname, '../../skills/ai-agents/autonomous-agent-harness/SKILL.md'), 'utf8');
 const blocks = [...source.matchAll(/```[^\n]*\n([\s\S]*?)```/g)].map(match => match[1]).join('\n');
 const checks = [
   ['executable examples omit unpublished packages and the invented dispatch endpoint', () => {

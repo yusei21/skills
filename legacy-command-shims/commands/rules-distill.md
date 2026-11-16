@@ -4,7 +4,7 @@ description: Legacy slash-entry shim for the rules-distill skill. Prefer the ski
 
 # Rules Distill (Legacy Shim)
 
-Use this only if you still invoke `/rules-distill`. The maintained workflow lives in `skills/rules-distill/SKILL.md`.
+Use this only if you still invoke `/rules-distill`. The maintained workflow lives in `skills/admin/rules-distill/SKILL.md`.
 
 ## Canonical Surface
 

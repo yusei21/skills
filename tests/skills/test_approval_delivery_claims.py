@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-REFERENCE = ROOT / 'skills/operator-approval-loop/references'
+REFERENCE = ROOT / 'skills/operations/operator-approval-loop/references'
 SPEC = importlib.util.spec_from_file_location('approval_claims', REFERENCE / 'approval_claims.py')
 if (REFERENCE / 'approval_claims.py').exists():
     claims = importlib.util.module_from_spec(SPEC)

@@ -7,6 +7,7 @@ const SCRIPT = path.join(
   '..',
   '..',
   'skills',
+  'ai-agents',
   'openclaw-persona-forge',
   'gacha.py'
 );

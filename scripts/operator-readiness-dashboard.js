@@ -534,7 +534,7 @@ function assessReadiness(rootDir, docs) {
       'publication-blockers-preserved'
     ]);
   const hermesArtifactsReady = fileExists(rootDir, 'docs/HERMES-SETUP.md')
-    && fileExists(rootDir, 'skills/hermes-imports/SKILL.md');
+    && fileExists(rootDir, 'skills/admin/hermes-imports/SKILL.md');
   const hypergrowthCommandCenterReady = includesAll(docs.hypergrowthCommandCenter, [
     'harness-native operator system',
     '$1,728/mo',
@@ -703,7 +703,7 @@ function releasePackRequirements(rootDir, docs, readiness) {
     buildRequirement(
       'hermes-specialized-skills',
       'Include Hermes specialized skills safely',
-      'docs/HERMES-SETUP.md and skills/hermes-imports/SKILL.md',
+      'docs/HERMES-SETUP.md and skills/admin/hermes-imports/SKILL.md',
       tiered(hermesReady, hermesArtifactsReady, TIERED_STATUS),
       tiered(hermesReady, hermesArtifactsReady, [
         'Hermes setup/import artifacts are covered by preview-pack smoke',

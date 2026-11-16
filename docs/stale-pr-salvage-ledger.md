@@ -68,15 +68,15 @@ porting.
 
 | Source PR | Disposition |
 | --- | --- |
-| #1310 | Ported through the Django/Celery maintainer branch after confirming `agents/django-reviewer.md`, `agents/django-build-resolver.md`, and `skills/django-celery/SKILL.md` were still missing. |
+| #1310 | Ported through the Django/Celery maintainer branch after confirming `agents/django-reviewer.md`, `agents/django-build-resolver.md`, and `skills/backend/django-celery/SKILL.md` were still missing. |
 | #1325 | Useful Quarkus framework material was already preserved across #1771 and #1803; current `main` contains the Quarkus rules/skills plus Java reviewer/build-resolver surfaces. |
-| #1360 | Already present as `skills/security-bounty-hunter/`. |
+| #1360 | Already present as `skills/security/security-bounty-hunter/`. |
 | #1414 | Useful F# support was already preserved in #1770; current `main` contains the F# rules, reviewer agent, testing skill, install wiring, and detection tests. |
-| #1415 | Already present as `skills/vite-patterns/`. |
+| #1415 | Already present as `skills/frontend/vite-patterns/`. |
 | #1478 | Useful HarmonyOS/ArkTS support was already preserved in #1769; current `main` contains the ArkTS rules, resolver agent, CLAUDE example, and install wiring. |
-| #1438 | Already present as `skills/ui-to-vue/`. |
+| #1438 | Already present as `skills/frontend/ui-to-vue/`. |
 | #1504 | Already mapped to #1776 in the durable salvage table. |
-| #1508 | Already present as `skills/fastapi-patterns/` and `agents/fastapi-reviewer.md`. |
+| #1508 | Already present as `skills/backend/fastapi-patterns/` and `agents/fastapi-reviewer.md`. |
 | #1563/#1564/#1565 | Translator/manual review: zh-TW, tr, and pt-BR README syncs may contain useful localization updates, but stale README/version/count text must be reviewed by language owners before import. |
 | #1567 | Already present as the current GateGuard subagent file-gate bypass in `scripts/hooks/gateguard-fact-force.js`, with Bash gates preserved and regression tests in `tests/hooks/gateguard-fact-force.test.js`. |
 | #1570 | Already present as public `llm.prompt` imports, keyword-based `PromptBuilder` construction, and template registry helpers; current tests register the `unit` marker through `tests/conftest.py`. |
@@ -92,7 +92,7 @@ porting.
 | #1631 | Already present in `scripts/hooks/suggest-compact.js` and `tests/hooks/hooks.test.js`; current code reads `session_id` from stdin JSON before falling back to `CLAUDE_SESSION_ID`. |
 | #1648 | Already present in `src/llm/providers/claude.py`; current Claude provider collects all text and tool-use content blocks and covers the behavior in `tests/test_claude_provider.py`. |
 | #1658 | Ported through the code-reviewer maintainer branch after confirming the false-positive proof gate and common false-positive skip list were still missing. |
-| #1693 | Already present as `skills/redis-patterns/`. |
+| #1693 | Already present as `skills/data/redis-patterns/`. |
 
 ## Already Present Or Superseded
 

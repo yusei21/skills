@@ -4,7 +4,7 @@ description: Legacy slash-entry shim for the e2e-testing skill. Prefer the skill
 
 # E2E Command (Legacy Shim)
 
-Use this only if you still invoke `/e2e`. The maintained workflow lives in `skills/e2e-testing/SKILL.md`.
+Use this only if you still invoke `/e2e`. The maintained workflow lives in `skills/quality/e2e-testing/SKILL.md`.
 
 ## Canonical Surface
 

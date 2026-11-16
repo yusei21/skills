@@ -8,7 +8,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const REPO_ROOT = path.join(__dirname, '..', '..');
-const SKILL_ROOT = path.join(REPO_ROOT, 'skills', 'terminal-opener');
+const SKILL_ROOT = path.join(REPO_ROOT, 'skills', 'devops', 'terminal-opener');
 const SCRIPT = path.join(SKILL_ROOT, 'scripts', 'open-terminal.js');
 
 const {

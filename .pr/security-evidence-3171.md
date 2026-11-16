@@ -3,7 +3,7 @@
 Commit under review: observe.sh Layer-1 allowlist adds `sdk-cli`.
 
 ## Changed security-sensitive surface
-- `skills/continuous-learning-v2/hooks/observe.sh` (agent hook entrypoint allowlist)
+- `skills/admin/continuous-learning-v2/hooks/observe.sh` (agent hook entrypoint allowlist)
 
 ## Threat model (bounded)
 - **Risk if missing `sdk-cli`**: interactive Agent SDK CLI sessions never observe (availability/coverage gap).

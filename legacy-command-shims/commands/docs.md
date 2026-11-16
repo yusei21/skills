@@ -4,7 +4,7 @@ description: Legacy slash-entry shim for the documentation-lookup skill. Prefer 
 
 # Docs Command (Legacy Shim)
 
-Use this only if you still reach for `/docs`. The maintained workflow lives in `skills/documentation-lookup/SKILL.md`.
+Use this only if you still reach for `/docs`. The maintained workflow lives in `skills/research/documentation-lookup/SKILL.md`.
 
 ## Canonical Surface
 

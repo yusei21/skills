@@ -1,18 +1,25 @@
 {
   "coverage": {
-    "skills": 314,
-    "withTriggers": 34
+    "skills": 326,
+    "withTriggers": 46
   },
-  "generatedAt": "2026-10-30T00:01:34.569Z",
+  "generatedAt": "2026-11-16T03:20:01.945Z",
   "id": "skill-triggers@1",
   "model": {
     "effort": null,
     "id": "hand-seeded",
     "source": "manual-curation-pending-regeneration"
   },
-  "registryDigest": "6f213dc845937b4093bc018d041b25b538d88d78451b9d799ad614989b360ee4",
+  "registryDigest": "fe2357b63db841d2bba5edd64d0d6fd9395b32e95da40e9214a1f3b037bd742b",
   "schemaVersion": 1,
   "triggers": {
+    "skill:agent-desktop": [
+      "computer use",
+      "operate desktop app",
+      "click button in app",
+      "accessibility tree automation",
+      "automatizar app desktop"
+    ],
     "skill:agent-runtime-gateway-smoke-test": [
       "test local agent gateway",
       "remote sandbox callback smoke test",
@@ -105,6 +112,13 @@
       "deploy pipeline",
       "containerize application"
     ],
+    "skill:design-md-library": [
+      "make it look like linear",
+      "design.md reference",
+      "borrow a product design system",
+      "design inspirado em stripe",
+      "referencia de design system"
+    ],
     "skill:design-system": [
       "design tokens",
       "visual consistency audit",
@@ -173,6 +187,13 @@
       "pull request cleanup",
       "git history tidy"
     ],
+    "skill:graphify": [
+      "build knowledge graph of codebase",
+      "graphify",
+      "map file relationships",
+      "grafo de conhecimento do codigo",
+      "arquitetura do repositorio"
+    ],
     "skill:hexagonal-architecture": [
       "ports and adapters",
       "dependency injection boundaries",
@@ -192,6 +213,37 @@
       "regression fix",
       "reproduce bug",
       "defect repair"
+    ],
+    "skill:ponytail": [
+      "ponytail",
+      "be lazy",
+      "simplest solution",
+      "yagni",
+      "stop over-engineering",
+      "solucao mais simples"
+    ],
+    "skill:ponytail-audit": [
+      "ponytail audit",
+      "audit repo for over-engineering",
+      "auditar excesso de codigo"
+    ],
+    "skill:ponytail-debt": [
+      "ponytail debt",
+      "list shortcut comments",
+      "divida tecnica de atalhos"
+    ],
+    "skill:ponytail-gain": [
+      "ponytail gain",
+      "show ponytail savings"
+    ],
+    "skill:ponytail-help": [
+      "ponytail help",
+      "ponytail levels"
+    ],
+    "skill:ponytail-review": [
+      "ponytail review",
+      "review this change for over-engineering",
+      "revisar mudanca minima"
     ],
     "skill:postgres-patterns": [
       "slow postgres query",
@@ -275,6 +327,13 @@
       "hook configuration audit",
       "settings json security"
     ],
+    "skill:taste-skill": [
+      "install taste-skill",
+      "tasteskill",
+      "design-taste-frontend",
+      "anti-slop landing page",
+      "site de empresa com bom design"
+    ],
     "skill:tdd-workflow": [
       "write test first",
       "failing test",
@@ -297,13 +356,27 @@
       "bounded concurrency mapper",
       "module boundary exports"
     ],
+    "skill:untangle-codebase": [
+      "untangle the codebase",
+      "reduce coupling across modules",
+      "hidden links between modules",
+      "refatorar acoplamento",
+      "desembaraçar o codigo"
+    ],
     "skill:verification-loop": [
       "pre pr checks",
       "verification report",
       "quality gates",
       "build lint test coverage",
       "before creating a pr"
+    ],
+    "skill:web-design-guidelines": [
+      "review my ui",
+      "check accessibility",
+      "audit web interface design",
+      "revisar ui",
+      "auditar acessibilidade da interface"
     ]
   },
-  "triggersDigest": "953728cb51ef7726f8a4969efecaec294d37772fcddf8544cd9ee45bff4945ee"
+  "triggersDigest": "bd52e4b4f288921fb864ea5e538e943eeb25c37087df000bdb1b45ef44ea6cdc"
 }

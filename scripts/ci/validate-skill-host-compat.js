@@ -335,14 +335,18 @@ function validateSkillHostCompat(options = {}) {
     };
   }
 
-  const canonicalSkills = listSkillDirs(skillsDir);
+  // Canonical skills are nested by department; mirrors (.agents, .cursor) stay flat.
+  const canonicalLocations = require('../lib/skill-layout').listSkills(root);
+  /** @type {Map<string, string>} */
+  const canonicalDirOf = new Map(canonicalLocations.map(skill => [skill.name, skill.dir]));
+  const canonicalSkills = canonicalLocations.map(skill => skill.name);
   const codexSkills = listSkillDirs(codexDir);
   const cursorSkills = listSkillDirs(cursorDir);
   const openaiListed = listOpenaiYamlSkills(root);
   const skillsWithCanonical = new Set(canonicalSkills);
 
   for (const skillName of canonicalSkills) {
-    const skillMd = path.join(skillsDir, skillName, 'SKILL.md');
+    const skillMd = path.join(canonicalDirOf.get(skillName) || path.join(skillsDir, skillName), 'SKILL.md');
     const content = readFileIfPresent(skillMd);
     if (content === null) continue;
     inspectCanonicalSkill(skillName, content, findings);

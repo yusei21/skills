@@ -706,7 +706,7 @@ How I tested this skill locally.
 
 ### Example 1: Language Standards
 
-**File:** `skills/rust-patterns/SKILL.md`
+**File:** `skills/languages/rust-patterns/SKILL.md`
 
 ```markdown
 ---
@@ -767,7 +767,7 @@ pub type AppResult<T> = Result<T, AppError>;
 
 ### Example 2: Framework Patterns
 
-**File:** `skills/fastapi-patterns/SKILL.md`
+**File:** `skills/backend/fastapi-patterns/SKILL.md`
 
 ```markdown
 ---
@@ -911,9 +911,9 @@ npm run test:e2e
 - [DevScratchpad AI Skill Studio](https://www.devscratchpad.tech/ai-skill-studio/claude-skills) - Third-party editor for drafting Claude Code `SKILL.md` files.
 - [CONTRIBUTING.md](../CONTRIBUTING.md) - General contribution guidelines
 - [project-guidelines-template](./examples/project-guidelines-template.md) - Project-specific skill template
-- [coding-standards](../skills/coding-standards/SKILL.md) - Example of standards skill
-- [tdd-workflow](../skills/tdd-workflow/SKILL.md) - Example of workflow skill
-- [security-review](../skills/security-review/SKILL.md) - Example of domain knowledge skill
+- [coding-standards](../skills/core/coding-standards/SKILL.md) - Example of standards skill
+- [tdd-workflow](../skills/core/tdd-workflow/SKILL.md) - Example of workflow skill
+- [security-review](../skills/security/security-review/SKILL.md) - Example of domain knowledge skill
 
 ---
 

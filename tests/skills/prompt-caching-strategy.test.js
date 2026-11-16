@@ -6,7 +6,7 @@ const path = require('path');
 const vm = require('vm');
 
 const root = path.resolve(__dirname, '../..');
-const source = fs.readFileSync(path.join(root, 'skills/prompt-caching-strategy/SKILL.md'), 'utf8');
+const source = fs.readFileSync(path.join(root, 'skills/ai-agents/prompt-caching-strategy/SKILL.md'), 'utf8');
 const snippet = source.match(/```javascript\n([\s\S]*?)\n```/);
 assert.ok(snippet, 'The documented calculator must be executable offline');
 const context = vm.createContext({});
@@ -67,8 +67,8 @@ test('missing or invalid usage and rates fail clearly', () => {
 test('canonical module and package both distribute the skill', () => {
   const modules = JSON.parse(fs.readFileSync(path.join(root, 'manifests/install-modules.json'), 'utf8'));
   const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
-  assert.ok(modules.modules.find(module => module.id === 'agentic-patterns').paths.includes('skills/prompt-caching-strategy'));
-  assert.ok(pkg.files.includes('skills/prompt-caching-strategy/'));
+  assert.ok(modules.modules.find(module => module.id === 'agentic-patterns').paths.includes('skills/ai-agents/prompt-caching-strategy'));
+  assert.ok(pkg.files.includes('skills/ai-agents/prompt-caching-strategy/'));
 });
 console.log('Offline prompt caching checks; runtime cache hits unmeasured.');
 console.log(`Passed: ${passed}, Failed: ${failed}`);

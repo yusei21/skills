@@ -68,7 +68,7 @@ function cleanupDir(dir) {
 }
 
 const repoRoot = path.resolve(__dirname, '..', '..');
-const observeShPath = path.join(repoRoot, 'skills', 'continuous-learning-v2', 'hooks', 'observe.sh');
+const observeShPath = path.join(repoRoot, 'skills', 'admin', 'continuous-learning-v2', 'hooks', 'observe.sh');
 
 const isWindows = process.platform === 'win32';
 const hasPython = !isWindows && spawnSync('python3', ['--version']).status === 0;

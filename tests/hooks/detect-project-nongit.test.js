@@ -66,6 +66,7 @@ const repoRoot = path.resolve(__dirname, '..', '..');
 const detectProjectPath = path.join(
   repoRoot,
   'skills',
+  'admin',
   'continuous-learning-v2',
   'scripts',
   'detect-project.sh'
@@ -73,6 +74,7 @@ const detectProjectPath = path.join(
 const instinctCliPath = path.join(
   repoRoot,
   'skills',
+  'admin',
   'continuous-learning-v2',
   'scripts',
   'instinct-cli.py'

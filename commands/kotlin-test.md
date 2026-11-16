@@ -308,5 +308,5 @@ open build/reports/kover/html/index.html
 
 ## Related
 
-- Skill: `skills/kotlin-testing/`
-- Skill: `skills/tdd-workflow/`
+- Skill: `skills/languages/kotlin-testing/`
+- Skill: `skills/core/tdd-workflow/`

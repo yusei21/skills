@@ -463,11 +463,11 @@ function runTests() {
     });
     assert.deepStrictEqual(plan.selectedModuleIds, ['skill-continuous-learning-v2']);
     assert.ok(
-      plan.operations.some(operation => operation.sourceRelativePath === 'skills/continuous-learning-v2'),
+      plan.operations.some(operation => operation.sourceRelativePath === 'skills/admin/continuous-learning-v2'),
       'Should install the continuous-learning-v2 skill directory'
     );
     assert.ok(
-      !plan.operations.some(operation => operation.sourceRelativePath === 'skills/tdd-workflow'),
+      !plan.operations.some(operation => operation.sourceRelativePath === 'skills/core/tdd-workflow'),
       'Should not install the whole workflow-quality skill module'
     );
   })) passed++; else failed++;

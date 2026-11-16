@@ -198,9 +198,9 @@ Create a detailed implementation plan for: $ARGUMENTS
 ```json
 {
   "instructions": [
-    "skills/tdd-workflow/SKILL.md",
-    "skills/security-review/SKILL.md",
-    "skills/coding-standards/SKILL.md"
+    "skills/core/tdd-workflow/SKILL.md",
+    "skills/security/security-review/SKILL.md",
+    "skills/core/coding-standards/SKILL.md"
   ]
 }
 ```

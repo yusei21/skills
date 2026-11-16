@@ -128,7 +128,7 @@ test('agents are planned into .github/agents with the frontmatter transform', ()
 });
 
 test('skills are planned into .github/skills with installed helper references', () => {
-  const operations = planFor([{ id: 'workflow-quality', paths: ['skills/tdd-workflow'] }]);
+  const operations = planFor([{ id: 'workflow-quality', paths: ['skills/core/tdd-workflow'] }]);
   assert.strictEqual(operations.length, 1);
   assert.strictEqual(operations[0].contentTransform, 'copilot-workflow-paths');
   assert.strictEqual(
@@ -295,7 +295,7 @@ test('supportsModule stays permissive so dependency anchors still resolve', () =
 test('every planned operation is contained within .github', () => {
   const operations = planFor([
     { id: 'agents-core', paths: ['agents', '.agents', 'AGENTS.md'] },
-    { id: 'framework-language', paths: ['skills/api-design', 'skills/react-patterns'] },
+    { id: 'framework-language', paths: ['skills/backend/api-design', 'skills/frontend/react-patterns'] },
     { id: 'rules-core', paths: ['rules'] },
   ]);
   const root = path.join('/project', '.github');

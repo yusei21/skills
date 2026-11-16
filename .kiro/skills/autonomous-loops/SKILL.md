@@ -607,4 +607,4 @@ These patterns compose well:
 | Infinite Agentic Loop | disler | credit: @disler |
 | Continuous Claude | AnandChowdhary | credit: @AnandChowdhary |
 | NanoClaw | ECC | `/claw` command in this repo |
-| Verification Loop | ECC | `skills/verification-loop/` in this repo |
+| Verification Loop | ECC | `skills/core/verification-loop/` in this repo |

@@ -17,7 +17,7 @@ if any(
 ):
     raise unittest.SkipTest("Install taste-application requirements for overlay tests")
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "skills/taste-application/scripts"
+SCRIPTS = Path(__file__).resolve().parents[1] / "skills/media/taste-application/scripts"
 sys.path.insert(0, str(SCRIPTS))
 spec = importlib.util.spec_from_file_location("overlay_forge", SCRIPTS / "forge.py")
 forge = importlib.util.module_from_spec(spec)

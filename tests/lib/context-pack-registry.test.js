@@ -220,9 +220,7 @@ test('ancestor replacement during open fails before reading redirected resource 
 test('real repository registry covers current curated skills and every install target plus Pi', () => {
   const root = path.resolve(__dirname, '../..');
   const registry = loadContextRegistry({ repoRoot: root });
-  const ids = fs.readdirSync(path.join(root, 'skills'), { withFileTypes: true })
-    .filter(entry => entry.isDirectory() && fs.existsSync(path.join(root, 'skills', entry.name, 'SKILL.md')))
-    .map(entry => `skill:${entry.name}`).sort();
+  const ids = require('../../scripts/lib/skill-layout').listSkillNames(root).map(name => `skill:${name}`).sort();
   assert.deepEqual(registry.entries.map(entry => entry.id), ids);
   assert.deepEqual(registry.targets, [...new Set([...SUPPORTED_INSTALL_TARGETS, 'pi'])].sort());
   assert.ok(registry.targets.includes('claude-project'));

@@ -4,7 +4,7 @@ description: Legacy slash-entry shim for the verification-loop skill. Prefer the
 
 # Verification Command (Legacy Shim)
 
-Use this only if you still invoke `/verify`. The maintained workflow lives in `skills/verification-loop/SKILL.md`.
+Use this only if you still invoke `/verify`. The maintained workflow lives in `skills/core/verification-loop/SKILL.md`.
 
 ## Canonical Surface
 

@@ -33,7 +33,7 @@ function fixture() {
 
 function installRuntime(selected) {
   fs.cpSync(path.join(repoRoot, 'scripts'), path.join(selected, 'scripts'), { recursive: true });
-  fs.mkdirSync(path.join(selected, 'skills', 'continuous-learning-v2'), { recursive: true });
+  fs.mkdirSync(path.join(selected, 'skills', 'admin', 'continuous-learning-v2'), { recursive: true });
 }
 
 function run(command, item, overrides = {}) {

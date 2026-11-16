@@ -1,7 +1,7 @@
 /**
  * Tests for shebang consistency across continuous-learning-v2 shell scripts
  *
- * Every `*.sh` script under skills/continuous-learning-v2/ must use the
+ * Every `*.sh` script under skills/admin/continuous-learning-v2/ must use the
  * portable `#!/usr/bin/env bash` shebang rather than the hardcoded
  * `#!/bin/bash`. The hardcoded interpreter path fails on systems where bash
  * is not installed at /bin/bash (NixOS, some Homebrew layouts, FreeBSD), and
@@ -33,7 +33,7 @@ function test(name, fn) {
 }
 
 const repoRoot = path.resolve(__dirname, '..', '..');
-const skillDir = path.join(repoRoot, 'skills', 'continuous-learning-v2');
+const skillDir = path.join(repoRoot, 'skills', 'admin', 'continuous-learning-v2');
 const PORTABLE_SHEBANG = '#!/usr/bin/env bash';
 const HARDCODED_SHEBANG = '#!/bin/bash';
 

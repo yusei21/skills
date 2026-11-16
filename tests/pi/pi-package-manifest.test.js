@@ -138,10 +138,11 @@ function main() {
     }],
 
     ["pi.skills and pi.prompts point at ECC's canonical top-level directories, never at .pi/", () => {
+      const departments = require(path.join(repoRoot, "manifests", "skill-departments.json")).departments.map((d) => `./skills/${d.id}`)
       assert.deepStrictEqual(
         packageJson.pi.skills,
-        ["./skills"],
-        `pi.skills must be exactly ["./skills"] (ECC's canonical skills directory) — got ${JSON.stringify(packageJson.pi.skills)}`
+        departments,
+        `pi.skills must list every canonical department directory (skills/<department>) — got ${JSON.stringify(packageJson.pi.skills)}`
       )
       assert.deepStrictEqual(
         packageJson.pi.prompts,
@@ -240,19 +241,19 @@ function main() {
     }],
 
     ["canonical skills/ is Pi-compatible without transformation (Agent Skills standard)", () => {
+      // Pi reads every directory listed in package.json pi.skills one level
+      // deep; ECC lists one directory per department (skills/<department>).
       const skillsDir = path.join(repoRoot, "skills")
-      const skillDirNames = fs.readdirSync(skillsDir, { withFileTypes: true })
-        .filter((entry) => entry.isDirectory())
-        .map((entry) => entry.name)
-      const skillDirsWithManifest = skillDirNames.filter((name) =>
-        fs.existsSync(path.join(skillsDir, name, "SKILL.md"))
-      )
+      const piRoots = require(path.join(repoRoot, "package.json")).pi.skills.map((rel) => path.join(repoRoot, rel))
+      const skillDirsWithManifest = piRoots.flatMap((root) => fs.readdirSync(root, { withFileTypes: true })
+        .filter((entry) => entry.isDirectory() && fs.existsSync(path.join(root, entry.name, "SKILL.md")))
+        .map((entry) => entry.name))
       assert.ok(
         skillDirsWithManifest.length >= 100,
         `skills/ must contain at least 100 subdirectories with a SKILL.md for Pi's Agent Skills implementation — found ${skillDirsWithManifest.length}`
       )
 
-      const sampleSkillPath = path.join(skillsDir, "frontend-patterns", "SKILL.md")
+      const sampleSkillPath = path.join(skillsDir, "frontend", "frontend-patterns", "SKILL.md")
       const sampleSkill = fs.readFileSync(sampleSkillPath, "utf8")
       const sampleFrontmatter = extractFrontmatter(sampleSkill)
       assert.ok(

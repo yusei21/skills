@@ -84,13 +84,16 @@ function validateCommands() {
 
   // Build set of valid skill directory names
   const validSkills = new Set();
+  const skillDepartments = require('../lib/skill-layout').listDepartments(path.dirname(SKILLS_DIR), { skillsDir: path.basename(SKILLS_DIR) });
   if (fs.existsSync(SKILLS_DIR)) {
+    // skills/<department>/<skill>/ (or a flat skills/<skill>/)
+    for (const skill of require('../lib/skill-layout').listSkills(path.dirname(SKILLS_DIR), { skillsDir: path.basename(SKILLS_DIR) })) {
+      validSkills.add(skill.name);
+    }
+    // Any top-level directory still counts, as before departments existed.
     for (const f of fs.readdirSync(SKILLS_DIR)) {
-      const skillPath = path.join(SKILLS_DIR, f);
       try {
-        if (fs.statSync(skillPath).isDirectory()) {
-          validSkills.add(f);
-        }
+        if (fs.statSync(path.join(SKILLS_DIR, f)).isDirectory() && !skillDepartments.has(f)) validSkills.add(f);
       } catch {
         // skip unreadable entries
       }
@@ -150,12 +153,13 @@ function validateCommands() {
       }
     }
 
-    // Check skill directory references (e.g., "skills/tdd-workflow/")
+    // Check skill directory references (e.g., "skills/core/tdd-workflow/")
     // learned and imported are reserved roots (~/.claude/skills/); no local dir expected
     const reservedSkillRoots = new Set(['learned', 'imported']);
-    const skillRefs = contentNoCodeBlocks.matchAll(/skills\/([a-z][-a-z0-9]*)\//g);
+    // skills/<department>/<skill>/ or a flat skills/<skill>/
+    const skillRefs = contentNoCodeBlocks.matchAll(/skills\/([a-z][-a-z0-9]*)\/(?:([a-z][-a-z0-9]*)\/?)?/g);
     for (const match of skillRefs) {
-      const refName = match[1];
+      const refName = skillDepartments.has(match[1]) && match[2] ? match[2] : match[1];
       if (reservedSkillRoots.has(refName) || validSkills.has(refName)) continue;
       console.warn(`WARN: ${file} - references skill directory skills/${refName}/ (not found locally)`);
       warnCount++;

@@ -6,7 +6,13 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const { resolveWindowsBashCandidates } = require('../lib/windows-bash');
 
-const OBSERVE_RELATIVE_PATH = path.join('skills', 'continuous-learning-v2', 'hooks', 'observe.sh');
+// A checkout or plugin root nests skills by department; an installed root
+// (~/.claude) keeps them flat. The first path that exists wins.
+const OBSERVE_RELATIVE_PATHS = [
+  path.join('skills', 'admin', 'continuous-learning-v2', 'hooks', 'observe.sh'),
+  path.join('skills', 'continuous-learning-v2', 'hooks', 'observe.sh'),
+];
+const OBSERVE_RELATIVE_PATH = OBSERVE_RELATIVE_PATHS[0];
 const DEFAULT_TIMEOUT_MS = 9000;
 
 function getPluginRoot(options = {}) {
@@ -105,7 +111,8 @@ function run(raw, options = {}) {
   const pluginRoot = getPluginRoot(options);
   let observePath;
   try {
-    observePath = resolveTarget(pluginRoot, OBSERVE_RELATIVE_PATH);
+    const candidates = OBSERVE_RELATIVE_PATHS.map(rel => resolveTarget(pluginRoot, rel));
+    observePath = candidates.find(candidate => fs.existsSync(candidate)) || candidates[0];
   } catch (error) {
     return {
       stderr: `[Hook] observe runner path resolution failed: ${error.message}`,

@@ -6,7 +6,7 @@ argument-hint: "[--out PATH] [--theme auto|light|dark] [--dry-run]"
 # Token Card
 
 Thin compatibility shim. The workflow lives in the **token-card** skill
-(`skills/token-card/SKILL.md`), which is the canonical surface; this command exists so the
+(`skills/admin/token-card/SKILL.md`), which is the canonical surface; this command exists so the
 slash-command harnesses can reach it.
 
 ## Usage

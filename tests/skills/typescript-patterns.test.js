@@ -7,10 +7,10 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
-const ts = require('typescript');
+const ts = require('@typescript/typescript6');
 
 const repoRoot = path.resolve(__dirname, '..', '..');
-const skillPath = path.join(repoRoot, 'skills', 'typescript-patterns', 'SKILL.md');
+const skillPath = path.join(repoRoot, 'skills', 'languages', 'typescript-patterns', 'SKILL.md');
 const skill = fs.readFileSync(skillPath, 'utf8');
 
 let passed = 0;

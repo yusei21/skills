@@ -3,7 +3,7 @@
 Candidate id: `bounded-event-summary`
 
 This is a synthetic, read-only worked example for the existing
-[search-first skill](../../../skills/search-first/SKILL.md). The five artifacts
+[search-first skill](../../../skills/core/search-first/SKILL.md). The five artifacts
 record expected rubric decisions, not a connector execution or model benchmark.
 The motivating [feedback](https://github.com/affaan-m/ECC/issues/3680) reports a
 corrected workflow; exact ECC activation, version and causal contribution are

@@ -93,7 +93,7 @@ function runTests() {
         },
         {
           id: 'workflow-quality',
-          paths: ['skills/tdd-workflow'],
+          paths: ['skills/core/tdd-workflow'],
         },
       ],
     });
@@ -121,7 +121,7 @@ function runTests() {
     );
     assert.ok(
       plan.operations.some(operation => (
-        normalizedRelativePath(operation.sourceRelativePath) === 'skills/tdd-workflow'
+        normalizedRelativePath(operation.sourceRelativePath) === 'skills/core/tdd-workflow'
         && operation.destinationPath === path.join(projectRoot, '.kimi-code', 'skills', 'tdd-workflow')
       )),
       'Should install directly discoverable Kimi skills under .kimi-code/skills'
@@ -176,7 +176,7 @@ function runTests() {
         },
         {
           id: 'workflow-quality',
-          paths: ['skills/tdd-workflow'],
+          paths: ['skills/core/tdd-workflow'],
         },
       ],
     });
@@ -190,7 +190,7 @@ function runTests() {
     );
     assert.ok(
       plan.operations.some(operation => (
-        normalizedRelativePath(operation.sourceRelativePath) === 'skills/tdd-workflow'
+        normalizedRelativePath(operation.sourceRelativePath) === 'skills/core/tdd-workflow'
         && operation.destinationPath === path.join(homeDir, '.claude', 'skills', 'tdd-workflow')
       )),
       'Should install bundled Claude skills under skills'
@@ -510,7 +510,7 @@ function runTests() {
         },
         {
           id: 'workflow-quality',
-          paths: ['skills/tdd-workflow'],
+          paths: ['skills/core/tdd-workflow'],
         },
         {
           id: 'rules-core',
@@ -535,7 +535,7 @@ function runTests() {
     );
     assert.ok(
       plan.operations.some(operation => (
-        operation.sourceRelativePath === 'skills/tdd-workflow'
+        operation.sourceRelativePath === 'skills/core/tdd-workflow'
         && operation.destinationPath === path.join(projectRoot, '.agents', 'skills', 'tdd-workflow')
       )),
       'Should remap canonical skills into native skills'
@@ -879,7 +879,7 @@ function runTests() {
         },
         {
           id: 'workflow-quality',
-          paths: ['skills/tdd-workflow'],
+          paths: ['skills/core/tdd-workflow'],
         },
       ],
     });
@@ -911,7 +911,7 @@ function runTests() {
     );
     assert.ok(
       plan.operations.some(operation => (
-        normalizedRelativePath(operation.sourceRelativePath) === 'skills/tdd-workflow'
+        normalizedRelativePath(operation.sourceRelativePath) === 'skills/core/tdd-workflow'
         && operation.destinationPath === path.join(projectRoot, '.joycode', 'skills', 'tdd-workflow')
       )),
       'Should install skills under .joycode/skills'
@@ -945,7 +945,7 @@ function runTests() {
         },
         {
           id: 'workflow-quality',
-          paths: ['skills/tdd-workflow'],
+          paths: ['skills/core/tdd-workflow'],
         },
       ],
     });
@@ -974,7 +974,7 @@ function runTests() {
     );
     assert.ok(
       plan.operations.some(operation => (
-        normalizedRelativePath(operation.sourceRelativePath) === 'skills/tdd-workflow'
+        normalizedRelativePath(operation.sourceRelativePath) === 'skills/core/tdd-workflow'
         && operation.destinationPath === path.join(homeDir, '.qwen', 'skills', 'tdd-workflow')
       )),
       'Should install skills under ~/.qwen/skills'
@@ -1008,7 +1008,7 @@ function runTests() {
         },
         {
           id: 'workflow-quality',
-          paths: ['skills/tdd-workflow'],
+          paths: ['skills/core/tdd-workflow'],
         },
       ],
     });
@@ -1047,7 +1047,7 @@ function runTests() {
     );
     assert.ok(
       plan.operations.some(operation => (
-        normalizedRelativePath(operation.sourceRelativePath) === 'skills/tdd-workflow'
+        normalizedRelativePath(operation.sourceRelativePath) === 'skills/core/tdd-workflow'
         && operation.destinationPath === path.join(projectRoot, '.zed', 'skills', 'tdd-workflow')
       )),
       'Should install skills under .zed/skills'
@@ -1096,7 +1096,7 @@ function runTests() {
         },
         {
           id: 'workflow-quality',
-          paths: ['skills/tdd-workflow'],
+          paths: ['skills/core/tdd-workflow'],
         },
         {
           id: 'platform-configs',
@@ -1117,7 +1117,7 @@ function runTests() {
     );
     assert.ok(
       plan.operations.some(operation => (
-        normalizedRelativePath(operation.sourceRelativePath) === 'skills/tdd-workflow'
+        normalizedRelativePath(operation.sourceRelativePath) === 'skills/core/tdd-workflow'
         && operation.destinationPath === path.join(projectRoot, '.adal', 'skills', 'tdd-workflow')
       )),
       'Should install skills under .adal/skills'
@@ -1263,7 +1263,7 @@ function runTests() {
         },
         {
           id: 'workflow-quality',
-          paths: ['skills/tdd-workflow'],
+          paths: ['skills/core/tdd-workflow'],
         },
       ],
     });
@@ -1280,7 +1280,7 @@ function runTests() {
     );
     assert.ok(
       plan.operations.some(operation => (
-        normalizedRelativePath(operation.sourceRelativePath) === 'skills/tdd-workflow'
+        normalizedRelativePath(operation.sourceRelativePath) === 'skills/core/tdd-workflow'
         && operation.destinationPath === path.join(projectRoot, '.claude', 'skills', 'tdd-workflow')
       )),
       'Should install bundled skills under project-scope skills'

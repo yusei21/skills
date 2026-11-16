@@ -4,7 +4,7 @@ description: Legacy slash-entry shim for the claude-devfleet skill. Prefer the s
 
 # DevFleet (Legacy Shim)
 
-Use this only if you still call `/devfleet`. The maintained workflow lives in `skills/claude-devfleet/SKILL.md`.
+Use this only if you still call `/devfleet`. The maintained workflow lives in `skills/ai-agents/claude-devfleet/SKILL.md`.
 
 ## Canonical Surface
 

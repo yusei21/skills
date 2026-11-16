@@ -14,6 +14,8 @@
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
+import { createRequire } from 'node:module';
+const { listSkills } = createRequire(import.meta.url)('../lib/skill-layout.js');
 
 const TOKEN = process.env.DISCORD_BOT_TOKEN;
 const APP_ID = process.env.DISCORD_APP_ID;
@@ -75,12 +77,9 @@ function parseFrontmatter(text) {
 }
 
 function loadSkills() {
-  const dir = join(REPO, 'skills');
-  if (!existsSync(dir)) return [];
   const skills = [];
-  for (const name of readdirSync(dir)) {
-    const md = join(dir, name, 'SKILL.md');
-    if (!existsSync(md)) continue;
+  // skills/<department>/<skill>/ (or flat skills/<skill>/)
+  for (const { name, skillFile: md } of listSkills(REPO)) {
     try {
       const fm = parseFrontmatter(readFileSync(md, 'utf8'));
       skills.push({ name, description: fm.description || '(no description)' });

@@ -15,7 +15,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { createRequire } = require('node:module');
 const vm = require('node:vm');
-const ts = require('typescript');
+const ts = require('@typescript/typescript6');
 const express = require('express');
 const x402Express = require('@x402/express');
 const coreServer = require('@x402/core/server');
@@ -29,9 +29,7 @@ const { privateKeyToAccount, generatePrivateKey } = viemFromEvm('viem/accounts')
 
 const ROOT = path.resolve(__dirname, '../..');
 const DOCS = [
-  'skills/agent-payment-x402/SKILL.md',
-  'docs/ja-JP/skills/agent-payment-x402/SKILL.md',
-  'docs/zh-CN/skills/agent-payment-x402/SKILL.md',
+  'skills/verticals/agent-payment-x402/SKILL.md',
 ];
 const NOW_S = 1_800_000_000; // fixed clock for the guard's expiry arithmetic
 const PAY_TO = '0x000000000000000000000000000000000000dEaD';

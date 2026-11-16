@@ -12,7 +12,7 @@ const SCHEMA_VERSION = 'ecc.preview-pack-smoke.v1';
 const REQUIRED_ARTIFACTS = [
   'README.md',
   'docs/HERMES-SETUP.md',
-  'skills/hermes-imports/SKILL.md',
+  'skills/admin/hermes-imports/SKILL.md',
   'docs/architecture/cross-harness.md',
   'docs/architecture/harness-adapter-compliance.md',
   'docs/architecture/observability-readiness.md',
@@ -214,7 +214,7 @@ function buildReport(options = {}) {
   const manifestPath = `${RELEASE_DIR}/preview-pack-manifest.md`;
   const manifest = readText(rootDir, manifestPath);
   const hermesSetup = readText(rootDir, 'docs/HERMES-SETUP.md');
-  const hermesSkill = readText(rootDir, 'skills/hermes-imports/SKILL.md');
+  const hermesSkill = readText(rootDir, 'skills/admin/hermes-imports/SKILL.md');
 
   const missingArtifacts = REQUIRED_ARTIFACTS.filter(relativePath => !fileExists(rootDir, relativePath));
   const unlistedArtifacts = REQUIRED_ARTIFACTS.filter(relativePath => !manifest.includes(`\`${relativePath}\``));

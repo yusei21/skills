@@ -15,7 +15,7 @@ if any(
         "Install taste-application/scripts/requirements.txt for the creative pipeline tests"
     )
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "skills/taste-application/scripts"
+SCRIPTS = Path(__file__).resolve().parents[1] / "skills/media/taste-application/scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 

@@ -368,6 +368,35 @@ function createFlatRuleOperations(options) {
 }
 
 function createInstallTargetAdapter(config) {
+  function planAdapterOperations(input) {
+    if (typeof config.planOperations === 'function') {
+      return config.planOperations(input, adapter);
+    }
+
+    if (Array.isArray(input.modules)) {
+      return input.modules.flatMap(module => {
+        const paths = Array.isArray(module.paths) ? module.paths : [];
+        return paths
+          .filter(p => !isForeignPlatformPath(p, config.target) && !adapter.excludesSourcePath(p))
+          .map(sourceRelativePath => adapter.createScaffoldOperation(
+            module.id,
+            sourceRelativePath,
+            input
+          ));
+      });
+    }
+
+    const module = input.module || {};
+    const paths = Array.isArray(module.paths) ? module.paths : [];
+    return paths
+      .filter(p => !isForeignPlatformPath(p, config.target) && !adapter.excludesSourcePath(p))
+      .map(sourceRelativePath => adapter.createScaffoldOperation(
+        module.id,
+        sourceRelativePath,
+        input
+      ));
+  }
+
   const adapter = {
     id: config.id,
     target: config.target,
@@ -425,32 +454,11 @@ function createInstallTargetAdapter(config) {
       return isExcludedSourcePath(sourceRelativePath, config.excludedSourcePaths);
     },
     planOperations(input = {}) {
-      if (typeof config.planOperations === 'function') {
-        return config.planOperations(input, adapter);
-      }
-
-      if (Array.isArray(input.modules)) {
-        return input.modules.flatMap(module => {
-          const paths = Array.isArray(module.paths) ? module.paths : [];
-          return paths
-            .filter(p => !isForeignPlatformPath(p, config.target) && !adapter.excludesSourcePath(p))
-            .map(sourceRelativePath => adapter.createScaffoldOperation(
-              module.id,
-              sourceRelativePath,
-              input
-            ));
-        });
-      }
-
-      const module = input.module || {};
-      const paths = Array.isArray(module.paths) ? module.paths : [];
-      return paths
-        .filter(p => !isForeignPlatformPath(p, config.target) && !adapter.excludesSourcePath(p))
-        .map(sourceRelativePath => adapter.createScaffoldOperation(
-          module.id,
-          sourceRelativePath,
-          input
-        ));
+      // Sources nest skills by department (skills/<department>/<skill>);
+      // every installed target keeps them flat (skills/<skill>).
+      const { flattenSkillDestination, knownDepartments } = require('../skill-layout');
+      const departments = knownDepartments(input.repoRoot);
+      return planAdapterOperations(input).map(operation => flattenSkillDestination(operation, departments));
     },
     supportsModule(module, input = {}) {
       if (typeof config.supportsModule === 'function') {

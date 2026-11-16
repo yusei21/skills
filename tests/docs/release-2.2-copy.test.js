@@ -13,7 +13,7 @@ function read(relativePath) {
 const readme = read('README.md');
 const changelog = read('CHANGELOG.md');
 const releaseNotes = read('docs/releases/2.2.0/release-notes.md');
-const nasikoSkill = read('skills/nasiko-control-plane/SKILL.md');
+const nasikoSkill = read('skills/verticals/nasiko-control-plane/SKILL.md');
 const modules = read('manifests/install-modules.json');
 const components = read('manifests/install-components.json');
 const staleReleaseCopy = [

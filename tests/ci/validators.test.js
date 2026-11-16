@@ -93,6 +93,10 @@ function stripShebang(source) {
  */
 function runSourceViaTempFile(source) {
   const tmpFile = path.join(repoRoot, `.tmp-validator-${Date.now()}-${Math.random().toString(36).slice(2)}.js`);
+  // The wrapper runs from the repo root, so a validator's relative
+  // require('../lib/...') must point at scripts/lib explicitly.
+  const libDir = path.join(repoRoot, 'scripts', 'lib');
+  source = source.replace(/require\((['"])\.\.\/lib\//g, (_m, quote) => `require(${quote}${libDir.split(path.sep).join('/')}/`);
   try {
     fs.writeFileSync(tmpFile, source, 'utf8');
     const stdout = execFileSync('node', [tmpFile], {
@@ -238,6 +242,8 @@ function runSkillsValidator(testDir, argv = [], envOverrides = {}, docsDir) {
   }
   const tmpFile = path.join(repoRoot,
     `.tmp-validator-${Date.now()}-${Math.random().toString(36).slice(2)}.js`);
+  const libDir = path.join(repoRoot, 'scripts', 'lib');
+  source = source.replace(/require\((['"])\.\.\/lib\//g, (_m, quote) => `require(${quote}${libDir.split(path.sep).join('/')}/`);
   try {
     fs.writeFileSync(tmpFile, source, 'utf8');
     const r = spawnSync('node', [tmpFile], {
@@ -707,8 +713,9 @@ function runTests() {
       pluginJsonPath,
       marketplaceJsonPath,
     } = writeCatalogFixture(testDir);
+    // Translated mirrors are optional; a missing required document must fail.
+    fs.rmSync(agentsPath);
     const missingZhAgentsPath = path.join(testDir, 'docs', 'zh-CN', 'AGENTS.md');
-    fs.rmSync(missingZhAgentsPath);
 
     const result = runCatalogValidator({
       ROOT: testDir,
@@ -3467,7 +3474,7 @@ function runTests() {
           id: 'security',
           kind: 'skills',
           description: 'Security',
-          paths: ['skills/security-review'],
+          paths: ['skills/security/security-review'],
           targets: ['codex'],
           dependencies: [],
           defaultInstall: false,

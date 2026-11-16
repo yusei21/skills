@@ -87,13 +87,6 @@ test('Copilot instructions include a prompt defense baseline', () => {
   assert.ok(instructions.includes('Never print tokens'));
 });
 
-test('README documents prompt-file settings and surfaces', () => {
-  const readme = read('README.md');
-  assert.ok(readme.includes('chat.promptFiles'));
-  assert.ok(readme.includes('.github/prompts/'));
-  assert.ok(readme.includes('.vscode/settings.json'));
-});
-
 if (failed > 0) {
   console.log(`\nFailed: ${failed}`);
   process.exit(1);

@@ -51,7 +51,7 @@ for loop status, session traces, harness audit, and ECC2 tool-risk logs.
 
 ## First Skill
 
-Read `skills/hermes-imports/SKILL.md` first.
+Read `skills/admin/hermes-imports/SKILL.md` first.
 
 It shows the intended ECC 2.0 pattern:
 

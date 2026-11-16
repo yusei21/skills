@@ -31,7 +31,7 @@ if (-not (Test-Path $WrapperSrc)) {
 }
 
 # Ensure the hook destination directory exists (fresh installs have no
-# skills/continuous-learning/hooks tree yet).
+# skills/admin/continuous-learning/hooks tree yet).
 $dstDir = Split-Path $WrapperDst
 if (-not (Test-Path $dstDir)) {
     New-Item -ItemType Directory -Path $dstDir -Force | Out-Null

@@ -16,6 +16,7 @@ test('Pi generation stays byte-identical after local Python execution creates ca
     fs.writeFileSync(destination, content);
   };
   write('scripts/build-pi-core.js', fs.readFileSync(path.join(__dirname, '../../scripts/build-pi-core.js')));
+  write('scripts/lib/skill-layout.js', fs.readFileSync(path.join(__dirname, '../../scripts/lib/skill-layout.js')));
   write('VERSION', '2.2.3\n');
   write('LICENSE', 'Fixture license\n');
   fs.mkdirSync(path.join(root, 'commands'));

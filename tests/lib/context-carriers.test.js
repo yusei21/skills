@@ -226,9 +226,9 @@ test('registry drift between compilation and carrier inventory fails closed', co
 test('missing required-resource metadata or inventory members cannot become partial carriers', context => withFixture(root => {
   for (const transform of [
     ({ requiredResources: _, ...entry }) => entry,
-    entry => ({ ...entry, requiredResources: ['skills/ecc-guide/absent.md'] }),
+    entry => ({ ...entry, requiredResources: ['skills/core/ecc-guide/absent.md'] }),
     entry => ({ ...entry, resources: [] }),
-    entry => ({ ...entry, sourcePath: 'skills/ecc-guide/absent.md' }),
+    entry => ({ ...entry, sourcePath: 'skills/core/ecc-guide/absent.md' }),
   ]) {
     withRegistryView(context, registry => changeSelectedEntry(registry, transform), () => {
       assert.throws(() => plan({ repoRoot: root }), /resource|source.*(?:missing|inventory)/i);
@@ -241,7 +241,7 @@ test('duplicate native names and case-colliding destination resources are reject
   assert.throws(() => plan({ repoRoot: root, include: ['skill:feature'] }), /name|collision|duplicate/i);
   withRegistryView(context, registry => changeSelectedEntry(registry, entry => ({
     ...entry, resources: [...entry.resources, ...['details.md', 'DETAILS.md'].map(file => ({
-      path: `skills/ecc-guide/${file}`, digest: 'a'.repeat(64), bytes: 1,
+      path: `skills/core/ecc-guide/${file}`, digest: 'a'.repeat(64), bytes: 1,
     }))],
   })), () => assert.throws(() => plan({ repoRoot: root }), /collision|duplicate/i));
 }));
@@ -249,7 +249,7 @@ test('duplicate native names and case-colliding destination resources are reject
 test('case-aliased ancestor directories with different child files are rejected', context => withFixture(root => (
   withRegistryView(context, registry => changeSelectedEntry(registry, entry => ({
     ...entry, resources: [...entry.resources, ...['Case/one.md', 'case/two.md'].map(file => ({
-      path: `skills/ecc-guide/${file}`, digest: 'a'.repeat(64), bytes: 1,
+      path: `skills/core/ecc-guide/${file}`, digest: 'a'.repeat(64), bytes: 1,
     }))],
   })), () => assert.throws(() => plan({ repoRoot: root }), /collision|alias/i))
 )));
@@ -257,7 +257,7 @@ test('case-aliased ancestor directories with different child files are rejected'
 test('Unicode-normalization-aliased ancestors with different children are rejected', context => withFixture(root => (
   withRegistryView(context, registry => changeSelectedEntry(registry, entry => ({
     ...entry, resources: [...entry.resources, ...['caf\u00e9/one.md', 'cafe\u0301/two.md'].map(file => ({
-      path: `skills/ecc-guide/${file}`, digest: 'a'.repeat(64), bytes: 1,
+      path: `skills/core/ecc-guide/${file}`, digest: 'a'.repeat(64), bytes: 1,
     }))],
   })), () => assert.throws(() => plan({ repoRoot: root }), /collision|alias/i))
 )));
@@ -342,7 +342,7 @@ test('real canonical inventory projects every selected bundled resource without 
         { sourcePath, destinationPath, digest, bytes }
       )), entry.resources.map(resource => ({
         sourcePath: resource.path,
-        destinationPath: `${LAYOUTS[target].skillRoot}/${name}/${resource.path.slice(`skills/${name}/`.length)}`,
+        destinationPath: `${LAYOUTS[target].skillRoot}/${name}/${resource.path.slice(`${path.posix.dirname(entry.sourcePath)}/`.length)}`,
         digest: resource.digest, bytes: resource.bytes,
       })));
       assert.equal(carrier.files.some(file => file.destinationPath.startsWith(

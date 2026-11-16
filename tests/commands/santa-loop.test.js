@@ -9,8 +9,6 @@ const { spawnSync } = require('child_process');
 const repoRoot = path.resolve(__dirname, '..', '..');
 const commands = [
   'commands/santa-loop.md',
-  'docs/ja-JP/commands/santa-loop.md',
-  'docs/zh-CN/commands/santa-loop.md',
 ];
 
 if (process.platform === 'win32') {

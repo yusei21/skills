@@ -19,6 +19,24 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # Locate the ECC repo root by walking up from SCRIPT_DIR to find the marker
 # file (VERSION). This keeps the script working even when it has been copied
 # into a target project's .codebuddy/ directory.
+# Skill directories: skills/<department>/<skill>/ (or a flat skills/<skill>/).
+list_skill_dirs() {
+    local root="$1" d c
+    for d in "$root"/*/; do
+        [ -d "$d" ] || continue
+        d="${d%/}"
+        if [ -f "$d/SKILL.md" ]; then
+            printf '%s\n' "$d"
+            continue
+        fi
+        for c in "$d"/*/; do
+            [ -d "$c" ] || continue
+            c="${c%/}"
+            [ -f "$c/SKILL.md" ] && printf '%s\n' "$c"
+        done
+    done
+}
+
 find_repo_root() {
     local dir="$(dirname "$SCRIPT_DIR")"
     # First try the parent of SCRIPT_DIR (original layout: .codebuddy/ lives in repo root)
@@ -158,7 +176,7 @@ do_install() {
 
     # Copy skills from repo root (if available)
     if [ -d "$REPO_ROOT/skills" ]; then
-        for d in "$REPO_ROOT/skills"/*/; do
+        while IFS= read -r d; do
             [ -d "$d" ] || continue
             skill_name="$(basename "$d")"
             target_skill_dir="$codebuddy_full_path/skills/$skill_name"
@@ -177,7 +195,7 @@ do_install() {
             if [ "$skill_copied" -eq 1 ]; then
                 skills=$((skills + 1))
             fi
-        done
+        done < <(list_skill_dirs "$REPO_ROOT/skills")
     fi
 
     # Copy rules from repo root

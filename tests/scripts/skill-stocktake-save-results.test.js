@@ -9,7 +9,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const repoRoot = path.resolve(__dirname, '..', '..');
-const saveScript = path.join(repoRoot, 'skills', 'skill-stocktake', 'scripts', 'save-results.sh');
+const saveScript = path.join(repoRoot, 'skills', 'admin', 'skill-stocktake', 'scripts', 'save-results.sh');
 let passed = 0;
 let failed = 0;
 

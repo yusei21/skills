@@ -7,6 +7,7 @@
  */
 
 const assert = require('assert');
+const { findSkill } = require('../../scripts/lib/skill-layout');
 const fs = require('fs');
 const path = require('path');
 
@@ -56,7 +57,7 @@ function walk(dir, acc = []) {
 console.log('\n=== Desk pattern skills ===\n');
 
 for (const skill of SKILLS) {
-  const skillDir = path.join(repoRoot, 'skills', skill);
+  const skillDir = findSkill(repoRoot, skill)?.dir ?? path.join(repoRoot, 'skills', skill);
   const skillPath = path.join(skillDir, 'SKILL.md');
 
   test(`${skill}: SKILL.md has name and description frontmatter`, () => {
@@ -92,18 +93,18 @@ for (const skill of SKILLS) {
 }
 
 test('operator-approval-loop ships the ledger schema with the idempotency key', () => {
-  const sql = fs.readFileSync(path.join(repoRoot, 'skills/operator-approval-loop/references/approval-ledger.sql'), 'utf8');
+  const sql = fs.readFileSync(path.join(repoRoot, 'skills/operations/operator-approval-loop/references/approval-ledger.sql'), 'utf8');
   assert.match(sql, /UNIQUE\(obligation_id, decision_id\)/);
   assert.match(sql, /draft_sha256/);
   assert.match(sql, /auto_send_after/);
-  const skill = fs.readFileSync(path.join(repoRoot, 'skills/operator-approval-loop/SKILL.md'), 'utf8');
+  const skill = fs.readFileSync(path.join(repoRoot, 'skills/operations/operator-approval-loop/SKILL.md'), 'utf8');
   assert.match(skill, /BASELINE_CHECK_UNAVAILABLE/);
   assert.match(skill, /exact `draft_text`/);
 });
 
 // These check the written routing contract, not a live sender or runtime policy.
 function approvalSection(heading) {
-  const source = fs.readFileSync(path.join(repoRoot, 'skills/operator-approval-loop/SKILL.md'), 'utf8');
+  const source = fs.readFileSync(path.join(repoRoot, 'skills/operations/operator-approval-loop/SKILL.md'), 'utf8');
   const marker = `${heading}\n`;
   assert.ok(source.includes(marker), `missing ${heading}`);
   return source.split(marker)[1].split(/\n#{2,3} /)[0].replace(/\s+/g, ' ');
@@ -124,7 +125,7 @@ test('approval notices stay quiet for unknown origins and have no external fallb
   assert.match(filing, /direct message.*not.*internal/i);
   assert.match(filing, /internal destination is unavailable.*internal tool result or operator surface/i);
   assert.match(filing, /never fall back to an external or unknown origin/i);
-  const policy = fs.readFileSync(path.join(repoRoot, 'skills/counterparty-channel-discipline/SKILL.md'), 'utf8').replace(/\s+/g, ' ');
+  const policy = fs.readFileSync(path.join(repoRoot, 'skills/operations/counterparty-channel-discipline/SKILL.md'), 'utf8').replace(/\s+/g, ' ');
   assert.match(policy, /unknown channels default to quiet/i);
   assert.match(policy, /never_silent_ack: true.*internal channels only/i);
 });
@@ -146,26 +147,26 @@ test('approval example and invariants keep receipt metadata internal without gra
 });
 
 test('counterparty-channel-discipline ships a policy example and a strict prompt template', () => {
-  const policy = fs.readFileSync(path.join(repoRoot, 'skills/counterparty-channel-discipline/references/channel-policy.example.yaml'), 'utf8');
+  const policy = fs.readFileSync(path.join(repoRoot, 'skills/operations/counterparty-channel-discipline/references/channel-policy.example.yaml'), 'utf8');
   assert.match(policy, /require_mention: true/);
   assert.match(policy, /observe_unmentioned_group_messages: true/);
   assert.match(policy, /default: auto/);
-  const template = fs.readFileSync(path.join(repoRoot, 'skills/counterparty-channel-discipline/references/strict-prompt.template.md'), 'utf8');
+  const template = fs.readFileSync(path.join(repoRoot, 'skills/operations/counterparty-channel-discipline/references/strict-prompt.template.md'), 'utf8');
   assert.doesNotMatch(template, /\{\{CHANNEL_NAME\}\}/);
   assert.match(template, /untrusted data/);
   assert.match(template, /Never reveal one counterparty/);
 });
 
 test('master-agreement-generator template pins the signature page with a page break', () => {
-  const template = fs.readFileSync(path.join(repoRoot, 'skills/master-agreement-generator/references/master-template.example.md'), 'utf8');
+  const template = fs.readFileSync(path.join(repoRoot, 'skills/operations/master-agreement-generator/references/master-template.example.md'), 'utf8');
   assert.match(template, /w:br w:type="page"/);
   assert.match(template, /\{\{SCHEDULE_ROWS\}\}/);
-  const spec = JSON.parse(fs.readFileSync(path.join(repoRoot, 'skills/master-agreement-generator/references/spec.example.json'), 'utf8'));
+  const spec = JSON.parse(fs.readFileSync(path.join(repoRoot, 'skills/operations/master-agreement-generator/references/spec.example.json'), 'utf8'));
   assert.strictEqual(spec.role, 'supplier');
 });
 
 test('esign-field-placement defaults to draft and forbids credential entry', () => {
-  const skill = fs.readFileSync(path.join(repoRoot, 'skills/esign-field-placement/SKILL.md'), 'utf8');
+  const skill = fs.readFileSync(path.join(repoRoot, 'skills/operations/esign-field-placement/SKILL.md'), 'utf8');
   assert.match(skill, /save as draft/i);
   assert.match(skill, /never\s+enters credentials/i);
   assert.match(skill, /Never nudge by drag/);
@@ -174,8 +175,8 @@ test('esign-field-placement defaults to draft and forbids credential entry', () 
 
 // Written-contract coverage only: these checks do not execute a browser or transform.
 const placementDocuments = [
-  'skills/esign-field-placement/SKILL.md',
-  'skills/esign-field-placement/references/placement-checklist.md',
+  'skills/operations/esign-field-placement/SKILL.md',
+  'skills/operations/esign-field-placement/references/placement-checklist.md',
 ].map(relative => ({ relative, text: fs.readFileSync(path.join(repoRoot, relative), 'utf8').replace(/\s+/g, ' ') }));
 
 function checkPlacementDocuments(assertions) {
@@ -264,9 +265,9 @@ test('e-sign evidence filenames and send grants have explicit trust boundaries',
 });
 
 test('channel policy separates audience, participation and output permission', () => {
-  const skill = fs.readFileSync(path.join(repoRoot, 'skills/counterparty-channel-discipline/SKILL.md'), 'utf8').replace(/\s+/g, ' ');
-  const template = fs.readFileSync(path.join(repoRoot, 'skills/counterparty-channel-discipline/references/strict-prompt.template.md'), 'utf8');
-  const policy = fs.readFileSync(path.join(repoRoot, 'skills/counterparty-channel-discipline/references/channel-policy.example.yaml'), 'utf8');
+  const skill = fs.readFileSync(path.join(repoRoot, 'skills/operations/counterparty-channel-discipline/SKILL.md'), 'utf8').replace(/\s+/g, ' ');
+  const template = fs.readFileSync(path.join(repoRoot, 'skills/operations/counterparty-channel-discipline/references/strict-prompt.template.md'), 'utf8');
+  const policy = fs.readFileSync(path.join(repoRoot, 'skills/operations/counterparty-channel-discipline/references/channel-policy.example.yaml'), 'utf8');
   assert.match(skill, /platform.*workspace.*channel.*identity/i);
   assert.match(skill, /historical.*thread.*never.*consent/i);
   assert.match(skill, /before.*model.*context.*media/i);

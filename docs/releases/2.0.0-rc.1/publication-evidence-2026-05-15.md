@@ -131,7 +131,7 @@ survive package uninstall.
 
 - release notes, quickstart, launch checklist, publication readiness, naming
   matrix, and May 15 evidence;
-- `docs/HERMES-SETUP.md` and `skills/hermes-imports/SKILL.md` as the public
+- `docs/HERMES-SETUP.md` and `skills/admin/hermes-imports/SKILL.md` as the public
   Hermes-specialized surface;
 - cross-harness, harness-adapter, observability, and progress-sync docs;
 - X, LinkedIn, article, Telegram, and demo collateral that must receive final

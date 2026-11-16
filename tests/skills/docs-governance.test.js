@@ -3,13 +3,14 @@
 'use strict';
 
 const assert = require('assert');
+const { skillDir, findSkill } = require('../../scripts/lib/skill-layout');
 const fs = require('fs');
 const path = require('path');
 
 const { resolveInstallPlan } = require('../../scripts/lib/install-manifests');
 
 const ROOT = path.resolve(__dirname, '../..');
-const CANONICAL = path.join(ROOT, 'skills', 'docs-governance');
+const CANONICAL = path.join(ROOT, 'skills', 'docs-product', 'docs-governance');
 const CODEX_MIRROR = path.join(ROOT, '.agents', 'skills', 'docs-governance');
 const PI_CORE = path.join(ROOT, 'pi', 'core', 'skills', 'docs-governance', 'SKILL.md');
 const MIRRORED_FILES = [
@@ -56,7 +57,7 @@ test('Codex and Pi distribution files match the canonical skill', () => {
 test('router destinations exist on current main', () => {
   for (const skill of ROUTED_SKILLS) {
     assert.ok(
-      fs.existsSync(path.join(ROOT, 'skills', skill, 'SKILL.md')),
+      fs.existsSync(path.join(skillDir(ROOT, skill), 'SKILL.md')),
       `docs-governance routes to missing skill: ${skill}`
     );
   }
@@ -82,9 +83,9 @@ test('opt-in install includes every routed skill owner', () => {
   });
   const installedPaths = new Set(plan.selectedModules.flatMap((module) => module.paths));
   for (const skill of ROUTED_SKILLS) {
-    assert.ok(installedPaths.has(`skills/${skill}`), `install plan omits routed skill: ${skill}`);
+    assert.ok(installedPaths.has(findSkill(ROOT, skill)?.relDir ?? `skills/${skill}`), `install plan omits routed skill: ${skill}`);
   }
-  assert.ok(installedPaths.has('skills/docs-governance'));
+  assert.ok(installedPaths.has('skills/docs-product/docs-governance'));
 });
 
 console.log(`\nPassed: ${passed}`);

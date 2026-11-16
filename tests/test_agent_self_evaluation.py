@@ -13,7 +13,7 @@ from typing import NoReturn
 
 import pytest
 
-SCRIPT = Path(__file__).resolve().parents[1] / "skills/agent-self-evaluation/scripts/evaluate.py"
+SCRIPT = Path(__file__).resolve().parents[1] / "skills/ai-agents/agent-self-evaluation/scripts/evaluate.py"
 PI_SCRIPT = SCRIPT.parents[3] / "pi/core/skills/agent-self-evaluation/scripts/evaluate.py"
 
 

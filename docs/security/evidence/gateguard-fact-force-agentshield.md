@@ -67,7 +67,7 @@ All 37 findings are present on `main` in the same number:
 ## Coverage limits
 
 AgentShield scans the hook entry script but not the `scripts/lib/gateguard-*.js`
-modules it requires, and it does not read `skills/gateguard/SKILL.md` below
+modules it requires, and it does not read `skills/core/gateguard/SKILL.md` below
 the top level of `skills/`. The scenario gate SARIF in
 [gateguard-fact-force.md](gateguard-fact-force.md) and the unit suites cover
 those modules.

@@ -44,6 +44,8 @@ const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
 
 const PROFILE_DIR = path.join(ROOT, manifest.profile.dir);
 const SKILLS_SRC = path.join(ROOT, 'skills');
+// Source skills nest by department (skills/<department>/<skill>); the Pi package stays flat.
+const { listSkillNames, skillDir } = require('./lib/skill-layout');
 const COMMANDS_SRC = path.join(ROOT, 'commands');
 const VERSION = fs.readFileSync(path.join(ROOT, 'VERSION'), 'utf8').trim();
 const CHECK_MODE = process.argv.includes('--check');
@@ -57,8 +59,7 @@ function fail(msg) {
 // Every on-disk skill dir and command file must be classified exactly once in
 // the manifest, so new content cannot silently bypass curation.
 {
-  const onDiskSkills = fs.readdirSync(SKILLS_SRC, { withFileTypes: true })
-    .filter(e => e.isDirectory()).map(e => e.name);
+  const onDiskSkills = listSkillNames(path.dirname(SKILLS_SRC));
   const known = new Set([...manifest.skills.include, ...Object.keys(manifest.skills.exclude)]);
   for (const dir of onDiskSkills) {
     if (!known.has(dir)) fail(`skills/${dir} is not classified in manifests/pi-core.json`);
@@ -119,7 +120,7 @@ const skillDescriptions = [];
 const seenNames = new Map();
 
 for (const dirName of manifest.skills.include) {
-  const srcDir = path.join(SKILLS_SRC, dirName);
+  const srcDir = skillDir(path.dirname(SKILLS_SRC), dirName);
   const outName = rename[dirName] || dirName;
   const destDir = path.join(tmpDir, 'skills', outName);
   const skillMd = path.join(srcDir, 'SKILL.md');

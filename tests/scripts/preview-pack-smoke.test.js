@@ -76,7 +76,7 @@ function seedRepo(rootDir, overrides = {}) {
       'ECC v2.0.0-rc.1 documents the Hermes surface',
       'No raw workspace export is included.',
     ].join('\n'),
-    'skills/hermes-imports/SKILL.md': [
+    'skills/admin/hermes-imports/SKILL.md': [
       '---',
       'name: hermes-imports',
       '---',

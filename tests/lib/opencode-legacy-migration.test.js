@@ -23,7 +23,7 @@ const {
 } = require('../../scripts/lib/install/opencode-legacy-migration');
 
 const REPO_ROOT = path.join(__dirname, '..', '..');
-const SOURCE_RELATIVE_PATH = path.join('skills', 'skill-comply', 'SKILL.md');
+const SOURCE_RELATIVE_PATH = path.join('skills', 'admin', 'skill-comply', 'SKILL.md');
 
 let passed = 0;
 let failed = 0;

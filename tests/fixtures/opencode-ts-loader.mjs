@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises"
-import ts from "typescript"
+import ts from "@typescript/typescript6"
 
 // Emulate OpenCode's in-place TypeScript loading without remapping missing
 // .js specifiers to .ts files. Such remapping would hide issue #3112.

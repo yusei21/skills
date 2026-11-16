@@ -10,7 +10,7 @@ from pathlib import Path
 
 SCRIPT = (
     Path(__file__).resolve().parents[1]
-    / "skills/taste-application/scripts/workflow_graphs.py"
+    / "skills/media/taste-application/scripts/workflow_graphs.py"
 )
 spec = importlib.util.spec_from_file_location("workflow_graphs", SCRIPT)
 graphs = importlib.util.module_from_spec(spec)

@@ -443,7 +443,7 @@ async function main() {
       } finally { fs.rmSync(installRoot, { recursive: true, force: true }); }
     }],
     ['ships a canonical opt-in skill without silently bundling Nasiko', () => {
-      const skill = read('skills/nasiko-control-plane/SKILL.md');
+      const skill = read('skills/verticals/nasiko-control-plane/SKILL.md');
       assert.match(skill, /^name: nasiko-control-plane$/m);
       assert.match(skill, /ecc nasiko status/i);
       assert.match(skill, /explicit.*consent|explicit.*--yes/i);
@@ -457,7 +457,7 @@ async function main() {
       const modules = readJson('manifests/install-modules.json').modules;
       const module = modules.find(candidate => candidate.id === 'nasiko-control-plane');
       assert.ok(module, 'nasiko-control-plane module is missing');
-      assert.deepStrictEqual(module.paths, ['skills/nasiko-control-plane']);
+      assert.deepStrictEqual(module.paths, ['skills/verticals/nasiko-control-plane']);
       assert.deepStrictEqual(module.dependencies, ['platform-configs']);
       assert.strictEqual(module.defaultInstall, false);
       assert.strictEqual(module.stability, 'experimental');
@@ -480,7 +480,7 @@ async function main() {
       }
 
       const packageJson = readJson('package.json');
-      assert.ok(packageJson.files.includes('skills/nasiko-control-plane/'));
+      assert.ok(packageJson.files.includes('skills/verticals/nasiko-control-plane/'));
       assert.ok(packageJson.files.includes('scripts/nasiko.js'));
       assert.ok(packageJson.files.includes('scripts/lib/'));
       assert.ok(!packageJson.dependencies?.nasiko);

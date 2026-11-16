@@ -29,6 +29,7 @@ const repoRoot = path.resolve(__dirname, '..', '..');
 const observeShPath = path.join(
   repoRoot,
   'skills',
+  'admin',
   'continuous-learning-v2',
   'hooks',
   'observe.sh'

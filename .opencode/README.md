@@ -226,8 +226,8 @@ Full configuration in `opencode.json`:
   "$schema": "https://opencode.ai/config.json",
   "plugin": ["./plugins"],
   "instructions": [
-    "skills/tdd-workflow/SKILL.md",
-    "skills/security-review/SKILL.md"
+    "skills/core/tdd-workflow/SKILL.md",
+    "skills/security/security-review/SKILL.md"
   ],
   "agent": { /* 12 agents */ },
   "command": { /* 24 commands */ }

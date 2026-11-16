@@ -7,7 +7,7 @@
   "sources": [
     {
       "kind": "repo_doc",
-      "path": "skills/search-first/SKILL.md",
+      "path": "skills/core/search-first/SKILL.md",
       "purpose": "Existing research, reuse and minimal-extension guidance"
     },
     {

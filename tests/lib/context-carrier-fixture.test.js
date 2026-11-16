@@ -63,10 +63,10 @@ test('materialization uses unique owned temporary roots and emits only structura
 
 test('copies preserve full binary bytes and never execute bundled scripts', () => withFixture(repoRoot => {
   const binary = Buffer.from([0, 255, 254, 128, 1, 10, 13, 0]);
-  const binaryPath = 'skills/ecc-guide/assets/payload.bin';
+  const binaryPath = 'skills/core/ecc-guide/assets/payload.bin';
   fs.mkdirSync(path.dirname(path.join(repoRoot, binaryPath)), { recursive: true });
   fs.writeFileSync(path.join(repoRoot, binaryPath), binary);
-  write(repoRoot, 'skills/ecc-guide/run.js', 'throw new Error("Bundled scripts must never execute");');
+  write(repoRoot, 'skills/core/ecc-guide/run.js', 'throw new Error("Bundled scripts must never execute");');
   const options = request(repoRoot);
   withCarrierFixture(options, ({ root, verify }) => {
     const file = options.artifact.files.find(value => value.sourcePath === binaryPath);
@@ -101,7 +101,7 @@ test('verification remains relocatable after original sources are removed', () =
 
 test('source drift is rejected before entering the materialized-fixture callback', () => withFixture(repoRoot => {
   const options = request(repoRoot);
-  fs.appendFileSync(path.join(repoRoot, 'skills/ecc-guide/SKILL.md'), '\nChanged after planning.\n');
+  fs.appendFileSync(path.join(repoRoot, 'skills/core/ecc-guide/SKILL.md'), '\nChanged after planning.\n');
   let entered = false;
   assert.throws(() => withCarrierFixture(options, () => { entered = true; }), /digest|drift|source|binding/i);
   assert.equal(entered, false);
@@ -150,12 +150,12 @@ test('independent expected plan cannot be replaced with forged provenance', () =
 }));
 
 test('self-consistently hashed artifacts cannot omit selected entrypoints or bundled resources', () => withFixture(repoRoot => {
-  write(repoRoot, 'skills/ecc-guide/references/required.md', 'Required reference.');
+  write(repoRoot, 'skills/core/ecc-guide/references/required.md', 'Required reference.');
   update(repoRoot, 'manifests/context-packs/skill-registry@1.json', value => ({ ...value, overrides: [{
-    id: 'skill:ecc-guide', requiredResources: ['skills/ecc-guide/references/required.md'],
+    id: 'skill:ecc-guide', requiredResources: ['skills/core/ecc-guide/references/required.md'],
   }] }));
   const options = request(repoRoot);
-  for (const sourcePath of ['skills/ecc-guide/SKILL.md', 'skills/ecc-guide/references/required.md']) {
+  for (const sourcePath of ['skills/core/ecc-guide/SKILL.md', 'skills/core/ecc-guide/references/required.md']) {
     const artifact = resign(options.artifact, { files: options.artifact.files.filter(file => file.sourcePath !== sourcePath) });
     assert.throws(() => withCarrierFixture({ ...options, artifact }, () => assert.fail('omitted source accepted')),
       /missing|required|resource|entrypoint|file set|closure/i);
@@ -198,9 +198,9 @@ for (const [label, spellings] of [
     const initial = request(repoRoot);
     const files = ['one.txt', 'two.txt'];
     spellings.forEach((directory, index) => {
-      write(repoRoot, `skills/ecc-guide/${directory}/${files[index]}`, `resource ${index}`);
+      write(repoRoot, `skills/core/ecc-guide/${directory}/${files[index]}`, `resource ${index}`);
     });
-    const skillRoot = path.join(fs.realpathSync(repoRoot), 'skills/ecc-guide');
+    const skillRoot = path.join(fs.realpathSync(repoRoot), 'skills/core/ecc-guide');
     const originalList = fs.readdirSync;
     const originalOpen = fs.opendirSync;
     // Model both directory spellings even when the test host aliases them.

@@ -8,7 +8,7 @@ This document captures the v2 continuous-learning architecture:
 4. Evolution of instincts into reusable skills/commands
 
 Primary implementation lives in:
-- `skills/continuous-learning-v2/`
+- `skills/admin/continuous-learning-v2/`
 - `scripts/hooks/`
 
 Use this file as the stable reference path for docs and translations.

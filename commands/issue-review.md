@@ -5,7 +5,7 @@ argument-hint: "<issue-number | issue-url | owner/repo#N> [--comment] [--label]"
 
 # Issue Review
 
-> Issue counterpart of the PR mode in `/code-review`. Canonical workflow: `skills/issue-review/SKILL.md`.
+> Issue counterpart of the PR mode in `/code-review`. Canonical workflow: `skills/operations/issue-review/SKILL.md`.
 
 **Input**: $ARGUMENTS
 
@@ -25,7 +25,7 @@ Without `--comment` or `--label` nothing is written to GitHub. Closing, reopenin
 
 ## What It Does
 
-Follow the nine phases in `skills/issue-review/SKILL.md`:
+Follow the nine phases in `skills/operations/issue-review/SKILL.md`:
 
 1. **FETCH**: `gh issue view` with body, comments, labels, and state. Stop if the number is a pull request and point to `/code-review`.
 2. **CONTEXT**: project rules, issue templates, and every file, function, or error message the issue names.
@@ -58,6 +58,6 @@ Artifacts:
 
 ## Links
 
-- Skill: `skills/issue-review/SKILL.md`
+- Skill: `skills/operations/issue-review/SKILL.md`
 - PR counterpart: `/code-review`
-- Bulk triage and label conventions: `skills/github-ops/SKILL.md`
+- Bulk triage and label conventions: `skills/operations/github-ops/SKILL.md`

@@ -25,7 +25,7 @@ function realRegistryRun() {
 }
 
 function plantSkillScript(root, source) {
-  write(root, 'skills/ecc-guide/scripts/tool.js', source);
+  write(root, 'skills/core/ecc-guide/scripts/tool.js', source);
 }
 
 function specifiersOf(failures) {
@@ -81,7 +81,7 @@ for (const specifier of ['C:/shared/helper', 'C:\\shared\\helper', '\\\\server\\
 }
 
 test('a directory require resolves through index.json', () => withFixture(root => {
-  write(root, 'skills/ecc-guide/scripts/data/index.json', '{}\n');
+  write(root, 'skills/core/ecc-guide/scripts/data/index.json', '{}\n');
   plantSkillScript(root, "'use strict';\n\nmodule.exports = require('./data');\n");
   const result = validator().validate(root);
   assert.equal(result.status, 'success', JSON.stringify(result.failures));
@@ -96,7 +96,7 @@ for (const [label, planned, source] of [
   ['an extensionless static import', 'helper.js', "import helper from './helper';\nexport default helper;\n"],
 ]) {
   test(`${label} fails even when the require form would resolve`, () => withFixture(root => {
-    write(root, `skills/ecc-guide/scripts/${planned}`, planned.endsWith('.json') ? '{}\n' : 'module.exports = 1;\n');
+    write(root, `skills/core/ecc-guide/scripts/${planned}`, planned.endsWith('.json') ? '{}\n' : 'module.exports = 1;\n');
     plantSkillScript(root, source);
     const result = validator().validate(root);
     assert.equal(result.status, 'failure');
@@ -105,14 +105,14 @@ for (const [label, planned, source] of [
 }
 
 test('an import() naming the planned file exactly resolves', () => withFixture(root => {
-  write(root, 'skills/ecc-guide/scripts/helper.js', 'module.exports = 1;\n');
+  write(root, 'skills/core/ecc-guide/scripts/helper.js', 'module.exports = 1;\n');
   plantSkillScript(root, "module.exports = import('./helper.js');\n");
   const result = validator().validate(root);
   assert.equal(result.status, 'success', JSON.stringify(result.failures));
 }));
 
 test('an extensionless require still resolves through the CommonJS extension search', () => withFixture(root => {
-  write(root, 'skills/ecc-guide/scripts/helper.js', 'module.exports = 1;\n');
+  write(root, 'skills/core/ecc-guide/scripts/helper.js', 'module.exports = 1;\n');
   plantSkillScript(root, "module.exports = require('./helper');\n");
   const result = validator().validate(root);
   assert.equal(result.status, 'success', JSON.stringify(result.failures));
@@ -122,7 +122,7 @@ test('an extensionless require still resolves through the CommonJS extension sea
 // directory's index; .cjs and .mjs must be named explicitly.
 for (const extension of ['cjs', 'mjs']) {
   test(`an extensionless require does not resolve to a .${extension} file`, () => withFixture(root => {
-    write(root, `skills/ecc-guide/scripts/helper.${extension}`, 'module.exports = 1;\n');
+    write(root, `skills/core/ecc-guide/scripts/helper.${extension}`, 'module.exports = 1;\n');
     plantSkillScript(root, "module.exports = require('./helper');\n");
     const result = validator().validate(root);
     assert.equal(result.status, 'failure');
@@ -131,7 +131,7 @@ for (const extension of ['cjs', 'mjs']) {
 }
 
 test('an extensionless require resolves to a .json file', () => withFixture(root => {
-  write(root, 'skills/ecc-guide/scripts/helper.json', '{}\n');
+  write(root, 'skills/core/ecc-guide/scripts/helper.json', '{}\n');
   plantSkillScript(root, "module.exports = require('./helper');\n");
   const result = validator().validate(root);
   assert.equal(result.status, 'success', JSON.stringify(result.failures));
@@ -152,7 +152,7 @@ test('a tagged template named from is not an import', () => withFixture(root => 
 }));
 
 test('a backslash-separated relative require fails: Linux and macOS read it as one filename', () => withFixture(root => {
-  write(root, 'skills/ecc-guide/scripts/lib/helper.js', 'module.exports = 1;\n');
+  write(root, 'skills/core/ecc-guide/scripts/lib/helper.js', 'module.exports = 1;\n');
   plantSkillScript(root, "module.exports = require('./lib\\\\helper.js');\n");
   const result = validator().validate(root);
   assert.equal(result.status, 'failure');
@@ -311,7 +311,7 @@ test('parser: import options preserve the literal module dependency', () => {
 
 for (const [specifier, file] of [['./helper.js?version=1#tag', 'helper.js'], ['./with%20space.js', 'with space.js']]) {
   test(`ESM URL path resolves a planned file: ${specifier}`, () => withFixture(root => {
-    write(root, `skills/ecc-guide/scripts/${file}`, 'module.exports = 1;');
+    write(root, `skills/core/ecc-guide/scripts/${file}`, 'module.exports = 1;');
     plantSkillScript(root, `import(${JSON.stringify(specifier)});`);
     assert.equal(validator().validate(root).status, 'success');
   }));

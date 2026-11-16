@@ -169,7 +169,7 @@ const tests = [];
 function test(name, fn) { tests.push([name, fn]); }
 
 test("has valid discoverable frontmatter and trigger phrases", () => {
-  const skill = read("skills/tasteforge-video/SKILL.md");
+  const skill = read("skills/media/tasteforge-video/SKILL.md");
   assert.match(
     skill,
     /^---\nname: tasteforge-video\ndescription: [^\n]+\nmetadata:\n {2}origin: ECC\n---\n/
@@ -194,7 +194,7 @@ test("has valid discoverable frontmatter and trigger phrases", () => {
 });
 
 test("distinguishes local deterministic operations from provider generation", () => {
-  const skill = read("skills/tasteforge-video/SKILL.md");
+  const skill = read("skills/media/tasteforge-video/SKILL.md");
   assert.match(skill, /local, deterministic/i);
   assert.match(skill, /provider generation/i);
   assert.match(skill, /must fail closed/i);
@@ -208,7 +208,7 @@ test("distinguishes local deterministic operations from provider generation", ()
 });
 
 test("never claims a Fal workflow is saved from a local reference", () => {
-  const skill = read("skills/tasteforge-video/SKILL.md");
+  const skill = read("skills/media/tasteforge-video/SKILL.md");
   assert.match(
     skill,
     /never (?:claim|means|treat)[^.]*provider-side workflow (?:is|was) saved/i
@@ -218,18 +218,18 @@ test("never claims a Fal workflow is saved from a local reference", () => {
 });
 
 test("assigns reusable runtime ownership to ECC and the example to ito-video", () => {
-  const skill = read("skills/tasteforge-video/SKILL.md");
+  const skill = read("skills/media/tasteforge-video/SKILL.md");
   assert.match(skill, /ito-video/i);
   assert.match(skill, /Ito-Markets\/ito-video/i);
   assert.match(skill, /python3 -m tasteforge/);
-  assert.match(skill, /skills\/taste-application\/scripts/);
+  assert.match(skill, /skills\/(?:media\/)?taste-application\/scripts/);
   assert.match(skill, /ecc-tasteforge/);
   assert.match(skill, /example project/i);
   assert.doesNotMatch(skill, /canonical implementation is the[\s\S]{0,100}Itô video repository/);
 });
 
 test("describes the deterministic workflow surface faithfully", () => {
-  const skill = read("skills/tasteforge-video/SKILL.md");
+  const skill = read("skills/media/tasteforge-video/SKILL.md");
   for (const cmd of ["inspect", "validate", "interview", "distill", "apply", "export", "provenance"]) {
     assert.match(skill, new RegExp(`\\b${cmd}\\b`));
   }
@@ -239,7 +239,7 @@ test("describes the deterministic workflow surface faithfully", () => {
 });
 
 test("defines the fail-closed file-driven multimodal contract", () => {
-  const skill = read("skills/tasteforge-video/SKILL.md");
+  const skill = read("skills/media/tasteforge-video/SKILL.md");
   assert.match(skill, /python3 -m tasteforge multimodal --config/);
   for (const phrase of [
     /Flash Ethereal/,
@@ -353,19 +353,19 @@ test("ships through the opt-in media-generation install module and npm package",
   const module = modules.find((candidate) => candidate.id === "media-generation");
   assert.ok(module, "media-generation install module is missing");
   assert.ok(
-    module.paths.includes("skills/tasteforge-video"),
-    "skills/tasteforge-video missing from media-generation paths"
+    module.paths.includes("skills/media/tasteforge-video"),
+    "skills/media/tasteforge-video missing from media-generation paths"
   );
   assert.strictEqual(module.defaultInstall, false);
   const packed = readJson("package.json").files;
   assert.ok(
-    packed.includes("skills/tasteforge-video/"),
-    "skills/tasteforge-video/ missing from npm files"
+    packed.includes("skills/media/tasteforge-video/"),
+    "skills/media/tasteforge-video/ missing from npm files"
   );
 });
 
 test("is discoverable in the source tree and in a simulated packed artifact", () => {
-  const skillPath = path.join(REPO_ROOT, "skills", "tasteforge-video", "SKILL.md");
+  const skillPath = path.join(REPO_ROOT, "skills", "media", "tasteforge-video", "SKILL.md");
   assert.ok(fs.existsSync(skillPath), "SKILL.md missing in source tree");
 
   // Packed surface: npm includes the directory; the plugin manifest routes
@@ -379,21 +379,22 @@ test("is discoverable in the source tree and in a simulated packed artifact", ()
       const normalized = line.replace(/\/+$/, "");
       return (
         normalized === "skills" ||
-        normalized === "skills/tasteforge-video" ||
-        normalized === "skills/tasteforge-video/SKILL.md"
+        normalized === "skills/media/tasteforge-video" ||
+        normalized === "skills/media/tasteforge-video/SKILL.md"
       );
     });
   assert.ok(!ignoresSkill, ".npmignore must not exclude the skill");
 
-  const claudePlugin = readJson(".claude-plugin/plugin.json");
-  assert.ok(
-    (claudePlugin.skills || []).includes("./skills/"),
-    "claude plugin skills must route to the root skills/ directory"
-  );
+  // The media department plugin ships the skill (skills/<department>/<skill>).
+  const marketplace = readJson(".claude-plugin/marketplace.json");
+  const mediaPlugin = marketplace.plugins.find((plugin) => plugin.name === "ecc-media");
+  assert.ok(mediaPlugin, "marketplace must publish the ecc-media department plugin");
+  assert.strictEqual(mediaPlugin.source, "./skills/media");
+  assert.ok(mediaPlugin.skills.includes("./tasteforge-video"), "ecc-media must list tasteforge-video");
 
   // Simulated installed layout: the files entry must name the skill dir and
   // the SKILL.md must exist beneath it with non-empty content.
-  const stat = fs.statSync(path.join(REPO_ROOT, "skills", "tasteforge-video"));
+  const stat = fs.statSync(path.join(REPO_ROOT, "skills", "media", "tasteforge-video"));
   assert.ok(stat.isDirectory(), "skill must be a directory");
   assert.ok(fs.readFileSync(skillPath, "utf8").trim().length > 200, "SKILL.md is empty-ish");
 });

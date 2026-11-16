@@ -141,7 +141,6 @@ function buildExpectedPublishPaths(repoRoot) {
     "docs/design/context-profiles.md",
     "docs/design/context-carriers.md",
     "docs/design/context-profile-delivery.md",
-    "assets/images/sponsors",
   ]
   const exclusionPaths = [
     "!**/__pycache__/**",
@@ -217,7 +216,7 @@ function main() {
       const packagedPaths = new Set(packEntry?.files?.map((file) => file.path) ?? [])
 
       for (const requiredPath of [
-        "skills/frontend-design-direction/scripts/check-evidence.js",
+        "skills/frontend/frontend-design-direction/scripts/check-evidence.js",
         "scripts/eval-harness.js",
         "scripts/lib/eval-harness/index.js",
         "examples/eval-harness/run-example.js",
@@ -311,10 +310,10 @@ function main() {
         "docs/design/ecc-memory-vault.md",
         "schemas/install-state.schema.json",
         "schemas/memory.schema.json",
-        "skills/backend-patterns/SKILL.md",
-        "skills/skill-comply/SKILL.md",
-        "skills/skill-host-compat/SKILL.md",
-        "skills/unified-memory/SKILL.md",
+        "skills/backend/backend-patterns/SKILL.md",
+        "skills/admin/skill-comply/SKILL.md",
+        "skills/admin/skill-host-compat/SKILL.md",
+        "skills/admin/unified-memory/SKILL.md",
         "scripts/agent-convert.js",
         "scripts/lib/agent-ir.js",
         "scripts/lib/agent-tool-map.js",

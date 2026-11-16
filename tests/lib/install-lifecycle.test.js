@@ -980,8 +980,8 @@ function runTests() {
         operations: [{
           kind: 'copy-file',
           moduleId: 'workflow-quality',
-          sourcePath: path.join(REPO_ROOT, 'skills', 'tdd-workflow', 'SKILL.md'),
-          sourceRelativePath: path.join('skills', 'tdd-workflow', 'SKILL.md'),
+          sourcePath: path.join(REPO_ROOT, 'skills', 'core', 'tdd-workflow', 'SKILL.md'),
+          sourceRelativePath: path.join('skills', 'core', 'tdd-workflow', 'SKILL.md'),
           destinationPath: legacySkillPath,
           strategy: 'preserve-relative-path',
           ownership: 'managed',
@@ -1021,7 +1021,7 @@ function runTests() {
       assert.strictEqual(
         fs.readFileSync(legacySkillPath, 'utf8'),
         fs.readFileSync(
-          path.join(REPO_ROOT, 'skills', 'tdd-workflow', 'SKILL.md'),
+          path.join(REPO_ROOT, 'skills', 'core', 'tdd-workflow', 'SKILL.md'),
           'utf8'
         )
       );
@@ -1077,8 +1077,8 @@ function runTests() {
         operations: [{
           kind: 'copy-file',
           moduleId: 'workflow-quality',
-          sourcePath: path.join(REPO_ROOT, 'skills', 'tdd-workflow', 'SKILL.md'),
-          sourceRelativePath: path.join('skills', 'tdd-workflow', 'SKILL.md'),
+          sourcePath: path.join(REPO_ROOT, 'skills', 'core', 'tdd-workflow', 'SKILL.md'),
+          sourceRelativePath: path.join('skills', 'core', 'tdd-workflow', 'SKILL.md'),
           destinationPath: legacySkillPath,
           strategy: 'preserve-relative-path',
           ownership: 'managed',
@@ -1103,7 +1103,7 @@ function runTests() {
       assert.strictEqual(
         fs.readFileSync(flatSkillPath, 'utf8'),
         fs.readFileSync(
-          path.join(REPO_ROOT, 'skills', 'tdd-workflow', 'SKILL.md'),
+          path.join(REPO_ROOT, 'skills', 'core', 'tdd-workflow', 'SKILL.md'),
           'utf8'
         )
       );

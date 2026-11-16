@@ -18,7 +18,7 @@ if any(
 
 import numpy as np
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "skills/taste-application/scripts"
+SCRIPTS = Path(__file__).resolve().parents[1] / "skills/media/taste-application/scripts"
 sys.path.insert(0, str(SCRIPTS))
 spec = importlib.util.spec_from_file_location("taste_verify", SCRIPTS / "verify.py")
 verify = importlib.util.module_from_spec(spec)

@@ -93,7 +93,7 @@ test('profile descriptions reject terminal controls and normalize ordinary white
 }));
 
 test('metadata ceiling blocks Lean while Full reports the estimate without certification', () => withFixture(root => {
-  write(root, 'skills/ecc-guide/SKILL.md', `---\nname: ecc-guide\ndescription: ${'x'.repeat(33000)}\n---\n`);
+  write(root, 'skills/core/ecc-guide/SKILL.md', `---\nname: ecc-guide\ndescription: ${'x'.repeat(33000)}\n---\n`);
   assert.throws(() => compileContextProfile({ repoRoot: root }), error => {
     assert.equal(error.code, 'CONTEXT_PROFILE_BUDGET_EXCEEDED');
     assert.ok(error.plan.estimate.estimatedTokens > 8000);
@@ -106,7 +106,7 @@ test('metadata ceiling blocks Lean while Full reports the estimate without certi
 
 test('body changes alter provenance without being charged to discovery metadata', () => withFixture(root => {
   const before = compileContextProfile({ repoRoot: root });
-  fs.appendFileSync(path.join(root, 'skills/ecc-guide/SKILL.md'), '\nLarge on-demand body. '.repeat(5000));
+  fs.appendFileSync(path.join(root, 'skills/core/ecc-guide/SKILL.md'), '\nLarge on-demand body. '.repeat(5000));
   const after = compileContextProfile({ repoRoot: root });
   assert.equal(before.estimate.estimatedTokens, after.estimate.estimatedTokens);
   assert.notEqual(before.registryDigest, after.registryDigest);
@@ -115,7 +115,7 @@ test('body changes alter provenance without being charged to discovery metadata'
 
 test('exact 8000 estimate passes and 8001 blocks while provider totals remain unknown', () => withFixture(root => {
   const before = compileContextProfile({ repoRoot: root });
-  const file = path.join(root, 'skills/ecc-guide/SKILL.md');
+  const file = path.join(root, 'skills/core/ecc-guide/SKILL.md');
   const source = fs.readFileSync(file, 'utf8');
   const padding = 'x'.repeat(4 * (8000 - before.estimate.estimatedTokens));
   fs.writeFileSync(file, source.replace('description: ', `description: ${padding}`));

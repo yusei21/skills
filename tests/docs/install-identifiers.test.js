@@ -23,12 +23,6 @@ function test(name, fn) {
 
 const publicInstallDocs = [
   'README.md',
-  'README.zh-CN.md',
-  'docs/pt-BR/README.md',
-  'docs/zh-CN/README.md',
-  'docs/ar/README.md',
-  'docs/ja-JP/skills/configure-ecc/SKILL.md',
-  'docs/zh-CN/skills/configure-ecc/SKILL.md',
 ];
 
 console.log('\n=== Testing public install identifiers ===\n');
@@ -47,47 +41,19 @@ for (const relativePath of publicInstallDocs) {
 
 const pluginAndManualInstallDocs = [
   'README.md',
-  'README.zh-CN.md',
-  'docs/zh-CN/README.md',
 ];
 
 const publicCommandNamespaceDocs = [
   'README.md',
-  'README.zh-CN.md',
-  'docs/pt-BR/README.md',
-  'docs/tr/README.md',
-  'docs/ko-KR/README.md',
-  'docs/ja-JP/README.md',
-  'docs/zh-CN/README.md',
-  'docs/zh-TW/README.md',
 ];
 
 const manualClaudeSkillInstallDocs = [
   'README.md',
-  'docs/de-DE/README.md',
-  'docs/ru/README.md',
 ];
 
-const rootReadme = fs.readFileSync(path.join(repoRoot, 'README.md'), 'utf8');
-const languageSwitcher = rootReadme.match(
-  /<p align="center">\s*<strong>Language:<\/strong>([\s\S]*?)<\/p>/
-);
-
-assert.ok(languageSwitcher, 'Expected README.md to contain the public language switcher');
-
-const languageSwitcherReadmes = Array.from(
-  languageSwitcher[1].matchAll(/href="([^"]+\.md)"/g),
-  (match) => match[1]
-);
-
-assert.ok(
-  languageSwitcherReadmes.length > 0,
-  'Expected the public language switcher to link at least one README'
-);
-
+// Translated READMEs were removed; the English README is the only public one.
 const publicUniversalInstallDocs = [
-  ...languageSwitcherReadmes,
-  'docs/zh-CN/README.md',
+  'README.md',
   'docs/MIGRATION-1X-TO-2.0.md',
   'docs/token-optimization.md',
 ];

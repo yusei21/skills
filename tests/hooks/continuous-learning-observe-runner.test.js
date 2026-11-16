@@ -81,7 +81,7 @@ function withEnv(vars, fn) {
 }
 
 function writeFakeObserveScript(tempRoot) {
-  const scriptPath = path.join(tempRoot, 'skills', 'continuous-learning-v2', 'hooks', 'observe.sh');
+  const scriptPath = path.join(tempRoot, 'skills', 'admin', 'continuous-learning-v2', 'hooks', 'observe.sh');
   fs.mkdirSync(path.dirname(scriptPath), { recursive: true });
   fs.writeFileSync(
     scriptPath,
@@ -120,7 +120,7 @@ function runTests() {
     const preCommand = loadHook('pre:observe:continuous-learning');
     assert.ok(preCommand.includes('node scripts/hooks/run-with-flags.js pre:observe scripts/hooks/observe-runner.js standard,strict'));
     assert.ok(!preCommand.includes('shell scripts/hooks/run-with-flags-shell.sh'));
-    assert.ok(!preCommand.includes('skills/continuous-learning-v2/hooks/observe.sh'));
+    assert.ok(!preCommand.includes('skills/admin/continuous-learning-v2/hooks/observe.sh'));
 
     const postHook = postToolUseDispatcher.ASYNC_HOOKS.find(hook => hook.id === 'post:observe:continuous-learning');
     assert.ok(postHook, 'PostToolUse dispatcher should retain the observe hook ID');

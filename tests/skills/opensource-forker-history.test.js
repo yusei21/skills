@@ -50,8 +50,8 @@ if (process.platform === 'win32') {
 }
 
 const step6 = bashBlock('agents/opensource-forker.md', '### Step 6: Clean Git History');
-const foldIn = bashBlock('skills/opensource-pipeline/SKILL.md', 'Fold changes in with:');
-const publishBlock = bashBlock('skills/opensource-pipeline/SKILL.md', '#### Step 7: GitHub Publish');
+const foldIn = bashBlock('skills/devops/opensource-pipeline/SKILL.md', 'Fold changes in with:');
+const publishBlock = bashBlock('skills/devops/opensource-pipeline/SKILL.md', '#### Step 7: GitHub Publish');
 
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'oss-forker-'));
 let failed = 0;

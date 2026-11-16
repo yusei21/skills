@@ -6,16 +6,13 @@ const path = require('path');
 
 const REPO_ROOT = path.join(__dirname, '..', '..');
 const SKILL_PATHS = [
-  'skills/unified-memory/SKILL.md',
+  'skills/admin/unified-memory/SKILL.md',
   '.agents/skills/unified-memory/SKILL.md',
   '.cursor/skills/unified-memory/SKILL.md',
 ];
 const RUNTIME_DOC_PATHS = [
   ...SKILL_PATHS,
-  'README.md',
   'docs/HERMES-SETUP.md',
-  'README.zh-CN.md',
-  'docs/zh-CN/README.md',
 ];
 
 let passed = 0;

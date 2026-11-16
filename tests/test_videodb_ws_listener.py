@@ -1,4 +1,4 @@
-"""Regression tests for skills/videodb/scripts/ws_listener.py.
+"""Regression tests for skills/media/videodb/scripts/ws_listener.py.
 
 `dotenv` and `videodb` are stubbed, so neither package nor a network is needed.
 """
