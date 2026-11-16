@@ -2,13 +2,21 @@
 
 `dotenv` and `videodb` are stubbed, so neither package nor a network is needed.
 """
+
 import asyncio
 import importlib.util
 import sys
 import types
 from pathlib import Path
 
-SCRIPT = Path(__file__).resolve().parent.parent / "skills" / "videodb" / "scripts" / "ws_listener.py"
+SCRIPT = (
+    Path(__file__).resolve().parent.parent
+    / "skills"
+    / "media"
+    / "videodb"
+    / "scripts"
+    / "ws_listener.py"
+)
 
 
 class FakeWebSocket:
@@ -25,15 +33,21 @@ def load_listener(monkeypatch, tmp_path, connections):
     """Import ws_listener with stubs; each connect() serves the next event list."""
     dotenv_calls = []
     dotenv = types.ModuleType("dotenv")
-    dotenv.find_dotenv = lambda **kwargs: dotenv_calls.append(("find", kwargs)) or "/project/.env"
-    dotenv.load_dotenv = lambda *args, **kwargs: dotenv_calls.append(("load", args)) or True
+    dotenv.find_dotenv = lambda **kwargs: (
+        dotenv_calls.append(("find", kwargs)) or "/project/.env"
+    )
+    dotenv.load_dotenv = lambda *args, **kwargs: (
+        dotenv_calls.append(("load", args)) or True
+    )
 
     remaining = list(connections)
 
     class Wrapper:
         async def connect(self):
             if not remaining:
-                raise AssertionError("listener kept reconnecting after its retry budget")
+                raise AssertionError(
+                    "listener kept reconnecting after its retry budget"
+                )
             return FakeWebSocket(remaining.pop(0))
 
     class Conn:
@@ -86,4 +100,3 @@ def test_an_event_resets_the_retry_budget(monkeypatch, tmp_path):
     assert sleeps[:3] == [1, 1, 2]
     assert len(sleeps) == 1 + module.MAX_RETRIES - 1
     assert (tmp_path / "videodb_events.jsonl").read_text().count("transcript") == 1
-

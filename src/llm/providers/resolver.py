@@ -76,7 +76,9 @@ def _resolve_provider_config(
 
 
 def _resolve_default_model(
-    provider_type: ProviderType, provider_cls: type[LLMProvider], saved_model: str | None,
+    provider_type: ProviderType,
+    provider_cls: type[LLMProvider],
+    saved_model: str | None,
 ) -> str | None:
     for name in _MODEL_ENV_VARS[provider_cls]:
         model = read_model_env(name)
@@ -91,7 +93,9 @@ def _resolve_default_model(
     return saved_model or None
 
 
-def get_provider(provider_type: ProviderType | str | None = None, **kwargs: str | None) -> LLMProvider:
+def get_provider(
+    provider_type: ProviderType | str | None = None, **kwargs: str | None
+) -> LLMProvider:
     """Create a provider, honoring the model selected by llm-select.
 
     Built-in model defaults prefer explicit kwargs, then existing provider-specific
@@ -105,7 +109,9 @@ def get_provider(provider_type: ProviderType | str | None = None, **kwargs: str 
         try:
             provider_type = ProviderType(provider_type)
         except ValueError:
-            raise ValueError(f"Unknown provider type: {provider_type}. Valid types: {[p.value for p in ProviderType]}")
+            raise ValueError(
+                f"Unknown provider type: {provider_type}. Valid types: {[p.value for p in ProviderType]}"
+            )
 
     provider_cls = _PROVIDER_MAP.get(provider_type)
     if not provider_cls:
@@ -119,5 +125,7 @@ def get_provider(provider_type: ProviderType | str | None = None, **kwargs: str 
     return provider_cls(**kwargs)
 
 
-def register_provider(provider_type: ProviderType, provider_cls: type[LLMProvider]) -> None:
+def register_provider(
+    provider_type: ProviderType, provider_cls: type[LLMProvider]
+) -> None:
     _PROVIDER_MAP[provider_type] = provider_cls

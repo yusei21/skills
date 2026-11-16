@@ -54,44 +54,61 @@ def install_fake_monitor(monkeypatch, module, *, result=None, error=None):
 
 def read_audit(tmp_path):
     audit_path = tmp_path / ".insaits_audit_session.jsonl"
-    return [json.loads(line) for line in audit_path.read_text(encoding="utf-8").splitlines()]
+    return [
+        json.loads(line) for line in audit_path.read_text(encoding="utf-8").splitlines()
+    ]
 
 
 def test_extract_content_handles_supported_payload_shapes():
     module = load_monitor()
 
-    assert module.extract_content({
-        "tool_name": "Bash",
-        "tool_input": {"command": "npm test -- --runInBand"},
-    }) == ("npm test -- --runInBand", "bash:npm test -- --runInBand")
+    assert module.extract_content(
+        {
+            "tool_name": "Bash",
+            "tool_input": {"command": "npm test -- --runInBand"},
+        }
+    ) == ("npm test -- --runInBand", "bash:npm test -- --runInBand")
 
-    assert module.extract_content({
-        "tool_name": "Write",
-        "tool_input": {"file_path": "/tmp/demo.txt", "content": "secret body"},
-    }) == ("secret body", "file:/tmp/demo.txt")
+    assert module.extract_content(
+        {
+            "tool_name": "Write",
+            "tool_input": {"file_path": "/tmp/demo.txt", "content": "secret body"},
+        }
+    ) == ("secret body", "file:/tmp/demo.txt")
 
-    assert module.extract_content({
-        "tool_name": "Edit",
-        "tool_input": {"file_path": "/tmp/demo.txt", "new_string": "replacement body"},
-    }) == ("replacement body", "file:/tmp/demo.txt")
+    assert module.extract_content(
+        {
+            "tool_name": "Edit",
+            "tool_input": {
+                "file_path": "/tmp/demo.txt",
+                "new_string": "replacement body",
+            },
+        }
+    ) == ("replacement body", "file:/tmp/demo.txt")
 
-    assert module.extract_content({
-        "task": "agent-task",
-        "content": [
-            {"type": "text", "text": "first"},
-            {"type": "image", "text": "ignored"},
-            {"type": "text", "text": "second"},
-        ],
-    }) == ("first\nsecond", "agent-task")
+    assert module.extract_content(
+        {
+            "task": "agent-task",
+            "content": [
+                {"type": "text", "text": "first"},
+                {"type": "image", "text": "ignored"},
+                {"type": "text", "text": "second"},
+            ],
+        }
+    ) == ("first\nsecond", "agent-task")
 
 
 def test_format_feedback_accepts_dict_and_object_anomalies():
     module = load_monitor()
 
-    feedback = module.format_feedback([
-        {"severity": "LOW", "type": "STYLE", "details": "minor issue"},
-        SimpleNamespace(severity="CRITICAL", type="SECRET", details="credential found"),
-    ])
+    feedback = module.format_feedback(
+        [
+            {"severity": "LOW", "type": "STYLE", "details": "minor issue"},
+            SimpleNamespace(
+                severity="CRITICAL", type="SECRET", details="credential found"
+            ),
+        ]
+    )
 
     assert "== InsAIts Security Monitor -- Issues Detected ==" in feedback
     assert "1. [LOW] STYLE" in feedback
@@ -104,7 +121,9 @@ def test_main_skips_short_or_empty_content(monkeypatch):
     module = load_monitor()
 
     assert run_main(monkeypatch, module, "") == (0, "", "")
-    assert run_main(monkeypatch, module, '{"tool_name":"Bash","tool_input":{"command":"ok"}}') == (0, "", "")
+    assert run_main(
+        monkeypatch, module, '{"tool_name":"Bash","tool_input":{"command":"ok"}}'
+    ) == (0, "", "")
 
 
 def test_main_exits_cleanly_when_sdk_is_missing(monkeypatch):

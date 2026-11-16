@@ -28,18 +28,29 @@ class PromptBuilder:
     ) -> None:
         if config is not None and any(
             value is not None
-            for value in (system_template, user_template, include_tools_in_system, tool_format)
+            for value in (
+                system_template,
+                user_template,
+                include_tools_in_system,
+                tool_format,
+            )
         ):
-            raise ValueError("Pass either config or PromptBuilder keyword options, not both")
+            raise ValueError(
+                "Pass either config or PromptBuilder keyword options, not both"
+            )
 
         if config is None:
             defaults = PromptConfig()
             config = PromptConfig(
                 system_template=(
-                    system_template if system_template is not None else defaults.system_template
+                    system_template
+                    if system_template is not None
+                    else defaults.system_template
                 ),
                 user_template=(
-                    user_template if user_template is not None else defaults.user_template
+                    user_template
+                    if user_template is not None
+                    else defaults.user_template
                 ),
                 include_tools_in_system=(
                     include_tools_in_system
@@ -53,7 +64,9 @@ class PromptBuilder:
 
         self.config = config
 
-    def build(self, messages: list[Message], tools: list[ToolDefinition] | None = None) -> list[Message]:
+    def build(
+        self, messages: list[Message], tools: list[ToolDefinition] | None = None
+    ) -> list[Message]:
         if not messages:
             return []
 
@@ -69,11 +82,15 @@ class PromptBuilder:
 
         if messages[0].role == Role.SYSTEM:
             system_parts.insert(0, messages[0].content)
-            result.insert(0, Message(role=Role.SYSTEM, content="\n\n".join(system_parts)))
+            result.insert(
+                0, Message(role=Role.SYSTEM, content="\n\n".join(system_parts))
+            )
             result.extend(messages[1:])
         else:
             if system_parts:
-                result.insert(0, Message(role=Role.SYSTEM, content="\n\n".join(system_parts)))
+                result.insert(
+                    0, Message(role=Role.SYSTEM, content="\n\n".join(system_parts))
+                )
             result.extend(messages)
 
         return result

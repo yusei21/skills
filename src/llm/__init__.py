@@ -36,5 +36,5 @@ __all__ = (
 
 def gui() -> None:
     from llm.cli.selector import main
-    main()
 
+    main()

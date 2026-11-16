@@ -81,7 +81,9 @@ def test_astraflow_cn_provider_uses_cn_endpoint_and_model_fallback(monkeypatch):
 
 
 def test_astraflow_provider_generates_openai_compatible_chat_completion():
-    provider = AstraflowProvider(api_key="test", default_model="deepseek-ai/DeepSeek-V3-0324")
+    provider = AstraflowProvider(
+        api_key="test", default_model="deepseek-ai/DeepSeek-V3-0324"
+    )
     client = _Client(_response(model="deepseek-ai/DeepSeek-V3-0324"))
     provider.client = client
 
@@ -95,7 +97,11 @@ def test_astraflow_provider_generates_openai_compatible_chat_completion():
 
     assert output.content == "ok"
     assert output.model == "deepseek-ai/DeepSeek-V3-0324"
-    assert output.usage == {"prompt_tokens": 1, "completion_tokens": 2, "total_tokens": 3}
+    assert output.usage == {
+        "prompt_tokens": 1,
+        "completion_tokens": 2,
+        "total_tokens": 3,
+    }
     assert client.completions.params["model"] == "deepseek-ai/DeepSeek-V3-0324"
     assert client.completions.params["max_tokens"] == 128
     assert "temperature" not in client.completions.params
@@ -105,7 +111,10 @@ def test_astraflow_provider_generates_openai_compatible_chat_completion():
             "function": {
                 "name": "search",
                 "description": "Search",
-                "parameters": {"type": "object", "properties": {"query": {"type": "string"}}},
+                "parameters": {
+                    "type": "object",
+                    "properties": {"query": {"type": "string"}},
+                },
                 "strict": True,
             },
         }
@@ -117,7 +126,9 @@ def test_astraflow_provider_forwards_non_default_temperature():
     client = _Client(_response())
     provider.client = client
 
-    provider.generate(LLMInput(messages=[Message(role=Role.USER, content="hi")], temperature=0.2))
+    provider.generate(
+        LLMInput(messages=[Message(role=Role.USER, content="hi")], temperature=0.2)
+    )
 
     assert client.completions.params["temperature"] == 0.2
 
@@ -129,12 +140,21 @@ def test_astraflow_provider_parses_tool_calls():
         function=SimpleNamespace(name="search", arguments='{"query":"ucloud"}'),
     )
     message = SimpleNamespace(content="", tool_calls=[tool_call])
-    client = _Client(_response(choices=[SimpleNamespace(message=message, finish_reason="tool_calls")], usage=None))
+    client = _Client(
+        _response(
+            choices=[SimpleNamespace(message=message, finish_reason="tool_calls")],
+            usage=None,
+        )
+    )
     provider.client = client
 
-    output = provider.generate(LLMInput(messages=[Message(role=Role.USER, content="hi")]))
+    output = provider.generate(
+        LLMInput(messages=[Message(role=Role.USER, content="hi")])
+    )
 
-    assert output.tool_calls == [ToolCall(id="call_1", name="search", arguments={"query": "ucloud"})]
+    assert output.tool_calls == [
+        ToolCall(id="call_1", name="search", arguments={"query": "ucloud"})
+    ]
     assert output.usage is None
 
 
@@ -145,9 +165,17 @@ def test_astraflow_provider_preserves_malformed_tool_arguments():
         function=SimpleNamespace(name="search", arguments="{not-json"),
     )
     message = SimpleNamespace(content="", tool_calls=[tool_call])
-    client = _Client(_response(choices=[SimpleNamespace(message=message, finish_reason="tool_calls")]))
+    client = _Client(
+        _response(
+            choices=[SimpleNamespace(message=message, finish_reason="tool_calls")]
+        )
+    )
     provider.client = client
 
-    output = provider.generate(LLMInput(messages=[Message(role=Role.USER, content="hi")]))
+    output = provider.generate(
+        LLMInput(messages=[Message(role=Role.USER, content="hi")])
+    )
 
-    assert output.tool_calls == [ToolCall(id="call_1", name="search", arguments={"raw": "{not-json"})]
+    assert output.tool_calls == [
+        ToolCall(id="call_1", name="search", arguments={"raw": "{not-json"})
+    ]

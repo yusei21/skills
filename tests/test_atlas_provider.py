@@ -101,7 +101,11 @@ def test_atlas_provider_generates_openai_compatible_chat_completion():
 
     assert output.content == "ok"
     assert output.model == DEFAULT_ATLAS_MODEL
-    assert output.usage == {"prompt_tokens": 1, "completion_tokens": 2, "total_tokens": 3}
+    assert output.usage == {
+        "prompt_tokens": 1,
+        "completion_tokens": 2,
+        "total_tokens": 3,
+    }
     assert client.completions.params["model"] == DEFAULT_ATLAS_MODEL
     assert client.completions.params["max_tokens"] == 1024
     assert "temperature" not in client.completions.params
@@ -111,7 +115,10 @@ def test_atlas_provider_generates_openai_compatible_chat_completion():
             "function": {
                 "name": "search",
                 "description": "Search",
-                "parameters": {"type": "object", "properties": {"query": {"type": "string"}}},
+                "parameters": {
+                    "type": "object",
+                    "properties": {"query": {"type": "string"}},
+                },
                 "strict": True,
             },
         }
@@ -128,7 +135,9 @@ def test_atlas_provider_floors_max_tokens_for_reasoning_models():
     assert client.completions.params["max_tokens"] == DEFAULT_ATLAS_MAX_TOKENS
 
     # Too-small max_tokens is also raised to the floor.
-    provider.generate(LLMInput(messages=[Message(role=Role.USER, content="hi")], max_tokens=16))
+    provider.generate(
+        LLMInput(messages=[Message(role=Role.USER, content="hi")], max_tokens=16)
+    )
     assert client.completions.params["max_tokens"] == DEFAULT_ATLAS_MAX_TOKENS
 
 
@@ -137,7 +146,9 @@ def test_atlas_provider_forwards_non_default_temperature():
     client = _Client(_response())
     provider.client = client
 
-    provider.generate(LLMInput(messages=[Message(role=Role.USER, content="hi")], temperature=0.2))
+    provider.generate(
+        LLMInput(messages=[Message(role=Role.USER, content="hi")], temperature=0.2)
+    )
 
     assert client.completions.params["temperature"] == 0.2
 
@@ -149,12 +160,21 @@ def test_atlas_provider_parses_tool_calls():
         function=SimpleNamespace(name="search", arguments='{"query":"atlas"}'),
     )
     message = SimpleNamespace(content="", tool_calls=[tool_call])
-    client = _Client(_response(choices=[SimpleNamespace(message=message, finish_reason="tool_calls")], usage=None))
+    client = _Client(
+        _response(
+            choices=[SimpleNamespace(message=message, finish_reason="tool_calls")],
+            usage=None,
+        )
+    )
     provider.client = client
 
-    output = provider.generate(LLMInput(messages=[Message(role=Role.USER, content="hi")]))
+    output = provider.generate(
+        LLMInput(messages=[Message(role=Role.USER, content="hi")])
+    )
 
-    assert output.tool_calls == [ToolCall(id="call_1", name="search", arguments={"query": "atlas"})]
+    assert output.tool_calls == [
+        ToolCall(id="call_1", name="search", arguments={"query": "atlas"})
+    ]
     assert output.usage is None
 
 
@@ -165,9 +185,17 @@ def test_atlas_provider_preserves_malformed_tool_arguments():
         function=SimpleNamespace(name="search", arguments="{not-json"),
     )
     message = SimpleNamespace(content="", tool_calls=[tool_call])
-    client = _Client(_response(choices=[SimpleNamespace(message=message, finish_reason="tool_calls")]))
+    client = _Client(
+        _response(
+            choices=[SimpleNamespace(message=message, finish_reason="tool_calls")]
+        )
+    )
     provider.client = client
 
-    output = provider.generate(LLMInput(messages=[Message(role=Role.USER, content="hi")]))
+    output = provider.generate(
+        LLMInput(messages=[Message(role=Role.USER, content="hi")])
+    )
 
-    assert output.tool_calls == [ToolCall(id="call_1", name="search", arguments={"raw": "{not-json"})]
+    assert output.tool_calls == [
+        ToolCall(id="call_1", name="search", arguments={"raw": "{not-json"})
+    ]

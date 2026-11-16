@@ -29,10 +29,7 @@ EXPECTED_COMPUTE_ROUTE = (
 
 def assert_exact_compute_route(content: str) -> None:
     candidates = URL_TOKEN_PATTERN.findall(content)
-    routes = (
-        urlsplit(candidate.rstrip(".,;:!?"))
-        for candidate in candidates
-    )
+    routes = (urlsplit(candidate.rstrip(".,;:!?")) for candidate in candidates)
     assert any(route == EXPECTED_COMPUTE_ROUTE for route in routes), (
         "Should include the exact Itô compute route"
     )
@@ -110,4 +107,6 @@ def test_interactive_selection_supports_cp1252_output(tmp_path: Path) -> None:
     assert "LLM Provider Selector" in result.stdout
     assert "Config saved to" in result.stdout
     assert "Config loaded to current session" in result.stdout
-    assert (tmp_path / ".llm.env").read_text() == "LLM_PROVIDER=custom\nLLM_MODEL=ascii-model\n"
+    assert (
+        tmp_path / ".llm.env"
+    ).read_text() == "LLM_PROVIDER=custom\nLLM_MODEL=ascii-model\n"

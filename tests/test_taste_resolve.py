@@ -10,7 +10,8 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 sys.path.insert(
-    0, str(Path(__file__).resolve().parents[1] / "skills/media/taste-application/scripts")
+    0,
+    str(Path(__file__).resolve().parents[1] / "skills/media/taste-application/scripts"),
 )
 from taste.resolve import allocate_placements, apply_placements, probe_asset
 

@@ -45,7 +45,9 @@ def _messages_payload(messages: list[Message]) -> list[dict[str, Any]]:
             if tc.id:
                 names[tc.id] = tc.name
         if msg.role == Role.TOOL:
-            tool_name = msg.name or (names.get(msg.tool_call_id) if msg.tool_call_id else None)
+            tool_name = msg.name or (
+                names.get(msg.tool_call_id) if msg.tool_call_id else None
+            )
             if tool_name:
                 item["tool_name"] = tool_name
         payload.append(item)
@@ -76,8 +78,12 @@ class OllamaProvider(LLMProvider):
             if prefilled_reasoning is not None
             else prefilled_reasoning_from_env("OLLAMA_PREFILLED_REASONING")
         )
-        self.base_url = base_url or os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
-        self.default_model = default_model or read_model_env("OLLAMA_MODEL") or "llama3.2"
+        self.base_url = base_url or os.environ.get(
+            "OLLAMA_BASE_URL", "http://localhost:11434"
+        )
+        self.default_model = (
+            default_model or read_model_env("OLLAMA_MODEL") or "llama3.2"
+        )
         self._models = [
             ModelInfo(
                 name="llama3.2",
@@ -127,12 +133,23 @@ class OllamaProvider(LLMProvider):
                 headers={"Content-Type": "application/json"},
             )
             with urllib.request.urlopen(req, timeout=10) as response:
-                capabilities = json.loads(response.read().decode("utf-8")).get("capabilities") or []
+                capabilities = (
+                    json.loads(response.read().decode("utf-8")).get("capabilities")
+                    or []
+                )
         except Exception as e:
-            logger.warning("Could not read capabilities for Ollama model '%s': %s", model, type(e).__name__)
+            logger.warning(
+                "Could not read capabilities for Ollama model '%s': %s",
+                model,
+                type(e).__name__,
+            )
             return False
-        if not isinstance(capabilities, list) or not all(isinstance(item, str) for item in capabilities):
-            logger.warning("Invalid capabilities for Ollama model '%s'; sending no tools", model)
+        if not isinstance(capabilities, list) or not all(
+            isinstance(item, str) for item in capabilities
+        ):
+            logger.warning(
+                "Invalid capabilities for Ollama model '%s'; sending no tools", model
+            )
             return False
         supports_tools = "tools" in capabilities
         self._tool_support = {**self._tool_support, model: supports_tools}
@@ -159,10 +176,15 @@ class OllamaProvider(LLMProvider):
                 if self.model_supports_tools(model):
                     payload["tools"] = [tool.to_openai_tool() for tool in input.tools]
                 else:
-                    logger.warning("Ollama model '%s' does not declare tool support; sending no tools", model)
+                    logger.warning(
+                        "Ollama model '%s' does not declare tool support; sending no tools",
+                        model,
+                    )
 
             data = json.dumps(payload).encode("utf-8")
-            req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
+            req = urllib.request.Request(
+                url, data=data, headers={"Content-Type": "application/json"}
+            )
 
             with urllib.request.urlopen(req, timeout=60) as response:
                 result = json.loads(response.read().decode("utf-8"))
@@ -170,7 +192,7 @@ class OllamaProvider(LLMProvider):
             content = strip_reasoning(
                 result.get("message", {}).get("content", ""),
                 leading=self.leading_reasoning,
-                prefilled=self.prefilled_reasoning
+                prefilled=self.prefilled_reasoning,
             )
 
             tool_calls = None
@@ -196,7 +218,9 @@ class OllamaProvider(LLMProvider):
             msg = str(e)
             lowered = msg.lower()
             if "401" in msg or "unauthorized" in lowered or "forbidden" in lowered:
-                raise AuthenticationError(f"Ollama authentication failed: {msg}", provider=ProviderType.OLLAMA) from e
+                raise AuthenticationError(
+                    f"Ollama authentication failed: {msg}", provider=ProviderType.OLLAMA
+                ) from e
             if "429" in msg or "rate_limit" in lowered:
                 raise RateLimitError(msg, provider=ProviderType.OLLAMA) from e
             if "context" in lowered and "length" in lowered:

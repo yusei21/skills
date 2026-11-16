@@ -10,7 +10,9 @@ from unittest.mock import patch
 
 import pytest
 
-_SKILL_COMPLY_ROOT = Path(__file__).resolve().parent.parent / "skills" / "skill-comply"
+_SKILL_COMPLY_ROOT = (
+    Path(__file__).resolve().parent.parent / "skills" / "admin" / "skill-comply"
+)
 if str(_SKILL_COMPLY_ROOT) not in sys.path:
     sys.path.insert(0, str(_SKILL_COMPLY_ROOT))
 
@@ -33,7 +35,9 @@ def _remove_marker():
     "setup_commands,test_id",
     [
         (
-            ("python -c \"import os; os.system('touch /tmp/runner_test_pwned_marker')\"",),
+            (
+                "python -c \"import os; os.system('touch /tmp/runner_test_pwned_marker')\"",
+            ),
             "python_interpreter",
         ),
         (
@@ -49,7 +53,9 @@ def _remove_marker():
             "git_alias",
         ),
         (
-            ("tar --checkpoint=1 --checkpoint-action=exec='touch /tmp/runner_test_pwned_marker' -cf out.tar .",),
+            (
+                "tar --checkpoint=1 --checkpoint-action=exec='touch /tmp/runner_test_pwned_marker' -cf out.tar .",
+            ),
             "tar_checkpoint_action",
         ),
         (
@@ -58,8 +64,12 @@ def _remove_marker():
         ),
     ],
     ids=[
-        "python_interpreter", "path_traversal", "non_allowlisted_binary",
-        "git_alias", "tar_checkpoint_action", "benign_echo",
+        "python_interpreter",
+        "path_traversal",
+        "non_allowlisted_binary",
+        "git_alias",
+        "tar_checkpoint_action",
+        "benign_echo",
     ],
 )
 def test_setup_sandbox_blocks_dangerous_commands(setup_commands, test_id, tmp_path):
@@ -108,7 +118,11 @@ def _plant_registry_package(sandbox_dir: Path) -> None:
 @pytest.mark.parametrize(
     "plant",
     [
-        ("mkdir templates", "cp -r node_modules/attacker-pkg/hooks templates/hooks", "git init --template=templates"),
+        (
+            "mkdir templates",
+            "cp -r node_modules/attacker-pkg/hooks templates/hooks",
+            "git init --template=templates",
+        ),
         ("cp -r --target-directory=.git node_modules/attacker-pkg/hooks",),
         ("cp -r -t.git node_modules/attacker-pkg/hooks",),
         ("tar -xf node_modules/attacker-pkg/hooks.tar --directory=.git",),
@@ -116,9 +130,21 @@ def _plant_registry_package(sandbox_dir: Path) -> None:
         ("unzip -o node_modules/attacker-pkg/payload.zip",),
         ("unzip -o node_modules/attacker-pkg/payload",),
         ("unzip -P pw node_modules/attacker-pkg/payload.zip",),
-        ("unzip -P node_modules/attacker-pkg/good.zip node_modules/attacker-pkg/payload.zip",),
+        (
+            "unzip -P node_modules/attacker-pkg/good.zip node_modules/attacker-pkg/payload.zip",
+        ),
     ],
-    ids=["git_template", "cp_target_directory", "cp_attached_t", "tar_directory", "tar_member", "unzip_member", "unzip_implicit_suffix", "unzip_password", "unzip_safe_password"],
+    ids=[
+        "git_template",
+        "cp_target_directory",
+        "cp_attached_t",
+        "tar_directory",
+        "tar_member",
+        "unzip_member",
+        "unzip_implicit_suffix",
+        "unzip_password",
+        "unzip_safe_password",
+    ],
 )
 def test_setup_cannot_plant_git_hooks(plant: tuple[str, ...], tmp_path: Path) -> None:
     """Invariant: setup must not leave a hook that a later accepted `git commit` runs on the host."""
@@ -134,16 +160,33 @@ def test_setup_cannot_plant_git_hooks(plant: tuple[str, ...], tmp_path: Path) ->
             return subprocess.CompletedProcess(argv, 0)
         return real_run(argv, **kwargs)
 
-    identity = ("git config user.name t", "git config user.email t@example.com", "git config commit.gpgsign false")
+    identity = (
+        "git config user.name t",
+        "git config user.email t@example.com",
+        "git config commit.gpgsign false",
+    )
     scenario = Scenario(
-        id="hook-plant", level=1, level_name="basic", description="security test scenario", prompt="",
-        setup_commands=("npm install attacker-pkg", *plant, *identity, "git commit --allow-empty -m setup"),
+        id="hook-plant",
+        level=1,
+        level_name="basic",
+        description="security test scenario",
+        prompt="",
+        setup_commands=(
+            "npm install attacker-pkg",
+            *plant,
+            *identity,
+            "git commit --allow-empty -m setup",
+        ),
     )
     with patch("scripts.runner.subprocess.run", side_effect=run):
         _setup_sandbox(sandbox_dir, scenario)
     assert npm_installs == [["npm", "install", "attacker-pkg", "--ignore-scripts"]]
     # The agent (or the user) commits later, without the runner's protections.
-    real_run(["git", "commit", "--allow-empty", "-m", "later"], cwd=sandbox_dir, capture_output=True)
+    real_run(
+        ["git", "commit", "--allow-empty", "-m", "later"],
+        cwd=sandbox_dir,
+        capture_output=True,
+    )
 
     assert not os.path.exists(_GLOBAL_MARKER), "a planted git hook ran on the host"
     assert not (sandbox_dir / ".git" / "hooks" / "post-commit").exists()

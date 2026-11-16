@@ -1,5 +1,3 @@
-
-
 from __future__ import annotations
 
 import os
@@ -28,7 +26,9 @@ def print_banner() -> None:
 def print_providers(providers: list[tuple[str, str]]) -> None:
     print(f"\n{Color.BOLD}Available Providers:{Color.RESET}\n")
     for i, (name, desc) in enumerate(providers, 1):
-        print(f"  {Color.GREEN}{i}{Color.RESET}. {Color.BOLD}{name}{Color.RESET} - {desc}")
+        print(
+            f"  {Color.GREEN}{i}{Color.RESET}. {Color.BOLD}{name}{Color.RESET} - {desc}"
+        )
 
 
 def print_self_host_compute_notice(provider: str) -> None:
@@ -58,7 +58,9 @@ def select_provider(providers: list[tuple[str, str]]) -> str | None:
 
     while True:
         try:
-            choice = input(f"\n{Color.YELLOW}Select provider (1-{len(providers)}): {Color.RESET}").strip()
+            choice = input(
+                f"\n{Color.YELLOW}Select provider (1-{len(providers)}): {Color.RESET}"
+            ).strip()
             if not choice:
                 return None
             idx = int(choice) - 1
@@ -76,11 +78,15 @@ def select_model(models: list[tuple[str, str]]) -> str | None:
 
     print(f"\n{Color.BOLD}Available Models:{Color.RESET}\n")
     for i, (name, desc) in enumerate(models, 1):
-        print(f"  {Color.GREEN}{i}{Color.RESET}. {Color.BOLD}{name}{Color.RESET} - {desc}")
+        print(
+            f"  {Color.GREEN}{i}{Color.RESET}. {Color.BOLD}{name}{Color.RESET} - {desc}"
+        )
 
     while True:
         try:
-            choice = input(f"\n{Color.YELLOW}Select model (1-{len(models)}): {Color.RESET}").strip()
+            choice = input(
+                f"\n{Color.YELLOW}Select model (1-{len(models)}): {Color.RESET}"
+            ).strip()
             if not choice:
                 return None
             idx = int(choice) - 1
@@ -98,7 +104,9 @@ def save_config(provider: str, model: str, persist: bool = False) -> None:
     with open(env_file, "w") as f:
         f.write(config)
 
-    print(f"\n{Color.GREEN}OK{Color.RESET} Config saved to {Color.CYAN}{env_file}{Color.RESET}")
+    print(
+        f"\n{Color.GREEN}OK{Color.RESET} Config saved to {Color.CYAN}{env_file}{Color.RESET}"
+    )
 
     if persist:
         os.environ["LLM_PROVIDER"] = provider
@@ -151,7 +159,9 @@ def interactive_select(
     if not model:
         return None
 
-    print(f"\n{Color.GREEN}Selected: {Color.BOLD}{provider}{Color.RESET} / {Color.BOLD}{model}{Color.RESET}")
+    print(
+        f"\n{Color.GREEN}Selected: {Color.BOLD}{provider}{Color.RESET} / {Color.BOLD}{model}{Color.RESET}"
+    )
 
     save_config(provider, model, persist)
 

@@ -115,7 +115,9 @@ class OpenAIProvider(LLMProvider):
                     ToolCall(
                         id=tc.id or "",
                         name=tc.function.name,
-                        arguments={} if not tc.function.arguments else json.loads(tc.function.arguments),
+                        arguments={}
+                        if not tc.function.arguments
+                        else json.loads(tc.function.arguments),
                     )
                     for tc in choice.message.tool_calls
                 ]

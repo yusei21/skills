@@ -29,7 +29,9 @@ def make_provider(response: SimpleNamespace) -> ClaudeProvider:
     return provider
 
 
-def make_response(content: list[SimpleNamespace], stop_reason: str = "tool_use") -> SimpleNamespace:
+def make_response(
+    content: list[SimpleNamespace], stop_reason: str = "tool_use"
+) -> SimpleNamespace:
     return SimpleNamespace(
         content=content,
         model="claude-test",
@@ -79,13 +81,20 @@ def test_generate_collects_text_and_tool_use_blocks() -> None:
         make_response(
             [
                 SimpleNamespace(type="text", text="I will search. "),
-                SimpleNamespace(type="tool_use", id="toolu_1", name="search", input={"query": "claude"}),
+                SimpleNamespace(
+                    type="tool_use",
+                    id="toolu_1",
+                    name="search",
+                    input={"query": "claude"},
+                ),
                 SimpleNamespace(type="text", text="Done."),
             ]
         )
     )
 
-    output = provider.generate(LLMInput(messages=[Message(role=Role.USER, content="Search")]))
+    output = provider.generate(
+        LLMInput(messages=[Message(role=Role.USER, content="Search")])
+    )
 
     assert output.content == "I will search. Done."
     assert output.tool_calls is not None
@@ -100,7 +109,12 @@ def test_generate_collects_multiple_tool_use_blocks() -> None:
     provider = make_provider(
         make_response(
             [
-                SimpleNamespace(type="tool_use", id="toolu_1", name="search", input={"query": "claude"}),
+                SimpleNamespace(
+                    type="tool_use",
+                    id="toolu_1",
+                    name="search",
+                    input={"query": "claude"},
+                ),
                 SimpleNamespace(
                     type="tool_use",
                     id="toolu_2",
@@ -111,7 +125,9 @@ def test_generate_collects_multiple_tool_use_blocks() -> None:
         )
     )
 
-    output = provider.generate(LLMInput(messages=[Message(role=Role.USER, content="Use tools")]))
+    output = provider.generate(
+        LLMInput(messages=[Message(role=Role.USER, content="Use tools")])
+    )
 
     assert output.content == ""
     assert [call.id for call in output.tool_calls or []] == ["toolu_1", "toolu_2"]
@@ -123,11 +139,17 @@ def test_generate_copies_tool_use_dict_arguments() -> None:
     raw_arguments: dict[str, Any] = {"query": "claude"}
     provider = make_provider(
         make_response(
-            [SimpleNamespace(type="tool_use", id="toolu_1", name="search", input=raw_arguments)]
+            [
+                SimpleNamespace(
+                    type="tool_use", id="toolu_1", name="search", input=raw_arguments
+                )
+            ]
         )
     )
 
-    output = provider.generate(LLMInput(messages=[Message(role=Role.USER, content="Use tools")]))
+    output = provider.generate(
+        LLMInput(messages=[Message(role=Role.USER, content="Use tools")])
+    )
     raw_arguments["query"] = "mutated"
 
     assert (output.tool_calls or [])[0].arguments == {"query": "claude"}
@@ -142,7 +164,9 @@ def test_generate_text_only_has_no_tool_calls() -> None:
         )
     )
 
-    output = provider.generate(LLMInput(messages=[Message(role=Role.USER, content="Hi")]))
+    output = provider.generate(
+        LLMInput(messages=[Message(role=Role.USER, content="Hi")])
+    )
 
     assert output.content == "Hello."
     assert output.tool_calls is None

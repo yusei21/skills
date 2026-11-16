@@ -33,6 +33,7 @@ def _generic_failure(tool_call: ToolCall) -> ToolResult:
         is_error=True,
     )
 
+
 ToolFunc = Callable[..., Any]
 
 
@@ -147,7 +148,9 @@ class ReActAgent:
             try:
                 output: LLMOutput = self.provider.generate(input_copy)
             except LLMError as e:
-                logger.warning("Provider failed during agent run: %s", e.code or type(e).__name__)
+                logger.warning(
+                    "Provider failed during agent run: %s", e.code or type(e).__name__
+                )
                 return LLMOutput(
                     content=f"Provider error: {e.code or type(e).__name__}",
                     stop_reason="provider_error",

@@ -10,7 +10,8 @@ from types import ModuleType, SimpleNamespace
 from unittest.mock import Mock, patch
 
 SCRIPT = (
-    Path(__file__).resolve().parents[1] / "skills/media/taste-application/scripts/mint3d.py"
+    Path(__file__).resolve().parents[1]
+    / "skills/media/taste-application/scripts/mint3d.py"
 )
 
 
