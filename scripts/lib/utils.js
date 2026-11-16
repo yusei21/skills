@@ -1,7 +1,30 @@
+// @ts-check
 /**
  * Cross-platform utility functions for Claude Code hooks and scripts
  * Works on Windows, macOS, and Linux
  */
+
+/** @typedef {{ path: string, mtime: number }} FileMatch */
+/** @typedef {{ maxAge?: number | null, recursive?: boolean }} FindFilesOptions */
+/** @typedef {{ lineNumber: number, content: string }} GrepMatch */
+/** @typedef {{ timeoutMs?: number, maxSize?: number }} ReadStdinJsonOptions */
+/** @typedef {{ all?: boolean }} ReplaceInFileOptions */
+/** @typedef {{ success: boolean, output: string }} CommandResult */
+
+/**
+ * Reads a property from a caught value without assuming it is an Error.
+ * @param {unknown} err
+ * @param {'code' | 'message' | 'stderr'} key
+ * @returns {string | undefined}
+ */
+function errorField(err, key) {
+  if (err && typeof err === 'object' && key in err) {
+    const value = /** @type {Record<string, unknown>} */ (err)[key];
+    if (typeof value === 'string') return value;
+    if (Buffer.isBuffer(value)) return value.toString('utf8');
+  }
+  return undefined;
+}
 
 const fs = require('fs');
 const path = require('path');
@@ -98,8 +121,8 @@ function ensureDir(dirPath) {
     }
   } catch (err) {
     // EEXIST is fine (race condition with another process creating it)
-    if (err.code !== 'EEXIST') {
-      throw new Error(`Failed to create directory '${dirPath}': ${err.message}`, { cause: err });
+    if (errorField(err, 'code') !== 'EEXIST') {
+      throw new Error(`Failed to create directory '${dirPath}': ${errorField(err, 'message')}`, { cause: err });
     }
   }
   return dirPath;
@@ -223,11 +246,13 @@ function getProjectName() {
  * Pure non-ASCII inputs get a stable 8-char hash so distinct names do not
  * collapse to the same fallback session id. Mixed-script inputs retain their
  * ASCII part and gain a short hash suffix for disambiguation.
+ * @param {unknown} raw
+ * @returns {string | null}
  */
 function sanitizeSessionId(raw) {
   if (!raw || typeof raw !== 'string') return null;
 
-  const hasNonAscii = Array.from(raw).some(char => char.codePointAt(0) > 0x7f);
+  const hasNonAscii = Array.from(raw).some(char => (char.codePointAt(0) ?? 0) > 0x7f);
   const normalized = raw.replace(/^\.+/, '');
   const sanitized = normalized
     .replace(/[^a-zA-Z0-9_-]/g, '-')
@@ -280,13 +305,15 @@ function getDateTimeString() {
  * Find files matching a pattern in a directory (cross-platform alternative to find)
  * @param {string} dir - Directory to search
  * @param {string} pattern - File pattern (e.g., "*.tmp", "*.md")
- * @param {object} options - Options { maxAge: days, recursive: boolean }
+ * @param {FindFilesOptions} [options] - maxAge in days, recursive search
+ * @returns {FileMatch[]} newest first
  */
 function findFiles(dir, pattern, options = {}) {
   if (!dir || typeof dir !== 'string') return [];
   if (!pattern || typeof pattern !== 'string') return [];
 
   const { maxAge = null, recursive = false } = options;
+  /** @type {FileMatch[]} */
   const results = [];
 
   if (!fs.existsSync(dir)) {
@@ -301,6 +328,7 @@ function findFiles(dir, pattern, options = {}) {
     .replace(/\?/g, '.');
   const regex = new RegExp(`^${regexPattern}$`);
 
+  /** @param {string} currentDir */
   function searchDir(currentDir) {
     try {
       const entries = fs.readdirSync(currentDir, { withFileTypes: true });
@@ -343,10 +371,9 @@ function findFiles(dir, pattern, options = {}) {
 
 /**
  * Read JSON from stdin (for hook input)
- * @param {object} options - Options
- * @param {number} options.timeoutMs - Timeout in milliseconds (default: 5000).
- *   Prevents hooks from hanging indefinitely if stdin never closes.
- * @returns {Promise<object>} Parsed JSON object, or empty object if stdin is empty
+ * @param {ReadStdinJsonOptions} [options] - timeoutMs (default 5000) keeps a
+ *   hook from hanging if stdin never closes; maxSize caps the bytes read.
+ * @returns {Promise<Record<string, unknown>>} Parsed JSON object, or empty object if stdin is empty
  */
 async function readStdinJson(options = {}) {
   const { timeoutMs = 5000, maxSize = 1024 * 1024 } = options;
@@ -432,6 +459,7 @@ async function readStdinJson(options = {}) {
 
 /**
  * Log to stderr (visible to user in Claude Code)
+ * @param {unknown} message
  */
 function log(message) {
   console.error(message);
@@ -439,6 +467,7 @@ function log(message) {
 
 /**
  * Output to stdout (returned to Claude)
+ * @param {unknown} data
  */
 function output(data) {
   if (typeof data === 'object') {
@@ -450,6 +479,8 @@ function output(data) {
 
 /**
  * Read a text file safely
+ * @param {string} filePath
+ * @returns {string | null}
  */
 function readFile(filePath) {
   try {
@@ -461,6 +492,8 @@ function readFile(filePath) {
 
 /**
  * Write a text file
+ * @param {string} filePath
+ * @param {string} content
  */
 function writeFile(filePath, content) {
   ensureDir(path.dirname(filePath));
@@ -469,6 +502,8 @@ function writeFile(filePath, content) {
 
 /**
  * Append to a text file
+ * @param {string} filePath
+ * @param {string} content
  */
 function appendFile(filePath, content) {
   ensureDir(path.dirname(filePath));
@@ -478,6 +513,8 @@ function appendFile(filePath, content) {
 /**
  * Check if a command exists in PATH
  * Uses execFileSync to prevent command injection
+ * @param {string} cmd
+ * @returns {boolean}
  */
 function commandExists(cmd) {
   // Validate command name - only allow alphanumeric, dash, underscore, dot
@@ -532,7 +569,7 @@ function runCommand(cmd, options = {}) {
     });
     return { success: true, output: result.trim() };
   } catch (err) {
-    return { success: false, output: err.stderr || err.message };
+    return { success: false, output: errorField(err, 'stderr') || errorField(err, 'message') || String(err) };
   }
 }
 
@@ -562,6 +599,7 @@ function getGitModifiedFiles(patterns = [], options = {}) {
 
   if (patterns.length > 0) {
     // Pre-compile patterns, skipping invalid ones
+    /** @type {RegExp[]} */
     const compiled = [];
     for (const pattern of patterns) {
       if (typeof pattern !== 'string' || pattern.length === 0) continue;
@@ -585,9 +623,8 @@ function getGitModifiedFiles(patterns = [], options = {}) {
  * @param {string|RegExp} search - Pattern to search for. String patterns replace
  *   the FIRST occurrence only; use a RegExp with the `g` flag for global replacement.
  * @param {string} replace - Replacement string
- * @param {object} options - Options
- * @param {boolean} options.all - When true and search is a string, replaces ALL
- *   occurrences (uses String.replaceAll). Ignored for RegExp patterns.
+ * @param {ReplaceInFileOptions} [options] - all: when true and search is a
+ *   string, replaces ALL occurrences (String.replaceAll). Ignored for RegExp.
  * @returns {boolean} true if file was written, false on error
  */
 function replaceInFile(filePath, search, replace, options = {}) {
@@ -604,7 +641,7 @@ function replaceInFile(filePath, search, replace, options = {}) {
     writeFile(filePath, newContent);
     return true;
   } catch (err) {
-    log(`[Utils] replaceInFile failed for ${filePath}: ${err.message}`);
+    log(`[Utils] replaceInFile failed for ${filePath}: ${errorField(err, 'message') ?? String(err)}`);
     return false;
   }
 }
@@ -658,6 +695,9 @@ function stripAnsi(str) {
 
 /**
  * Search for pattern in file and return matching lines with line numbers
+ * @param {string} filePath
+ * @param {string | RegExp} pattern
+ * @returns {GrepMatch[]}
  */
 function grepFile(filePath, pattern) {
   const content = readFile(filePath);
@@ -678,6 +718,7 @@ function grepFile(filePath, pattern) {
     return []; // Invalid regex pattern
   }
   const lines = content.split('\n');
+  /** @type {GrepMatch[]} */
   const results = [];
 
   lines.forEach((line, index) => {
