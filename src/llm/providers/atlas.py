@@ -68,10 +68,14 @@ class AtlasProvider(LLMProvider):
             or os.environ.get(self.fallback_api_key_env)
             or ""
         )
-        self.base_url = base_url or os.environ.get(self.base_url_env, self.default_base_url)
+        self.base_url = base_url or os.environ.get(
+            self.base_url_env, self.default_base_url
+        )
         env_model = read_model_env(self.model_env)
         self.default_model = default_model or env_model or DEFAULT_ATLAS_MODEL
-        self.client = OpenAI(api_key=self.api_key, base_url=self.base_url, _enforce_credentials=False)
+        self.client = OpenAI(
+            api_key=self.api_key, base_url=self.base_url, _enforce_credentials=False
+        )
         self._models = [
             ModelInfo(
                 name=self.default_model,
@@ -85,7 +89,9 @@ class AtlasProvider(LLMProvider):
         try:
             params: dict[str, Any] = {
                 "model": llm_input.model or self.default_model,
-                "messages": [to_openai_message_param(msg) for msg in llm_input.messages],
+                "messages": [
+                    to_openai_message_param(msg) for msg in llm_input.messages
+                ],
             }
             if llm_input.temperature != 1.0:
                 params["temperature"] = llm_input.temperature

@@ -35,14 +35,18 @@ class TestPromptBuilder:
 
     def test_build_adds_system_from_prompt_config(self):
         messages = [Message(role=Role.USER, content="Hello")]
-        builder = PromptBuilder(config=PromptConfig(system_template="You are a pirate."))
+        builder = PromptBuilder(
+            config=PromptConfig(system_template="You are a pirate.")
+        )
         result = builder.build(messages)
 
         assert len(result) == 2
         assert "pirate" in result[0].content
 
     def test_rejects_config_with_keyword_options(self):
-        with pytest.raises(ValueError, match="Pass either config or PromptBuilder keyword options"):
+        with pytest.raises(
+            ValueError, match="Pass either config or PromptBuilder keyword options"
+        ):
             PromptBuilder(
                 config=PromptConfig(system_template="Configured."),
                 system_template="Keyword override.",
@@ -86,7 +90,9 @@ class TestAdaptMessagesForProvider:
 
     def test_provider_names_allow_outer_whitespace(self):
         messages = [Message(role=Role.USER, content="Hello")]
-        tools = [ToolDefinition(name="search", description="Search the web", parameters={})]
+        tools = [
+            ToolDefinition(name="search", description="Search the web", parameters={})
+        ]
 
         result = adapt_messages_for_provider(messages, " ollama ", tools)
 

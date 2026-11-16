@@ -41,13 +41,18 @@ class TestToolExecutor:
             ToolDefinition(
                 name="search",
                 description="Search",
-                parameters={"type": "object", "properties": {"query": {"type": "string"}}},
+                parameters={
+                    "type": "object",
+                    "properties": {"query": {"type": "string"}},
+                },
             ),
             search,
         )
 
         executor = ToolExecutor(registry)
-        result = executor.execute(ToolCall(id="1", name="search", arguments={"query": "test"}))
+        result = executor.execute(
+            ToolCall(id="1", name="search", arguments={"query": "test"})
+        )
 
         assert result.tool_call_id == "1"
         assert result.content == "Results for: test"
@@ -71,14 +76,20 @@ class TestToolExecutor:
         def tool2() -> str:
             return "result2"
 
-        registry.register(ToolDefinition(name="t1", description="", parameters={}), tool1)
-        registry.register(ToolDefinition(name="t2", description="", parameters={}), tool2)
+        registry.register(
+            ToolDefinition(name="t1", description="", parameters={}), tool1
+        )
+        registry.register(
+            ToolDefinition(name="t2", description="", parameters={}), tool2
+        )
 
         executor = ToolExecutor(registry)
-        results = executor.execute_all([
-            ToolCall(id="1", name="t1", arguments={}),
-            ToolCall(id="2", name="t2", arguments={}),
-        ])
+        results = executor.execute_all(
+            [
+                ToolCall(id="1", name="t1", arguments={}),
+                ToolCall(id="2", name="t2", arguments={}),
+            ]
+        )
 
         assert len(results) == 2
         assert results[0].content == "result1"
@@ -94,11 +105,15 @@ class TestAsyncTools:
         async def fetch(url: str = "") -> str:
             return f"fetched:{url}"
 
-        registry.register(ToolDefinition(name="fetch", description="", parameters={}), fetch)
+        registry.register(
+            ToolDefinition(name="fetch", description="", parameters={}), fetch
+        )
 
         executor = ToolExecutor(registry)
         result = asyncio.run(
-            executor.execute_async(ToolCall(id="1", name="fetch", arguments={"url": "x"}))
+            executor.execute_async(
+                ToolCall(id="1", name="fetch", arguments={"url": "x"})
+            )
         )
 
         assert result.tool_call_id == "1"
@@ -112,7 +127,9 @@ class TestAsyncTools:
             return f"value:{key}"
 
         registry = ToolRegistry()
-        registry.register(ToolDefinition(name="lookup", description="", parameters={}), lookup)
+        registry.register(
+            ToolDefinition(name="lookup", description="", parameters={}), lookup
+        )
 
         seen = {}
 
@@ -122,7 +139,9 @@ class TestAsyncTools:
                     seen["done"] = True
                     return LLMOutput(
                         content="",
-                        tool_calls=[ToolCall(id="1", name="lookup", arguments={"key": "k"})],
+                        tool_calls=[
+                            ToolCall(id="1", name="lookup", arguments={"key": "k"})
+                        ],
                     )
                 tool_messages = [m for m in agent_input.messages if m.role == Role.TOOL]
                 assert len(tool_messages) == 1

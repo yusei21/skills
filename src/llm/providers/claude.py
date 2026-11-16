@@ -32,7 +32,9 @@ class ClaudeProvider(LLMProvider):
         base_url: str | None = None,
         default_model: str | None = None,
     ) -> None:
-        self.client = Anthropic(api_key=api_key or os.environ.get("ANTHROPIC_API_KEY"), base_url=base_url)
+        self.client = Anthropic(
+            api_key=api_key or os.environ.get("ANTHROPIC_API_KEY"), base_url=base_url
+        )
         self.default_model = default_model or _DEFAULT_MODEL
         self._models = [
             ModelInfo(
@@ -64,9 +66,13 @@ class ClaudeProvider(LLMProvider):
     def generate(self, input: LLMInput) -> LLMOutput:
         try:
             model = input.model or self.default_model
-            system_parts = [msg.content for msg in input.messages if msg.role == Role.SYSTEM]
+            system_parts = [
+                msg.content for msg in input.messages if msg.role == Role.SYSTEM
+            ]
             api_messages = [
-                msg.to_dict() for msg in input.messages if msg.role not in (Role.SYSTEM,)
+                msg.to_dict()
+                for msg in input.messages
+                if msg.role not in (Role.SYSTEM,)
             ]
 
             params: dict[str, Any] = {
@@ -124,7 +130,9 @@ class ClaudeProvider(LLMProvider):
                     "cache_creation_input_tokens": getattr(
                         response.usage, "cache_creation_input_tokens", 0
                     ),
-                    "cache_read_input_tokens": getattr(response.usage, "cache_read_input_tokens", 0),
+                    "cache_read_input_tokens": getattr(
+                        response.usage, "cache_read_input_tokens", 0
+                    ),
                 },
                 stop_reason=response.stop_reason,
             )

@@ -8,7 +8,9 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = ROOT / "skills" / "docs-governance" / "scripts" / "audit-docs.py"
+SCRIPT = (
+    ROOT / "skills" / "docs-product" / "docs-governance" / "scripts" / "audit-docs.py"
+)
 
 
 @pytest.fixture
@@ -17,13 +19,24 @@ def project(tmp_path: Path) -> Path:
 
 
 def run_audit(
-    project: Path, scope: str, *, timeout: float | None = None,
+    project: Path,
+    scope: str,
+    *,
+    timeout: float | None = None,
     modules: tuple[str, ...] = (),
     script: Path = SCRIPT,
 ) -> subprocess.CompletedProcess[str]:
     module_args = [argument for module in modules for argument in ("--module", module)]
     return subprocess.run(
-        [sys.executable, str(script), "--root", str(project), "--scope", scope, *module_args],
+        [
+            sys.executable,
+            str(script),
+            "--root",
+            str(project),
+            "--scope",
+            scope,
+            *module_args,
+        ],
         text=True,
         capture_output=True,
         check=False,
@@ -31,11 +44,15 @@ def run_audit(
     )
 
 
-def test_module_audit_checks_local_carriers_links_and_is_read_only(project: Path) -> None:
+def test_module_audit_checks_local_carriers_links_and_is_read_only(
+    project: Path,
+) -> None:
     module = project / "src" / "inventory"
     module.mkdir(parents=True)
     (module / "AGENTS.md").write_text("[terms](CONTEXT.md)\n", encoding="utf-8")
-    (module / "CONTEXT.md").write_text("[contract](../../contract.md)\n", encoding="utf-8")
+    (module / "CONTEXT.md").write_text(
+        "[contract](../../contract.md)\n", encoding="utf-8"
+    )
     (project / "contract.md").write_text("# Contract\n", encoding="utf-8")
     before = {path: path.read_bytes() for path in project.rglob("*") if path.is_file()}
     result = run_audit(project, "modules", modules=("src/inventory",))
@@ -48,12 +65,20 @@ def test_module_audit_checks_local_carriers_links_and_is_read_only(project: Path
     assert after == before
 
 
-@pytest.mark.parametrize("distribution", ("skills", ".agents/skills", "pi/core/skills"))
-@pytest.mark.parametrize("role,filename", (("agents", "AGENTS.md"), ("context", "CONTEXT.md")))
+@pytest.mark.parametrize(
+    "distribution", ("skills/docs-product", ".agents/skills", "pi/core/skills")
+)
+@pytest.mark.parametrize(
+    "role,filename", (("agents", "AGENTS.md"), ("context", "CONTEXT.md"))
+)
 @pytest.mark.parametrize("broken", (False, True))
 @pytest.mark.parametrize("module_path", (".", "src/inventory"))
 def test_module_audit_checks_root_carrier_before_mapped_source(
-    project: Path, distribution: str, role: str, filename: str, broken: bool,
+    project: Path,
+    distribution: str,
+    role: str,
+    filename: str,
+    broken: bool,
     module_path: str,
 ) -> None:
     (project / module_path).mkdir(parents=True, exist_ok=True)
@@ -64,28 +89,40 @@ def test_module_audit_checks_root_carrier_before_mapped_source(
         encoding="utf-8",
     )
     for mapped in ("rules", "glossary"):
-        (project / f"docs/{mapped}.md").write_text("# Shared source\n", encoding="utf-8")
+        (project / f"docs/{mapped}.md").write_text(
+            "# Shared source\n", encoding="utf-8"
+        )
     if not broken:
         (project / "docs/target.md").write_text("# Link target\n", encoding="utf-8")
     (project / filename).write_text("[target](docs/target.md)\n", encoding="utf-8")
     before = {path: path.read_bytes() for path in project.rglob("*") if path.is_file()}
     result = run_audit(
-        project, "modules", modules=(module_path,),
+        project,
+        "modules",
+        modules=(module_path,),
         script=ROOT / distribution / "docs-governance/scripts/audit-docs.py",
     )
     assert result.returncode == (1 if broken else 0), result.stdout + result.stderr
-    source_label = f"Local {role} source" if module_path == "." else f"Shared {role} candidate"
+    source_label = (
+        f"Local {role} source" if module_path == "." else f"Shared {role} candidate"
+    )
     assert f"{source_label}: '{filename}'" in result.stdout
-    assert (f"Broken Markdown link: '{filename}' -> 'docs/target.md'" in result.stdout) == broken
+    assert (
+        f"Broken Markdown link: '{filename}' -> 'docs/target.md'" in result.stdout
+    ) == broken
     after = {path: path.read_bytes() for path in project.rglob("*") if path.is_file()}
     assert after == before, "module audit must remain read-only in every distribution"
 
 
 @pytest.mark.parametrize("scope", ("modules", "full"))
-def test_module_audit_reports_nearest_shared_candidates(project: Path, scope: str) -> None:
+def test_module_audit_reports_nearest_shared_candidates(
+    project: Path, scope: str
+) -> None:
     (project / "src" / "inventory").mkdir(parents=True)
     (project / "AGENTS.md").write_text("# Project rules\n", encoding="utf-8")
-    (project / "src" / "AGENTS.md").write_text("# Shared module rules\n", encoding="utf-8")
+    (project / "src" / "AGENTS.md").write_text(
+        "# Shared module rules\n", encoding="utf-8"
+    )
     (project / "CONTEXT.md").write_text("# Shared language\n", encoding="utf-8")
     result = run_audit(project, scope, modules=("src/inventory",))
     assert result.returncode == 0, result.stdout + result.stderr
@@ -95,12 +132,15 @@ def test_module_audit_reports_nearest_shared_candidates(project: Path, scope: st
     assert "Local agents source" not in result.stdout
 
 
-def test_module_audit_reuses_mapped_sources_without_creating_shells(project: Path) -> None:
+def test_module_audit_reuses_mapped_sources_without_creating_shells(
+    project: Path,
+) -> None:
     (project / "inventory").mkdir()
     (project / "docs").mkdir()
     (project / ".governance").mkdir()
     (project / ".governance/docs-map.json").write_text(
-        json.dumps({"agents": "docs/rules.md", "context": "docs/glossary.md"}), encoding="utf-8"
+        json.dumps({"agents": "docs/rules.md", "context": "docs/glossary.md"}),
+        encoding="utf-8",
     )
     for name in ("rules", "glossary"):
         (project / f"docs/{name}.md").write_text(f"# {name}\n", encoding="utf-8")
@@ -111,15 +151,21 @@ def test_module_audit_reuses_mapped_sources_without_creating_shells(project: Pat
     assert list((project / "inventory").iterdir()) == []
 
 
-def test_module_audit_checks_selected_carriers_in_template_named_modules(project: Path) -> None:
+def test_module_audit_checks_selected_carriers_in_template_named_modules(
+    project: Path,
+) -> None:
     (project / "templates/inventory").mkdir(parents=True)
-    (project / "templates/inventory/AGENTS.md").write_text("[missing](missing.md)\n", encoding="utf-8")
+    (project / "templates/inventory/AGENTS.md").write_text(
+        "[missing](missing.md)\n", encoding="utf-8"
+    )
     result = run_audit(project, "modules", modules=("templates/inventory",))
     assert result.returncode == 1, result.stdout + result.stderr
     assert "Broken Markdown link: 'templates/inventory/AGENTS.md'" in result.stdout
 
 
-def test_module_audit_missing_carriers_are_manual_review_not_failure(project: Path) -> None:
+def test_module_audit_missing_carriers_are_manual_review_not_failure(
+    project: Path,
+) -> None:
     (project / "inventory").mkdir()
     result = run_audit(project, "modules", modules=("inventory",))
     assert result.returncode == 0, result.stdout + result.stderr
@@ -138,7 +184,9 @@ def test_module_audit_rejects_invalid_directories(project: Path, module: str) ->
 
 
 @pytest.mark.parametrize("filename", ("AGENTS.md", "CONTEXT.md"))
-def test_module_audit_does_not_read_escaping_sources(project: Path, filename: str) -> None:
+def test_module_audit_does_not_read_escaping_sources(
+    project: Path, filename: str
+) -> None:
     module = project / "inventory"
     module.mkdir()
     outside = project.parent / f"outside-{filename}"
@@ -161,7 +209,9 @@ def test_module_audit_reports_invalid_utf8_carrier(project: Path) -> None:
     assert "Cannot read module agents source" in result.stdout
 
 
-def test_module_audit_reuses_link_parser_and_source_relative_resolution(project: Path) -> None:
+def test_module_audit_reuses_link_parser_and_source_relative_resolution(
+    project: Path,
+) -> None:
     module = project / "src/inventory"
     module.mkdir(parents=True)
     (module / "AGENTS.md").write_text("[terms](.\\CONTEXT.md)\n", encoding="utf-8")
@@ -169,7 +219,10 @@ def test_module_audit_reuses_link_parser_and_source_relative_resolution(project:
     (project / "contract.md").write_text("# Wrong base\n", encoding="utf-8")
     result = run_audit(project, "modules", modules=("src/inventory",))
     assert result.returncode == 1, result.stdout + result.stderr
-    assert "Broken Markdown link: 'src/inventory/CONTEXT.md' -> '../contract.md'" in result.stdout
+    assert (
+        "Broken Markdown link: 'src/inventory/CONTEXT.md' -> '../contract.md'"
+        in result.stdout
+    )
     assert "AGENTS.md' ->" not in result.stdout
 
 
@@ -184,7 +237,9 @@ def test_module_audit_requires_explicit_scope_and_boundary(project: Path) -> Non
 def test_module_audit_checks_each_selected_boundary_once(project: Path) -> None:
     for module in ("inventory", "billing"):
         (project / module).mkdir()
-    result = run_audit(project, "modules", modules=("inventory", "billing", "inventory"))
+    result = run_audit(
+        project, "modules", modules=("inventory", "billing", "inventory")
+    )
     assert result.returncode == 0, result.stdout + result.stderr
     assert result.stdout.count("Selected module: 'inventory'") == 1
     assert result.stdout.count("Selected module: 'billing'") == 1
@@ -231,9 +286,7 @@ def test_artifact_scope_resolves_windows_style_relative_markdown_links(
     target = project / "docs" / "adr" / "0001.md"
     target.parent.mkdir(parents=True)
     target.write_text("# ADR\n", encoding="utf-8")
-    (project / "guide.md").write_text(
-        "[adr](docs\\adr\\0001.md)\n", encoding="utf-8"
-    )
+    (project / "guide.md").write_text("[adr](docs\\adr\\0001.md)\n", encoding="utf-8")
     result = run_audit(project, "artifacts")
     assert result.returncode == 0, result.stdout
 

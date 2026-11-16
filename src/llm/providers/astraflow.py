@@ -54,11 +54,19 @@ class _AstraflowBaseProvider(LLMProvider):
         default_model: str | None = None,
     ) -> None:
         self.api_key = api_key or os.environ.get(self.api_key_env) or ""
-        self.base_url = base_url or os.environ.get(self.base_url_env, self.default_base_url)
+        self.base_url = base_url or os.environ.get(
+            self.base_url_env, self.default_base_url
+        )
         env_model = read_model_env(self.model_env)
-        fallback_model = read_model_env(self.fallback_model_env) if self.fallback_model_env else None
-        self.default_model = default_model or env_model or fallback_model or DEFAULT_ASTRAFLOW_MODEL
-        self.client = OpenAI(api_key=self.api_key, base_url=self.base_url, _enforce_credentials=False)
+        fallback_model = (
+            read_model_env(self.fallback_model_env) if self.fallback_model_env else None
+        )
+        self.default_model = (
+            default_model or env_model or fallback_model or DEFAULT_ASTRAFLOW_MODEL
+        )
+        self.client = OpenAI(
+            api_key=self.api_key, base_url=self.base_url, _enforce_credentials=False
+        )
         self._models = [
             ModelInfo(
                 name=self.default_model,
@@ -72,7 +80,9 @@ class _AstraflowBaseProvider(LLMProvider):
         try:
             params: dict[str, Any] = {
                 "model": llm_input.model or self.default_model,
-                "messages": [to_openai_message_param(msg) for msg in llm_input.messages],
+                "messages": [
+                    to_openai_message_param(msg) for msg in llm_input.messages
+                ],
             }
             if llm_input.temperature != 1.0:
                 params["temperature"] = llm_input.temperature

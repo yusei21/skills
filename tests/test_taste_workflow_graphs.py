@@ -87,20 +87,29 @@ class WorkflowGraphTests(unittest.TestCase):
                 graphs.prepare_distillation_input(bad)
 
     def test_optional_motion_variant_preserves_application_contract(self):
-        still = graphs.load_graph('apply')
-        motion = graphs.load_graph('apply-motion')
-        self.assertEqual(still['contents']['schema'], motion['contents']['schema'])
-        self.assertNotEqual(still['name'], motion['name'])
-        for name in ('node-gen1', 'node-gen2', 'node-gen3'):
-            original = still['contents']['nodes'][name]['input']
-            variant = motion['contents']['nodes'][name]['input']
-            self.assertNotIn('video_urls', original)
-            self.assertEqual(variant['video_urls'], ['$input.source_video'])
-            self.assertEqual({k: v for k, v in variant.items() if k != 'video_urls'}, original)
-        self.assertEqual(motion['contents']['nodes']['node-merge']['input']['target_fps'], 30)
-        payload = graphs.compile_application_input({'brief': 'a', 'style_steer': 'b',
-                                                   'source_video': 'https://example.org/own.mp4'})
-        self.assertEqual(set(payload), set(motion['contents']['schema']['input']))
+        still = graphs.load_graph("apply")
+        motion = graphs.load_graph("apply-motion")
+        self.assertEqual(still["contents"]["schema"], motion["contents"]["schema"])
+        self.assertNotEqual(still["name"], motion["name"])
+        for name in ("node-gen1", "node-gen2", "node-gen3"):
+            original = still["contents"]["nodes"][name]["input"]
+            variant = motion["contents"]["nodes"][name]["input"]
+            self.assertNotIn("video_urls", original)
+            self.assertEqual(variant["video_urls"], ["$input.source_video"])
+            self.assertEqual(
+                {k: v for k, v in variant.items() if k != "video_urls"}, original
+            )
+        self.assertEqual(
+            motion["contents"]["nodes"]["node-merge"]["input"]["target_fps"], 30
+        )
+        payload = graphs.compile_application_input(
+            {
+                "brief": "a",
+                "style_steer": "b",
+                "source_video": "https://example.org/own.mp4",
+            }
+        )
+        self.assertEqual(set(payload), set(motion["contents"]["schema"]["input"]))
 
     def test_bad_inputs_fail(self):
         for source in ("file:///tmp/private", "http://example.org/a", "", 42):
