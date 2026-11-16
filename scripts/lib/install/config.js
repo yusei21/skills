@@ -14,7 +14,7 @@ function readJson(filePath, label) {
     const content = fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, '');
     return JSON.parse(content);
   } catch (error) {
-    throw new Error(`Invalid JSON in ${label}: ${error.message}`);
+    throw new Error(`Invalid JSON in ${label}: ${error.message}`, { cause: error });
   }
 }
 

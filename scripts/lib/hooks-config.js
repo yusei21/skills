@@ -29,14 +29,14 @@ function readJsonObject(filePath, label) {
   try {
     raw = fs.readFileSync(filePath, 'utf8');
   } catch (error) {
-    throw new Error(`Unable to read ${label} at ${filePath}: ${error.message}`);
+    throw new Error(`Unable to read ${label} at ${filePath}: ${error.message}`, { cause: error });
   }
 
   let parsed;
   try {
     parsed = JSON.parse(raw);
   } catch (error) {
-    throw new Error(`Invalid JSON in ${label} at ${filePath}: ${error.message}`);
+    throw new Error(`Invalid JSON in ${label} at ${filePath}: ${error.message}`, { cause: error });
   }
 
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {

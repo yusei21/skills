@@ -374,7 +374,7 @@ function rollbackTo(skillPath, targetVersion, options = {}) {
   } catch (primaryError) {
     try {
       if (!fs.readFileSync(getSkillFilePath(skillPath)).equals(priorContent)) {
-        throw new Error('Live skill changed during the failed write; target snapshot retained');
+        throw new Error('Live skill changed during the failed write; target snapshot retained', { cause: primaryError });
       }
     } catch (recoveryError) {
       const error = new Error(`${primaryError.message}; ${recoveryError.message}; recovery is pending`, { cause: primaryError });

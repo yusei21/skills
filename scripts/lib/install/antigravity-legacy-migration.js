@@ -385,7 +385,7 @@ function cleanupLegacyAntigravityInstall(plan) {
     }
   }
 
-  let complete = false;
+  let complete;
   try {
     complete = removeLegacyStateWhenEmpty(location);
   } catch (_error) {

@@ -19,7 +19,7 @@ function parseJsonLikeValue(value, label) {
     try {
       return JSON.parse(value);
     } catch (error) {
-      throw new Error(`Invalid ${label}: ${error.message}`);
+      throw new Error(`Invalid ${label}: ${error.message}`, { cause: error });
     }
   }
 

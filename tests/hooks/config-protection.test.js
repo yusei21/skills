@@ -251,7 +251,7 @@ function runTests() {
         // Windows NTFS), where the uppercase path is the SAME inode. On a
         // case-sensitive filesystem the variant is a genuinely different file
         // and the write is harmless, so skip rather than assert.
-        let sameFile = false;
+        let sameFile;
         try {
           sameFile = fs.lstatSync(variantPath).ino === fs.lstatSync(realPath).ino;
         } catch {

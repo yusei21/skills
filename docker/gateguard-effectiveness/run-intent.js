@@ -102,7 +102,7 @@ function readResults(file) {
     try {
       return [JSON.parse(line)];
     } catch (error) {
-      throw new Error(`results.jsonl line ${index + 1} is malformed; preserve the file for recovery (${error.message})`);
+      throw new Error(`results.jsonl line ${index + 1} is malformed; preserve the file for recovery (${error.message})`, { cause: error });
     }
   });
 }

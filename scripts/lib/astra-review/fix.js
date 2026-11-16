@@ -46,7 +46,7 @@ function parseJson(text, label) {
   try {
     return JSON.parse(stripCodeFences(String(text)));
   } catch (error) {
-    throw new Error(`${label} is not valid JSON: ${error.message}`);
+    throw new Error(`${label} is not valid JSON: ${error.message}`, { cause: error });
   }
 }
 

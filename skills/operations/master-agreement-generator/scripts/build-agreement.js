@@ -189,7 +189,7 @@ function build(templatePath, specPath, outDir, options = {}) {
     }
   } catch (error) {
     fs.rmSync(docxPath, { force: true });
-    if (error.code === 'ENOENT') throw new Error('pandoc did not produce a DOCX artifact');
+    if (error.code === 'ENOENT') throw new Error('pandoc did not produce a DOCX artifact', { cause: error });
     throw error;
   }
   result.docx = docxPath;

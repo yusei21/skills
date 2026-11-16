@@ -26,7 +26,7 @@ function readJson(filePath, label) {
     const { readFileWithSharingRetry } = require('./atomic-write');
     return JSON.parse(readFileWithSharingRetry(filePath, 'utf8'));
   } catch (error) {
-    throw new Error(`Failed to read ${label}: ${error.message}`);
+    throw new Error(`Failed to read ${label}: ${error.message}`, { cause: error });
   }
 }
 

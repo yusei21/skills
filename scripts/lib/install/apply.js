@@ -1024,7 +1024,7 @@ function applyInstallPlanLocked(rawPlan, dependencies = {}, settingsLockHeld = f
         } catch (checkpointError) {
           throw new Error(
             `${error.message} Install-state checkpoint also failed: ${checkpointError.message}`,
-            { cause: error }
+            { cause: checkpointError }
           );
         }
       }
@@ -1070,7 +1070,7 @@ function applyInstallPlanLocked(rawPlan, dependencies = {}, settingsLockHeld = f
   }
 
   let excludedPathsRemoved = [];
-  let excludedPathsWarnings = [];
+  let excludedPathsWarnings;
   try {
     const excludedReconciliation = completeExcludedPathsReconciliation(migration, appliedPlan);
     excludedPathsRemoved = excludedReconciliation.removedPaths;
@@ -1082,7 +1082,7 @@ function applyInstallPlanLocked(rawPlan, dependencies = {}, settingsLockHeld = f
   }
 
   let stalePathsRemoved = [];
-  let stalePathsWarnings = [];
+  let stalePathsWarnings;
   try {
     const staleReconciliation = completeStaleOperationsReconciliation(migration, appliedPlan);
     stalePathsRemoved = staleReconciliation.removedPaths;

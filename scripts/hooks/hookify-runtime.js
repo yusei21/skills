@@ -256,7 +256,7 @@ function readRuleFile(filePath, directoryStat) {
   try {
     fd = fs.openSync(filePath, flags);
   } catch (error) {
-    if (error.code === 'ELOOP') throw new Error('symbolic links are not loaded');
+    if (error.code === 'ELOOP') throw new Error('symbolic links are not loaded', { cause: error });
     throw error;
   }
   try {

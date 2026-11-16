@@ -111,7 +111,7 @@ function listConfiguredMcpServers(launcher, deps = {}) {
   try {
     servers = JSON.parse(result.stdout || '');
   } catch (error) {
-    throw new Error(`MCP servers could not be listed (${error.message}); refusing to review without isolation`);
+    throw new Error(`MCP servers could not be listed (${error.message}); refusing to review without isolation`, { cause: error });
   }
   if (result.status !== 0 || !Array.isArray(servers)) {
     const detail = (result.stderr || '').trim().split('\n').slice(-1)[0];
@@ -159,7 +159,7 @@ function readLastMessage(outputFile) {
   try {
     text = fs.readFileSync(outputFile, 'utf8').trim();
   } catch (error) {
-    throw new Error(`Codex returned no final response: ${error.message}`);
+    throw new Error(`Codex returned no final response: ${error.message}`, { cause: error });
   }
   if (!text) throw new Error('Codex returned an empty final response');
   return text;

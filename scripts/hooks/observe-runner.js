@@ -190,7 +190,7 @@ function emitHookResult(raw, output) {
 }
 
 if (require.main === module) {
-  let raw = '';
+  let raw;
   try {
     raw = fs.readFileSync(0, 'utf8');
   } catch (_error) {
