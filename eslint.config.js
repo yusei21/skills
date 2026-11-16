@@ -28,7 +28,11 @@ module.exports = [
             'no-console': 'off',
             'complexity': ['warn', 20],
             'max-depth': ['warn', 5],
-            'max-params': ['warn', 6]
+            'max-params': ['warn', 6],
+            // New in @eslint/js 10's recommended set. Existing code has ~100
+            // hits; warn until they are fixed (see docs/MODERNIZATION-STATUS.md).
+            'preserve-caught-error': 'warn',
+            'no-useless-assignment': 'warn'
         }
     },
     {
