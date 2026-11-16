@@ -64,13 +64,9 @@ function listSkillsInRoot(rootPath) {
     return [];
   }
 
-  return fs.readdirSync(rootPath, { withFileTypes: true })
-    .filter(entry => entry.isDirectory())
-    .map(entry => ({
-      skill_id: entry.name,
-      skill_dir: path.join(rootPath, entry.name),
-    }))
-    .filter(entry => fs.existsSync(path.join(entry.skill_dir, 'SKILL.md')));
+  // Curated roots nest by department; learned/imported roots stay flat. Both work.
+  return require('../skill-layout').listSkills(path.dirname(rootPath), { skillsDir: path.basename(rootPath) })
+    .map(skill => ({ skill_id: skill.name, skill_dir: skill.dir }));
 }
 
 function discoverSkills(options = {}) {

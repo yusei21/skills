@@ -24,7 +24,7 @@ const { DEFAULT_REPO_ROOT } = require('../lib/context-profile-support');
 const PROFILES = Object.freeze(['lean@1', 'full@1']);
 const BUILTINS = new Set(builtinModules);
 const SCRIPT_EXTENSIONS = new Set(['.js', '.cjs', '.mjs']);
-const ts = require('typescript');
+const ts = require('@typescript/typescript6');
 
 function isAbsoluteSpecifier(value) {
   return value.startsWith('/') || value.startsWith('\\\\') || /^[A-Za-z]:[\\/]/.test(value) || /^file:/i.test(value);

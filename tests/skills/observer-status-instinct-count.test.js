@@ -13,7 +13,7 @@ const os = require('os');
 const path = require('path');
 
 const repoRoot = path.resolve(__dirname, '..', '..');
-const skillRoot = path.join(repoRoot, 'skills', 'continuous-learning-v2');
+const skillRoot = path.join(repoRoot, 'skills', 'admin', 'continuous-learning-v2');
 const observerScript = path.join(skillRoot, 'agents', 'start-observer.sh');
 const instinctCli = path.join(skillRoot, 'scripts', 'instinct-cli.py');
 const bashBinary = process.env.ECC_TEST_BASH || (process.platform === 'win32' ? null : '/bin/bash');

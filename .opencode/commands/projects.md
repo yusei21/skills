@@ -12,7 +12,7 @@ Show continuous-learning-v2 project registry and stats: $ARGUMENTS
 Run:
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT}/skills/continuous-learning-v2/scripts/instinct-cli.py" projects
+python3 "${CLAUDE_PLUGIN_ROOT}/skills/admin/continuous-learning-v2/scripts/instinct-cli.py" projects
 ```
 
 If `CLAUDE_PLUGIN_ROOT` is unavailable, use:

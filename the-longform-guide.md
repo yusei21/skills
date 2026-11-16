@@ -327,7 +327,7 @@ alias q='cd ~/Desktop/projects'
 
 **Self-Improving Memory:**
 
-- See `skills/continuous-learning/` in this repo
+- See `skills/admin/continuous-learning/` in this repo
 - rlancemartin.github.io/2025/12/01/claude_diary/ - Session reflection pattern
 
 **System Prompts Reference:**

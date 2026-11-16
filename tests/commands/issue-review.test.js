@@ -2,7 +2,7 @@
 
 /**
  * Structural tests for the /issue-review command shim and the
- * skills/issue-review workflow it delegates to.
+ * skills/operations/issue-review workflow it delegates to.
  *
  * These guard three things:
  *   1. The skill and shim exist with valid frontmatter and the sections
@@ -22,7 +22,7 @@ const os = require('os');
 const { spawnSync } = require('child_process');
 
 const repoRoot = path.resolve(__dirname, '..', '..');
-const skillPath = path.join(repoRoot, 'skills', 'issue-review', 'SKILL.md');
+const skillPath = path.join(repoRoot, 'skills', 'operations', 'issue-review', 'SKILL.md');
 const commandPath = path.join(repoRoot, 'commands', 'issue-review.md');
 
 let passed = 0;
@@ -68,8 +68,8 @@ console.log('\n=== Testing /issue-review command and skill ===\n');
 const skill = fs.existsSync(skillPath) ? fs.readFileSync(skillPath, 'utf8') : '';
 const command = fs.existsSync(commandPath) ? fs.readFileSync(commandPath, 'utf8') : '';
 
-test('skills/issue-review/SKILL.md exists with name and inline description', () => {
-  assert.ok(skill.length > 0, 'Expected skills/issue-review/SKILL.md to exist');
+test('skills/operations/issue-review/SKILL.md exists with name and inline description', () => {
+  assert.ok(skill.length > 0, 'Expected skills/operations/issue-review/SKILL.md to exist');
   const frontmatter = parseFrontmatter(skill);
   assert.ok(frontmatter, 'Expected SKILL.md to start with YAML frontmatter');
   assert.ok(/^name:\s*issue-review\s*$/m.test(frontmatter), 'Expected name to match the directory');
@@ -582,7 +582,7 @@ test('commands/issue-review.md exists with description and quoted argument-hint'
 });
 
 test('command shim delegates to the canonical skill and the PR counterpart', () => {
-  assert.ok(command.includes('skills/issue-review/SKILL.md'), 'Expected the shim to point at the skill');
+  assert.ok(command.includes('skills/operations/issue-review/SKILL.md'), 'Expected the shim to point at the skill');
   assert.ok(command.includes('/code-review'), 'Expected the shim to reference /code-review');
   assert.ok(command.includes('$ARGUMENTS'), 'Expected the shim to consume $ARGUMENTS');
   assert.ok(/--comment/.test(command) && /--label/.test(command), 'Expected the shim to document the opt-in flags');
@@ -607,11 +607,11 @@ test('skill and command are listed in agent.yaml', () => {
 
 test('skill is referenced by an install module and the npm publish surface', () => {
   const manifest = JSON.parse(read('manifests/install-modules.json'));
-  const owners = manifest.modules.filter(module => (module.paths || []).includes('skills/issue-review'));
-  assert.ok(owners.length > 0, 'Expected skills/issue-review in at least one install module');
+  const owners = manifest.modules.filter(module => (module.paths || []).includes('skills/operations/issue-review'));
+  assert.ok(owners.length > 0, 'Expected skills/operations/issue-review in at least one install module');
 
   const pkg = JSON.parse(read('package.json'));
-  assert.ok(pkg.files.includes('skills/issue-review/'), 'Expected skills/issue-review/ in package.json files');
+  assert.ok(pkg.files.includes('skills/operations/issue-review/'), 'Expected skills/operations/issue-review/ in package.json files');
 });
 
 test('command appears in the quick reference and the command-agent map', () => {

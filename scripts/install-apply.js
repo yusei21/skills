@@ -10,27 +10,23 @@ const os = require('os');
 const {
   SUPPORTED_INSTALL_TARGETS,
   listLegacyCompatibilityLanguages,
-  listSupportedLocales,
 } = require('./lib/install-manifests');
 const {
   LEGACY_INSTALL_TARGETS,
   normalizeInstallRequest,
   parseInstallArgs,
 } = require('./lib/install/request');
-const { getComputeSponsorCopy } = require('./lib/compute-sponsor');
 const { stripAnsi } = require('./lib/utils');
 const { describeMissingDependencyError } = require('./lib/missing-dependency');
 
 function getHelpText() {
   const languages = listLegacyCompatibilityLanguages();
-  const locales = listSupportedLocales();
 
   return `
 Usage: install.sh [--target <${LEGACY_INSTALL_TARGETS.join('|')}>] [--dry-run] [--json] <language> [<language> ...]
        install.sh [--target <${SUPPORTED_INSTALL_TARGETS.join('|')}>] [--dry-run] [--json] --profile <name> [--with <component>]... [--without <component>]...
        install.sh [--target <${SUPPORTED_INSTALL_TARGETS.join('|')}>] [--dry-run] [--json] --modules <id,id,...> [--with <component>]... [--without <component>]...
        install.sh [--target <${SUPPORTED_INSTALL_TARGETS.join('|')}>] [--dry-run] [--json] --skills <skill-id[,skill-id...]>
-       install.sh [--target claude|claude-project] [--dry-run] [--json] --locale <locale-code>
        install.sh [--dry-run] [--json] --config <path>
 
 Targets:
@@ -58,8 +54,6 @@ Options:
   --skills <ids>      Install one or more skill directories by ID, e.g. continuous-learning-v2
   --without <component>
                       Exclude a user-facing install component
-  --locale <code>     Install translated docs to ~/.claude/docs/<locale>/ (or ./.claude/docs/<locale>/ for claude-project)
-                      (claude or claude-project target only; can be combined with --profile or --with)
   --config <path>     Load install intent from ecc-install.json
   --enable-hooks      Confirm installing the automatic hook runtime (required
                       when the selected profile/modules materialize hooks)
@@ -68,14 +62,8 @@ Options:
   --json       Emit machine-readable plan/result JSON
   --help       Show this help text
 
-Compute:
-  ${getComputeSponsorCopy()}
-
 Available languages:
 ${languages.map(language => `  - ${language}`).join('\n')}
-
-Available locales (--locale):
-${locales.map(locale => `  - ${locale}`).join('\n')}
 `;
 }
 
@@ -151,7 +139,6 @@ function printHumanPlan(plan, dryRun) {
     console.log(`\nDone. Install-state written to ${plan.installStatePath}`);
   }
 
-  console.log('\nCompute: ' + getComputeSponsorCopy());
 }
 
 async function main() {

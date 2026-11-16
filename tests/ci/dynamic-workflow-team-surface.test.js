@@ -13,7 +13,7 @@ const REPO_ROOT = path.join(__dirname, '..', '..');
 
 const SURFACES = [
   {
-    path: 'skills/dynamic-workflow-mode/SKILL.md',
+    path: 'skills/ai-agents/dynamic-workflow-mode/SKILL.md',
     required: [
       'dynamic workflow mode',
       'task-local harness',
@@ -35,7 +35,7 @@ const SURFACES = [
     ],
   },
   {
-    path: 'skills/team-agent-orchestration/SKILL.md',
+    path: 'skills/ai-agents/team-agent-orchestration/SKILL.md',
     required: [
       'team-based orchestration',
       'agent kanban',

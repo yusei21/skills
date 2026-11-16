@@ -82,7 +82,7 @@ This document lists each slash command and the primary agent(s) or skills it inv
 
 | Skill | Purpose | Entry point |
 |-------|---------|-------------|
-| [osint-investigation](../skills/osint-investigation/SKILL.md) | Public-source investigation methodology: competing hypotheses, falsification, visual verification, and evidence tracking | Invoke the self-contained skill directly using available host capabilities. |
+| [osint-investigation](../skills/research/osint-investigation/SKILL.md) | Public-source investigation methodology: competing hypotheses, falsification, visual verification, and evidence tracking | Invoke the self-contained skill directly using available host capabilities. |
 
 ## How to use this map
 

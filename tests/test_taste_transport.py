@@ -9,11 +9,11 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 ROOT = Path(__file__).resolve().parents[1]
-APP = ROOT / "skills/taste-application/scripts"
+APP = ROOT / "skills/media/taste-application/scripts"
 COPIES = [
     APP / "falapi.py",
     APP / "taste/falapi.py",
-    ROOT / "skills/taste-distillation/scripts/taste/falapi.py",
+    ROOT / "skills/media/taste-distillation/scripts/taste/falapi.py",
 ]
 
 

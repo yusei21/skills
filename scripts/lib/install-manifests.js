@@ -15,32 +15,10 @@ const COMPONENT_FAMILY_PREFIXES = {
   skill: 'skill:',
   locale: 'locale:',
 };
-const SUPPORTED_LOCALES = Object.freeze(['ja', 'zh-CN', 'ko-KR', 'pt-BR', 'ru', 'tr', 'vi-VN', 'zh-TW', 'de-DE', 'uk-UA', 'pl', 'bn', 'ar']);
-const LOCALE_ALIAS_TO_COMPONENT_ID = Object.freeze({
-  'ja': 'locale:ja',
-  'ja-JP': 'locale:ja',
-  'zh-CN': 'locale:zh-cn',
-  'zh': 'locale:zh-cn',
-  'ko-KR': 'locale:ko-kr',
-  'ko': 'locale:ko-kr',
-  'pt-BR': 'locale:pt-br',
-  'pt': 'locale:pt-br',
-  'ru': 'locale:ru',
-  'tr': 'locale:tr',
-  'vi-VN': 'locale:vi-vn',
-  'vi': 'locale:vi-vn',
-  'zh-TW': 'locale:zh-tw',
-  'de-DE': 'locale:de-de',
-  'de': 'locale:de-de',
-  'uk-UA': 'locale:uk-ua',
-  'uk': 'locale:uk-ua',
-  'pl': 'locale:pl',
-  'pl-PL': 'locale:pl',
-  'bn': 'locale:bn',
-  'bn-BD': 'locale:bn',
-  'ar': 'locale:ar',
-  'ar-SA': 'locale:ar'
-});
+// Translated documentation was removed from this fork, so no locale installs
+// exist. `--locale` stays recognized and reports that clearly.
+const SUPPORTED_LOCALES = Object.freeze([]);
+const LOCALE_ALIAS_TO_COMPONENT_ID = Object.freeze({});
 
 function listSupportedLocales() {
   return [...SUPPORTED_LOCALES];
@@ -183,23 +161,16 @@ function dedupeStrings(values) {
   return [...new Set((Array.isArray(values) ? values : []).map(value => String(value).trim()).filter(Boolean))];
 }
 
-function listSkillDirectoryIds(repoRoot) {
-  const skillsRoot = path.join(repoRoot, 'skills');
-  if (!fs.existsSync(skillsRoot) || !fs.statSync(skillsRoot).isDirectory()) {
-    return [];
-  }
-
-  return fs.readdirSync(skillsRoot, { withFileTypes: true })
-    .filter(entry => entry.isDirectory())
-    .map(entry => entry.name)
-    .sort();
+/** Curated skills as { name, relDir }: skills/<department>/<skill> (or a flat skills/<skill>). */
+function listSkillDirectories(repoRoot) {
+  return require('./skill-layout').listSkills(repoRoot).map(skill => ({ name: skill.name, relDir: skill.relDir }));
 }
 
 function addSyntheticSkillComponents({ repoRoot, modules, components }) {
   const moduleIds = new Set(modules.map(module => module.id));
   const componentIds = new Set(components.map(component => component.id));
 
-  for (const skillId of listSkillDirectoryIds(repoRoot)) {
+  for (const { name: skillId, relDir } of listSkillDirectories(repoRoot)) {
     const componentId = `skill:${skillId}`;
     if (componentIds.has(componentId)) {
       continue;
@@ -211,7 +182,7 @@ function addSyntheticSkillComponents({ repoRoot, modules, components }) {
         id: moduleId,
         kind: 'skills',
         description: `Single-skill install surface for ${skillId}.`,
-        paths: [`skills/${skillId}`],
+        paths: [relDir],
         targets: SUPPORTED_INSTALL_TARGETS.slice(),
         dependencies: [],
         defaultInstall: false,

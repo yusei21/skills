@@ -71,7 +71,7 @@ This skill ships with ECC. No separate installation is needed when ECC is instal
 If you are working from the ECC repository checkout, verify the skill is present with:
 
 ```bash
-test -f skills/blueprint/SKILL.md
+test -f skills/ai-agents/blueprint/SKILL.md
 ```
 
 To update later, review the ECC diff before updating:

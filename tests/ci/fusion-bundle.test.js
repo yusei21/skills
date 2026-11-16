@@ -8,7 +8,7 @@ const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 
 const root = path.resolve(__dirname, "../..");
-const relative = "skills/video-editing/assets/fusion/ito-v28";
+const relative = "skills/media/video-editing/assets/fusion/ito-v28";
 const bundle = path.join(root, relative);
 const provenance = JSON.parse(fs.readFileSync(path.join(bundle, "provenance.json")));
 const digest = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
@@ -30,10 +30,10 @@ assert.match(readme, /static rectangular/);
 assert.match(readme, /no subject detection or tracking/);
 assert.match(readme, /ImportFusionComp/);
 assert.match(readme, /provenance.json/);
-assert.ok(JSON.parse(fs.readFileSync(path.join(root, "package.json"))).files.includes("skills/video-editing/"));
+assert.ok(JSON.parse(fs.readFileSync(path.join(root, "package.json"))).files.includes("skills/media/video-editing/"));
 console.log("Fusion source hashes, registered wiring, scope and package ownership passed.");
 
-const productionRelative = "skills/video-editing/assets/fusion/ito-production-v1";
+const productionRelative = "skills/media/video-editing/assets/fusion/ito-production-v1";
 const production = path.join(root, productionRelative);
 const productionProvenance = JSON.parse(fs.readFileSync(path.join(production, "provenance.json")));
 assert.equal(Object.keys(productionProvenance.files).length, 4);

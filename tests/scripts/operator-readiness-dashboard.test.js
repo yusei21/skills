@@ -173,7 +173,7 @@ function seedRepo(rootDir, overrides = {}) {
       'Stale legacy payments/0EM roadmap issues closed: 72.'
     ].join('\n'),
     'docs/HERMES-SETUP.md': 'Hermes setup Public Release Candidate Scope',
-    'skills/hermes-imports/SKILL.md': 'Hermes imports Sanitization Checklist Do not ship raw workspace exports Output Contract',
+    'skills/admin/hermes-imports/SKILL.md': 'Hermes imports Sanitization Checklist Do not ship raw workspace exports Output Contract',
     'docs/stale-pr-salvage-ledger.md': [
       'Remaining Manual-Review Backlog',
       'Linear ITO-55',

@@ -8,7 +8,7 @@ const os = require('os');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..', '..');
-const SKILL_ROOT = path.join(ROOT, 'skills', 'council-multi-model');
+const SKILL_ROOT = path.join(ROOT, 'skills', 'ai-agents', 'council-multi-model');
 const ADAPTER = path.join(SKILL_ROOT, 'scripts', 'review-with-codex.js');
 const {
   MAX_PROMPT_BYTES,

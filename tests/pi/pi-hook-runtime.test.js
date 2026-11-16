@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 const { EventEmitter } = require('events');
-const ts = require('typescript');
+const ts = require('@typescript/typescript6');
 
 const extensionDir = path.resolve(__dirname, '../../.pi/extensions');
 const extensionSource = fs.readFileSync(path.join(extensionDir, 'index.ts'), 'utf8');

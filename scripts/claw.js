@@ -8,6 +8,7 @@
 'use strict';
 
 const fs = require('fs');
+const { skillDir } = require('./lib/skill-layout');
 const path = require('path');
 const os = require('os');
 const { spawnSync } = require('child_process');
@@ -68,7 +69,7 @@ function loadECCContext(skillList) {
 
   const chunks = [];
   for (const name of requested) {
-    const skillPath = path.join(process.cwd(), 'skills', name, 'SKILL.md');
+    const skillPath = path.join(skillDir(process.cwd(), name), 'SKILL.md');
     try {
       chunks.push(fs.readFileSync(skillPath, 'utf8'));
     } catch {
@@ -280,7 +281,7 @@ function branchSession(currentSessionPath, newSessionName, targetDir = getClawDi
 }
 
 function skillExists(skillName) {
-  const p = path.join(process.cwd(), 'skills', skillName, 'SKILL.md');
+  const p = path.join(skillDir(process.cwd(), skillName), 'SKILL.md');
   return fs.existsSync(p);
 }
 

@@ -50,17 +50,17 @@ Start with only the files you actually need:
 Good minimal examples:
 
 - Python feature work:
-  - `skills/python-patterns/SKILL.md`
-  - `skills/tdd-workflow/SKILL.md`
-  - `skills/verification-loop/SKILL.md`
+  - `skills/languages/python-patterns/SKILL.md`
+  - `skills/core/tdd-workflow/SKILL.md`
+  - `skills/core/verification-loop/SKILL.md`
 - TypeScript API work:
-  - `skills/backend-patterns/SKILL.md`
-  - `skills/security-review/SKILL.md`
-  - `skills/tdd-workflow/SKILL.md`
+  - `skills/backend/backend-patterns/SKILL.md`
+  - `skills/security/security-review/SKILL.md`
+  - `skills/core/tdd-workflow/SKILL.md`
 - Content/outbound work:
-  - `skills/brand-voice/SKILL.md`
-  - `skills/content-engine/SKILL.md`
-  - `skills/crosspost/SKILL.md`
+  - `skills/business/brand-voice/SKILL.md`
+  - `skills/business/content-engine/SKILL.md`
+  - `skills/business/crosspost/SKILL.md`
 
 If the harness supports file upload, upload only those files.
 
@@ -75,11 +75,11 @@ Use the repo directly:
 ```bash
 cd /path/to/ECC
 
-sed -n '1,220p' skills/tdd-workflow/SKILL.md > /tmp/ecc-context.md
+sed -n '1,220p' skills/core/tdd-workflow/SKILL.md > /tmp/ecc-context.md
 printf '\n\n---\n\n' >> /tmp/ecc-context.md
-sed -n '1,220p' skills/backend-patterns/SKILL.md >> /tmp/ecc-context.md
+sed -n '1,220p' skills/backend/backend-patterns/SKILL.md >> /tmp/ecc-context.md
 printf '\n\n---\n\n' >> /tmp/ecc-context.md
-sed -n '1,220p' skills/security-review/SKILL.md >> /tmp/ecc-context.md
+sed -n '1,220p' skills/security/security-review/SKILL.md >> /tmp/ecc-context.md
 ```
 
 You can also use `rg` to identify the right skills before packing:

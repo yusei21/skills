@@ -26,15 +26,27 @@ function validateModules(document) {
   return document.modules;
 }
 
+// Skills live at <root>/<department>/<skill>/SKILL.md; a flat
+// <root>/<skill>/SKILL.md is still accepted. Returns [{ name, skillRoot }].
 function discoverSkills(reader, root) {
-  return reader.list(root).filter(name => {
-    const skillRoot = `${root}/${name}`;
-    if (isExcludedResource(skillRoot)) return false;
-    const absolute = reader.resolve(skillRoot);
-    if (!fs.statSync(absolute).isDirectory()) return false;
+  const isDir = rel => !isExcludedResource(rel) && fs.statSync(reader.resolve(rel)).isDirectory();
+  const found = [];
+  for (const name of reader.list(root)) {
+    const entryRoot = `${root}/${name}`;
+    if (!isDir(entryRoot)) continue;
     if (!ID_PATTERN.test(name)) throw new Error(`Invalid canonical skill ID: ${name}`);
-    return reader.list(skillRoot).includes('SKILL.md');
-  });
+    if (reader.list(entryRoot).includes('SKILL.md')) {
+      found.push({ name, skillRoot: entryRoot });
+      continue;
+    }
+    for (const child of reader.list(entryRoot)) {
+      const skillRoot = `${entryRoot}/${child}`;
+      if (!isDir(skillRoot)) continue;
+      if (!ID_PATTERN.test(child)) throw new Error(`Invalid canonical skill ID: ${child}`);
+      if (reader.list(skillRoot).includes('SKILL.md')) found.push({ name: child, skillRoot });
+    }
+  }
+  return found.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 }
 
 function parseMetadata(resource) {
@@ -78,8 +90,7 @@ function validateDependencies(entries) {
   entries.forEach(entry => visit(entry.id));
 }
 
-function buildEntry(reader, modules, root, name, override = {}) {
-  const skillRoot = `${root}/${name}`;
+function buildEntry(reader, modules, { name, skillRoot }, override = {}) {
   const sourcePath = `${skillRoot}/SKILL.md`;
   const owners = modules.filter(module => module.paths.some(source => sourcePath === source || sourcePath.startsWith(`${source}/`)));
   if (owners.length !== 1) throw new Error(`Skill ${name} requires exactly one owner; found ${owners.length}`);
@@ -109,9 +120,9 @@ function loadContextRegistry({ repoRoot = DEFAULT_REPO_ROOT } = {}) {
   const manifest = reader.json(REGISTRY_PATH);
   validateSchema(manifest, 'context-pack-registry.schema.json');
   const modules = validateModules(reader.json(manifest.inventory.source));
-  const names = discoverSkills(reader, manifest.inventory.skillsRoot);
-  const overrides = indexedOverrides(manifest.overrides, new Set(names.map(name => `skill:${name}`)));
-  const entries = names.map(name => buildEntry(reader, modules, manifest.inventory.skillsRoot, name, overrides.get(`skill:${name}`)));
+  const skills = discoverSkills(reader, manifest.inventory.skillsRoot);
+  const overrides = indexedOverrides(manifest.overrides, new Set(skills.map(skill => `skill:${skill.name}`)));
+  const entries = skills.map(skill => buildEntry(reader, modules, skill, overrides.get(`skill:${skill.name}`)));
   validateDependencies(entries);
   const value = {
     schemaVersion: 'ecc.context-registry.v1', id: manifest.id,

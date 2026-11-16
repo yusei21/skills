@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
-const CANONICAL_SKILL = path.join(REPO_ROOT, 'skills', 'mle-workflow', 'SKILL.md');
+const CANONICAL_SKILL = path.join(REPO_ROOT, 'skills', 'ml', 'mle-workflow', 'SKILL.md');
 const CODEX_SKILL = path.join(REPO_ROOT, '.agents', 'skills', 'mle-workflow', 'SKILL.md');
 
 const EXPECTED_TASKS = [

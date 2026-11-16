@@ -7,19 +7,9 @@ const path = require('path');
 const repoRoot = path.resolve(__dirname, '..', '..');
 const policyDocs = [
   {
-    path: 'skills/github-ops/SKILL.md',
+    path: 'skills/operations/github-ops/SKILL.md',
     approval: 'user approval',
     prohibition: 'never auto-merge',
-  },
-  {
-    path: 'docs/ja-JP/skills/github-ops/SKILL.md',
-    approval: 'user approval',
-    prohibition: 'never auto-merge',
-  },
-  {
-    path: 'docs/zh-CN/skills/github-ops/SKILL.md',
-    approval: '用户批准',
-    prohibition: '切勿自动合并',
   },
 ];
 

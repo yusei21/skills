@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..', '..');
-const SKILL_PATH = path.join(ROOT, 'skills', 'dev-team', 'SKILL.md');
+const SKILL_PATH = path.join(ROOT, 'skills', 'ai-agents', 'dev-team', 'SKILL.md');
 
 function test(name, fn) {
   try {
@@ -91,9 +91,9 @@ function runTests() {
 
   if (test('every referenced skill, agent, and command resolves in the repo', () => {
     const refs = [
-      'skills/council/SKILL.md',
-      'skills/team-builder/SKILL.md',
-      'skills/santa-method/SKILL.md',
+      'skills/ai-agents/council/SKILL.md',
+      'skills/ai-agents/team-builder/SKILL.md',
+      'skills/ai-agents/santa-method/SKILL.md',
       'commands/plan-prd.md',
       'commands/plan.md',
       'commands/epic-decompose.md',
@@ -110,10 +110,10 @@ function runTests() {
   if (test('skill is registered in install manifest and npm files list', () => {
     const modules = JSON.parse(
       fs.readFileSync(path.join(ROOT, 'manifests', 'install-modules.json'), 'utf8'));
-    assert.ok(JSON.stringify(modules).includes('skills/dev-team'),
+    assert.ok(JSON.stringify(modules).includes('skills/ai-agents/dev-team'),
       'missing from manifests/install-modules.json');
     const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
-    assert.ok(pkg.files.includes('skills/dev-team/'),
+    assert.ok(pkg.files.includes('skills/ai-agents/dev-team/'),
       'missing from package.json files');
   })) passed++; else failed++;
 

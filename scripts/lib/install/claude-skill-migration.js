@@ -92,7 +92,10 @@ function describeClaudeSkillOperation(targetRoot, operation) {
     return null;
   }
 
-  const sourceParts = sourceRelativePath.split('/');
+  // Install-state files record either the flat source layout (older ECC) or
+  // skills/<department>/<skill>/...; both map to the same installed skill.
+  const { flattenSkillPath, knownDepartments } = require('../skill-layout');
+  const sourceParts = flattenSkillPath(sourceRelativePath, knownDepartments()).split('/');
   if (sourceParts[0] !== 'skills' || sourceParts.length < 3 || !sourceParts[1]) {
     return null;
   }

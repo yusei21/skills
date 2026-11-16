@@ -20,15 +20,18 @@ function update(root, relativePath, transform) {
 function fixture() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-context-contract-'));
   const ids = [...KERNEL, 'feature', 'shared'];
+  // Mirror the repository layout: kernel skills nest under their department,
+  // `feature` and `shared` stay flat so both layouts stay covered.
+  const skillPath = id => (KERNEL.includes(id) ? `skills/core/${id}` : `skills/${id}`);
   for (const id of ids) {
-    write(root, `skills/${id}/SKILL.md`, `---\nname: ${id}\ndescription: Help with ${id}.\n---\n\n# ${id}\n\nInstructions remain on demand.\n`);
+    write(root, `${skillPath(id)}/SKILL.md`, `---\nname: ${id}\ndescription: Help with ${id}.\n---\n\n# ${id}\n\nInstructions remain on demand.\n`);
   }
   write(root, 'skills/feature/references/details.md', 'Resource content.\n');
   write(root, 'manifests/install-modules.json', {
     version: 1,
     modules: [{
       id: 'workflow-quality', kind: 'skills',
-      paths: ids.map(id => `skills/${id}`), targets: ['claude', 'codex'],
+      paths: ids.map(skillPath), targets: ['claude', 'codex'],
       dependencies: [], defaultInstall: true, cost: 'light', stability: 'stable',
     }],
   });
@@ -60,4 +63,4 @@ function createDirectoryLink(source, destination, platform = process.platform) {
   fs.symlinkSync(source, destination, platform === 'win32' ? 'junction' : 'dir');
 }
 
-module.exports = { KERNEL, createDirectoryLink, fixture, update, withFixture, write };
+module.exports = { KERNEL, KERNEL_DEPARTMENT: 'core', createDirectoryLink, fixture, update, withFixture, write };

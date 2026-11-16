@@ -4,7 +4,7 @@ description: Legacy slash-entry shim for the context-budget skill. Prefer the sk
 
 # Context Budget Optimizer (Legacy Shim)
 
-Use this only if you still invoke `/context-budget`. The maintained workflow lives in `skills/context-budget/SKILL.md`.
+Use this only if you still invoke `/context-budget`. The maintained workflow lives in `skills/core/context-budget/SKILL.md`.
 
 ## Canonical Surface
 

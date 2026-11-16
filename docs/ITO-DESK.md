@@ -2,8 +2,8 @@
 
 ECC is the public agentic-engineering toolkit; the Ito desk is Affaan's
 private ops system. The connection surface in this repo is the set of
-public `ito-*` skills (`skills/ito-baskets`, `skills/ito-compute`,
-`skills/ito-inference`, `skills/ito-training`). Each of them is a thin
+public `ito-*` skills (`skills/verticals/ito-baskets`, `skills/verticals/ito-compute`,
+`skills/verticals/ito-inference`, `skills/verticals/ito-training`). Each of them is a thin
 pointer: it names the supported boundary and hands real work to the
 separately installed canonical CLI or MCP server. ECC itself implements no
 compute booking, inference serving, training stack or basket trading, and

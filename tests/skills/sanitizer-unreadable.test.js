@@ -20,7 +20,7 @@ const { spawnSync } = require('child_process');
 
 const repoRoot = path.join(__dirname, '..', '..');
 const agentPath = path.join(repoRoot, 'agents', 'opensource-sanitizer.md');
-const skillPath = path.join(repoRoot, 'skills', 'opensource-pipeline', 'SKILL.md');
+const skillPath = path.join(repoRoot, 'skills', 'devops', 'opensource-pipeline', 'SKILL.md');
 
 if (process.platform === 'win32') {
   console.log('SKIP: sanitizer-unreadable (POSIX shell block, not applicable on win32)');

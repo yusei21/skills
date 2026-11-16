@@ -207,7 +207,7 @@ function runTests() {
           observationId: 'obs-1',
           timestamp: '2026-03-14T12:00:00.000Z',
           task: 'Review auth middleware',
-          skill: { id: 'security-review', path: 'skills/security-review/SKILL.md' },
+          skill: { id: 'security-review', path: 'skills/security/security-review/SKILL.md' },
           outcome: { success: false, status: 'failure', error: 'missing csrf guidance', feedback: 'Need CSRF coverage' },
           run: { variant: 'baseline', amendmentId: null, sessionId: 'sess-1' }
         }),
@@ -216,7 +216,7 @@ function runTests() {
           observationId: 'obs-2',
           timestamp: '2026-03-14T12:05:00.000Z',
           task: 'Review auth middleware',
-          skill: { id: 'security-review', path: 'skills/security-review/SKILL.md' },
+          skill: { id: 'security-review', path: 'skills/security/security-review/SKILL.md' },
           outcome: { success: false, status: 'failure', error: 'missing csrf guidance', feedback: null },
           run: { variant: 'baseline', amendmentId: null, sessionId: 'sess-2' }
         })
@@ -246,7 +246,7 @@ function runTests() {
           observationId: 'obs-1',
           timestamp: '2026-03-14T12:00:00.000Z',
           task: 'Add rate limiting',
-          skill: { id: 'api-design', path: 'skills/api-design/SKILL.md' },
+          skill: { id: 'api-design', path: 'skills/backend/api-design/SKILL.md' },
           outcome: { success: false, status: 'failure', error: 'missing rate limiting guidance', feedback: 'Need rate limiting examples' },
           run: { variant: 'baseline', amendmentId: null, sessionId: 'sess-1' }
         })
@@ -277,7 +277,7 @@ function runTests() {
           observationId: 'obs-1',
           timestamp: '2026-03-14T12:00:00.000Z',
           task: 'Fix flaky login test',
-          skill: { id: 'e2e-testing', path: 'skills/e2e-testing/SKILL.md' },
+          skill: { id: 'e2e-testing', path: 'skills/quality/e2e-testing/SKILL.md' },
           outcome: { success: false, status: 'failure', error: null, feedback: null },
           run: { variant: 'baseline', amendmentId: null, sessionId: 'sess-1' }
         }),
@@ -286,7 +286,7 @@ function runTests() {
           observationId: 'obs-2',
           timestamp: '2026-03-14T12:10:00.000Z',
           task: 'Fix flaky checkout test',
-          skill: { id: 'e2e-testing', path: 'skills/e2e-testing/SKILL.md' },
+          skill: { id: 'e2e-testing', path: 'skills/quality/e2e-testing/SKILL.md' },
           outcome: { success: true, status: 'success', error: null, feedback: null },
           run: { variant: 'baseline', amendmentId: null, sessionId: 'sess-2' }
         }),
@@ -295,7 +295,7 @@ function runTests() {
           observationId: 'obs-3',
           timestamp: '2026-03-14T12:20:00.000Z',
           task: 'Fix flaky login test',
-          skill: { id: 'e2e-testing', path: 'skills/e2e-testing/SKILL.md' },
+          skill: { id: 'e2e-testing', path: 'skills/quality/e2e-testing/SKILL.md' },
           outcome: { success: true, status: 'success', error: null, feedback: null },
           run: { variant: 'amended', amendmentId: 'amend-1', sessionId: 'sess-3' }
         }),
@@ -304,7 +304,7 @@ function runTests() {
           observationId: 'obs-4',
           timestamp: '2026-03-14T12:30:00.000Z',
           task: 'Fix flaky checkout test',
-          skill: { id: 'e2e-testing', path: 'skills/e2e-testing/SKILL.md' },
+          skill: { id: 'e2e-testing', path: 'skills/quality/e2e-testing/SKILL.md' },
           outcome: { success: true, status: 'success', error: null, feedback: null },
           run: { variant: 'amended', amendmentId: 'amend-1', sessionId: 'sess-4' }
         })

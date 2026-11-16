@@ -9,7 +9,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const repoRoot = path.resolve(__dirname, '..', '..');
-const commandsDir = path.join(repoRoot, 'skills', 'ck', 'commands');
+const commandsDir = path.join(repoRoot, 'skills', 'admin', 'ck', 'commands');
 let passed = 0;
 let failed = 0;
 

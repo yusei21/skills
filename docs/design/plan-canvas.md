@@ -43,7 +43,7 @@ A loopback-only web editor for plan artifacts (and any local HTML artifact):
 | Markdown plan renderer | `scripts/lib/plan-canvas/markdown.js` | zero new deps; renders the `commands/plan.md` artifact schema (tables, tasks, code fences, Mermaid blocks) |
 | Mermaid diagrams | `scripts/lib/plan-canvas/ui.js` | ` ```mermaid ` blocks render in the browser, themed to ECC; pinned CDN with offline fallback (`ECC_PLAN_CANVAS_MERMAID_URL` for a local mirror) |
 | Session state | `scripts/lib/plan-canvas/sessions.js` | file-path-keyed sessions, state under `~/.claude/plan-canvas/` (`ECC_PLAN_CANVAS_STATE_DIR` override) |
-| Skill | `skills/plan-canvas/SKILL.md` | skills-first surface; teaches the open → await → reply loop; defers visual guidance to `frontend-design-direction`, `artifact-design`, `dataviz` |
+| Skill | `skills/admin/plan-canvas/SKILL.md` | skills-first surface; teaches the open → await → reply loop; defers visual guidance to `frontend-design-direction`, `artifact-design`, `dataviz` |
 | Command shim | `commands/plan-canvas.md` | legacy parity surface, points at the skill |
 | `/plan` pointer | `commands/plan.md` | after writing the artifact, offer canvas review |
 | Hook (optional) | `scripts/hooks/plan-canvas-sessions.js`, `SessionStart` | surfaces open canvas sessions so a fresh session can resume a review |
@@ -63,7 +63,7 @@ from a bare `ecc-plan-canvas` invocation).
 
 Surfaces mirror how peer workflow-quality skills ship across ECC's harnesses:
 
-- `skills/plan-canvas/` — canonical (Claude Code and the installer's per-target adapters).
+- `skills/admin/plan-canvas/` — canonical (Claude Code and the installer's per-target adapters).
 - `.agents/skills/plan-canvas/` (+ `agents/openai.yaml` interface manifest) — Codex, alongside
   `tdd-workflow`, `e2e-testing`, `verification-loop`.
 - `agent.yaml` skills list — the Codex gitagent manifest.

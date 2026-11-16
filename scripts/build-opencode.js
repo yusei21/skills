@@ -13,7 +13,11 @@ fs.rmSync(distDir, { recursive: true, force: true })
 let tscEntrypoint
 
 try {
-  tscEntrypoint = require.resolve("typescript/bin/tsc", { paths: [rootDir] })
+  // TypeScript 7 ships an `exports` map, so `typescript/bin/tsc` is no longer
+  // resolvable directly. Resolve the package manifest and follow its `bin`.
+  const manifestPath = require.resolve("typescript/package.json", { paths: [rootDir] })
+  const { bin } = JSON.parse(fs.readFileSync(manifestPath, "utf8"))
+  tscEntrypoint = path.join(path.dirname(manifestPath), typeof bin === "string" ? bin : bin.tsc)
 } catch {
   throw new Error(
     "TypeScript compiler not found. Install root dev dependencies before publishing so .opencode/dist can be built."

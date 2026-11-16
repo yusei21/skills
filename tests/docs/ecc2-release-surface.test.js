@@ -64,12 +64,6 @@ test('release candidate directory includes the public launch pack', () => {
   }
 });
 
-test('README links to Hermes setup and current release notes', () => {
-  const readme = read('README.md');
-  assert.ok(readme.includes('docs/HERMES-SETUP.md'), 'README must link to Hermes setup');
-  assert.ok(readme.includes('docs/releases/2.0.0/release-notes.md'), 'README must link to the 2.0.0 release notes');
-});
-
 test('cross-harness architecture doc exists and names core harnesses', () => {
   const source = read('docs/architecture/cross-harness.md');
   for (const harness of ['Claude Code', 'Codex', 'OpenCode', 'Cursor', 'Gemini', 'Hermes']) {
@@ -78,7 +72,7 @@ test('cross-harness architecture doc exists and names core harnesses', () => {
 });
 
 test('Hermes import skill exists and declares sanitization rules', () => {
-  const source = read('skills/hermes-imports/SKILL.md');
+  const source = read('skills/admin/hermes-imports/SKILL.md');
   assert.ok(source.includes('name: hermes-imports'));
   assert.ok(source.includes('Sanitization Checklist'));
   assert.ok(source.includes('Do not ship raw workspace exports'));
@@ -156,7 +150,7 @@ test('preview pack manifest assembles release, Hermes, and publication gates', (
 
   for (const artifact of [
     'docs/HERMES-SETUP.md',
-    'skills/hermes-imports/SKILL.md',
+    'skills/admin/hermes-imports/SKILL.md',
     'docs/architecture/harness-adapter-compliance.md',
     'scripts/preview-pack-smoke.js',
     'scripts/release-approval-gate.js',
@@ -266,7 +260,7 @@ test('rc.1 quickstart gives a clone-to-cross-harness path', () => {
   assert.ok(quickstart.includes('git clone https://github.com/affaan-m/ECC.git'));
   assert.ok(quickstart.includes('cd ECC'));
   assert.ok(quickstart.includes('node tests/run-all.js'));
-  assert.ok(quickstart.includes('skills/hermes-imports/SKILL.md'));
+  assert.ok(quickstart.includes('skills/admin/hermes-imports/SKILL.md'));
 });
 
 test('cross-harness doc includes a worked skill portability example', () => {
@@ -526,14 +520,6 @@ test('release checklist and roadmap link to publication readiness evidence gate'
   assert.ok(launchChecklist.includes('fresh evidence'));
   assert.ok(roadmap.includes('docs/releases/2.0.0-rc.1/publication-readiness.md'));
   assert.ok(roadmap.includes('npm dist-tag'));
-});
-
-test('localized changelogs include rc.1 and 1.10.0 release entries', () => {
-  for (const relativePath of ['docs/tr/CHANGELOG.md', 'docs/zh-CN/CHANGELOG.md']) {
-    const source = read(relativePath);
-    assert.ok(source.includes('## 2.0.0-rc.1 - 2026-04-28'), `${relativePath} missing rc.1 entry`);
-    assert.ok(source.includes('## 1.10.0 - 2026-04-05'), `${relativePath} missing 1.10.0 entry`);
-  }
 });
 
 if (failed > 0) {

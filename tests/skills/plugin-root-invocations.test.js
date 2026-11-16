@@ -18,6 +18,7 @@
 'use strict';
 
 const assert = require('assert');
+const { skillDir } = require('../../scripts/lib/skill-layout');
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const os = require('os');
@@ -50,7 +51,7 @@ function test(name, fn) {
 }
 
 function readSkill(name) {
-  return fs.readFileSync(path.join(repoRoot, 'skills', name, 'SKILL.md'), 'utf8');
+  return fs.readFileSync(path.join(skillDir(repoRoot, name), 'SKILL.md'), 'utf8');
 }
 
 function bashBlocks(markdown) {

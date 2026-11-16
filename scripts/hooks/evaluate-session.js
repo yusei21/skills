@@ -54,7 +54,8 @@ async function main() {
 
   // Get script directory to find config
   const scriptDir = __dirname;
-  const configFile = path.join(scriptDir, '..', '..', 'skills', 'continuous-learning', 'config.json');
+  // skills/admin/continuous-learning in a checkout or plugin root, flat skills/continuous-learning when installed
+  const configFile = path.join(require('../lib/skill-layout').skillDir(path.join(scriptDir, '..', '..'), 'continuous-learning'), 'config.json');
 
   // Default configuration
   let minSessionLength = 10;

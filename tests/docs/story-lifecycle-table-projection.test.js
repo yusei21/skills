@@ -4,7 +4,7 @@ const os = require('os');
 const path = require('path');
 const { execFileSync, spawnSync } = require('child_process');
 
-const LEDGER = path.join(__dirname, '..', '..', 'skills', 'story-lifecycle', 'scripts', 'ledger.js');
+const LEDGER = path.join(__dirname, '..', '..', 'skills', 'docs-product', 'story-lifecycle', 'scripts', 'ledger.js');
 const MARKER = '<!-- Derived from story files -->';
 const EPIC_HEADER = '| ID | Title | Status |\n| --- | --- | --- |';
 const SPRINT_HEADER = '| ID | Title | Points | Status |\n| --- | --- | --- | --- |';

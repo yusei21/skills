@@ -226,12 +226,22 @@ function doInstall() {
   // Copy skills (with subdirectories)
   const skillsDir = path.join(repoRoot, 'skills');
   if (fs.existsSync(skillsDir)) {
-    const skillDirs = fs.readdirSync(skillsDir, { withFileTypes: true })
-      .filter(entry => entry.isDirectory())
-      .map(entry => entry.name);
+    // skills/<department>/<skill>/ (or a flat skills/<skill>/); the target stays flat.
+    const skillDirs = [];
+    for (const entry of fs.readdirSync(skillsDir, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+      const dir = path.join(skillsDir, entry.name);
+      if (fs.existsSync(path.join(dir, 'SKILL.md'))) {
+        skillDirs.push(dir);
+        continue;
+      }
+      for (const child of fs.readdirSync(dir, { withFileTypes: true })) {
+        if (child.isDirectory() && fs.existsSync(path.join(dir, child.name, 'SKILL.md'))) skillDirs.push(path.join(dir, child.name));
+      }
+    }
 
-    for (const skillName of skillDirs) {
-      const sourceSkillDir = path.join(skillsDir, skillName);
+    for (const sourceSkillDir of skillDirs) {
+      const skillName = path.basename(sourceSkillDir);
       const targetSkillDir = path.join(codebuddyFullPath, 'skills', skillName);
       let skillCopied = false;
 

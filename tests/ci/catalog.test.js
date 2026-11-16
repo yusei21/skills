@@ -408,7 +408,8 @@ function runTests() {
     const testDir = createTestDir();
     try {
       writeCatalogFixture(testDir);
-      fs.rmSync(path.join(testDir, 'docs', 'zh-CN', 'AGENTS.md'));
+      // Translated mirrors are optional; a missing required document still fails loudly.
+      fs.rmSync(path.join(testDir, 'AGENTS.md'));
 
       assert.throws(
         () => runCatalogCheck({ root: testDir }),

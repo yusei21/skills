@@ -120,8 +120,8 @@ function createModularInstallRoot(options = {}) {
   fs.symlinkSync(path.join(repoRoot, "node_modules"), path.join(root, "node_modules"), "junction")
 
   if (options.withSkills) {
-    fs.mkdirSync(path.join(root, "skills", "continuous-learning-v2"), { recursive: true })
-    fs.writeFileSync(path.join(root, "skills", "continuous-learning-v2", "SKILL.md"), "# sentinel\n")
+    fs.mkdirSync(path.join(root, "skills", "admin", "continuous-learning-v2"), { recursive: true })
+    fs.writeFileSync(path.join(root, "skills", "admin", "continuous-learning-v2", "SKILL.md"), "# sentinel\n")
   }
 
   return root
@@ -638,7 +638,7 @@ async function main() {
     [
       "telemetry and root export work in a modular install without optional skills",
       async () => {
-        // Regression: root detection probed skills/continuous-learning-v2, which
+        // Regression: root detection probed skills/admin/continuous-learning-v2, which
         // belongs to the optional workflow-quality module. An install with
         // platform-configs + hooks-runtime but without workflow-quality still
         // ships the plugin and the tracker, and it lost both fixes.

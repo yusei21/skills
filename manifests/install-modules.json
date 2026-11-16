@@ -185,78 +185,81 @@
       "kind": "skills",
       "description": "Core framework, language, and application-engineering skills.",
       "paths": [
-        "skills/android-clean-architecture",
-        "skills/angular-developer",
-        "skills/api-design",
-        "skills/backend-patterns",
-        "skills/bengali-nlp",
-        "skills/coding-standards",
-        "skills/compose-multiplatform-patterns",
-        "skills/contract-first",
-        "skills/csharp-testing",
-        "skills/fsharp-testing",
-        "skills/cpp-coding-standards",
-        "skills/cpp-testing",
-        "skills/dart-flutter-patterns",
-        "skills/django-patterns",
-        "skills/django-tdd",
-        "skills/django-verification",
-        "skills/dotnet-patterns",
-        "skills/fastapi-patterns",
-        "skills/frontend-design-direction",
-        "skills/frontend-patterns",
-        "skills/i18n-sync",
-        "skills/frontend-slides",
-        "skills/make-interfaces-feel-better",
-        "skills/golang-patterns",
-        "skills/golang-testing",
-        "skills/java-coding-standards",
-        "skills/kotlin-coroutines-flows",
-        "skills/kotlin-exposed-patterns",
-        "skills/kotlin-ktor-patterns",
-        "skills/kotlin-patterns",
-        "skills/kotlin-testing",
-        "skills/laravel-plugin-discovery",
-        "skills/laravel-patterns",
-        "skills/laravel-tdd",
-        "skills/laravel-verification",
-        "skills/mcp-server-patterns",
-        "skills/nestjs-patterns",
-        "skills/perl-patterns",
-        "skills/perl-testing",
-        "skills/python-patterns",
-        "skills/python-testing",
-        "skills/quarkus-patterns",
-        "skills/quarkus-tdd",
-        "skills/quarkus-verification",
-        "skills/rails-patterns",
-        "skills/react-patterns",
-        "skills/react-performance",
-        "skills/react-testing",
-        "skills/rust-patterns",
-        "skills/rust-testing",
-        "skills/springboot-patterns",
-        "skills/springboot-tdd",
-        "skills/springboot-verification",
-        "skills/typescript-patterns",
-        "skills/ui-to-vue",
-        "skills/vue-patterns",
-        "skills/accessibility",
-        "skills/bun-runtime",
-        "skills/design-system",
-        "skills/django-celery",
-        "skills/flutter-dart-code-review",
-        "skills/frontend-a11y",
-        "skills/generating-python-installer",
-        "skills/hexagonal-architecture",
-        "skills/motion-advanced",
-        "skills/motion-foundations",
-        "skills/motion-patterns",
-        "skills/nextjs-turbopack",
-        "skills/nuxt4-patterns",
-        "skills/react-native-patterns",
-        "skills/tinystruct-patterns",
-        "skills/vite-patterns"
+        "skills/mobile/android-clean-architecture",
+        "skills/frontend/angular-developer",
+        "skills/backend/api-design",
+        "skills/backend/backend-patterns",
+        "skills/ml/bengali-nlp",
+        "skills/core/coding-standards",
+        "skills/mobile/compose-multiplatform-patterns",
+        "skills/backend/contract-first",
+        "skills/languages/csharp-testing",
+        "skills/languages/fsharp-testing",
+        "skills/languages/cpp-coding-standards",
+        "skills/languages/cpp-testing",
+        "skills/mobile/dart-flutter-patterns",
+        "skills/backend/django-patterns",
+        "skills/backend/django-tdd",
+        "skills/backend/django-verification",
+        "skills/backend/dotnet-patterns",
+        "skills/backend/fastapi-patterns",
+        "skills/frontend/frontend-design-direction",
+        "skills/frontend/frontend-patterns",
+        "skills/frontend/i18n-sync",
+        "skills/frontend/frontend-slides",
+        "skills/frontend/make-interfaces-feel-better",
+        "skills/languages/golang-patterns",
+        "skills/languages/golang-testing",
+        "skills/languages/java-coding-standards",
+        "skills/languages/kotlin-coroutines-flows",
+        "skills/backend/kotlin-exposed-patterns",
+        "skills/backend/kotlin-ktor-patterns",
+        "skills/languages/kotlin-patterns",
+        "skills/languages/kotlin-testing",
+        "skills/backend/laravel-plugin-discovery",
+        "skills/backend/laravel-patterns",
+        "skills/backend/laravel-tdd",
+        "skills/backend/laravel-verification",
+        "skills/backend/mcp-server-patterns",
+        "skills/backend/nestjs-patterns",
+        "skills/languages/perl-patterns",
+        "skills/languages/perl-testing",
+        "skills/languages/python-patterns",
+        "skills/languages/python-testing",
+        "skills/backend/quarkus-patterns",
+        "skills/backend/quarkus-tdd",
+        "skills/backend/quarkus-verification",
+        "skills/backend/rails-patterns",
+        "skills/frontend/react-patterns",
+        "skills/frontend/react-performance",
+        "skills/frontend/react-testing",
+        "skills/languages/rust-patterns",
+        "skills/languages/rust-testing",
+        "skills/backend/springboot-patterns",
+        "skills/backend/springboot-tdd",
+        "skills/backend/springboot-verification",
+        "skills/languages/typescript-patterns",
+        "skills/frontend/ui-to-vue",
+        "skills/frontend/vue-patterns",
+        "skills/frontend/accessibility",
+        "skills/backend/bun-runtime",
+        "skills/frontend/design-system",
+        "skills/backend/django-celery",
+        "skills/mobile/flutter-dart-code-review",
+        "skills/frontend/frontend-a11y",
+        "skills/languages/generating-python-installer",
+        "skills/backend/hexagonal-architecture",
+        "skills/frontend/motion-advanced",
+        "skills/frontend/motion-foundations",
+        "skills/frontend/motion-patterns",
+        "skills/frontend/nextjs-turbopack",
+        "skills/frontend/nuxt4-patterns",
+        "skills/mobile/react-native-patterns",
+        "skills/backend/tinystruct-patterns",
+        "skills/frontend/vite-patterns",
+        "skills/frontend/web-design-guidelines",
+        "skills/frontend/taste-skill",
+        "skills/frontend/design-md-library"
       ],
       "targets": [
         "claude",
@@ -291,14 +294,14 @@
       "kind": "skills",
       "description": "Database and persistence-focused skills.",
       "paths": [
-        "skills/clickhouse-io",
-        "skills/database-migrations",
-        "skills/jpa-patterns",
-        "skills/mybatis-patterns",
-        "skills/mysql-patterns",
-        "skills/postgres-patterns",
-        "skills/prisma-patterns",
-        "skills/redis-patterns"
+        "skills/data/clickhouse-io",
+        "skills/data/database-migrations",
+        "skills/data/jpa-patterns",
+        "skills/data/mybatis-patterns",
+        "skills/data/mysql-patterns",
+        "skills/data/postgres-patterns",
+        "skills/data/prisma-patterns",
+        "skills/data/redis-patterns"
       ],
       "targets": [
         "claude",
@@ -325,7 +328,7 @@
       "kind": "skills",
       "description": "Single-skill unified-memory guidance; requires the separately installed ecc-universal CLI runtime.",
       "paths": [
-        "skills/unified-memory"
+        "skills/admin/unified-memory"
       ],
       "targets": [
         "claude",
@@ -357,7 +360,7 @@
       "kind": "skills",
       "description": "Optional durable domain-context and ADR handoff workflow.",
       "paths": [
-        "skills/context-and-decisions"
+        "skills/docs-product/context-and-decisions"
       ],
       "targets": [
         "claude",
@@ -387,58 +390,66 @@
       "kind": "skills",
       "description": "Evaluation, TDD, verification, compaction, learning, and cross-harness memory skills, including the legacy continuous-learning v1 path. The unified-memory workflow requires the separately installed ecc-universal CLI runtime.",
       "paths": [
-        "skills/agent-sort",
-        "skills/agent-introspection-debugging",
-        "skills/ai-regression-testing",
-        "skills/configure-ecc",
-        "skills/deepseek-harness-setup",
-        "skills/code-tour",
-        "skills/continuous-learning",
-        "skills/continuous-learning-v2",
-        "skills/council",
-        "skills/council-multi-model",
-        "skills/dev-team",
-        "skills/e2e-testing",
-        "skills/error-handling",
-        "skills/eval-harness",
-        "skills/hookify-rules",
-        "skills/iterative-retrieval",
-        "skills/plan-canvas",
-        "skills/plankton-code-quality",
-        "skills/production-audit",
-        "skills/skill-comply",
-        "skills/skill-host-compat",
-        "skills/skill-scout",
-        "skills/skill-stocktake",
-        "skills/story-lifecycle",
-        "skills/strategic-compact",
-        "skills/tdd-workflow",
-        "skills/verification-loop",
-        "skills/windows-desktop-e2e",
-        "skills/agent-self-evaluation",
-        "skills/architecture-decision-records",
-        "skills/brownfield-retrospective",
-        "skills/browser-qa",
-        "skills/ck",
-        "skills/click-path-audit",
-        "skills/codebase-onboarding",
-        "skills/codehealth-mcp",
-        "skills/config-gc",
-        "skills/context-budget",
-        "skills/delivery-gate",
-        "skills/ecc-guide",
-        "skills/ecc-recipes",
-        "skills/growth-log",
-        "skills/inherit-legacy-style",
-        "skills/intent-driven-development",
-        "skills/living-docs-governance",
-        "skills/loop-design-check",
-        "skills/product-lens",
-        "skills/repo-scan",
-        "skills/rules-distill",
-        "skills/santa-method",
-        "skills/git-workflow",
-        "skills/conventional-commit-review"
+        "skills/admin/agent-sort",
+        "skills/ai-agents/agent-introspection-debugging",
+        "skills/quality/ai-regression-testing",
+        "skills/core/configure-ecc",
+        "skills/admin/deepseek-harness-setup",
+        "skills/core/code-tour",
+        "skills/admin/continuous-learning",
+        "skills/admin/continuous-learning-v2",
+        "skills/ai-agents/council",
+        "skills/ai-agents/council-multi-model",
+        "skills/ai-agents/dev-team",
+        "skills/quality/e2e-testing",
+        "skills/core/error-handling",
+        "skills/quality/eval-harness",
+        "skills/admin/hookify-rules",
+        "skills/core/iterative-retrieval",
+        "skills/admin/plan-canvas",
+        "skills/admin/plankton-code-quality",
+        "skills/quality/production-audit",
+        "skills/admin/skill-comply",
+        "skills/admin/skill-host-compat",
+        "skills/admin/skill-scout",
+        "skills/admin/skill-stocktake",
+        "skills/docs-product/story-lifecycle",
+        "skills/core/strategic-compact",
+        "skills/core/tdd-workflow",
+        "skills/core/verification-loop",
+        "skills/quality/windows-desktop-e2e",
+        "skills/ai-agents/agent-self-evaluation",
+        "skills/docs-product/architecture-decision-records",
+        "skills/docs-product/brownfield-retrospective",
+        "skills/quality/browser-qa",
+        "skills/admin/ck",
+        "skills/quality/click-path-audit",
+        "skills/core/codebase-onboarding",
+        "skills/quality/codehealth-mcp",
+        "skills/admin/config-gc",
+        "skills/core/context-budget",
+        "skills/admin/delivery-gate",
+        "skills/core/ecc-guide",
+        "skills/admin/ecc-recipes",
+        "skills/admin/growth-log",
+        "skills/core/inherit-legacy-style",
+        "skills/core/intent-driven-development",
+        "skills/docs-product/living-docs-governance",
+        "skills/ai-agents/loop-design-check",
+        "skills/docs-product/product-lens",
+        "skills/quality/repo-scan",
+        "skills/admin/rules-distill",
+        "skills/ai-agents/santa-method",
+        "skills/core/git-workflow",
+        "skills/core/conventional-commit-review",
+        "skills/quality/untangle-codebase",
+        "skills/quality/ponytail",
+        "skills/quality/ponytail-review",
+        "skills/quality/ponytail-audit",
+        "skills/quality/ponytail-debt",
+        "skills/quality/ponytail-gain",
+        "skills/quality/ponytail-help",
+        "skills/docs-product/graphify"
       ],
       "targets": [
         "claude",
@@ -469,7 +480,7 @@
       "kind": "skills",
       "description": "Optional documentation-governance routing and deterministic read-only audits.",
       "paths": [
-        "skills/docs-governance"
+        "skills/docs-product/docs-governance"
       ],
       "targets": [
         "claude",
@@ -499,14 +510,14 @@
       "kind": "skills",
       "description": "Parallel execution, benchmarking, data-throughput, latency, and recursive decision-ledger skills for faster evidence-backed work.",
       "paths": [
-        "skills/benchmark-optimization-loop",
-        "skills/data-throughput-accelerator",
-        "skills/latency-critical-systems",
-        "skills/parallel-execution-optimizer",
-        "skills/recursive-decision-ledger",
-        "skills/agent-eval",
-        "skills/benchmark",
-        "skills/benchmark-methodology"
+        "skills/quality/benchmark-optimization-loop",
+        "skills/data/data-throughput-accelerator",
+        "skills/quality/latency-critical-systems",
+        "skills/quality/parallel-execution-optimizer",
+        "skills/ai-agents/recursive-decision-ledger",
+        "skills/quality/agent-eval",
+        "skills/quality/benchmark",
+        "skills/quality/benchmark-methodology"
       ],
       "targets": [
         "claude",
@@ -534,28 +545,28 @@
       "kind": "skills",
       "description": "Security review and security-focused framework guidance.",
       "paths": [
-        "skills/agent-security-hardening",
-        "skills/defi-amm-security",
-        "skills/django-security",
-        "skills/healthcare-phi-compliance",
-        "skills/hipaa-compliance",
-        "skills/laravel-security",
-        "skills/llm-trading-agent-security",
-        "skills/mcp-dependency-review",
-        "skills/nodejs-keccak256",
-        "skills/perl-security",
-        "skills/quarkus-security",
-        "skills/security-review",
-        "skills/security-scan",
-        "skills/security-bounty-hunter",
-        "skills/springboot-security",
-        "skills/evm-token-decimals",
+        "skills/security/agent-security-hardening",
+        "skills/verticals/defi-amm-security",
+        "skills/security/django-security",
+        "skills/verticals/healthcare-phi-compliance",
+        "skills/verticals/hipaa-compliance",
+        "skills/security/laravel-security",
+        "skills/verticals/llm-trading-agent-security",
+        "skills/security/mcp-dependency-review",
+        "skills/verticals/nodejs-keccak256",
+        "skills/security/perl-security",
+        "skills/security/quarkus-security",
+        "skills/security/security-review",
+        "skills/security/security-scan",
+        "skills/security/security-bounty-hunter",
+        "skills/security/springboot-security",
+        "skills/verticals/evm-token-decimals",
         "the-security-guide.md",
-        "skills/gateguard",
-        "skills/healthcare-cdss-patterns",
-        "skills/healthcare-emr-patterns",
-        "skills/healthcare-eval-harness",
-        "skills/safety-guard"
+        "skills/core/gateguard",
+        "skills/verticals/healthcare-cdss-patterns",
+        "skills/verticals/healthcare-emr-patterns",
+        "skills/verticals/healthcare-eval-harness",
+        "skills/core/safety-guard"
       ],
       "targets": [
         "claude",
@@ -582,16 +593,16 @@
       "kind": "skills",
       "description": "Research and API integration skills for deep investigations and model integrations.",
       "paths": [
-        "skills/deep-research",
-        "skills/exa-search",
-        "skills/research-ops",
-        "skills/osint-investigation",
-        "skills/scientific-db-pubmed-database",
-        "skills/scientific-db-uspto-database",
-        "skills/scientific-pkg-gget",
-        "skills/scientific-thinking-literature-review",
-        "skills/scientific-thinking-scholar-evaluation",
-        "skills/documentation-lookup"
+        "skills/research/deep-research",
+        "skills/research/exa-search",
+        "skills/research/research-ops",
+        "skills/research/osint-investigation",
+        "skills/research/scientific-db-pubmed-database",
+        "skills/research/scientific-db-uspto-database",
+        "skills/research/scientific-pkg-gget",
+        "skills/research/scientific-thinking-literature-review",
+        "skills/research/scientific-thinking-scholar-evaluation",
+        "skills/research/documentation-lookup"
       ],
       "targets": [
         "claude",
@@ -618,20 +629,20 @@
       "kind": "skills",
       "description": "Business, writing, market, and investor communication skills.",
       "paths": [
-        "skills/article-writing",
-        "skills/brand-voice",
-        "skills/content-engine",
-        "skills/investor-materials",
-        "skills/investor-outreach",
-        "skills/lead-intelligence",
-        "skills/product-capability",
-        "skills/social-graph-ranker",
-        "skills/seo",
-        "skills/market-research",
-        "skills/brand-discovery",
-        "skills/competitive-platform-analysis",
-        "skills/competitive-report-structure",
-        "skills/marketing-campaign"
+        "skills/business/article-writing",
+        "skills/business/brand-voice",
+        "skills/business/content-engine",
+        "skills/business/investor-materials",
+        "skills/business/investor-outreach",
+        "skills/business/lead-intelligence",
+        "skills/docs-product/product-capability",
+        "skills/business/social-graph-ranker",
+        "skills/business/seo",
+        "skills/business/market-research",
+        "skills/business/brand-discovery",
+        "skills/business/competitive-platform-analysis",
+        "skills/business/competitive-report-structure",
+        "skills/business/marketing-campaign"
       ],
       "targets": [
         "claude",
@@ -658,27 +669,27 @@
       "kind": "skills",
       "description": "Connected-app operator workflows for setup audits, billing operations, program tracking, Google Workspace, and network optimization.",
       "paths": [
-        "skills/automation-audit-ops",
-        "skills/api-connector-builder",
-        "skills/connections-optimizer",
-        "skills/cost-tracking",
-        "skills/customer-billing-ops",
-        "skills/dashboard-builder",
-        "skills/ecc-tools-cost-audit",
-        "skills/email-ops",
-        "skills/finance-billing-ops",
-        "skills/github-ops",
-        "skills/issue-review",
-        "skills/google-workspace-ops",
-        "skills/jira-integration",
-        "skills/knowledge-ops",
-        "skills/messages-ops",
-        "skills/project-flow-ops",
-        "skills/terminal-ops",
-        "skills/token-card",
-        "skills/unified-notifications-ops",
-        "skills/workspace-surface-audit",
-        "skills/mailtrap-email-integration"
+        "skills/operations/automation-audit-ops",
+        "skills/backend/api-connector-builder",
+        "skills/business/connections-optimizer",
+        "skills/admin/cost-tracking",
+        "skills/operations/customer-billing-ops",
+        "skills/operations/dashboard-builder",
+        "skills/admin/ecc-tools-cost-audit",
+        "skills/operations/email-ops",
+        "skills/operations/finance-billing-ops",
+        "skills/operations/github-ops",
+        "skills/operations/issue-review",
+        "skills/operations/google-workspace-ops",
+        "skills/operations/jira-integration",
+        "skills/docs-product/knowledge-ops",
+        "skills/operations/messages-ops",
+        "skills/operations/project-flow-ops",
+        "skills/operations/terminal-ops",
+        "skills/admin/token-card",
+        "skills/operations/unified-notifications-ops",
+        "skills/admin/workspace-surface-audit",
+        "skills/operations/mailtrap-email-integration"
       ],
       "targets": [
         "claude",
@@ -705,9 +716,9 @@
       "kind": "skills",
       "description": "Public, non-advisory prediction-market workflows and the consolidated read-only Ito baskets data skill with gated Ito API access.",
       "paths": [
-        "skills/ito-baskets",
-        "skills/prediction-market-oracle-research",
-        "skills/prediction-market-risk-review"
+        "skills/verticals/ito-baskets",
+        "skills/verticals/prediction-market-oracle-research",
+        "skills/verticals/prediction-market-risk-review"
       ],
       "targets": [
         "claude",
@@ -736,10 +747,10 @@
       "kind": "skills",
       "description": "Generic operator desk patterns: never-silent approval loop, counterparty channel discipline, master agreement generation with a rolling schedule, and deterministic e-signature field placement.",
       "paths": [
-        "skills/operator-approval-loop",
-        "skills/counterparty-channel-discipline",
-        "skills/master-agreement-generator",
-        "skills/esign-field-placement"
+        "skills/operations/operator-approval-loop",
+        "skills/operations/counterparty-channel-discipline",
+        "skills/operations/master-agreement-generator",
+        "skills/operations/esign-field-placement"
       ],
       "targets": [
         "claude",
@@ -761,11 +772,11 @@
     {
       "id": "ito-compute",
       "kind": "skills",
-      "description": "Authenticated It\u00f4 GPU inventory, RFQ, status, device revocation, and explicitly gated node-qualification workflows through the separately installed canonical CLI.",
+      "description": "Authenticated Itô GPU inventory, RFQ, status, device revocation, and explicitly gated node-qualification workflows through the separately installed canonical CLI.",
       "paths": [
-        "skills/ito-compute",
-        "skills/ito-inference",
-        "skills/ito-training"
+        "skills/verticals/ito-compute",
+        "skills/verticals/ito-inference",
+        "skills/verticals/ito-training"
       ],
       "targets": [
         "claude",
@@ -797,7 +808,7 @@
       "kind": "skills",
       "description": "Experimental Nasiko CLI lifecycle bridge guidance for pinned installation, read-only status, qualified uninstall, and opt-in telemetry boundaries.",
       "paths": [
-        "skills/nasiko-control-plane"
+        "skills/verticals/nasiko-control-plane"
       ],
       "targets": [
         "claude",
@@ -828,9 +839,9 @@
       "kind": "skills",
       "description": "Social publishing and distribution skills.",
       "paths": [
-        "skills/crosspost",
-        "skills/x-api",
-        "skills/social-publisher"
+        "skills/business/crosspost",
+        "skills/business/x-api",
+        "skills/business/social-publisher"
       ],
       "targets": [
         "claude",
@@ -857,17 +868,17 @@
       "kind": "skills",
       "description": "Media generation, technical explainers, and AI-assisted editing skills.",
       "paths": [
-        "skills/blender-motion-state-inspection",
-        "skills/fal-ai-media",
-        "skills/manim-video",
-        "skills/remotion-video-creation",
-        "skills/ui-demo",
-        "skills/video-editing",
-        "skills/videodb",
-        "skills/taste",
-        "skills/tasteforge-video",
-        "skills/taste-distillation",
-        "skills/taste-application"
+        "skills/media/blender-motion-state-inspection",
+        "skills/media/fal-ai-media",
+        "skills/media/manim-video",
+        "skills/media/remotion-video-creation",
+        "skills/media/ui-demo",
+        "skills/media/video-editing",
+        "skills/media/videodb",
+        "skills/media/taste",
+        "skills/media/tasteforge-video",
+        "skills/media/taste-distillation",
+        "skills/media/taste-application"
       ],
       "targets": [
         "claude",
@@ -898,7 +909,7 @@
         "scripts/orchestrate-codex-worker.sh",
         "scripts/orchestrate-worktrees.js",
         "scripts/orchestration-status.js",
-        "skills/dmux-workflows"
+        "skills/ai-agents/dmux-workflows"
       ],
       "targets": [
         "claude",
@@ -922,13 +933,13 @@
       "kind": "skills",
       "description": "Swift, SwiftUI, and Apple platform skills including concurrency, persistence, and design patterns.",
       "paths": [
-        "skills/foundation-models-on-device",
-        "skills/liquid-glass-design",
-        "skills/swift-actor-persistence",
-        "skills/swift-concurrency-6-2",
-        "skills/swift-protocol-di-testing",
-        "skills/swiftui-patterns",
-        "skills/ios-icon-gen"
+        "skills/mobile/foundation-models-on-device",
+        "skills/mobile/liquid-glass-design",
+        "skills/mobile/swift-actor-persistence",
+        "skills/mobile/swift-concurrency-6-2",
+        "skills/mobile/swift-protocol-di-testing",
+        "skills/mobile/swiftui-patterns",
+        "skills/mobile/ios-icon-gen"
       ],
       "targets": [
         "claude",
@@ -956,43 +967,44 @@
       "description": "Agentic engineering, autonomous loops, agent harness construction, and LLM pipeline optimization skills.",
       "paths": [
         "scripts/claw.js",
-        "skills/agent-architecture-audit",
-        "skills/agent-harness-construction",
-        "skills/agentic-engineering",
-        "skills/agentic-os",
-        "skills/ai-first-engineering",
-        "skills/autonomous-loops",
-        "skills/blueprint",
-        "skills/claude-devfleet",
-        "skills/content-hash-cache-pattern",
-        "skills/continuous-agent-loop",
-        "skills/cost-aware-llm-pipeline",
-        "skills/data-scraper-agent",
-        "skills/dynamic-workflow-mode",
-        "skills/enterprise-agent-ops",
-        "skills/nanoclaw-repl",
-        "skills/prompt-caching-strategy",
-        "skills/prompt-optimizer",
-        "skills/ralphinho-rfc-pipeline",
-        "skills/regex-vs-llm-structured-text",
-        "skills/search-first",
-        "skills/team-agent-orchestration",
-        "skills/token-budget-advisor",
-        "skills/team-builder",
-        "skills/agent-payment-x402",
-        "skills/autonomous-agent-harness",
-        "skills/gan-style-harness",
-        "skills/hermes-imports",
-        "skills/agent-runtime-gateway-smoke-test",
-        "skills/openclaw-persona-forge",
-        "skills/opensource-pipeline",
-        "skills/orch-add-feature",
-        "skills/orch-build-mvp",
-        "skills/orch-change-feature",
-        "skills/orch-fix-defect",
-        "skills/orch-pipeline",
-        "skills/orch-refine-code",
-        "skills/plan-orchestrate"
+        "skills/ai-agents/agent-architecture-audit",
+        "skills/ai-agents/agent-harness-construction",
+        "skills/ai-agents/agentic-engineering",
+        "skills/ai-agents/agentic-os",
+        "skills/ai-agents/ai-first-engineering",
+        "skills/ai-agents/autonomous-loops",
+        "skills/ai-agents/blueprint",
+        "skills/ai-agents/claude-devfleet",
+        "skills/backend/content-hash-cache-pattern",
+        "skills/ai-agents/continuous-agent-loop",
+        "skills/ai-agents/cost-aware-llm-pipeline",
+        "skills/ai-agents/data-scraper-agent",
+        "skills/ai-agents/dynamic-workflow-mode",
+        "skills/ai-agents/enterprise-agent-ops",
+        "skills/admin/nanoclaw-repl",
+        "skills/ai-agents/prompt-caching-strategy",
+        "skills/ai-agents/prompt-optimizer",
+        "skills/ai-agents/ralphinho-rfc-pipeline",
+        "skills/ai-agents/regex-vs-llm-structured-text",
+        "skills/core/search-first",
+        "skills/ai-agents/team-agent-orchestration",
+        "skills/ai-agents/token-budget-advisor",
+        "skills/ai-agents/team-builder",
+        "skills/verticals/agent-payment-x402",
+        "skills/ai-agents/autonomous-agent-harness",
+        "skills/ai-agents/gan-style-harness",
+        "skills/admin/hermes-imports",
+        "skills/ai-agents/agent-runtime-gateway-smoke-test",
+        "skills/ai-agents/openclaw-persona-forge",
+        "skills/devops/opensource-pipeline",
+        "skills/ai-agents/orch-add-feature",
+        "skills/ai-agents/orch-build-mvp",
+        "skills/ai-agents/orch-change-feature",
+        "skills/ai-agents/orch-fix-defect",
+        "skills/ai-agents/orch-pipeline",
+        "skills/ai-agents/orch-refine-code",
+        "skills/ai-agents/plan-orchestrate",
+        "skills/ai-agents/agent-desktop"
       ],
       "targets": [
         "claude",
@@ -1019,23 +1031,23 @@
       "kind": "skills",
       "description": "Deployment workflows, Docker patterns, and infrastructure skills.",
       "paths": [
-        "skills/cisco-ios-patterns",
-        "skills/deployment-patterns",
-        "skills/docker-patterns",
-        "skills/terminal-opener",
-        "skills/homelab-network-readiness",
-        "skills/homelab-network-setup",
-        "skills/netmiko-ssh-automation",
-        "skills/network-bgp-diagnostics",
-        "skills/network-config-validation",
-        "skills/network-interface-health",
-        "skills/canary-watch",
-        "skills/flox-environments",
-        "skills/homelab-pihole-dns",
-        "skills/homelab-vlan-segmentation",
-        "skills/homelab-wireguard-vpn",
-        "skills/kubernetes-patterns",
-        "skills/uncloud"
+        "skills/devops/cisco-ios-patterns",
+        "skills/devops/deployment-patterns",
+        "skills/devops/docker-patterns",
+        "skills/devops/terminal-opener",
+        "skills/devops/homelab-network-readiness",
+        "skills/devops/homelab-network-setup",
+        "skills/devops/netmiko-ssh-automation",
+        "skills/devops/network-bgp-diagnostics",
+        "skills/devops/network-config-validation",
+        "skills/devops/network-interface-health",
+        "skills/devops/canary-watch",
+        "skills/devops/flox-environments",
+        "skills/devops/homelab-pihole-dns",
+        "skills/devops/homelab-vlan-segmentation",
+        "skills/devops/homelab-wireguard-vpn",
+        "skills/devops/kubernetes-patterns",
+        "skills/devops/uncloud"
       ],
       "targets": [
         "claude",
@@ -1062,10 +1074,10 @@
       "kind": "skills",
       "description": "Production machine-learning engineering workflows for data contracts, reproducible training, evaluation, deployment, monitoring, and rollback.",
       "paths": [
-        "skills/mle-workflow",
-        "skills/ml-adoption-playbook",
-        "skills/pytorch-patterns",
-        "skills/recsys-pipeline-architect"
+        "skills/ml/mle-workflow",
+        "skills/ml/ml-adoption-playbook",
+        "skills/ml/pytorch-patterns",
+        "skills/ml/recsys-pipeline-architect"
       ],
       "targets": [
         "claude",
@@ -1096,14 +1108,14 @@
       "kind": "skills",
       "description": "Supply chain, logistics, procurement, and manufacturing domain skills.",
       "paths": [
-        "skills/carrier-relationship-management",
-        "skills/customs-trade-compliance",
-        "skills/energy-procurement",
-        "skills/inventory-demand-planning",
-        "skills/logistics-exception-management",
-        "skills/production-scheduling",
-        "skills/quality-nonconformance",
-        "skills/returns-reverse-logistics"
+        "skills/verticals/carrier-relationship-management",
+        "skills/verticals/customs-trade-compliance",
+        "skills/verticals/energy-procurement",
+        "skills/verticals/inventory-demand-planning",
+        "skills/verticals/logistics-exception-management",
+        "skills/verticals/production-scheduling",
+        "skills/verticals/quality-nonconformance",
+        "skills/verticals/returns-reverse-logistics"
       ],
       "targets": [
         "claude",
@@ -1130,8 +1142,8 @@
       "kind": "skills",
       "description": "Document processing, conversion, and translation skills.",
       "paths": [
-        "skills/nutrient-document-processing",
-        "skills/visa-doc-translate"
+        "skills/operations/nutrient-document-processing",
+        "skills/operations/visa-doc-translate"
       ],
       "targets": [
         "claude",
@@ -1154,219 +1166,11 @@
       "stability": "stable"
     },
     {
-      "id": "docs-ja-jp",
-      "kind": "docs",
-      "description": "Japanese (ja-JP) translated reference docs for agents, commands, skills, and rules.",
-      "paths": [
-        "docs/ja-JP"
-      ],
-      "targets": [
-        "claude",
-        "claude-project"
-      ],
-      "dependencies": [],
-      "defaultInstall": false,
-      "cost": "heavy",
-      "stability": "stable"
-    },
-    {
-      "id": "docs-zh-cn",
-      "kind": "docs",
-      "description": "Simplified Chinese (zh-CN) translated reference docs for agents, commands, skills, and rules.",
-      "paths": [
-        "docs/zh-CN"
-      ],
-      "targets": [
-        "claude",
-        "claude-project"
-      ],
-      "dependencies": [],
-      "defaultInstall": false,
-      "cost": "heavy",
-      "stability": "stable"
-    },
-    {
-      "id": "docs-ko-kr",
-      "kind": "docs",
-      "description": "Korean (ko-KR) translated reference docs for agents, commands, skills, and rules.",
-      "paths": [
-        "docs/ko-KR"
-      ],
-      "targets": [
-        "claude",
-        "claude-project"
-      ],
-      "dependencies": [],
-      "defaultInstall": false,
-      "cost": "heavy",
-      "stability": "stable"
-    },
-    {
-      "id": "docs-pt-br",
-      "kind": "docs",
-      "description": "Brazilian Portuguese (pt-BR) translated reference docs for agents, commands, skills, and rules.",
-      "paths": [
-        "docs/pt-BR"
-      ],
-      "targets": [
-        "claude",
-        "claude-project"
-      ],
-      "dependencies": [],
-      "defaultInstall": false,
-      "cost": "heavy",
-      "stability": "stable"
-    },
-    {
-      "id": "docs-ru",
-      "kind": "docs",
-      "description": "Russian (ru) translated reference docs for agents, commands, skills, and rules.",
-      "paths": [
-        "docs/ru"
-      ],
-      "targets": [
-        "claude",
-        "claude-project"
-      ],
-      "dependencies": [],
-      "defaultInstall": false,
-      "cost": "heavy",
-      "stability": "stable"
-    },
-    {
-      "id": "docs-tr",
-      "kind": "docs",
-      "description": "Turkish (tr) translated reference docs for agents, commands, skills, and rules.",
-      "paths": [
-        "docs/tr"
-      ],
-      "targets": [
-        "claude",
-        "claude-project"
-      ],
-      "dependencies": [],
-      "defaultInstall": false,
-      "cost": "heavy",
-      "stability": "stable"
-    },
-    {
-      "id": "docs-vi-vn",
-      "kind": "docs",
-      "description": "Vietnamese (vi-VN) translated reference docs for agents, commands, skills, and rules.",
-      "paths": [
-        "docs/vi-VN"
-      ],
-      "targets": [
-        "claude",
-        "claude-project"
-      ],
-      "dependencies": [],
-      "defaultInstall": false,
-      "cost": "heavy",
-      "stability": "stable"
-    },
-    {
-      "id": "docs-zh-tw",
-      "kind": "docs",
-      "description": "Traditional Chinese (zh-TW) translated reference docs for agents, commands, skills, and rules.",
-      "paths": [
-        "docs/zh-TW"
-      ],
-      "targets": [
-        "claude",
-        "claude-project"
-      ],
-      "dependencies": [],
-      "defaultInstall": false,
-      "cost": "heavy",
-      "stability": "stable"
-    },
-    {
-      "id": "docs-bn",
-      "kind": "docs",
-      "description": "Bengali (bn) translated reference documentation.",
-      "paths": [
-        "docs/bn"
-      ],
-      "targets": [
-        "claude",
-        "claude-project"
-      ],
-      "dependencies": [],
-      "defaultInstall": false,
-      "cost": "light",
-      "stability": "stable"
-    },
-    {
-      "id": "docs-de-de",
-      "kind": "docs",
-      "description": "German (de-DE) translated reference docs for agents, commands, skills, and rules.",
-      "paths": [
-        "docs/de-DE"
-      ],
-      "targets": [
-        "claude",
-        "claude-project"
-      ],
-      "dependencies": [],
-      "defaultInstall": false,
-      "cost": "heavy",
-      "stability": "stable"
-    },
-    {
-      "id": "docs-uk-ua",
-      "kind": "docs",
-      "description": "Ukrainian (uk-UA) translated reference docs for agents, commands, skills, and rules.",
-      "paths": [
-        "docs/uk-UA"
-      ],
-      "targets": [
-        "claude",
-        "claude-project"
-      ],
-      "dependencies": [],
-      "defaultInstall": false,
-      "cost": "heavy",
-      "stability": "stable"
-    },
-    {
-      "id": "docs-pl",
-      "kind": "docs",
-      "description": "Polish (pl) getting-started and core-concepts guide with a terminology glossary.",
-      "paths": [
-        "docs/pl"
-      ],
-      "targets": [
-        "claude",
-        "claude-project"
-      ],
-      "dependencies": [],
-      "defaultInstall": false,
-      "cost": "heavy",
-      "stability": "stable"
-    },
-    {
-      "id": "docs-ar",
-      "kind": "docs",
-      "description": "Arabic (ar) getting-started and core-concepts guide with a terminology glossary.",
-      "paths": [
-        "docs/ar"
-      ],
-      "targets": [
-        "claude",
-        "claude-project"
-      ],
-      "dependencies": [],
-      "defaultInstall": false,
-      "cost": "heavy",
-      "stability": "stable"
-    },
-    {
       "id": "documentation-change-impact",
       "kind": "skills",
       "description": "Optional read-only change-impact analysis workflow.",
       "paths": [
-        "skills/change-impact"
+        "skills/docs-product/change-impact"
       ],
       "targets": [
         "claude",
@@ -1396,7 +1200,7 @@
       "kind": "skills",
       "description": "Optional module-local instructions and documentation ownership workflow.",
       "paths": [
-        "skills/module-governance"
+        "skills/docs-product/module-governance"
       ],
       "targets": [
         "claude",
@@ -1425,8 +1229,8 @@
       "kind": "skills",
       "description": "Optional test-collaboration and module-regression workflow.",
       "paths": [
-        "skills/test-collaboration",
-        "skills/module-regression"
+        "skills/quality/test-collaboration",
+        "skills/quality/module-regression"
       ],
       "targets": [
         "claude",

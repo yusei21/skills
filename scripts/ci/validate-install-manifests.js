@@ -39,8 +39,7 @@ function normalizeRelativePath(relativePath) {
   return String(relativePath).replace(/\\/g, '/').replace(/\/+$/, '');
 }
 
-function isCuratedSkillReferenced(claimedPaths, skillId) {
-  const skillRoot = `skills/${skillId}`;
+function isCuratedSkillReferenced(claimedPaths, skillId, skillRoot = `skills/${skillId}`) {
 
   for (const claimedPath of claimedPaths.keys()) {
     if (claimedPath === skillRoot || claimedPath.startsWith(`${skillRoot}/`)) {
@@ -154,23 +153,15 @@ function validateInstallManifests() {
   }
 
   if (fs.existsSync(CURATED_SKILLS_DIR)) {
-    const entries = fs.readdirSync(CURATED_SKILLS_DIR, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isDirectory() || entry.name.startsWith('.')) {
-        continue;
-      }
-
-      const skillMdPath = path.join(CURATED_SKILLS_DIR, entry.name, 'SKILL.md');
-      if (!fs.existsSync(skillMdPath)) {
-        continue;
-      }
-
+    // skills/<department>/<skill>/ (or a flat skills/<skill>/)
+    const curated = require('../lib/skill-layout').listSkills(path.dirname(CURATED_SKILLS_DIR), { skillsDir: path.basename(CURATED_SKILLS_DIR) });
+    for (const skill of curated) {
       if (
-        !INTENTIONALLY_UNSHIPPED_SKILL_IDS.has(entry.name)
-        && !isCuratedSkillReferenced(claimedPaths, entry.name)
+        !INTENTIONALLY_UNSHIPPED_SKILL_IDS.has(skill.name)
+        && !isCuratedSkillReferenced(claimedPaths, skill.name, skill.relDir)
       ) {
         console.error(
-          `ERROR: curated skill skills/${entry.name} is not referenced by any install module`
+          `ERROR: curated skill ${skill.relDir} is not referenced by any install module`
         );
         hasErrors = true;
       }

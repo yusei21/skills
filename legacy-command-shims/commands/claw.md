@@ -4,7 +4,7 @@ description: Legacy slash-entry shim for the nanoclaw-repl skill. Prefer the ski
 
 # Claw Command (Legacy Shim)
 
-Use this only if you still reach for `/claw` from muscle memory. The maintained implementation lives in `skills/nanoclaw-repl/SKILL.md`.
+Use this only if you still reach for `/claw` from muscle memory. The maintained implementation lives in `skills/admin/nanoclaw-repl/SKILL.md`.
 
 ## Canonical Surface
 

@@ -15,7 +15,7 @@ const path = require('path');
 const { pathToFileURL } = require('url');
 const { spawnSync } = require('child_process');
 
-const SKILL_DIR = path.join(__dirname, '..', '..', 'skills', 'ck');
+const SKILL_DIR = path.join(__dirname, '..', '..', 'skills', 'admin', 'ck');
 const SKILL_MD = path.join(SKILL_DIR, 'SKILL.md');
 const SESSION_START = path.join(SKILL_DIR, 'hooks', 'session-start.mjs');
 

@@ -52,9 +52,8 @@ function listMatchingFiles(root, relativeDir, matcher) {
 function buildCatalog(root = ROOT) {
   const agents = listMatchingFiles(root, 'agents', entry => entry.isFile() && entry.name.endsWith('.md'));
   const commands = listMatchingFiles(root, 'commands', entry => entry.isFile() && entry.name.endsWith('.md'));
-  const skills = listMatchingFiles(root, 'skills', entry => (
-    entry.isDirectory() && fs.existsSync(path.join(root, 'skills', entry.name, 'SKILL.md'))
-  )).map(skillDir => `${skillDir}/SKILL.md`);
+  // skills/<department>/<skill>/SKILL.md, or a flat skills/<skill>/SKILL.md
+  const skills = require('../lib/skill-layout').listSkills(root).map(skill => `${skill.relDir}/SKILL.md`).sort();
 
   return {
     agents: { count: agents.length, files: agents, glob: 'agents/*.md' },
@@ -671,16 +670,22 @@ function createDocumentSpecs(paths = {}) {
       syncContent: (content, catalog) => syncCrossHarnessIdentity(content, catalog, '.gemini/GEMINI.md'),
     },
     {
+      // Translated mirror: checked only while the file exists.
+      optional: true,
       filePath: zhRootReadmePath,
       parseExpectations: parseZhRootReadmeExpectations,
       syncContent: syncZhRootReadme,
     },
     {
+      // Translated mirror: checked only while the file exists.
+      optional: true,
       filePath: zhDocsReadmePath,
       parseExpectations: parseZhDocsReadmeExpectations,
       syncContent: syncZhDocsReadme,
     },
     {
+      // Translated mirror: checked only while the file exists.
+      optional: true,
       filePath: zhDocsAgentsPath,
       parseExpectations: parseZhAgentsDocExpectations,
       syncContent: syncZhAgents,
@@ -777,9 +782,9 @@ function renderMarkdown(result) {
 function runCatalogCheck(options = {}) {
   const root = options.root || ROOT;
   const writeMode = options.writeMode ?? WRITE_MODE;
-  const documentSpecs = options.documentSpecs || (
+  const documentSpecs = (options.documentSpecs || (
     root === ROOT ? DOCUMENT_SPECS : createDocumentSpecsForRoot(root)
-  );
+  )).filter(spec => !spec.optional || fs.existsSync(spec.filePath));
   const catalog = buildCatalog(root);
 
   if (writeMode) {

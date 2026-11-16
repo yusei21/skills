@@ -7,12 +7,10 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
-const ts = require('typescript');
+const ts = require('@typescript/typescript6');
 const ROOT = path.resolve(__dirname, '../..');
 const DOCS = [
-  'skills/agent-payment-x402/SKILL.md',
-  'docs/ja-JP/skills/agent-payment-x402/SKILL.md',
-  'docs/zh-CN/skills/agent-payment-x402/SKILL.md',
+  'skills/verticals/agent-payment-x402/SKILL.md',
 ];
 const ORIGIN = 'https://api.example.com';
 const URL_PAID = `${ORIGIN}/data`;

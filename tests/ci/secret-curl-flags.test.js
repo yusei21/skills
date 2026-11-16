@@ -10,13 +10,11 @@ const path = require('path');
 const repoRoot = path.resolve(__dirname, '..', '..');
 
 const jiraDocs = [
-  'skills/jira-integration/SKILL.md',
-  'docs/ja-JP/skills/jira-integration/SKILL.md',
-  'docs/zh-CN/skills/jira-integration/SKILL.md',
+  'skills/operations/jira-integration/SKILL.md',
 ];
 
 const socialDocs = [
-  'skills/social-publisher/SKILL.md',
+  'skills/business/social-publisher/SKILL.md',
 ];
 
 function test(name, fn) {

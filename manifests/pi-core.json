@@ -502,7 +502,7 @@
     ],
     "scanAllowlist": [
       {
-        "path": "skills/tdd-workflow/SKILL.md",
+        "path": "skills/core/tdd-workflow/SKILL.md",
         "contains": "curl ... | sh` must be rejected",
         "reason": "anti-pattern warning telling reviewers to reject pipe-to-shell; not an instruction"
       }

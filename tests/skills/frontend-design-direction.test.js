@@ -6,7 +6,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const { test } = require('node:test');
-const script = path.resolve(__dirname, '../../skills/frontend-design-direction/scripts/check-evidence.js');
+const script = path.resolve(__dirname, '../../skills/frontend/frontend-design-direction/scripts/check-evidence.js');
 const { checkEvidence } = require(script);
 
 function report() {

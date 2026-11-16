@@ -96,9 +96,9 @@ function loadAgents(_root) {
 }
 function loadSkills(_root) {
   const root = _root || ROOT;
-  const dir = path.join(root, 'skills'); if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir).filter(d => { try { return fs.statSync(path.join(dir, d)).isDirectory(); } catch { return false; } }).sort().map(d => {
-    const r = readSkill(path.join(dir, d, 'SKILL.md')); return { n: d, d: r.d, b: r.b.slice(0, 1000) };
+  // skills/<department>/<skill>/ (or flat skills/<skill>/)
+  return require('./lib/skill-layout').listSkills(root).map(skill => {
+    const r = readSkill(skill.skillFile); return { n: skill.name, d: r.d, b: r.b.slice(0, 1000) };
   });
 }
 function loadCommands(_root) {

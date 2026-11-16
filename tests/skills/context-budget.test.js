@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const repoRoot = path.resolve(__dirname, '..', '..');
-const skillPath = path.join(repoRoot, 'skills', 'context-budget', 'SKILL.md');
+const skillPath = path.join(repoRoot, 'skills', 'core', 'context-budget', 'SKILL.md');
 const legacyShimPath = path.join(repoRoot, 'legacy-command-shims', 'commands', 'context-budget.md');
 
 const skill = fs.readFileSync(skillPath, 'utf8');

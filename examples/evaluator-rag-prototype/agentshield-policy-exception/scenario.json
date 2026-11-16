@@ -17,7 +17,7 @@
     },
     {
       "kind": "repo_skill",
-      "path": "skills/security-scan/SKILL.md",
+      "path": "skills/security/security-scan/SKILL.md",
       "purpose": "Operator-facing AgentShield scan workflow and output-format guidance"
     },
     {

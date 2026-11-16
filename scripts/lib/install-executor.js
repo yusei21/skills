@@ -436,7 +436,13 @@ function planAntigravityLegacyInstall(context) {
     moduleId: 'legacy-antigravity-install',
     sourceRoot: context.sourceRoot,
     sourceRelativeDir: 'skills',
-    destinationDir: path.join(targetRoot, 'skills')
+    destinationDir: path.join(targetRoot, 'skills'),
+    // skills/<department>/<skill>/ in the source, skills/<skill>/ in the target
+    destinationRelativePathTransform: relativeFile => {
+      const departments = require('./skill-layout').knownDepartments(context.sourceRoot);
+      const flat = require('./skill-layout').flattenSkillPath(`skills/${relativeFile.split(path.sep).join('/')}`, departments);
+      return flat.slice('skills/'.length).split('/').join(path.sep);
+    }
   });
 
   return {

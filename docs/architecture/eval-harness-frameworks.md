@@ -368,7 +368,7 @@ and does not validate normal prepack or clear a release.
 
 ## Where it plugs in
 
-- `skills/eval-harness/SKILL.md` describes eval-driven development. These
+- `skills/quality/eval-harness/SKILL.md` describes eval-driven development. These
   frameworks are the mechanical layer under its report format.
 - The `harness-optimizer` agent and `/harness-audit` command must report the gate
   unavailable until a reviewed OS backend exists. They cannot emit new gate

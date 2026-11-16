@@ -67,7 +67,7 @@ function processExists(pid) {
 
 const repoRoot = path.resolve(__dirname, '..', '..');
 const observerLoopPath = path.join(
-  repoRoot, 'skills', 'continuous-learning-v2', 'agents', 'observer-loop.sh'
+  repoRoot, 'skills', 'admin', 'continuous-learning-v2', 'agents', 'observer-loop.sh'
 );
 const ANALYSIS_COMPLETE_RECORD = '{"status":"analysis_complete"}';
 const ORIGINAL_OBSERVATIONS = '{"a":1}\n{"a":2}\n{"a":3}\n';

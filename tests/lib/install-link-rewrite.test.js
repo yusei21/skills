@@ -6,6 +6,7 @@
 'use strict';
 
 const assert = require('assert');
+const { findSkill } = require('../../scripts/lib/skill-layout');
 const path = require('path');
 
 const {
@@ -178,12 +179,13 @@ function runTests() {
 
     let changedLinks = 0;
     for (const skill of ['react-patterns', 'react-performance', 'react-testing']) {
-      const sourceRel = `skills/${skill}/SKILL.md`;
+      // Sources nest by department, so their repo-relative links climb one more level.
+      const sourceRel = `${findSkill(REPO_ROOT, skill).relDir}/SKILL.md`;
       const content = fs.readFileSync(path.join(REPO_ROOT, sourceRel), 'utf8');
-      assert.ok(content.includes('](../../rules/'), `${sourceRel} should have a broken link pre-fix`);
+      assert.ok(content.includes('](../../../rules/'), `${sourceRel} should have a broken link pre-fix`);
       const rewritten = rewriteRelativeLinks(content, { sourceRel, index: realIndex });
       assert.ok(
-        !rewritten.includes('](../../rules/react/'),
+        !rewritten.includes('](../../../rules/react/') && !rewritten.includes('](../../rules/react/'),
         `${sourceRel} still links to un-namespaced rules`
       );
 

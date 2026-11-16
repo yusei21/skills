@@ -127,7 +127,7 @@
       "env": {
         "CS_ACCESS_TOKEN": "YOUR_CS_ACCESS_TOKEN_HERE"
       },
-      "description": "Optional. CodeScene Code Health MCP (community skill: codehealth-mcp). Not enabled by default — copy only if you opt in. Requires your own CS_ACCESS_TOKEN (no bundled credentials). See skills/codehealth-mcp/SKILL.md for data boundaries and failure behavior."
+      "description": "Optional. CodeScene Code Health MCP (community skill: codehealth-mcp). Not enabled by default — copy only if you opt in. Requires your own CS_ACCESS_TOKEN (no bundled credentials). See skills/quality/codehealth-mcp/SKILL.md for data boundaries and failure behavior."
     },
     "magic": {
       "command": "npx",

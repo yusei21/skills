@@ -10,7 +10,7 @@ const { INLINE_RESOLVE } = require('../../scripts/lib/resolve-ecc-root');
 
 // Sentinel ECC skill that resolveEccRoot() requires alongside the script tree
 // before accepting a root; kept in sync with the module's DEFAULT_SKILL_PROBE.
-const ECC_SKILL_SENTINEL = path.join('skills', 'continuous-learning-v2');
+const ECC_SKILL_SENTINEL = path.join('skills', 'admin', 'continuous-learning-v2');
 
 let passed = 0;
 let failed = 0;
@@ -59,8 +59,6 @@ test('auto-update command probes for the script it runs, not just scripts/lib', 
   // executes so such roots don't shadow the complete plugin root.
   const autoUpdateDocs = [
     path.join(__dirname, '..', '..', 'commands', 'auto-update.md'),
-    path.join(__dirname, '..', '..', 'docs', 'ja-JP', 'commands', 'auto-update.md'),
-    path.join(__dirname, '..', '..', 'docs', 'zh-CN', 'commands', 'auto-update.md'),
   ];
   for (const docPath of autoUpdateDocs) {
     const doc = fs.readFileSync(docPath, 'utf8');

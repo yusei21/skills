@@ -21,6 +21,24 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 
 # Get the trae directory name (.trae or .trae-cn)
+# Skill directories: skills/<department>/<skill>/ (or a flat skills/<skill>/).
+list_skill_dirs() {
+    local root="$1" d c
+    for d in "$root"/*/; do
+        [ -d "$d" ] || continue
+        d="${d%/}"
+        if [ -f "$d/SKILL.md" ]; then
+            printf '%s\n' "$d"
+            continue
+        fi
+        for c in "$d"/*/; do
+            [ -d "$c" ] || continue
+            c="${c%/}"
+            [ -f "$c/SKILL.md" ] && printf '%s\n' "$c"
+        done
+    done
+}
+
 get_trae_dir() {
     if [ "${TRAE_ENV:-}" = "cn" ]; then
         echo ".trae-cn"
@@ -149,7 +167,7 @@ do_install() {
 
     # Copy skills from repo root (if available)
     if [ -d "$REPO_ROOT/skills" ]; then
-        for d in "$REPO_ROOT/skills"/*/; do
+        while IFS= read -r d; do
             [ -d "$d" ] || continue
             # Strip trailing slash so find emits single-slash paths and the
             # prefix removal below does not leave a leading slash (which would
@@ -172,7 +190,7 @@ do_install() {
             if [ "$skill_copied" -eq 1 ]; then
                 skills=$((skills + 1))
             fi
-        done
+        done < <(list_skill_dirs "$REPO_ROOT/skills")
     fi
 
     # Copy rules from repo root

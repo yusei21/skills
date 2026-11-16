@@ -4,7 +4,7 @@ description: Legacy slash-entry shim for the tdd-workflow skill. Prefer the skil
 
 # TDD Command (Legacy Shim)
 
-Use this only if you still invoke `/tdd`. The maintained workflow lives in `skills/tdd-workflow/SKILL.md`.
+Use this only if you still invoke `/tdd`. The maintained workflow lives in `skills/core/tdd-workflow/SKILL.md`.
 
 ## Canonical Surface
 

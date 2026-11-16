@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..', '..');
-const SKILL_PATH = path.join(ROOT, 'skills', 'story-lifecycle', 'SKILL.md');
+const SKILL_PATH = path.join(ROOT, 'skills', 'docs-product', 'story-lifecycle', 'SKILL.md');
 
 function test(name, fn) {
   try {
@@ -83,7 +83,7 @@ function runTests() {
   })) passed++; else failed++;
 
   if (test('routes every write through the portable ledger helper, no POSIX-only shell', () => {
-    assert.ok(fs.existsSync(path.join(ROOT, 'skills', 'story-lifecycle', 'scripts', 'ledger.js')),
+    assert.ok(fs.existsSync(path.join(ROOT, 'skills', 'docs-product', 'story-lifecycle', 'scripts', 'ledger.js')),
       'missing scripts/ledger.js');
     assert.ok(/Every write to `\.stories\/` goes through `scripts\/ledger\.js`/.test(body),
       'missing single-writer rule');
@@ -125,10 +125,10 @@ function runTests() {
 
   if (test('every referenced skill, agent, and command resolves in the repo', () => {
     const refs = [
-      'skills/tdd-workflow/SKILL.md',
-      'skills/verification-loop/SKILL.md',
-      'skills/council/SKILL.md',
-      'skills/project-flow-ops/SKILL.md',
+      'skills/core/tdd-workflow/SKILL.md',
+      'skills/core/verification-loop/SKILL.md',
+      'skills/ai-agents/council/SKILL.md',
+      'skills/operations/project-flow-ops/SKILL.md',
       'commands/plan-prd.md',
       'commands/epic-decompose.md',
       'agents/architect.md',
@@ -143,10 +143,10 @@ function runTests() {
   if (test('skill is registered in install manifest and npm files list', () => {
     const modules = JSON.parse(
       fs.readFileSync(path.join(ROOT, 'manifests', 'install-modules.json'), 'utf8'));
-    assert.ok(JSON.stringify(modules).includes('skills/story-lifecycle'),
+    assert.ok(JSON.stringify(modules).includes('skills/docs-product/story-lifecycle'),
       'missing from manifests/install-modules.json');
     const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
-    assert.ok(pkg.files.includes('skills/story-lifecycle/'),
+    assert.ok(pkg.files.includes('skills/docs-product/story-lifecycle/'),
       'missing from package.json files');
   })) passed++; else failed++;
 

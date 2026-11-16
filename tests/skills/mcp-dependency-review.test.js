@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const repoRoot = path.resolve(__dirname, '..', '..');
-const canonicalPath = path.join(repoRoot, 'skills', 'mcp-dependency-review', 'SKILL.md');
+const canonicalPath = path.join(repoRoot, 'skills', 'security', 'mcp-dependency-review', 'SKILL.md');
 const codexPath = path.join(repoRoot, '.agents', 'skills', 'mcp-dependency-review', 'SKILL.md');
 const cursorPath = path.join(repoRoot, '.cursor', 'skills', 'mcp-dependency-review', 'SKILL.md');
 

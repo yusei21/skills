@@ -7,19 +7,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const {
-  getInstallComponent,
-  loadInstallManifests,
-  listInstallComponents,
-  listLegacyCompatibilityLanguages,
-  listInstallModules,
-  listInstallProfiles,
-  listSupportedLocales,
-  resolveInstallPlan,
-  resolveLegacyCompatibilitySelection,
-  validateInstallModuleIds,
-  LOCALE_ALIAS_TO_COMPONENT_ID,
-} = require('../../scripts/lib/install-manifests');
+const { getInstallComponent, loadInstallManifests, listInstallComponents, listLegacyCompatibilityLanguages, listInstallModules, listInstallProfiles, resolveInstallPlan, resolveLegacyCompatibilitySelection, validateInstallModuleIds } = require('../../scripts/lib/install-manifests');
 
 function test(name, fn) {
   try {
@@ -108,39 +96,6 @@ function runTests() {
       'Should include skill:mle-workflow');
   })) passed++; else failed++;
 
-  if (test('every locale alias resolves to a real component with a real module', () => {
-    const manifests = loadInstallManifests();
-
-    for (const locale of listSupportedLocales()) {
-      const componentId = LOCALE_ALIAS_TO_COMPONENT_ID[locale];
-      assert.ok(componentId, `Locale ${locale} should have an alias mapping`);
-
-      const component = getInstallComponent(componentId);
-      assert.strictEqual(component.family, 'locale', `${componentId} should be in the locale family`);
-      assert.ok(component.moduleIds.length > 0, `${componentId} should reference at least one module`);
-
-      for (const moduleId of component.moduleIds) {
-        const module = manifests.modulesById.get(moduleId);
-        assert.ok(module, `${componentId} module ${moduleId} should exist in install-modules.json`);
-        assert.ok(
-          module.paths.every(modulePath => fs.existsSync(path.join(manifests.repoRoot, modulePath))),
-          `${moduleId} paths should exist on disk`
-        );
-      }
-    }
-  })) passed++; else failed++;
-
-  if (test('every locale component is reachable through --locale', () => {
-    const aliased = new Set(Object.values(LOCALE_ALIAS_TO_COMPONENT_ID));
-
-    for (const component of listInstallComponents({ family: 'locale' })) {
-      assert.ok(
-        aliased.has(component.id),
-        `${component.id} has no --locale alias; add it to LOCALE_ALIAS_TO_COMPONENT_ID and SUPPORTED_LOCALES`
-      );
-    }
-  })) passed++; else failed++;
-
   if (test('gets install component details and validates component IDs', () => {
     const component = getInstallComponent(' lang:typescript ');
 
@@ -198,7 +153,7 @@ function runTests() {
     });
     assert.deepStrictEqual(plan.selectedModuleIds, ['skill-continuous-learning-v2']);
     assert.ok(
-      plan.operations.some(operation => operation.sourceRelativePath === 'skills/continuous-learning-v2'),
+      plan.operations.some(operation => operation.sourceRelativePath === 'skills/admin/continuous-learning-v2'),
       'Should plan only the continuous-learning-v2 skill path'
     );
   })) passed++; else failed++;
@@ -415,7 +370,7 @@ function runTests() {
     assert.ok(plan.selectedModuleIds.includes('security'),
       'Should include security through machine-learning dependencies');
     assert.ok(plan.operations.some(operation => (
-      operation.sourceRelativePath === 'skills/mle-workflow'
+      operation.sourceRelativePath === 'skills/ml/mle-workflow'
     )), 'Should install the MLE workflow skill');
   })) passed++; else failed++;
 
@@ -435,7 +390,7 @@ function runTests() {
       assert.ok(!plan.skippedModuleIds.includes('machine-learning'),
         `Should not skip machine-learning module for ${target}`);
       assert.ok(plan.operations.some(operation => (
-        operation.sourceRelativePath === 'skills/mle-workflow'
+        operation.sourceRelativePath === 'skills/ml/mle-workflow'
       )), `Should install the MLE workflow skill for ${target}`);
     }
   })) passed++; else failed++;
@@ -454,7 +409,7 @@ function runTests() {
       operation.sourceRelativePath === 'agents'
     )), 'Should install the agent directory that contains mle-reviewer.md');
     assert.ok(plan.operations.some(operation => (
-      operation.sourceRelativePath === 'skills/mle-workflow'
+      operation.sourceRelativePath === 'skills/ml/mle-workflow'
     )), 'Should install the MLE workflow skill');
   })) passed++; else failed++;
 

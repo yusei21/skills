@@ -1,5 +1,5 @@
 /**
- * Subprocess tests for skills/delivery-gate/hooks/quality-gate.py.
+ * Subprocess tests for skills/admin/delivery-gate/hooks/quality-gate.py.
  *
  * Run with: node tests/skills/delivery-gate-quality-gate.test.js
  */
@@ -12,7 +12,7 @@ const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
-const SCRIPT = path.join(__dirname, '..', '..', 'skills', 'delivery-gate', 'hooks', 'quality-gate.py');
+const SCRIPT = path.join(__dirname, '..', '..', 'skills', 'admin', 'delivery-gate', 'hooks', 'quality-gate.py');
 
 function findPython() {
   const candidates = [

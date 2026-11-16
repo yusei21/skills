@@ -12,7 +12,7 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 
 const REPO_ROOT = path.join(__dirname, "..", "..");
-const SKILL_PATH = path.join(REPO_ROOT, "skills", "agent-security-hardening", "SKILL.md");
+const SKILL_PATH = path.join(REPO_ROOT, "skills", "security", "agent-security-hardening", "SKILL.md");
 
 function findPython() {
   for (const candidate of ["python3", "python"]) {

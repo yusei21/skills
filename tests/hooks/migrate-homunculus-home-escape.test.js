@@ -39,6 +39,7 @@ const repoRoot = path.resolve(__dirname, '..', '..');
 const scriptPath = path.join(
   repoRoot,
   'skills',
+  'admin',
   'continuous-learning-v2',
   'scripts',
   'migrate-homunculus.sh'

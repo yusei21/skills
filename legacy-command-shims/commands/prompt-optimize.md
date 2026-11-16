@@ -4,7 +4,7 @@ description: Legacy slash-entry shim for the prompt-optimizer skill. Prefer the 
 
 # Prompt Optimize (Legacy Shim)
 
-Use this only if you still invoke `/prompt-optimize`. The maintained workflow lives in `skills/prompt-optimizer/SKILL.md`.
+Use this only if you still invoke `/prompt-optimize`. The maintained workflow lives in `skills/ai-agents/prompt-optimizer/SKILL.md`.
 
 ## Canonical Surface
 

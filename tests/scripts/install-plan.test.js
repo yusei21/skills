@@ -121,8 +121,8 @@ function runTests() {
     const parsed = JSON.parse(result.stdout);
     assert.deepStrictEqual(parsed.includedComponentIds, ['skill:continuous-learning-v2']);
     assert.deepStrictEqual(parsed.selectedModuleIds, ['skill-continuous-learning-v2']);
-    assert.ok(parsed.operations.some(operation => operation.sourceRelativePath === 'skills/continuous-learning-v2'));
-    assert.ok(!parsed.operations.some(operation => operation.sourceRelativePath === 'skills/tdd-workflow'));
+    assert.ok(parsed.operations.some(operation => operation.sourceRelativePath === 'skills/admin/continuous-learning-v2'));
+    assert.ok(!parsed.operations.some(operation => operation.sourceRelativePath === 'skills/core/tdd-workflow'));
   })) passed++; else failed++;
 
   if (test('loads planning intent from ecc-install.json', () => {
@@ -155,7 +155,7 @@ function runTests() {
   if (test('config component selections produce the same operations as CLI flags', () => {
     const configDir = fs.mkdtempSync(path.join(os.tmpdir(), 'install-plan-config-'));
     const configPath = path.join(configDir, 'selections.json');
-    const include = ['agent:planner', 'skill:continuous-learning-v2', 'locale:ja'];
+    const include = ['agent:planner', 'skill:continuous-learning-v2'];
     const exclude = ['skill:security-review'];
 
     try {

@@ -4,7 +4,7 @@ const os = require('os');
 const path = require('path');
 const { execFileSync, spawn, spawnSync } = require('child_process');
 
-const LEDGER = path.join(__dirname, '..', '..', 'skills', 'story-lifecycle', 'scripts', 'ledger.js');
+const LEDGER = path.join(__dirname, '..', '..', 'skills', 'docs-product', 'story-lifecycle', 'scripts', 'ledger.js');
 const { resolveLedgerPath } = require(LEDGER);
 
 const EPIC = `# Epic: Auth flow

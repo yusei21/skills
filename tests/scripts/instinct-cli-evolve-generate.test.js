@@ -11,6 +11,7 @@ const repoRoot = path.resolve(__dirname, '..', '..');
 const cliPath = path.join(
   repoRoot,
   'skills',
+  'admin',
   'continuous-learning-v2',
   'scripts',
   'instinct-cli.py'

@@ -11,7 +11,7 @@ tagging plugin surfaces, uploading video, or posting announcements.
 | --- | --- | --- |
 | `README.md` | Public onramp and install surface | Links Hermes setup, rc.1 notes, plugin install, manual install, reset, and uninstall guidance |
 | `docs/HERMES-SETUP.md` | Public Hermes operator topology | No raw workspace export, credentials, private account names, or local-only operator state |
-| `skills/hermes-imports/SKILL.md` | Sanitized Hermes-to-ECC import workflow | Includes import rules, sanitization checklist, conversion pattern, and output contract |
+| `skills/admin/hermes-imports/SKILL.md` | Sanitized Hermes-to-ECC import workflow | Includes import rules, sanitization checklist, conversion pattern, and output contract |
 | `docs/architecture/cross-harness.md` | Shared substrate model for Claude Code, Codex, OpenCode, Cursor, Gemini, Hermes, and terminal-only use | Names portability boundaries and does not claim unsupported native parity |
 | `docs/architecture/harness-adapter-compliance.md` | Adapter matrix and scorecard | Verified by `npm run harness:adapters -- --check` |
 | `docs/architecture/platform-value-loop.md` | Product integration and full-stack platform thesis | Keeps external product skill packs, gated APIs, case studies, sponsorship, Pro, and consulting loops separate from unsupported GA/control-pane claims |
@@ -59,8 +59,8 @@ Itô-adjacent workflows:
 - `skills/ito-basket-compare/SKILL.md`
 - `skills/ito-trade-planner/SKILL.md`
 - `skills/ito-data-atlas-agent/SKILL.md`
-- `skills/prediction-market-oracle-research/SKILL.md`
-- `skills/prediction-market-risk-review/SKILL.md`
+- `skills/verticals/prediction-market-oracle-research/SKILL.md`
+- `skills/verticals/prediction-market-risk-review/SKILL.md`
 
 They are research, comparison, planning, and risk-review skills. They do not
 place trades, do not provide investment advice, and do not merge ECC Tools with
@@ -71,7 +71,7 @@ Itô. Any Itô-backed data call requires explicit gated API access through
 
 The preview pack includes one public Hermes-specialized skill:
 
-- `skills/hermes-imports/SKILL.md`
+- `skills/admin/hermes-imports/SKILL.md`
 
 That is intentional for rc.1. The skill is a sanitization and conversion
 workflow, not a dump of private Hermes automations. Additional Hermes-generated

@@ -562,7 +562,7 @@ function runTests() {
       )));
       assert.ok(
         parsed.plan.operations.some(operation => (
-          String(operation.sourceRelativePath || '').replace(/\\/g, '/').startsWith('skills/delivery-gate/')
+          String(operation.sourceRelativePath || '').replace(/\\/g, '/').startsWith('skills/admin/delivery-gate/')
         )),
         'Full profile dry-run should include the delivery-gate skill'
       );

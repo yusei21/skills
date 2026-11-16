@@ -29,13 +29,13 @@ function cleanupTestDir(testDir) {
 function writeFixture(root) {
   fs.mkdirSync(path.join(root, 'commands'), { recursive: true });
   fs.mkdirSync(path.join(root, 'agents'), { recursive: true });
-  fs.mkdirSync(path.join(root, 'skills', 'tdd-workflow'), { recursive: true });
-  fs.mkdirSync(path.join(root, 'skills', 'security-review'), { recursive: true });
+  fs.mkdirSync(path.join(root, 'skills', 'core', 'tdd-workflow'), { recursive: true });
+  fs.mkdirSync(path.join(root, 'skills', 'security', 'security-review'), { recursive: true });
 
   fs.writeFileSync(path.join(root, 'agents', 'code-reviewer.md'), '---\nmodel: sonnet\ntools: Read\n---\n');
   fs.writeFileSync(path.join(root, 'agents', 'test-writer.md'), '---\nmodel: sonnet\ntools: Read\n---\n');
-  fs.writeFileSync(path.join(root, 'skills', 'tdd-workflow', 'SKILL.md'), '# TDD workflow\n');
-  fs.writeFileSync(path.join(root, 'skills', 'security-review', 'SKILL.md'), '# Security review\n');
+  fs.writeFileSync(path.join(root, 'skills', 'core', 'tdd-workflow', 'SKILL.md'), '# TDD workflow\n');
+  fs.writeFileSync(path.join(root, 'skills', 'security', 'security-review', 'SKILL.md'), '# Security review\n');
 
   fs.writeFileSync(path.join(root, 'commands', 'review.md'), `---
 description: Review changes
@@ -50,7 +50,7 @@ description: "Write tests first"
 ---
 # TDD
 
-Call subagent_type: test-writer and skills/tdd-workflow/SKILL.md.
+Call subagent_type: test-writer and skills/core/tdd-workflow/SKILL.md.
 `);
 }
 

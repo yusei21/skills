@@ -204,6 +204,24 @@ function inspectFrontmatter(lines) {
  * @param {(msg: string) => void} reportFrontmatterFinding
  * @returns {{fatal: boolean}}
  */
+/**
+ * Skill directories relative to skillsDir: "<department>/<skill>" or a flat
+ * "<skill>". A top-level directory with neither a SKILL.md nor any skill
+ * below it is still returned, so it is reported as missing its SKILL.md.
+ * @param {string} skillsDir
+ * @returns {string[]}
+ */
+function listSkillDirsForValidation(skillsDir) {
+  const { listSkills } = require('../lib/skill-layout');
+  const found = listSkills(path.dirname(skillsDir), { skillsDir: path.basename(skillsDir) })
+    .map(skill => (skill.department ? `${skill.department}/${skill.name}` : skill.name));
+  const covered = new Set(found.map(rel => rel.split('/')[0]));
+  const stray = fs.readdirSync(skillsDir, { withFileTypes: true })
+    .filter(e => e.isDirectory() && !e.name.startsWith('.') && !covered.has(e.name))
+    .map(e => e.name);
+  return [...found, ...stray].sort();
+}
+
 function validateSkillDir(dir, skillsDir, reportFrontmatterFinding) {
   const skillMd = path.join(skillsDir, dir, 'SKILL.md');
   return validateSkillFile(skillMd, `${dir}/SKILL.md`, reportFrontmatterFinding, { requireFrontmatter: false });
@@ -346,8 +364,8 @@ function validateSkills() {
   };
 
   if (curatedExists) {
-    const entries = fs.readdirSync(SKILLS_DIR, { withFileTypes: true });
-    const dirs = entries.filter(e => e.isDirectory() && !e.name.startsWith('.')).map(e => e.name);
+    // Department layout: skills/<department>/<skill>/ (flat skills/<skill>/ still accepted).
+    const dirs = listSkillDirsForValidation(SKILLS_DIR);
 
     for (const dir of dirs) {
       const { fatal } = validateSkillDir(dir, SKILLS_DIR, reportFrontmatterFinding);

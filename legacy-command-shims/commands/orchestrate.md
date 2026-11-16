@@ -4,7 +4,7 @@ description: Legacy slash-entry shim for dmux-workflows and autonomous-agent-har
 
 # Orchestrate Command (Legacy Shim)
 
-Use this only if you still invoke `/orchestrate`. The maintained orchestration guidance lives in `skills/dmux-workflows/SKILL.md` and `skills/autonomous-agent-harness/SKILL.md`.
+Use this only if you still invoke `/orchestrate`. The maintained orchestration guidance lives in `skills/ai-agents/dmux-workflows/SKILL.md` and `skills/ai-agents/autonomous-agent-harness/SKILL.md`.
 
 ## Canonical Surface
 

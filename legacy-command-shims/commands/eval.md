@@ -4,7 +4,7 @@ description: Legacy slash-entry shim for the eval-harness skill. Prefer the skil
 
 # Eval Command (Legacy Shim)
 
-Use this only if you still invoke `/eval`. The maintained workflow lives in `skills/eval-harness/SKILL.md`.
+Use this only if you still invoke `/eval`. The maintained workflow lives in `skills/quality/eval-harness/SKILL.md`.
 
 ## Canonical Surface
 

@@ -328,7 +328,7 @@ function assertNoProjectDetectionSideEffects(homeDir, testName) {
 }
 
 async function assertObserveSkipBeforeProjectDetection(testCase) {
-  const observePath = path.join(__dirname, '..', '..', 'skills', 'continuous-learning-v2', 'hooks', 'observe.sh');
+  const observePath = path.join(__dirname, '..', '..', 'skills', 'admin', 'continuous-learning-v2', 'hooks', 'observe.sh');
   const homeDir = createTestDir();
   const projectDir = createTestDir();
 
@@ -3617,9 +3617,9 @@ async function runTests() {
 
   if (
     test('continuous-learning shell scripts use resolved Python command instead of hardcoded python3 invocations', () => {
-      const observeSource = fs.readFileSync(path.join(__dirname, '..', '..', 'skills', 'continuous-learning-v2', 'hooks', 'observe.sh'), 'utf8');
-      const startObserverSource = fs.readFileSync(path.join(__dirname, '..', '..', 'skills', 'continuous-learning-v2', 'agents', 'start-observer.sh'), 'utf8');
-      const detectProjectSource = fs.readFileSync(path.join(__dirname, '..', '..', 'skills', 'continuous-learning-v2', 'scripts', 'detect-project.sh'), 'utf8');
+      const observeSource = fs.readFileSync(path.join(__dirname, '..', '..', 'skills', 'admin', 'continuous-learning-v2', 'hooks', 'observe.sh'), 'utf8');
+      const startObserverSource = fs.readFileSync(path.join(__dirname, '..', '..', 'skills', 'admin', 'continuous-learning-v2', 'agents', 'start-observer.sh'), 'utf8');
+      const detectProjectSource = fs.readFileSync(path.join(__dirname, '..', '..', 'skills', 'admin', 'continuous-learning-v2', 'scripts', 'detect-project.sh'), 'utf8');
 
       assert.ok(!/python3\s+-c/.test(observeSource), 'observe.sh should not invoke python3 directly');
       assert.ok(!/python3\s+-c/.test(startObserverSource), 'start-observer.sh should not invoke python3 directly');
@@ -3633,7 +3633,7 @@ async function runTests() {
 
   if (
     test('observer-loop uses a configurable max-turn budget with safe default', () => {
-      const observerLoopSource = fs.readFileSync(path.join(__dirname, '..', '..', 'skills', 'continuous-learning-v2', 'agents', 'observer-loop.sh'), 'utf8');
+      const observerLoopSource = fs.readFileSync(path.join(__dirname, '..', '..', 'skills', 'admin', 'continuous-learning-v2', 'agents', 'observer-loop.sh'), 'utf8');
 
       assert.ok(observerLoopSource.includes('ECC_OBSERVER_MAX_TURNS'), 'observer-loop should allow max-turn overrides');
       assert.ok(observerLoopSource.includes('max_turns=$(( analysis_count / 10 ))'), 'observer-loop should auto-scale max_turns from the analysis batch size when no override is set');
@@ -3652,7 +3652,7 @@ async function runTests() {
 
   if (
     test('start-observer waits for PID file via poll instead of fixed sleep (#2295)', () => {
-      const startObserverSource = fs.readFileSync(path.join(__dirname, '..', '..', 'skills', 'continuous-learning-v2', 'agents', 'start-observer.sh'), 'utf8');
+      const startObserverSource = fs.readFileSync(path.join(__dirname, '..', '..', 'skills', 'admin', 'continuous-learning-v2', 'agents', 'start-observer.sh'), 'utf8');
 
       assert.ok(!/^\s*sleep 2\s*$/m.test(startObserverSource), 'start-observer.sh should not use the fixed `sleep 2` wait after spawning the observer loop');
       assert.ok(/\bseq 1 \d+\b/.test(startObserverSource), 'start-observer.sh should bound PID-file polling to a finite iteration count');
@@ -3665,7 +3665,7 @@ async function runTests() {
 
   if (
     test('observer scripts only call homunculus resolvers the shared lib defines (#2452)', () => {
-      const skillRoot = path.join(__dirname, '..', '..', 'skills', 'continuous-learning-v2');
+      const skillRoot = path.join(__dirname, '..', '..', 'skills', 'admin', 'continuous-learning-v2');
       const libSource = fs.readFileSync(path.join(skillRoot, 'scripts', 'lib', 'homunculus-dir.sh'), 'utf8');
       const definedResolvers = new Set([...libSource.matchAll(/^([A-Za-z_][A-Za-z0-9_]*_resolve_homunculus_dir)\(\)/gm)].map((m) => m[1]));
       assert.ok(definedResolvers.size > 0, 'homunculus-dir.sh should define a homunculus resolver function');
@@ -3689,7 +3689,7 @@ async function runTests() {
 
   if (
     test('observer-loop closes stdin on the backgrounded claude analysis call (#2452)', () => {
-      const observerLoopSource = fs.readFileSync(path.join(__dirname, '..', '..', 'skills', 'continuous-learning-v2', 'agents', 'observer-loop.sh'), 'utf8');
+      const observerLoopSource = fs.readFileSync(path.join(__dirname, '..', '..', 'skills', 'admin', 'continuous-learning-v2', 'agents', 'observer-loop.sh'), 'utf8');
 
       assert.ok(observerLoopSource.includes('-p "$prompt_content" < /dev/null'), 'observer-loop should close stdin on the backgrounded claude call so Git Bash children do not hang on inherited stdin and exit 1');
     })
@@ -3702,7 +3702,7 @@ async function runTests() {
     passed++;
   } else if (
     await asyncTest('detect-project exports the resolved Python command for downstream scripts', async () => {
-      const detectProjectPath = path.join(__dirname, '..', '..', 'skills', 'continuous-learning-v2', 'scripts', 'detect-project.sh');
+      const detectProjectPath = path.join(__dirname, '..', '..', 'skills', 'admin', 'continuous-learning-v2', 'scripts', 'detect-project.sh');
       const shellCommand = [`source "${toBashPath(detectProjectPath)}" >/dev/null 2>&1`, 'printf "%s\\n" "${CLV2_PYTHON_CMD:-}"'].join('; ');
 
       const shell = process.platform === 'win32' ? 'bash' : 'bash';
@@ -3736,7 +3736,7 @@ async function runTests() {
       const testRoot = createTestDir();
       const homeDir = path.join(testRoot, 'home');
       const repoDir = path.join(testRoot, 'repo');
-      const detectProjectPath = path.join(__dirname, '..', '..', 'skills', 'continuous-learning-v2', 'scripts', 'detect-project.sh');
+      const detectProjectPath = path.join(__dirname, '..', '..', 'skills', 'admin', 'continuous-learning-v2', 'scripts', 'detect-project.sh');
 
       try {
         fs.mkdirSync(homeDir, { recursive: true });
@@ -3812,7 +3812,7 @@ async function runTests() {
     await asyncTest('observe.sh falls back to legacy output fields when tool_response is null', async () => {
       const homeDir = createTestDir();
       const projectDir = createTestDir();
-      const observePath = path.join(__dirname, '..', '..', 'skills', 'continuous-learning-v2', 'hooks', 'observe.sh');
+      const observePath = path.join(__dirname, '..', '..', 'skills', 'admin', 'continuous-learning-v2', 'hooks', 'observe.sh');
       const payload = JSON.stringify({
         tool_name: 'Bash',
         tool_input: { command: 'echo hello' },
@@ -3975,7 +3975,7 @@ async function runTests() {
       fs.writeFileSync(transcriptPath, lines.join('\n'));
 
       // Create a config file with min_session_length=0
-      const skillsDir = path.join(testDir, 'skills', 'continuous-learning');
+      const skillsDir = path.join(testDir, 'skills', 'admin', 'continuous-learning');
       fs.mkdirSync(skillsDir, { recursive: true });
       const configPath = path.join(skillsDir, 'config.json');
       fs.writeFileSync(
@@ -4011,7 +4011,7 @@ async function runTests() {
       for (let i = 0; i < 5; i++) lines.push(`{"type":"user","content":"msg${i}"}`);
       fs.writeFileSync(transcriptPath, lines.join('\n'));
 
-      const skillsDir = path.join(testDir, 'skills', 'continuous-learning');
+      const skillsDir = path.join(testDir, 'skills', 'admin', 'continuous-learning');
       fs.mkdirSync(skillsDir, { recursive: true });
       const configPath = path.join(skillsDir, 'config.json');
       fs.writeFileSync(
@@ -4045,7 +4045,7 @@ async function runTests() {
       fs.writeFileSync(transcriptPath, '{"type":"user","content":"msg"}');
 
       const customLearnedDir = path.join(testDir, 'custom-learned-skills');
-      const skillsDir = path.join(testDir, 'skills', 'continuous-learning');
+      const skillsDir = path.join(testDir, 'skills', 'admin', 'continuous-learning');
       fs.mkdirSync(skillsDir, { recursive: true });
       const configPath = path.join(skillsDir, 'config.json');
       fs.writeFileSync(
@@ -4077,7 +4077,7 @@ async function runTests() {
       for (let i = 0; i < 5; i++) lines.push(`{"type":"user","content":"msg${i}"}`);
       fs.writeFileSync(transcriptPath, lines.join('\n'));
 
-      const skillsDir = path.join(testDir, 'skills', 'continuous-learning');
+      const skillsDir = path.join(testDir, 'skills', 'admin', 'continuous-learning');
       fs.mkdirSync(skillsDir, { recursive: true });
       const configPath = path.join(skillsDir, 'config.json');
       fs.writeFileSync(configPath, 'not valid json!!!');
@@ -5078,7 +5078,7 @@ async function runTests() {
       // 1 user message — below threshold, but we only need to verify directory creation
       fs.writeFileSync(transcriptPath, '{"type":"user","content":"msg"}');
 
-      const skillsDir = path.join(testDir, 'skills', 'continuous-learning');
+      const skillsDir = path.join(testDir, 'skills', 'admin', 'continuous-learning');
       fs.mkdirSync(skillsDir, { recursive: true });
       const configPath = path.join(skillsDir, 'config.json');
       // Use ~ prefix — should expand to the HOME dir we set
@@ -5115,7 +5115,7 @@ async function runTests() {
       fs.writeFileSync(transcriptPath, '{"type":"user","content":"msg"}');
 
       const midTildeDir = path.join(testDir, 'some~path', 'skills');
-      const skillsDir = path.join(testDir, 'skills', 'continuous-learning');
+      const skillsDir = path.join(testDir, 'skills', 'admin', 'continuous-learning');
       fs.mkdirSync(skillsDir, { recursive: true });
       const configPath = path.join(skillsDir, 'config.json');
       // Path with ~ in the middle — should NOT be expanded

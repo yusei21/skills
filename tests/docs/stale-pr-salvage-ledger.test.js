@@ -147,7 +147,7 @@ test('stale PR salvage ledger records the May 12 gap pass', () => {
   assert.ok(source.includes('current managed installer/profile flow'));
   assert.ok(source.includes('false-positive proof gate'));
   assert.ok(source.includes('session_id` from stdin JSON'));
-  assert.ok(source.includes('Already present as `skills/redis-patterns/`'));
+  assert.ok(source.includes('Already present as `skills/data/redis-patterns/`'));
 });
 
 if (failed > 0) {

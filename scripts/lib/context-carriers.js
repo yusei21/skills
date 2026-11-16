@@ -39,8 +39,11 @@ function validateEntryResources(entry) {
   if (!Array.isArray(entry.resources) || !entry.resources.length || !Array.isArray(entry.requiredResources)) {
     throw new Error(`Missing resource inventory or required-resource metadata: ${entry.id}`);
   }
-  const sourceRoot = `skills/${entry.id.slice('skill:'.length)}`;
-  if (entry.sourcePath !== `${sourceRoot}/SKILL.md`) {
+  // skills/<department>/<name>/SKILL.md (or a flat skills/<name>/SKILL.md)
+  const name = entry.id.slice('skill:'.length);
+  const sourceRoot = typeof entry.sourcePath === 'string' ? path.posix.dirname(entry.sourcePath) : '';
+  const canonical = new RegExp(`^skills/(?:[a-z0-9]+(?:-[a-z0-9]+)*/)?${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`);
+  if (!canonical.test(sourceRoot) || entry.sourcePath !== `${sourceRoot}/SKILL.md`) {
     throw new Error(`Source resource is not the canonical skill entrypoint: ${entry.id}`);
   }
   const resources = new Set();

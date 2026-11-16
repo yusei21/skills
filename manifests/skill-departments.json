@@ -1,0 +1,867 @@
+{
+  "$schema": "../schemas/skill-departments.schema.json",
+  "version": 1,
+  "description": "Canonical department taxonomy for curated skills. Every directory under skills/ belongs to exactly one department group. Drives department plugins and `ecc2 skills suggest`.",
+  "departments": [
+    {
+      "id": "core",
+      "title": "Core engineering",
+      "description": "Daily workflow for any project: TDD, verification, git, code standards and context management.",
+      "groups": [
+        {
+          "id": "ecc-kernel",
+          "title": "ECC discovery",
+          "skills": [
+            "configure-ecc",
+            "ecc-guide"
+          ]
+        },
+        {
+          "id": "workflow",
+          "title": "Workflow",
+          "skills": [
+            "tdd-workflow",
+            "verification-loop",
+            "git-workflow",
+            "conventional-commit-review",
+            "search-first",
+            "intent-driven-development"
+          ]
+        },
+        {
+          "id": "standards",
+          "title": "Code standards",
+          "skills": [
+            "coding-standards",
+            "error-handling",
+            "inherit-legacy-style"
+          ]
+        },
+        {
+          "id": "context",
+          "title": "Session context",
+          "skills": [
+            "strategic-compact",
+            "context-budget",
+            "iterative-retrieval",
+            "codebase-onboarding",
+            "code-tour"
+          ]
+        },
+        {
+          "id": "guards",
+          "title": "Guards",
+          "skills": [
+            "safety-guard",
+            "gateguard"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "frontend",
+      "title": "Frontend and design",
+      "description": "Web interfaces, design systems, accessibility, motion and UI frameworks.",
+      "groups": [
+        {
+          "id": "design",
+          "title": "Design and UX",
+          "skills": [
+            "design-system",
+            "frontend-design-direction",
+            "make-interfaces-feel-better",
+            "frontend-slides",
+            "web-design-guidelines",
+            "taste-skill",
+            "design-md-library"
+          ]
+        },
+        {
+          "id": "a11y-i18n",
+          "title": "Accessibility and i18n",
+          "skills": [
+            "accessibility",
+            "frontend-a11y",
+            "i18n-sync"
+          ]
+        },
+        {
+          "id": "motion",
+          "title": "Animation",
+          "skills": [
+            "motion-foundations",
+            "motion-patterns",
+            "motion-advanced"
+          ]
+        },
+        {
+          "id": "react",
+          "title": "React / Next.js",
+          "skills": [
+            "react-patterns",
+            "react-performance",
+            "react-testing",
+            "nextjs-turbopack"
+          ]
+        },
+        {
+          "id": "vue-angular",
+          "title": "Vue / Nuxt / Angular / Vite",
+          "skills": [
+            "vue-patterns",
+            "nuxt4-patterns",
+            "ui-to-vue",
+            "angular-developer",
+            "vite-patterns",
+            "frontend-patterns"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "backend",
+      "title": "Backend and APIs",
+      "description": "Service architecture, API contracts and server frameworks.",
+      "groups": [
+        {
+          "id": "architecture",
+          "title": "Architecture and contracts",
+          "skills": [
+            "api-design",
+            "backend-patterns",
+            "contract-first",
+            "hexagonal-architecture",
+            "mcp-server-patterns",
+            "api-connector-builder",
+            "content-hash-cache-pattern"
+          ]
+        },
+        {
+          "id": "node",
+          "title": "Node / TypeScript",
+          "skills": [
+            "nestjs-patterns",
+            "bun-runtime"
+          ]
+        },
+        {
+          "id": "python",
+          "title": "Python (Django / FastAPI)",
+          "skills": [
+            "django-patterns",
+            "django-celery",
+            "django-tdd",
+            "django-verification",
+            "fastapi-patterns"
+          ]
+        },
+        {
+          "id": "jvm",
+          "title": "JVM (Spring / Quarkus / Ktor)",
+          "skills": [
+            "springboot-patterns",
+            "springboot-tdd",
+            "springboot-verification",
+            "quarkus-patterns",
+            "quarkus-tdd",
+            "quarkus-verification",
+            "kotlin-ktor-patterns",
+            "kotlin-exposed-patterns",
+            "tinystruct-patterns"
+          ]
+        },
+        {
+          "id": "php-ruby-dotnet",
+          "title": "PHP / Ruby / .NET",
+          "skills": [
+            "laravel-patterns",
+            "laravel-plugin-discovery",
+            "laravel-tdd",
+            "laravel-verification",
+            "rails-patterns",
+            "dotnet-patterns"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "languages",
+      "title": "Languages",
+      "description": "Per-language idioms and testing. Keep only the languages you use.",
+      "groups": [
+        {
+          "id": "typescript",
+          "title": "TypeScript",
+          "skills": [
+            "typescript-patterns"
+          ]
+        },
+        {
+          "id": "rust",
+          "title": "Rust",
+          "skills": [
+            "rust-patterns",
+            "rust-testing"
+          ]
+        },
+        {
+          "id": "python",
+          "title": "Python",
+          "skills": [
+            "python-patterns",
+            "python-testing",
+            "generating-python-installer"
+          ]
+        },
+        {
+          "id": "go",
+          "title": "Go",
+          "skills": [
+            "golang-patterns",
+            "golang-testing"
+          ]
+        },
+        {
+          "id": "jvm",
+          "title": "Java / Kotlin",
+          "skills": [
+            "java-coding-standards",
+            "kotlin-patterns",
+            "kotlin-coroutines-flows",
+            "kotlin-testing"
+          ]
+        },
+        {
+          "id": "c-cpp",
+          "title": "C / C++",
+          "skills": [
+            "cpp-coding-standards",
+            "cpp-testing"
+          ]
+        },
+        {
+          "id": "dotnet",
+          "title": "C# / F#",
+          "skills": [
+            "csharp-testing",
+            "fsharp-testing"
+          ]
+        },
+        {
+          "id": "perl",
+          "title": "Perl",
+          "skills": [
+            "perl-patterns",
+            "perl-testing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mobile",
+      "title": "Mobile and Apple",
+      "description": "Android, iOS/Swift, Flutter and React Native.",
+      "groups": [
+        {
+          "id": "apple",
+          "title": "Swift / Apple",
+          "skills": [
+            "swiftui-patterns",
+            "swift-concurrency-6-2",
+            "swift-actor-persistence",
+            "swift-protocol-di-testing",
+            "liquid-glass-design",
+            "foundation-models-on-device",
+            "ios-icon-gen"
+          ]
+        },
+        {
+          "id": "android",
+          "title": "Android / Kotlin Multiplatform",
+          "skills": [
+            "android-clean-architecture",
+            "compose-multiplatform-patterns"
+          ]
+        },
+        {
+          "id": "cross",
+          "title": "Flutter / React Native",
+          "skills": [
+            "dart-flutter-patterns",
+            "flutter-dart-code-review",
+            "react-native-patterns"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "data",
+      "title": "Data and databases",
+      "description": "Relational databases, caching, analytics and data movement.",
+      "groups": [
+        {
+          "id": "sql",
+          "title": "SQL and ORMs",
+          "skills": [
+            "postgres-patterns",
+            "mysql-patterns",
+            "database-migrations",
+            "prisma-patterns",
+            "jpa-patterns",
+            "mybatis-patterns"
+          ]
+        },
+        {
+          "id": "other",
+          "title": "Cache, analytics and pipelines",
+          "skills": [
+            "redis-patterns",
+            "clickhouse-io",
+            "data-throughput-accelerator"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ai-agents",
+      "title": "AI and agents",
+      "description": "Agent architecture, multi-agent orchestration, prompts and LLM cost.",
+      "groups": [
+        {
+          "id": "harness",
+          "title": "Harness and agent architecture",
+          "skills": [
+            "agent-harness-construction",
+            "agent-architecture-audit",
+            "agentic-engineering",
+            "agentic-os",
+            "ai-first-engineering",
+            "autonomous-agent-harness",
+            "gan-style-harness",
+            "dynamic-workflow-mode",
+            "loop-design-check",
+            "agent-runtime-gateway-smoke-test",
+            "enterprise-agent-ops"
+          ]
+        },
+        {
+          "id": "orchestration",
+          "title": "Orchestration",
+          "skills": [
+            "plan-orchestrate",
+            "blueprint",
+            "ralphinho-rfc-pipeline",
+            "team-agent-orchestration",
+            "team-builder",
+            "claude-devfleet",
+            "dmux-workflows",
+            "autonomous-loops",
+            "continuous-agent-loop",
+            "orch-pipeline",
+            "orch-add-feature",
+            "orch-change-feature",
+            "orch-fix-defect",
+            "orch-build-mvp",
+            "orch-refine-code"
+          ]
+        },
+        {
+          "id": "review",
+          "title": "Multi-agent review and decisions",
+          "skills": [
+            "council",
+            "council-multi-model",
+            "dev-team",
+            "santa-method",
+            "recursive-decision-ledger",
+            "agent-self-evaluation",
+            "agent-introspection-debugging"
+          ]
+        },
+        {
+          "id": "prompts",
+          "title": "Prompts and cost",
+          "skills": [
+            "prompt-optimizer",
+            "prompt-caching-strategy",
+            "cost-aware-llm-pipeline",
+            "token-budget-advisor",
+            "regex-vs-llm-structured-text"
+          ]
+        },
+        {
+          "id": "builders",
+          "title": "Ready-made agents",
+          "skills": [
+            "data-scraper-agent",
+            "openclaw-persona-forge"
+          ]
+        },
+        {
+          "id": "computer-use",
+          "title": "Computer use",
+          "skills": [
+            "agent-desktop"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ml",
+      "title": "Machine learning",
+      "description": "Training, evaluation and adoption of models.",
+      "groups": [
+        {
+          "id": "ml",
+          "title": "ML and NLP",
+          "skills": [
+            "mle-workflow",
+            "pytorch-patterns",
+            "ml-adoption-playbook",
+            "recsys-pipeline-architect",
+            "bengali-nlp"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quality",
+      "title": "Quality, testing and performance",
+      "description": "E2E, evals, benchmarks, production audits and code health.",
+      "groups": [
+        {
+          "id": "testing",
+          "title": "Testing",
+          "skills": [
+            "e2e-testing",
+            "browser-qa",
+            "windows-desktop-e2e",
+            "ai-regression-testing",
+            "test-collaboration",
+            "module-regression"
+          ]
+        },
+        {
+          "id": "evals",
+          "title": "Evals and benchmarks",
+          "skills": [
+            "eval-harness",
+            "agent-eval",
+            "benchmark",
+            "benchmark-methodology",
+            "benchmark-optimization-loop"
+          ]
+        },
+        {
+          "id": "audits",
+          "title": "Audits",
+          "skills": [
+            "production-audit",
+            "click-path-audit",
+            "repo-scan",
+            "codehealth-mcp",
+            "untangle-codebase"
+          ]
+        },
+        {
+          "id": "performance",
+          "title": "Performance",
+          "skills": [
+            "latency-critical-systems",
+            "parallel-execution-optimizer"
+          ]
+        },
+        {
+          "id": "minimal",
+          "title": "Minimal code (ponytail)",
+          "skills": [
+            "ponytail",
+            "ponytail-review",
+            "ponytail-audit",
+            "ponytail-debt",
+            "ponytail-gain",
+            "ponytail-help"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "title": "Security",
+      "description": "Security review, scanning, agent hardening and per-framework security.",
+      "groups": [
+        {
+          "id": "general",
+          "title": "General",
+          "skills": [
+            "security-review",
+            "security-scan",
+            "security-bounty-hunter",
+            "agent-security-hardening",
+            "mcp-dependency-review"
+          ]
+        },
+        {
+          "id": "frameworks",
+          "title": "Per framework",
+          "skills": [
+            "django-security",
+            "springboot-security",
+            "quarkus-security",
+            "laravel-security",
+            "perl-security"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "devops",
+      "title": "DevOps and infrastructure",
+      "description": "Containers, deployment, reproducible environments and networking.",
+      "groups": [
+        {
+          "id": "deploy",
+          "title": "Containers and deployment",
+          "skills": [
+            "docker-patterns",
+            "kubernetes-patterns",
+            "deployment-patterns",
+            "canary-watch",
+            "uncloud",
+            "flox-environments",
+            "opensource-pipeline",
+            "terminal-opener"
+          ]
+        },
+        {
+          "id": "network",
+          "title": "Networking and homelab",
+          "skills": [
+            "network-bgp-diagnostics",
+            "network-config-validation",
+            "network-interface-health",
+            "cisco-ios-patterns",
+            "netmiko-ssh-automation",
+            "homelab-network-setup",
+            "homelab-network-readiness",
+            "homelab-pihole-dns",
+            "homelab-vlan-segmentation",
+            "homelab-wireguard-vpn"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "docs-product",
+      "title": "Docs, product and knowledge",
+      "description": "Documentation governance, decisions, product planning and knowledge bases.",
+      "groups": [
+        {
+          "id": "docs",
+          "title": "Documentation and decisions",
+          "skills": [
+            "architecture-decision-records",
+            "docs-governance",
+            "living-docs-governance",
+            "module-governance",
+            "change-impact",
+            "context-and-decisions",
+            "brownfield-retrospective"
+          ]
+        },
+        {
+          "id": "product",
+          "title": "Product and planning",
+          "skills": [
+            "product-lens",
+            "product-capability",
+            "story-lifecycle"
+          ]
+        },
+        {
+          "id": "knowledge",
+          "title": "Knowledge",
+          "skills": [
+            "knowledge-ops",
+            "graphify"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "research",
+      "title": "Research",
+      "description": "Deep research, search, OSINT and scientific databases.",
+      "groups": [
+        {
+          "id": "web",
+          "title": "Research and search",
+          "skills": [
+            "deep-research",
+            "exa-search",
+            "documentation-lookup",
+            "research-ops",
+            "osint-investigation"
+          ]
+        },
+        {
+          "id": "science",
+          "title": "Scientific",
+          "skills": [
+            "scientific-db-pubmed-database",
+            "scientific-db-uspto-database",
+            "scientific-pkg-gget",
+            "scientific-thinking-literature-review",
+            "scientific-thinking-scholar-evaluation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "business",
+      "title": "Business, content and marketing",
+      "description": "Writing, brand, SEO, market, investors and social networks.",
+      "groups": [
+        {
+          "id": "content",
+          "title": "Content and brand",
+          "skills": [
+            "article-writing",
+            "content-engine",
+            "brand-discovery",
+            "brand-voice",
+            "seo"
+          ]
+        },
+        {
+          "id": "market",
+          "title": "Market and investors",
+          "skills": [
+            "market-research",
+            "competitive-platform-analysis",
+            "competitive-report-structure",
+            "investor-materials",
+            "investor-outreach",
+            "lead-intelligence",
+            "marketing-campaign"
+          ]
+        },
+        {
+          "id": "social",
+          "title": "Social networks",
+          "skills": [
+            "crosspost",
+            "social-publisher",
+            "x-api",
+            "social-graph-ranker",
+            "connections-optimizer"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "media",
+      "title": "Media and video",
+      "description": "Video and media generation and editing.",
+      "groups": [
+        {
+          "id": "video",
+          "title": "Video",
+          "skills": [
+            "video-editing",
+            "videodb",
+            "remotion-video-creation",
+            "manim-video",
+            "ui-demo",
+            "fal-ai-media",
+            "blender-motion-state-inspection"
+          ]
+        },
+        {
+          "id": "taste-video",
+          "title": "Creative direction (video)",
+          "skills": [
+            "taste",
+            "taste-application",
+            "taste-distillation",
+            "tasteforge-video"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "operations",
+      "title": "Operations and integrations",
+      "description": "Email, billing, GitHub, Jira, Google Workspace and notifications.",
+      "groups": [
+        {
+          "id": "dev-ops",
+          "title": "GitHub, issues and terminal",
+          "skills": [
+            "github-ops",
+            "issue-review",
+            "jira-integration",
+            "project-flow-ops",
+            "terminal-ops",
+            "automation-audit-ops",
+            "dashboard-builder"
+          ]
+        },
+        {
+          "id": "comms",
+          "title": "Communication",
+          "skills": [
+            "email-ops",
+            "mailtrap-email-integration",
+            "messages-ops",
+            "unified-notifications-ops",
+            "google-workspace-ops"
+          ]
+        },
+        {
+          "id": "finance",
+          "title": "Billing and finance",
+          "skills": [
+            "customer-billing-ops",
+            "finance-billing-ops"
+          ]
+        },
+        {
+          "id": "documents",
+          "title": "Documents and contracts",
+          "skills": [
+            "nutrient-document-processing",
+            "visa-doc-translate",
+            "esign-field-placement",
+            "master-agreement-generator",
+            "counterparty-channel-discipline",
+            "operator-approval-loop"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "verticals",
+      "title": "Industry verticals",
+      "description": "Niche domains: healthcare, supply chain, web3, prediction markets and partner platforms.",
+      "groups": [
+        {
+          "id": "healthcare",
+          "title": "Healthcare",
+          "skills": [
+            "healthcare-cdss-patterns",
+            "healthcare-emr-patterns",
+            "healthcare-eval-harness",
+            "healthcare-phi-compliance",
+            "hipaa-compliance"
+          ]
+        },
+        {
+          "id": "supply-chain",
+          "title": "Supply chain",
+          "skills": [
+            "carrier-relationship-management",
+            "customs-trade-compliance",
+            "energy-procurement",
+            "inventory-demand-planning",
+            "logistics-exception-management",
+            "production-scheduling",
+            "quality-nonconformance",
+            "returns-reverse-logistics"
+          ]
+        },
+        {
+          "id": "web3",
+          "title": "Web3 / DeFi",
+          "skills": [
+            "defi-amm-security",
+            "evm-token-decimals",
+            "nodejs-keccak256",
+            "agent-payment-x402",
+            "llm-trading-agent-security"
+          ]
+        },
+        {
+          "id": "markets-compute",
+          "title": "Prediction markets and Itô",
+          "skills": [
+            "prediction-market-oracle-research",
+            "prediction-market-risk-review",
+            "ito-baskets",
+            "ito-compute",
+            "ito-inference",
+            "ito-training"
+          ]
+        },
+        {
+          "id": "partners",
+          "title": "Partner platforms",
+          "skills": [
+            "nasiko-control-plane"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin",
+      "title": "ECC administration",
+      "description": "Skills about ECC itself: setup, continuous learning, memory, cost and skill maintenance.",
+      "groups": [
+        {
+          "id": "setup",
+          "title": "Setup and guides",
+          "skills": [
+            "ecc-recipes",
+            "agent-sort",
+            "workspace-surface-audit",
+            "deepseek-harness-setup",
+            "config-gc"
+          ]
+        },
+        {
+          "id": "skills",
+          "title": "Skill and rule maintenance",
+          "skills": [
+            "skill-comply",
+            "skill-host-compat",
+            "skill-scout",
+            "skill-stocktake",
+            "rules-distill",
+            "hookify-rules",
+            "hermes-imports"
+          ]
+        },
+        {
+          "id": "learning",
+          "title": "Learning and memory",
+          "skills": [
+            "continuous-learning",
+            "continuous-learning-v2",
+            "growth-log",
+            "ck",
+            "unified-memory"
+          ]
+        },
+        {
+          "id": "quality-hooks",
+          "title": "Quality gates and hooks",
+          "skills": [
+            "delivery-gate",
+            "plankton-code-quality"
+          ]
+        },
+        {
+          "id": "tools",
+          "title": "Tools and cost",
+          "skills": [
+            "cost-tracking",
+            "ecc-tools-cost-audit",
+            "token-card",
+            "nanoclaw-repl",
+            "plan-canvas"
+          ]
+        }
+      ]
+    }
+  ]
+}

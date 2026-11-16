@@ -198,7 +198,7 @@ Verdict: BLOCK — HIGH issues must be fixed before merge.
 
 - Agents: `typescript-reviewer` (generic TS/JS, invoked alongside on `.vue`/`.ts`), `security-reviewer` (project-wide audit)
 - Rules: `rules/vue/coding-style.md`, `rules/vue/hooks.md`, `rules/vue/patterns.md`, `rules/vue/security.md`, `rules/vue/testing.md`
-- Skills: `skills/vue-patterns/`
+- Skills: `skills/frontend/vue-patterns/`
 - Commands: `/vue-review`
 
 ---

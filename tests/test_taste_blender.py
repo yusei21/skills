@@ -8,7 +8,7 @@ from types import SimpleNamespace
 
 SCRIPT = (
     Path(__file__).resolve().parents[1]
-    / "skills/taste-application/scripts/blender_prop.py"
+    / "skills/media/taste-application/scripts/blender_prop.py"
 )
 spec = importlib.util.spec_from_file_location("blender_prop", SCRIPT)
 prop = importlib.util.module_from_spec(spec)

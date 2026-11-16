@@ -29,6 +29,7 @@ const repoRoot = path.resolve(__dirname, '..', '..');
 const observerLoopPath = path.join(
   repoRoot,
   'skills',
+  'admin',
   'continuous-learning-v2',
   'agents',
   'observer-loop.sh'

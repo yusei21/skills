@@ -9,8 +9,8 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const repoRoot = path.resolve(__dirname, '..', '..');
-const scanScript = path.join(repoRoot, 'skills', 'skill-stocktake', 'scripts', 'scan.sh');
-const quickDiffScript = path.join(repoRoot, 'skills', 'skill-stocktake', 'scripts', 'quick-diff.sh');
+const scanScript = path.join(repoRoot, 'skills', 'admin', 'skill-stocktake', 'scripts', 'scan.sh');
+const quickDiffScript = path.join(repoRoot, 'skills', 'admin', 'skill-stocktake', 'scripts', 'quick-diff.sh');
 
 let passed = 0;
 let failed = 0;
@@ -295,7 +295,7 @@ if (process.platform !== 'win32') {
 }
 
 if (process.platform !== 'win32') {
-  const skillSource = fs.readFileSync(path.join(repoRoot, 'skills', 'skill-stocktake', 'SKILL.md'), 'utf8');
+  const skillSource = fs.readFileSync(path.join(repoRoot, 'skills', 'admin', 'skill-stocktake', 'SKILL.md'), 'utf8');
   const inventorySection = skillSource.split('### Phase 1')[1].split('### Phase 2')[0];
   const inventoryBlock = inventorySection.match(/```bash\n([\s\S]*?)\n```/)[1];
   for (const scenario of ['changed', 'missing mtime', 'null mtime', 'matching', 'legacy matching']) {

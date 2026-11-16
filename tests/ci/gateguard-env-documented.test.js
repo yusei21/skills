@@ -31,7 +31,7 @@ const path = require('path');
 
 const repoRoot = path.join(__dirname, '..', '..');
 const hookPath = path.join(repoRoot, 'scripts', 'hooks', 'gateguard-fact-force.js');
-const skillPath = path.join(repoRoot, 'skills', 'gateguard', 'SKILL.md');
+const skillPath = path.join(repoRoot, 'skills', 'core', 'gateguard', 'SKILL.md');
 
 let passed = 0;
 let failed = 0;
@@ -244,7 +244,7 @@ if (test('every GATEGUARD_* variable the hook reads is documented', () => {
   assert.deepStrictEqual(
     undocumented,
     [],
-    `undocumented in skills/gateguard/SKILL.md: ${undocumented.join(', ')}`
+    `undocumented in skills/core/gateguard/SKILL.md: ${undocumented.join(', ')}`
   );
 })) passed++; else failed++;
 

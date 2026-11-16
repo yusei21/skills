@@ -166,7 +166,7 @@ test('every planned operation is contained within .agents', () => {
   const operations = planFor([
     { id: 'agents-core', paths: ['agents', '.agents', 'AGENTS.md'] },
     { id: 'commands-core', paths: ['commands'] },
-    { id: 'framework-language', paths: ['skills/api-design'] },
+    { id: 'framework-language', paths: ['skills/backend/api-design'] },
   ]);
   const root = path.join('/project', '.agents');
   assert.ok(operations.length > 0);

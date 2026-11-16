@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const repoRoot = path.resolve(__dirname, '..', '..');
-const skillPath = path.join(repoRoot, 'skills', 'docker-patterns', 'SKILL.md');
+const skillPath = path.join(repoRoot, 'skills', 'devops', 'docker-patterns', 'SKILL.md');
 
 let passed = 0;
 let failed = 0;

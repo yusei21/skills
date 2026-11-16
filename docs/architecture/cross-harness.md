@@ -99,7 +99,7 @@ The trust boundary is consistent across every adapter:
   never turns memory frontmatter into a self-asserted approval;
 - active execution state remains in GitHub or Linear, not only in memory.
 
-`skills/unified-memory/SKILL.md` owns this workflow. Codex and Cursor receive
+`skills/admin/unified-memory/SKILL.md` owns this workflow. Codex and Cursor receive
 behavior-identical packaging copies under `.agents/skills/` and
 `.cursor/skills/`; Hermes can import the canonical skill. No harness owns a
 separate authoritative memory store.
@@ -134,11 +134,11 @@ Do not ship:
 
 ## Worked Example
 
-Use `skills/hermes-imports/SKILL.md` as the same skill source across harnesses.
+Use `skills/admin/hermes-imports/SKILL.md` as the same skill source across harnesses.
 
 The workflow is:
 
-1. Author the durable behavior once in `skills/hermes-imports/SKILL.md`.
+1. Author the durable behavior once in `skills/admin/hermes-imports/SKILL.md`.
 2. Keep secrets, local paths, and raw operator memory out of the skill.
 3. Let each harness adapt how the skill is loaded.
 4. Test the source skill and the harness-facing metadata separately.

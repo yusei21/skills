@@ -250,8 +250,8 @@ Wrap a component in `React.memo` only when:
 - Every interactive element must be reachable by keyboard
 - Form inputs need labels — `<label htmlFor>` or `aria-label` if visually labeled by an icon
 - Manage focus on route changes and modal open/close
-- Run `axe` in component tests (see [skills/react-testing](../react-testing/SKILL.md))
-- Cross-link: [skills/accessibility/SKILL.md](../accessibility/SKILL.md) covers WCAG criteria and pattern libraries
+- Run `axe` in component tests (see [skills/frontend/react-testing](../react-testing/SKILL.md))
+- Cross-link: [skills/frontend/accessibility/SKILL.md](../accessibility/SKILL.md) covers WCAG criteria and pattern libraries
 
 ## Routing
 

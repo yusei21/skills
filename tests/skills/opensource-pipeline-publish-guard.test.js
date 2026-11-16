@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Runs the documented Step 7 publish guard of skills/opensource-pipeline/SKILL.md
+ * Runs the documented Step 7 publish guard of skills/devops/opensource-pipeline/SKILL.md
  * against a throwaway git repo, with `gh` stubbed so nothing is published.
  *
  * Run with: node tests/skills/opensource-pipeline-publish-guard.test.js
@@ -14,7 +14,7 @@ const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
-const SKILL_MD = path.join(__dirname, '..', '..', 'skills', 'opensource-pipeline', 'SKILL.md');
+const SKILL_MD = path.join(__dirname, '..', '..', 'skills', 'devops', 'opensource-pipeline', 'SKILL.md');
 
 function test(name, fn) {
   try {

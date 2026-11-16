@@ -17,7 +17,9 @@ const { createInstallState, readInstallState, writeInstallState } = require('../
 const { withOpenCodeInstallLocks } = load(require.resolve('../../scripts/lib/install/opencode-install-lock'));
 const { removeVerifiedLegacyFile } = require('../../scripts/lib/install/opencode-legacy-migration');
 
-const SOURCE_RELATIVE_PATH = path.join('skills', 'skill-comply', 'SKILL.md');
+const SOURCE_RELATIVE_PATH = path.join('skills', 'admin', 'skill-comply', 'SKILL.md');
+// Installed skills are flat whatever the source layout.
+const INSTALLED_RELATIVE_PATH = path.join('skills', 'skill-comply', 'SKILL.md');
 const SKILL_CONTENT = '---\nname: skill-comply\ndescription: Synthetic migration fixture.\n---\n\n# Inert fixture\n';
 const sha256 = value => crypto.createHash('sha256').update(value).digest('hex');
 const lockPath = root => path.join(root, 'ecc-install-state.json.ecc.lock');
@@ -34,7 +36,7 @@ function privateFixture(callback) {
   const legacyRoot = path.join(homeDir, '.opencode');
   const canonicalRoot = path.join(homeDir, '.config', 'opencode');
   const sourcePath = path.join(sourceRoot, SOURCE_RELATIVE_PATH);
-  const legacyFile = path.join(legacyRoot, SOURCE_RELATIVE_PATH);
+  const legacyFile = path.join(legacyRoot, INSTALLED_RELATIVE_PATH);
   const legacyStatePath = path.join(legacyRoot, 'ecc-install-state.json');
   const canonicalStatePath = path.join(canonicalRoot, 'ecc-install-state.json');
   const adapter = { id: 'opencode-home', target: 'opencode', kind: 'home' };
@@ -66,7 +68,7 @@ function privateFixture(callback) {
     writeInstallState(legacyStatePath, createInstallState({ ...stateOptions,
       targetRoot: legacyRoot, installStatePath: legacyStatePath, operations: [operation] }));
     const canonicalOperation = { ...operation, sourcePath,
-      destinationPath: path.join(canonicalRoot, SOURCE_RELATIVE_PATH) };
+      destinationPath: path.join(canonicalRoot, INSTALLED_RELATIVE_PATH) };
     const canonicalPlan = {
       target: 'opencode', adapter, sourceRoot, homeDir, targetRoot: canonicalRoot,
       installRoot: canonicalRoot, installStatePath: canonicalStatePath,
@@ -225,7 +227,7 @@ function runTests() {
     assert.notStrictEqual(state.request.hookConsent, 'enabled');
     assert.strictEqual(state.operations.length, 1);
     assert.strictEqual(state.operations[0].contentSha256, sha256(SKILL_CONTENT));
-    assert.strictEqual(fs.readFileSync(path.join(value.canonicalRoot, SOURCE_RELATIVE_PATH), 'utf8'), SKILL_CONTENT);
+    assert.strictEqual(fs.readFileSync(path.join(value.canonicalRoot, INSTALLED_RELATIVE_PATH), 'utf8'), SKILL_CONTENT);
     assert.strictEqual(fs.existsSync(value.legacyStatePath), false);
     assert.strictEqual(fs.existsSync(value.legacyFile), false);
     assertSourceUnchanged(value);
