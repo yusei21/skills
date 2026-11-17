@@ -29,8 +29,15 @@ falta, em ordem. Atualize ao terminar cada item.
 - **Python:** uv. `[dependency-groups] dev`, backend `uv_build`, `uv.lock`,
   `.python-version` 3.14, mínimo 3.11. O ruff só olha `src/` e `tests/`: o
   ruff 0.16 também formata blocos Python dentro de Markdown e scripts das skills.
-- **Fora do escopo por pedido:** renomear yus, trazer as skills do repositório
-  Harnesses (só a ideia), traduções e patrocínios (removidos).
+- **Fora do escopo por pedido:** trazer as skills do repositório Harnesses (só
+  a ideia) e patrocínios (removidos). A renomeação de ECC para yus, de início
+  fora do escopo, foi feita depois a pedido (ver abaixo).
+- **Runtime continua Node, não Bun.** Os hooks rodam no `node` de quem instala,
+  e a suíte depende de `node:test` e do `c8`. O Bun segue suportado como
+  gerenciador de pacotes dos projetos dos usuários e tem linhas próprias no CI.
+- **Yarn 4 é o gerenciador do repositório** (`packageManager`;
+  `.claude/package-manager.json` também diz `yarn`). npm, pnpm e bun rodam no CI
+  como linhas de compatibilidade.
 
 ## Feito
 
@@ -49,8 +56,10 @@ falta, em ordem. Atualize ao terminar cada item.
   `web-design-guidelines`, `agent-desktop`, `untangle-codebase`, `ponytail*`,
   `graphify`, `taste-skill` (ponte), `design-md-library` (ponte). Ficam fora do
   `pi/core` (motivo em `manifests/pi-core.json`).
-- README novo; traduções, `SPONSORS.md`, `SPONSORING.md` e assets de
-  patrocínio removidos; `--locale` do instalador desativado com mensagem clara.
+- README novo; `SPONSORS.md`, `SPONSORING.md` e assets de patrocínio
+  removidos. As traduções antigas também saíram e o `--locale` do instalador
+  foi desativado com mensagem clara; os documentos da raiz voltaram depois em
+  en, pt-BR e zh-CN, mantidos juntos.
 - **Testes:** as 6 suítes que falhavam foram corrigidas. O
   `audit-closed-references` não dependia de rede: uma data fixa tinha saído da
   janela de 30 dias.
@@ -81,9 +90,9 @@ falta, em ordem. Atualize ao terminar cada item.
   que o código já devolvia e o `.d.ts` antigo omitia.
 - **Publicado** em `github.com/yusei21/yus` (`main`, 16/11/2026; o repositório
   se chamava `yusei21/skills`). Os 96
-  commits do projeto anterior (coleção de skills derivada do yus, até
-  `22151ba`) continuam no histórico; o commit "restart from yus upstream"
-  troca o conteúdo pelo yus original e a modernização vem depois. Skills que
+  commits do projeto anterior (coleção de skills derivada do ECC, até
+  `22151ba`) continuam no histórico; o commit "restart from ECC upstream"
+  (`6528cd7`) troca o conteúdo pelo ECC original e a modernização vem depois. Skills que
   só existiam no projeto anterior estão no histórico (`git show 22151ba:skills/`).
 - **Renomeado de ECC para yus** em todo o projeto: plugins (`yus@yus`,
   `yus-<departamento>`), comando `yus`, variáveis `YUS_*`, pastas, arquivos
@@ -126,7 +135,9 @@ falta, em ordem. Atualize ao terminar cada item.
   disponível. Os executores (`run-with-flags`, os dois bootstraps e o wrapper
   do InsAIts) tratavam isso como falha: um `exit 2` (bloquear) virava 0 ou 1
   e a ação passava. `scripts/lib/spawn-result.js` concentra a regra. Achado
-  por um teste intermitente no macOS.
+  por um teste intermitente no macOS. No Windows o mesmo caso chega como
+  `EOF`, não `EPIPE` (`ad0c1c2`); os dois são aceitos, confirmado pelo job
+  Windows full do CI.
 - **`plan-canvas stop` no Windows:** o CLI e o servidor apagavam o
   `server.json` ao mesmo tempo, e o segundo recebia `EPERM` (arquivo pendente
   de exclusão). O `stop` devolvia um erro e o servidor às vezes não saía.
@@ -134,22 +145,38 @@ falta, em ordem. Atualize ao terminar cada item.
 - **CI consertado (17/11):** `yarn.lock` regenerado, caminhos planos no teste
   do pacote, resumo TAP do Node 22 contado pelo `run-all`, limites de tempo
   ajustados para cobertura e runners lentos, caminho do Dependabot.
+- **Varredura das skills de nuvem, JVM e mobile (17/11):** a `security-review`
+  (única com código de SDK de nuvem) usa o cliente modular do AWS SDK v3
+  (`send(new ...Command())`; o exemplo do CloudWatch nem compilava), regras de
+  security group como recursos separados, Block Public Access e
+  `BucketOwnerEnforced` no S3, `id-token: write` para OIDC e actions fixadas
+  por SHA (o exemplo usava `trufflehog@main`). Spring: `@MockitoBean` no lugar
+  de `@MockBean` (removido no Boot 4), `@ServiceConnection` e Testcontainers 2.
+  Quarkus: `quarkus-rest` e `@WithTestResource`. Exposed 1.6 (pacotes
+  `org.jetbrains.exposed.v1`), Ktor 3.6, Flyway 13, HikariCP 7 e o resto das
+  versões pelo Maven Central. Riverpod 3 (`.value` em vez de `valueOrNull`,
+  provider sem o sufixo `Notifier`). Postgres 14 (fim de vida em 11/2026)
+  trocado por 18 no exemplo de CI do Django. As skills de Swift/iOS 26, Compose
+  e React Native já estavam em dia.
+- **Tipagem:** `atomic-write.js` e `install/claude-settings-lock.js` em
+  `strict`. O `runWithSettingsLock` não quebra mais quando o callback lança um
+  valor que não é objeto e o lock também falha ao liberar.
 - `node scripts/dev/generate-skill-triggers.js --keep-triggers` atualiza o
   `registryDigest` sem chamar modelo. Use depois de editar skills sem mudar a
   `description`; com descrição nova ou skill nova, rode a geração completa.
 
 ## Falta, em ordem
 
-1. **Varredura das skills, continuação.** Feito em 17/11: Prisma 7, SDK de
-   MCP (`registerTool`, transportes), Next.js 15/16 (`params` assíncrono,
-   `'use cache'`, `proxy.ts`), Zod 4 (`z.email()`), tipos do Python 3.12. Uma
-   busca por APIs obsoletas conhecidas (React, Pydantic, SQLAlchemy, FastAPI,
-   AI SDK, Supabase, Expo, Go, Rust) não achou mais nada. Falta ler skill por
-   skill os SDKs de nuvem (AWS, GCP, Azure) e as skills de mobile e JVM.
-2. **Tipagem gradual, próximos módulos.** `utils.js`, `session-manager.js` e
-   `session-aliases.js` já estão em strict. Os próximos candidatos são os
-   módulos que eles importam sem tipo (`atomic-write.js`,
-   `install/claude-settings-lock.js`).
+Os itens da lista original estão feitos. O que sobra é opcional:
+
+1. **Tipagem gradual, quando valer a pena.** Em strict: `package-manager.js`,
+   `utils.js`, `session-manager.js`, `session-aliases.js`, `atomic-write.js` e
+   `install/claude-settings-lock.js`. Os próximos naturais são os que usam o
+   lock (`install/claude-settings.js`, `claude-plugin-setup.js`).
+2. **Versões fixadas nas skills envelhecem.** Repita a busca por versões e APIs
+   obsoletas a cada poucos meses; as versões Maven saem de
+   `repo1.maven.org/maven2/<grupo>/<artefato>/maven-metadata.xml` (o índice de
+   busca do Maven Central fica meses atrasado).
 
 ## Limitações conhecidas
 
@@ -174,6 +201,16 @@ claude plugin validate .
 ```
 
 ## Último resultado
+
+Sessão de 17/11/2026 (fim de tarde), varredura de nuvem/JVM/mobile e tipagem
+de `atomic-write` e `claude-settings-lock`:
+
+- `npm test`: 9295 testes em 455 arquivos, 0 falhas; `npm run typecheck`: ok;
+  ESLint: 0 erros; markdownlint: ok; `build-pi-core.js --check`: ok.
+- CI do `ad0c1c2` (run `44109809052`): tudo verde, inclusive o Windows full,
+  menos dois jobs do macOS cancelados sem runner (falta de máquina no GitHub).
+
+Rodada anterior:
 
 Sessão de 16/11/2026 (noite), tipagem dos módulos de sessão:
 

@@ -13,10 +13,11 @@
 
 ## Stack
 
-- **Runtime**: Node.js >=18 (no transpilation, plain CommonJS)
+- **Runtime**: Node.js >=22.12 (`engines`; no transpilation, plain CommonJS)
 - **Test runner**: `node tests/run-all.js` — individual files via `node tests/**/*.test.js`
 - **Linter**: ESLint (`@eslint/js`, flat config)
 - **Coverage**: c8
+- **Package manager**: Yarn 4 (`packageManager` in `package.json`); npm, pnpm and bun run in CI as compatibility lanes
 - **Lint**: markdownlint-cli for `.md` files
 
 ## File Conventions
@@ -29,7 +30,8 @@
 ## Code Style
 
 - CommonJS only — no ESM (`import`/`export`) unless file ends in `.mjs`
-- No TypeScript — plain `.js` throughout
+- No `.ts` in runtime code — plain `.js` throughout. Types come from JSDoc: a file
+  with a `// @ts-check` header is held to `strict` by `npm run typecheck`
 - Prefer `const` over `let`; never `var`
 - Keep hook scripts under 200 lines — extract helpers to `scripts/lib/`
 - All hooks must `exit 0` on non-critical errors (never block tool execution unexpectedly)

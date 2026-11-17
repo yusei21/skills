@@ -2,8 +2,26 @@
 
 ## Unreleased
 
+### Breaking
+
+- The fork is renamed from ECC to yus, always written in lowercase: Claude Code plugins `yus@yus` and `yus-<department>`, marketplace `yus`, CLI `yus` (`scripts/yus.js`), environment variables `YUS_*`, the Rust crate in `yus2/` (`yus-tui`), and the skills `yus-guide`, `configure-yus` and `yus-recipes`. The legacy `everything-claude-code` identifiers are still recognised.
+- Node.js 22.12 or newer is required (`engines`); Node 26 LTS is recommended.
+- Skills are grouped into 18 departments under `skills/<department>/<skill>/`. The `yus` plugin now carries only the core skills, which cuts its fixed context from about 33,800 to about 9,500 tokens per session; each `yus-<department>` plugin (or `yus-all-departments`, never both) carries the rest. Installed skills stay flat (`skills/<skill>/`).
+
+### Added
+
+- Trigger phrases for all 328 skills, used by automatic skill selection.
+- `yus skills suggest "<task>"` in `yus-tui`.
+- Skills `pr-review-threads` and `human-attention-budget`, and a before/after section for UI changes in `verification-loop`, adapted from deepseek-ai/dsh-superagent-prototype (MIT).
+- Reviewed community skills, pinned to a commit with their licence alongside: `web-design-guidelines`, `agent-desktop`, `untangle-codebase`, `ponytail*`, `graphify`, `taste-skill` and `design-md-library`.
+- `scripts/ci/check-core-context-budget.js` (`npm run context-budget:check`) fails `npm test` when the names and descriptions every session loads grow past their budget.
+- Root documents in English, Portuguese (pt-BR) and Chinese (zh-CN).
+
 ### Changed
 
+- Toolchain: TypeScript 7 checks JSDoc-typed CommonJS (`npm run typecheck`; files with `// @ts-check` are strict), ESLint 10, c8 12 and Yarn 4.18.1. Rust uses edition 2024 (MSRV 1.85, toolchain pinned). The Python package moved to uv (Python 3.11+).
+- CI tests Node 22, 24 and 26 and adds typecheck, department, Rust and Python jobs.
+- Skill examples refreshed for current releases: GitHub Actions majors, Claude 5 model IDs, Prisma 7, the MCP SDK, Next.js 16, Zod 4, Python 3.12 typing, the modular AWS SDK v3, Terraform AWS provider rule resources, Spring Boot 4 (`@MockitoBean`, `@ServiceConnection`, Testcontainers 2), Quarkus (`quarkus-rest`, `@WithTestResource`), Exposed 1.x, Ktor 3.6 and Riverpod 3.
 - GateGuard first-touch denials ask questions that fit the target: by class (instruction, test, prose, config, code) on its project-relative path, and for code by what the change touches. An edit that changes no public declaration asks for the in-module call sites instead of importers and public API, and the data-schema question is dropped when the change handles no data. Changes the hook cannot read with confidence keep the original four questions word for word.
 - GateGuard's external-contract question ("name what outside this repository decides the format, units, timezone or protocol semantics") is opt-in through `GATEGUARD_EXTERNAL_CONTRACT_QUESTION`. Hidden-intent trials did not show it helps, so by default a code change that handles data asks only the data-schema question, and an unreadable change gets the original four questions and condensed hint.
 - GateGuard credits investigation that already happened: a completed, non-error `Glob`, `Grep`, `LS`, or search-style Bash/PowerShell command in the current human turn that names the target and whose scope contains it passes the first touch with a note. `Read` never counts, nor do searches in the same batch, before a compaction, with error results, or whose filters exclude the target or limit the search to another directory. When a denial follows a search that nearly counted, it names that search and why it did not count.
@@ -21,6 +39,10 @@
 
 ### Fixed
 
+- Hooks that exit before reading all of stdin keep their exit status. `spawnSync` reports `EPIPE` (or `EOF` on Windows) even though the status is available, and the hook runners treated that as a failure, so a blocking `exit 2` became 0 or 1 and the action went through.
+- `plan-canvas stop` no longer fails on Windows when the CLI and the server delete `server.json` at the same time (`EPERM` on a file pending deletion).
+- The package-manager config no longer accepts inherited keys such as `toString` or `constructor` as a package manager, and `getExecCommand` rejects arguments that contain a newline.
+- Security examples no longer run a third-party action from a branch (`trufflehog@main`), and the OIDC example grants the `id-token: write` permission it needs.
 - Context-size detection keeps a complete usage record at the start of the transcript tail, so a boundary-aligned record still triggers the strategic-compact reminder. Partial records remain excluded.
 - GateGuard keys checked files by canonical path, resolving relative targets against the tool `cwd`, so `a.py`, `./a.py`, and the absolute path (or differently cased and separated Windows spellings) share one first touch. Keys from earlier state files are still honoured.
 - GateGuard gates a MultiEdit call as its `tool_input.file_path` when its entries do not name their own path, which is the tool's own shape; such calls were never gated before, including on sensitive files.
