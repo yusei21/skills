@@ -13,6 +13,7 @@
 
 const path = require('path');
 const { spawnSync } = require('child_process');
+const { spawnRunError } = require('../lib/spawn-result');
 
 const MAX_STDIN = 1024 * 1024;
 const WINDOWS_SHELL_UNSAFE_PATH_CHARS = /[&|<>^%!]/;
@@ -82,8 +83,9 @@ process.stdin.on('end', () => {
 
   // Log non-ENOENT spawn errors (timeout, signal kill, etc.) so users
   // know the security monitor did not run - fail-open with a warning.
-  if (result.error) {
-    process.stderr.write(`[InsAIts] Security monitor failed to run: ${result.error.message}\n`);
+  const runError = spawnRunError(result);
+  if (runError) {
+    process.stderr.write(`[InsAIts] Security monitor failed to run: ${runError.message}\n`);
     process.stdout.write(raw);
     process.exit(0);
   }

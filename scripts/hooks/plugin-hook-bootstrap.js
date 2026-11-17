@@ -6,6 +6,7 @@ const { StringDecoder } = require('string_decoder');
 const { spawnSync } = require('child_process');
 const { ensureAgentDataHomeEnv } = require('../lib/agent-data-home');
 const { normalizePluginRootForPlatform } = require('../lib/resolve-yus-root');
+const { spawnRunError, spawnFailed } = require('../lib/spawn-result');
 const { resolveWindowsBashCandidates } = require('../lib/windows-bash');
 const { readStdinRaw: readBoundedStdin, resolveMaxStdin } = require('./hook-input');
 
@@ -301,9 +302,12 @@ async function main() {
   passthrough(result);
   writeStderr(result.stderr);
 
-  if (result.error || result.signal || result.status === null) {
-    const reason = result.error
-      ? result.error.message
+  // spawnFailed ignores EPIPE from a child that exited with a status without
+  // reading all of stdin, so a blocking exit 2 is not turned into an allow.
+  if (spawnFailed(result)) {
+    const runError = spawnRunError(result);
+    const reason = runError
+      ? runError.message
       : result.signal
         ? `terminated by signal ${result.signal}`
         : 'missing exit status';

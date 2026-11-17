@@ -6,6 +6,7 @@ const { StringDecoder } = require('string_decoder');
 const fs = require('fs');
 const { spawnSync } = require('child_process');
 const { normalizePluginRootForPlatform } = require('../lib/resolve-yus-root');
+const { spawnRunError, spawnFailed } = require('../lib/spawn-result');
 const { readStdinRaw, resolveMaxStdin } = require('./hook-input');
 const { createHookContextScanner } = require('./hook-input-limits');
 
@@ -103,7 +104,7 @@ async function main() {
     }
   );
 
-  const failed = result.error || result.status === null || result.signal;
+  const failed = spawnFailed(result);
   const stdout = !failed && typeof result.stdout === 'string' && result.stdout !== raw
     ? result.stdout
     : '';
@@ -111,8 +112,9 @@ async function main() {
   let exitCode = Number.isInteger(result.status) ? result.status : 0;
 
   if (failed) {
-    const reason = result.error
-      ? result.error.message
+    const runError = spawnRunError(result);
+    const reason = runError
+      ? runError.message
       : result.signal
         ? `signal ${result.signal}`
         : 'missing exit status';

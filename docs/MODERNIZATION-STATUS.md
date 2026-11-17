@@ -121,6 +121,12 @@ falta, em ordem. Atualize ao terminar cada item.
   a skill errada. Uma geração completa nova desfaz isso; rode os testes
   `tests/lib/context-selection.test.js` e `context-routing-index.test.js`
   depois e corrija as frases que eles apontarem.
+- **Hooks que bloqueiam sem ler o stdin:** quando um hook sai antes de ler toda
+  a entrada, o `spawnSync` acusa `EPIPE` mesmo com o código de saída
+  disponível. Os executores (`run-with-flags`, os dois bootstraps e o wrapper
+  do InsAIts) tratavam isso como falha: um `exit 2` (bloquear) virava 0 ou 1
+  e a ação passava. `scripts/lib/spawn-result.js` concentra a regra. Achado
+  por um teste intermitente no macOS.
 - **`plan-canvas stop` no Windows:** o CLI e o servidor apagavam o
   `server.json` ao mesmo tempo, e o segundo recebia `EPERM` (arquivo pendente
   de exclusão). O `stop` devolvia um erro e o servidor às vezes não saía.

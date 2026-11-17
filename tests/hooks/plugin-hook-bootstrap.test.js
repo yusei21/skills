@@ -232,6 +232,29 @@ process.exit(7);
     }
   })) passed++; else failed++;
 
+  if (test('node mode keeps a blocking exit when the child ignores a large stdin', () => {
+    const root = createTempDir();
+    try {
+      // The input exceeds any pipe buffer, so writing it always hits EPIPE
+      // once the child has exited; the child's exit 2 must still block.
+      writeFile(root, path.join('scripts', 'block.js'), `
+process.stderr.write('blocked\\n');
+process.exit(2);
+`);
+
+      const result = run(['node', path.join('scripts', 'block.js')], {
+        root,
+        input: 'x'.repeat(512 * 1024),
+      });
+
+      assert.strictEqual(result.status, 2);
+      assert.strictEqual(result.stdout, '');
+      assert.strictEqual(result.stderr, 'blocked\n');
+    } finally {
+      cleanup(root);
+    }
+  })) passed++; else failed++;
+
   if (test('shell mode runs target script through an available shell', () => {
     const root = createTempDir();
     try {

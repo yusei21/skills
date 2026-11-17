@@ -47,6 +47,7 @@ writeFixture(
 );
 writeFixture('legacy-empty.js', "process.stdin.resume(); process.stdin.on('end', () => process.exit(0));\n");
 writeFixture('legacy-echo.js', 'process.stdin.pipe(process.stdout);\n');
+writeFixture('legacy-block.js', "process.stderr.write('blocked\\n'); process.exit(2);\n");
 writeFixture(
   'legacy-inspect.js',
   "let raw=''; process.stdin.setEncoding('utf8'); process.stdin.on('data', chunk => { raw += chunk; }); process.stdin.on('end', () => process.stdout.write(JSON.stringify({ bytes: Buffer.byteLength(raw, 'utf8'), truncated: process.env.YUS_HOOK_INPUT_TRUNCATED, maxStdin: process.env.YUS_HOOK_INPUT_MAX_BYTES })));\n"
@@ -545,6 +546,20 @@ if (
     assert.strictEqual(Buffer.byteLength(result.stderr, 'utf8'), 512 * 1024);
     assert.match(result.stdout, /^x+$/);
     assert.match(result.stderr, /^y+$/);
+  })
+)
+  passed++;
+else failed++;
+
+if (
+  test('a legacy hook that blocks without reading a large stdin still blocks', () => {
+    // The input exceeds any pipe buffer, so writing it hits EPIPE after the
+    // hook exits; its exit 2 must reach the harness instead of a failure exit 1.
+    const large = JSON.stringify({ hook_event_name: 'PreToolUse', tool_name: 'Bash', tool_input: { command: 'x'.repeat(512 * 1024) } });
+    const result = run(['pre:test', 'hooks/legacy-block.js', 'standard'], {}, large);
+    assert.strictEqual(result.status, 2, result.stderr);
+    assert.match(result.stderr, /blocked/);
+    assert.doesNotMatch(result.stderr, /EPIPE/);
   })
 )
   passed++;
