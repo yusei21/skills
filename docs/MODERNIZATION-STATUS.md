@@ -108,19 +108,36 @@ falta, em ordem. Atualize ao terminar cada item.
   categoria passar do limite (~5% acima da base: 6154/14731/15986 caracteres,
   ~9.200 tokens no total). Roda no `npm test`; `npm run context-budget:check`
   mostra os itens maiores. Baixe o limite quando o texto encolher.
+- **Gatilhos:** as 328 skills têm frases de gatilho (3721), geradas com
+  `claude-sonnet-5-5`. O gerador agora mostra o motivo da falha do `claude`,
+  não apaga gatilhos existentes quando uma chamada falha e aceita `--missing`
+  para retomar só as skills sem gatilhos (útil quando o limite de uso acaba
+  no meio). O token deve ficar numa linha só: uma quebra de linha no meio dá
+  "Invalid auth token".
+  Seis skills tiveram as frases revisadas à mão depois da geração
+  (`santa-method`, `ai-regression-testing`, `accessibility`, `ui-demo`,
+  `ralphinho-rfc-pipeline`, `security-review`): frases com palavras genéricas
+  ("two", "same", "make", "test", "pass") faziam a seleção automática escolher
+  a skill errada. Uma geração completa nova desfaz isso; rode os testes
+  `tests/lib/context-selection.test.js` e `context-routing-index.test.js`
+  depois e corrija as frases que eles apontarem.
+- **CI consertado (17/11):** `yarn.lock` regenerado, caminhos planos no teste
+  do pacote, resumo TAP do Node 22 contado pelo `run-all`, limites de tempo
+  ajustados para cobertura e runners lentos, caminho do Dependabot.
 - `node scripts/dev/generate-skill-triggers.js --keep-triggers` atualiza o
   `registryDigest` sem chamar modelo. Use depois de editar skills sem mudar a
   `description`; com descrição nova ou skill nova, rode a geração completa.
 
 ## Falta, em ordem
 
-1. **Gatilhos das skills.** Só 46 de 326 skills têm frases de gatilho; o
-   `skills suggest` usa nome e descrição para as outras. A geração completa
-   precisa de `CLAUDE_CODE_OAUTH_TOKEN` (crie com `claude setup-token`) e roda
-   `node scripts/dev/generate-skill-triggers.js --provider claude`.
-2. **Varredura das skills, segunda passada.** A primeira cobriu versões de
-   actions, runtimes e IDs de modelo. Faltam APIs de bibliotecas por domínio
-   (React/Next, ORMs, SDKs de nuvem), skill por skill.
+1. **Varredura das skills, continuação.** Feito em 17/11: Prisma 7, SDK de
+   MCP (`registerTool`, transportes), Next.js 15/16 (`params` assíncrono,
+   `'use cache'`, `proxy.ts`), Zod 4 (`z.email()`), tipos do Python 3.12. Uma
+   busca por APIs obsoletas conhecidas (React, Pydantic, SQLAlchemy, FastAPI,
+   AI SDK, Supabase, Expo, Go, Rust) não achou mais nada. Falta ler skill por
+   skill os SDKs de nuvem (AWS, GCP, Azure) e as skills de mobile e JVM.
+2. **Instabilidade conhecida no CI:** `integration/plan-canvas-e2e.test.js`
+   falhou uma vez no Windows (`stop` sem `status`); não investigado.
 3. **Tipagem gradual, próximos módulos.** `utils.js`, `session-manager.js` e
    `session-aliases.js` já estão em strict. Os próximos candidatos são os
    módulos que eles importam sem tipo (`atomic-write.js`,

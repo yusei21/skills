@@ -14,8 +14,12 @@
 //   node scripts/dev/generate-skill-triggers.js --auth-home ~/.yus-eval/auth \
 //     [--model gpt-5.6-sol] [--executable /path/to/codex] [--batch 25] [--dry-run]
 //   node scripts/dev/generate-skill-triggers.js --provider claude \
-//     [--model claude-sonnet-5] [--executable /path/to/claude] [--batch 40] [--dry-run]
+//     [--model claude-sonnet-5-5] [--executable /path/to/claude] [--batch 40] [--dry-run]
 //   node scripts/dev/generate-skill-triggers.js --keep-triggers
+//   node scripts/dev/generate-skill-triggers.js --provider claude --missing
+//
+// --missing only calls the provider for skills that have no triggers yet and
+// keeps every other skill's phrases, so an interrupted run can be resumed.
 //
 // --keep-triggers makes no provider calls: it keeps the existing phrases,
 // drops those of removed skills, and re-stamps registryDigest. Use it after
@@ -39,7 +43,7 @@ const { digestObject, stableStringify } = require('../lib/context-profile-suppor
 const MANIFEST_PATH = 'manifests/context-packs/skill-triggers@1.json';
 const MAX_TRIGGERS_PER_SKILL = 12;
 const MAX_TRIGGER_CHARS = 80;
-const DEFAULT_MODEL = { codex: 'gpt-5.6-sol', claude: 'claude-sonnet-5' };
+const DEFAULT_MODEL = { codex: 'gpt-5.6-sol', claude: 'claude-sonnet-5-5' };
 
 function parseFlags(argv) {
   const flags = { batch: 25 };
@@ -47,6 +51,7 @@ function parseFlags(argv) {
     const arg = argv[index];
     if (arg === '--dry-run') flags.dryRun = true;
     else if (arg === '--keep-triggers') flags.keepTriggers = true;
+    else if (arg === '--missing') flags.missing = true;
     else if (['--auth-home', '--model', '--executable', '--batch', '--provider'].includes(arg)) {
       flags[arg.slice(2).replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = argv[index += 1];
     } else throw new Error(`Unknown flag: ${arg}`);
@@ -101,13 +106,60 @@ function keepTriggers(repoRoot, registry, entries) {
     + (dropped.length ? `; dropped removed skills: ${dropped.join(', ')}` : ''));
 }
 
+/**
+ * The reason `claude --print --output-format json` gives for a failed run, such as
+ * an invalid token, without echoing credentials. Empty when there is none.
+ */
+function claudeFailureReason(stdout) {
+  try {
+    const result = JSON.parse(String(stdout).trim().split('\n').pop());
+    if (result && result.is_error && typeof result.result === 'string') {
+      return `: ${result.result.replace(/sk-ant-[\w-]+/g, '[redacted]').slice(0, 200)}`;
+    }
+  } catch { /* not JSON */ }
+  return '';
+}
+
+/**
+ * Refuse to write when nothing succeeded, and let each skill whose call failed keep
+ * the phrases it already had instead of losing them.
+ */
+function keepPreviousOnFailure(triggers, failed, previous, newlyGenerated) {
+  const generated = newlyGenerated === null ? Object.keys(triggers).length : newlyGenerated;
+  if (!generated && failed.length) {
+    throw new Error(`every provider call failed; ${MANIFEST_PATH} was left unchanged (first failure: ${failed[0]})`);
+  }
+  for (const id of failed) {
+    if (Array.isArray(previous[id]) && previous[id].length) triggers[id] = previous[id];
+  }
+}
+
+/** The phrases already recorded for the given skills, by id. */
+function existingTriggers(entries, previous) {
+  const kept = {};
+  for (const entry of entries) {
+    if ((previous[entry.id] || []).length) kept[entry.id] = previous[entry.id];
+  }
+  return kept;
+}
+
+function readPreviousTriggers(repoRoot) {
+  const previousPath = path.join(repoRoot, MANIFEST_PATH);
+  if (!fs.existsSync(previousPath)) return {};
+  return JSON.parse(fs.readFileSync(previousPath, 'utf8')).triggers || {};
+}
+
 function main() {
   const flags = parseFlags(process.argv);
   const repoRoot = path.join(__dirname, '..', '..');
   const registry = loadContextRegistry({ repoRoot });
-  const entries = registry.entries.filter(entry => entry.id.startsWith('skill:'));
+  const allEntries = registry.entries.filter(entry => entry.id.startsWith('skill:'));
+  const previousTriggers = readPreviousTriggers(repoRoot);
+  const entries = flags.missing && !flags.keepTriggers
+    ? allEntries.filter(entry => !(previousTriggers[entry.id] || []).length)
+    : allEntries;
   if (flags.keepTriggers) {
-    keepTriggers(repoRoot, registry, entries);
+    keepTriggers(repoRoot, registry, allEntries);
     return;
   }
   const executable = flags.executable || (flags.provider === 'claude' ? 'claude' : `${process.env.HOME}/.yus-eval/codex/node_modules/.bin/codex`);
@@ -120,7 +172,7 @@ function main() {
   if (family === 'codex' && (!flags.authHome || !path.isAbsolute(flags.authHome))) throw new Error('--auth-home with an absolute dedicated login home is required for Codex');
   const lease = family === 'codex' ? createAuthLease(flags.authHome) : null;
   const claudeToken = () => process.env.CLAUDE_CODE_OAUTH_TOKEN || readClaudeKeychainToken();
-  const triggers = {};
+  const triggers = flags.missing ? existingTriggers(allEntries, previousTriggers) : {};
   const failed = [];
   const callProvider = batch => {
     const home = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'yus-trigger-gen-'));
@@ -146,7 +198,7 @@ function main() {
         ['--print', '--output-format', 'json', '--tools', '', '--no-session-persistence', '--model', model],
         { input: promptFor(batch), cwd: home, env, encoding: 'utf8', shell: false,
           timeout: 240000, killSignal: 'SIGKILL', maxBuffer: 1024 * 1024 });
-      if (result.status !== 0) throw new Error(`provider exited ${result.status}`);
+      if (result.status !== 0) throw new Error(`provider exited ${result.status}${claudeFailureReason(result.stdout)}`);
       return extractJson(parseClaudeJson(result.stdout).text);
     } finally { fs.rmSync(home, { recursive: true, force: true, maxRetries: 5 }); }
   };
@@ -169,17 +221,19 @@ function main() {
   };
   for (let index = 0; index < entries.length; index += flags.batch) {
     processBatch(entries.slice(index, index + flags.batch));
-    console.log(`progress: ${Object.keys(triggers).length}/${entries.length} skills have triggers`);
+    console.log(`progress: ${Object.keys(triggers).length}/${allEntries.length} skills have triggers`);
   }
+  keepPreviousOnFailure(triggers, failed, previousTriggers, flags.missing ? entries.length - failed.length : null);
   const manifest = { schemaVersion: 1, id: 'skill-triggers@1', registryDigest: registry.registryDigest,
     model: { id: model, ...(family === 'codex' ? { effort: 'low' } : {}),
       source: family === 'codex' ? 'codex-subscription-lease' : 'claude-subscription-login' },
     generatedAt: new Date().toISOString(),
-    coverage: { skills: entries.length, withTriggers: Object.keys(triggers).length },
+    coverage: { skills: allEntries.length, withTriggers: Object.keys(triggers).length },
     triggers, triggersDigest: digestObject(triggers) };
   const target = path.join(repoRoot, MANIFEST_PATH);
   fs.mkdirSync(path.dirname(target), { recursive: true });
-  fs.writeFileSync(target, `${stableStringify(manifest)}\n`);
+  // Same layout as --keep-triggers and the checked-in file: sorted keys, two-space indent.
+  fs.writeFileSync(target, `${JSON.stringify(JSON.parse(stableStringify(manifest)), null, 2)}\n`);
   console.log(`wrote ${MANIFEST_PATH}: ${manifest.coverage.withTriggers}/${manifest.coverage.skills} skills, ${Object.values(triggers).reduce((n, t) => n + t.length, 0)} triggers`);
   if (failed.length) { console.error(`skills with no usable triggers: ${failed.join(', ')}`); process.exitCode = 1; }
 }
