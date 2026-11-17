@@ -999,6 +999,22 @@ async function main(suite = createTestRunner()) {
   await artifactRaceTests(test);
   await fixtureIsolationTests(test);
   await integrationCleanupTests(test);
+
+  await test('server-info removal tolerates the Windows delete race on stop', () => {
+    const { removeServerInfo } = require('../../scripts/plan-canvas');
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-canvas-info-'));
+    try {
+      const info = path.join(stateDir, 'server.json');
+      fs.writeFileSync(info, '{}');
+      assert.strictEqual(removeServerInfo(stateDir), true);
+      assert.strictEqual(fs.existsSync(info), false);
+      assert.strictEqual(removeServerInfo(stateDir), true, 'an already-removed file is fine');
+      const pending = () => { throw Object.assign(new Error('EPERM: operation not permitted, unlink'), { code: 'EPERM' }); };
+      assert.strictEqual(removeServerInfo(stateDir, pending), false, 'EPERM must not throw');
+    } finally {
+      fs.rmSync(stateDir, { recursive: true, force: true });
+    }
+  });
   if (process.argv.includes('--artifact-security-only')) return;
 
   await withResourceScope(async resources => {

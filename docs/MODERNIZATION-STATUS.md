@@ -121,6 +121,10 @@ falta, em ordem. Atualize ao terminar cada item.
   a skill errada. Uma geração completa nova desfaz isso; rode os testes
   `tests/lib/context-selection.test.js` e `context-routing-index.test.js`
   depois e corrija as frases que eles apontarem.
+- **`plan-canvas stop` no Windows:** o CLI e o servidor apagavam o
+  `server.json` ao mesmo tempo, e o segundo recebia `EPERM` (arquivo pendente
+  de exclusão). O `stop` devolvia um erro e o servidor às vezes não saía.
+  A remoção agora é tolerante a falhas nos dois lados.
 - **CI consertado (17/11):** `yarn.lock` regenerado, caminhos planos no teste
   do pacote, resumo TAP do Node 22 contado pelo `run-all`, limites de tempo
   ajustados para cobertura e runners lentos, caminho do Dependabot.
@@ -136,9 +140,7 @@ falta, em ordem. Atualize ao terminar cada item.
    busca por APIs obsoletas conhecidas (React, Pydantic, SQLAlchemy, FastAPI,
    AI SDK, Supabase, Expo, Go, Rust) não achou mais nada. Falta ler skill por
    skill os SDKs de nuvem (AWS, GCP, Azure) e as skills de mobile e JVM.
-2. **Instabilidade conhecida no CI:** `integration/plan-canvas-e2e.test.js`
-   falhou uma vez no Windows (`stop` sem `status`); não investigado.
-3. **Tipagem gradual, próximos módulos.** `utils.js`, `session-manager.js` e
+2. **Tipagem gradual, próximos módulos.** `utils.js`, `session-manager.js` e
    `session-aliases.js` já estão em strict. Os próximos candidatos são os
    módulos que eles importam sem tipo (`atomic-write.js`,
    `install/claude-settings-lock.js`).

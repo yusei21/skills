@@ -82,6 +82,19 @@ function serverInfoPath(stateDir) {
   return path.join(stateDir, 'server.json');
 }
 
+// Best-effort: on stop the CLI and the exiting server both delete this file,
+// and on Windows the second delete of a file pending deletion fails with
+// EPERM or EBUSY. A leftover file is harmless (it is checked against /health),
+// so a failed removal must never block the stop or the server's exit.
+function removeServerInfo(stateDir, remove = fs.rmSync) {
+  try {
+    remove(serverInfoPath(stateDir), { force: true });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function readServerInfo(stateDir) {
   try {
     return JSON.parse(fs.readFileSync(serverInfoPath(stateDir), 'utf8'));
@@ -325,7 +338,7 @@ async function cmdEnd(file, { port }) {
 async function cmdStop({ stateDir, port }) {
   if (!(await healthCheck(port))) return { status: 'not running' };
   await request(port, 'POST', '/shutdown').catch(() => {});
-  fs.rmSync(serverInfoPath(stateDir), { force: true });
+  removeServerInfo(stateDir);
   return { status: 'stopping' };
 }
 
@@ -338,7 +351,7 @@ async function cmdServer(args, { stateDir, port }) {
   const shutdown = async code => {
     if (shuttingDown) return;
     shuttingDown = true;
-    fs.rmSync(serverInfoPath(stateDir), { force: true });
+    removeServerInfo(stateDir);
     await canvas.close().catch(() => {});
     process.exit(code);
   };
@@ -403,4 +416,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { main, ensureServer, healthCheck };
+module.exports = { main, ensureServer, healthCheck, removeServerInfo };
