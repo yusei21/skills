@@ -338,7 +338,7 @@ async function main() {
   const legacyStdout = sanitizeEcho(resolveLegacySpawnStdout(result));
   if (result.stderr) process.stderr.write(result.stderr);
 
-  // EPIPE from a legacy hook that exited without reading all of stdin is not a
+  // EPIPE (EOF on Windows) from a legacy hook that exited without reading all of stdin is not a
   // failure: its status (exit 2 blocks) must reach the harness unchanged.
   if (spawnFailed(result)) {
     const runError = spawnRunError(result);

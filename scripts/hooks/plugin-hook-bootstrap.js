@@ -302,7 +302,7 @@ async function main() {
   passthrough(result);
   writeStderr(result.stderr);
 
-  // spawnFailed ignores EPIPE from a child that exited with a status without
+  // spawnFailed ignores EPIPE (EOF on Windows) from a child that exited with a status without
   // reading all of stdin, so a blocking exit 2 is not turned into an allow.
   if (spawnFailed(result)) {
     const runError = spawnRunError(result);

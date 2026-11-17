@@ -20,6 +20,14 @@ test('EPIPE from a child that exited with a status is not a failure', () => {
   assert.strictEqual(spawnFailed(result), false);
 });
 
+test('EOF, which Windows reports for the same case, is not a failure either', () => {
+  const eof = Object.assign(new Error('spawnSync node.exe EOF'), { code: 'EOF' });
+  const result = { error: eof, status: 2, signal: null };
+  assert.strictEqual(spawnRunError(result), null);
+  assert.strictEqual(spawnFailed(result), false);
+  assert.strictEqual(spawnFailed({ error: eof, status: null, signal: null }), true);
+});
+
 test('EPIPE without a status, or with a signal, is still a failure', () => {
   assert.ok(spawnRunError({ error: epipe(), status: null, signal: null }));
   assert.strictEqual(spawnFailed({ error: epipe(), status: null, signal: null }), true);
