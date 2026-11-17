@@ -74,7 +74,11 @@ falta, em ordem. Atualize ao terminar cada item.
   `claude-haiku-5-5` / `claude-sonnet-5-5` e tabela de preços atualizada.
 - **node:test:** mais 48 suítes convertidas pelo codemod (mesma contagem de
   testes antes e depois).
-- **Tipagem:** `scripts/lib/utils.js` em `strict`, sem o `utils.d.ts`.
+- **Tipagem:** `scripts/lib/utils.js`, `session-aliases.js` e
+  `session-manager.js` em `strict`, sem os `.d.ts` escritos à mão. O
+  `errorField` do `utils.js` é exportado para ler erros capturados sem supor
+  `Error`. O `SessionMetadata` agora inclui `project`, `branch` e `worktree`,
+  que o código já devolvia e o `.d.ts` antigo omitia.
 - **Publicado** em `github.com/yusei21/yus` (`main`, 16/11/2026; o repositório
   se chamava `yusei21/skills`). Os 96
   commits do projeto anterior (coleção de skills derivada do yus, até
@@ -102,9 +106,10 @@ falta, em ordem. Atualize ao terminar cada item.
 2. **Varredura das skills, segunda passada.** A primeira cobriu versões de
    actions, runtimes e IDs de modelo. Faltam APIs de bibliotecas por domínio
    (React/Next, ORMs, SDKs de nuvem), skill por skill.
-3. **Tipagem gradual, próximos módulos.** `utils.js` já está em strict; os
-   próximos são `session-manager.js` e `session-aliases.js` (ainda com `.d.ts`
-   escrito à mão).
+3. **Tipagem gradual, próximos módulos.** `utils.js`, `session-manager.js` e
+   `session-aliases.js` já estão em strict. Os próximos candidatos são os
+   módulos que eles importam sem tipo (`atomic-write.js`,
+   `install/claude-settings-lock.js`).
 
 ## Limitações conhecidas
 
@@ -129,6 +134,13 @@ claude plugin validate .
 ```
 
 ## Último resultado
+
+Sessão de 16/11/2026 (noite), tipagem dos módulos de sessão:
+
+- `npm test`: 9280 testes em 453 arquivos, 0 falhas.
+- `npm run typecheck`: ok; ESLint nos três arquivos alterados: 0 erros.
+
+Rodada anterior:
 
 Sessão de 16/11/2026 (tarde), commit final no branch `modernize-2026`:
 

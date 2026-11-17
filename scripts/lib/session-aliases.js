@@ -1,7 +1,38 @@
+// @ts-check
 /**
  * Session Aliases Library for Claude Code
  * Manages session aliases stored in $YUS_AGENT_DATA_HOME/session-aliases.json (default ~/.claude).
  */
+
+/**
+ * Internal alias storage entry.
+ * @typedef {{ sessionPath: string, createdAt: string, updatedAt?: string, title: string | null }} AliasEntry
+ */
+/**
+ * Alias data structure stored on disk.
+ * @typedef {{
+ *   version: string,
+ *   aliases: Record<string, AliasEntry>,
+ *   metadata: { totalCount: number, lastUpdated: string }
+ * }} AliasStore
+ */
+/** @typedef {{ alias: string, sessionPath: string, createdAt: string, title: string | null }} ResolvedAlias */
+/** @typedef {{ name: string, sessionPath: string, createdAt: string, updatedAt?: string | undefined, title: string | null }} AliasListItem */
+/** @typedef {{ success: boolean, error?: string }} AliasResult */
+/** @typedef {AliasResult & { isNew?: boolean, alias?: string, sessionPath?: string, title?: string | null }} SetAliasResult */
+/** @typedef {AliasResult & { alias?: string, deletedSessionPath?: string }} DeleteAliasResult */
+/** @typedef {AliasResult & { oldAlias?: string, newAlias?: string, sessionPath?: string }} RenameAliasResult */
+/** @typedef {AliasResult & { alias?: string, title?: string | null }} UpdateTitleResult */
+/**
+ * @typedef {{
+ *   success?: boolean,
+ *   totalChecked: number,
+ *   removed: number,
+ *   removedAliases: Array<{ name: string, sessionPath: string }>,
+ *   error?: string
+ * }} CleanupResult
+ */
+/** @typedef {{ search?: string | null, limit?: number | null }} ListAliasesOptions */
 
 const path = require('path');
 const { readFileWithSharingRetry, writeFileAtomic } = require('./atomic-write');
@@ -9,10 +40,14 @@ const { acquireSettingsLock } = require('./install/claude-settings-lock');
 
 const {
   getClaudeDir,
-  log
+  log,
+  errorField
 } = require('./utils');
 
-// Aliases file path
+/**
+ * Path to the aliases JSON file.
+ * @returns {string}
+ */
 function getAliasesPath() {
   return path.join(getClaudeDir(), 'session-aliases.json');
 }
@@ -22,6 +57,7 @@ const ALIAS_VERSION = '1.0';
 
 /**
  * Default aliases file structure
+ * @returns {AliasStore}
  */
 function getDefaultAliases() {
   return {
@@ -36,16 +72,17 @@ function getDefaultAliases() {
 
 /**
  * Load aliases from file
- * @returns {object} Aliases object
+ * @returns {AliasStore} Aliases object
  */
 function loadAliases() {
   const aliasesPath = getAliasesPath();
 
+  /** @type {string} */
   let content;
   try {
-    content = readFileWithSharingRetry(aliasesPath, 'utf8');
+    content = String(readFileWithSharingRetry(aliasesPath, 'utf8'));
   } catch (error) {
-    if (error.code === 'ENOENT') return getDefaultAliases();
+    if (errorField(error, 'code') === 'ENOENT') return getDefaultAliases();
     // An unreadable published snapshot is not an empty store. Fail closed so
     // a transaction cannot replace existing aliases with a default snapshot.
     throw error;
@@ -78,13 +115,14 @@ function loadAliases() {
 
     return data;
   } catch (err) {
-    log(`[Aliases] Error parsing aliases file: ${err.message}`);
+    log(`[Aliases] Error parsing aliases file: ${errorField(err, 'message') ?? String(err)}`);
     return getDefaultAliases();
   }
 }
 
 // Reject callback reentry instead of allowing a nested write to be overwritten
 // by the outer transaction's snapshot.
+/** @type {Set<string>} */
 const activeWrites = new Set();
 
 /**
@@ -93,7 +131,7 @@ const activeWrites = new Set();
  * Release errors are logged without replacing the callback's result or error:
  * a successfully published snapshot remains committed even if cleanup fails.
  * @template T
- * @param {function(): T} callback - Transaction to execute while holding the lock
+ * @param {() => T} callback - Transaction to execute while holding the lock
  * @param {T} failure - Result when the transaction cannot start
  * @returns {T} The transaction result, or failure if it could not start
  */
@@ -108,14 +146,18 @@ function withAliasesLock(callback, failure) {
   try {
     release = acquireSettingsLock(aliasesPath, { label: 'session aliases', timeoutMs: 5000 });
   } catch (error) {
-    log(`[Aliases] Error locking aliases: ${error.message}`);
+    log(`[Aliases] Error locking aliases: ${errorField(error, 'message') ?? String(error)}`);
     return failure;
   }
 
   activeWrites.add(aliasesPath);
-  let result;
+  /** @type {T} */
+  let result = failure;
+  /** @type {unknown} */
   let primaryError;
   let callbackFailed = false;
+  let releaseFailed = false;
+  /** @type {unknown} */
   let releaseError;
   try {
     result = callback();
@@ -126,12 +168,13 @@ function withAliasesLock(callback, failure) {
     try {
       release();
     } catch (error) {
+      releaseFailed = true;
       releaseError = error;
     }
     activeWrites.delete(aliasesPath);
   }
-  if (releaseError) {
-    log(`[Aliases] Error releasing aliases lock: ${releaseError.message}`);
+  if (releaseFailed) {
+    log(`[Aliases] Error releasing aliases lock: ${errorField(releaseError, 'message') ?? String(releaseError)}`);
   }
   if (callbackFailed) throw primaryError;
   return result;
@@ -139,7 +182,7 @@ function withAliasesLock(callback, failure) {
 
 /**
  * Publish a complete alias snapshot while the caller holds the transaction lock.
- * @param {object} aliases - Snapshot to publish without mutating the caller
+ * @param {AliasStore} aliases - Snapshot to publish without mutating the caller
  * @returns {boolean} Whether atomic replacement succeeded
  */
 function saveAliasesUnlocked(aliases) {
@@ -154,7 +197,7 @@ function saveAliasesUnlocked(aliases) {
     writeFileAtomic(getAliasesPath(), JSON.stringify(snapshot, null, 2));
     return true;
   } catch (error) {
-    log(`[Aliases] Error saving aliases: ${error.message}`);
+    log(`[Aliases] Error saving aliases: ${errorField(error, 'message') ?? String(error)}`);
     return false;
   }
 }
@@ -162,7 +205,7 @@ function saveAliasesUnlocked(aliases) {
 /**
  * Atomically replace the complete snapshot. This does not merge snapshots
  * loaded by callers before acquiring the lock; use the mutators for updates.
- * @param {object} aliases - Complete aliases snapshot
+ * @param {AliasStore} aliases - Complete aliases snapshot
  * @returns {boolean} Success status
  */
 function saveAliases(aliases) {
@@ -172,7 +215,7 @@ function saveAliases(aliases) {
 /**
  * Resolve an alias to get session path
  * @param {string} alias - Alias name to resolve
- * @returns {object|null} Alias data or null if not found
+ * @returns {ResolvedAlias | null} Alias data or null if not found
  */
 function resolveAlias(alias) {
   if (!alias) return null;
@@ -201,8 +244,8 @@ function resolveAlias(alias) {
  * Set or update an alias for a session
  * @param {string} alias - Alias name (alphanumeric, dash, underscore)
  * @param {string} sessionPath - Session directory path
- * @param {string} title - Optional title for the alias
- * @returns {object} Result with success status and message
+ * @param {string | null} [title] - Optional title for the alias
+ * @returns {SetAliasResult} Result with success status and message
  */
 function setAliasUnlocked(alias, sessionPath, title = null) {
   // Validate alias name
@@ -250,7 +293,7 @@ function setAliasUnlocked(alias, sessionPath, title = null) {
       isNew,
       alias,
       sessionPath,
-      title: data.aliases[alias].title
+      title: title || null
     };
   }
 
@@ -259,10 +302,8 @@ function setAliasUnlocked(alias, sessionPath, title = null) {
 
 /**
  * List all aliases
- * @param {object} options - Options object
- * @param {string} options.search - Filter aliases by name (partial match)
- * @param {number} options.limit - Maximum number of aliases to return
- * @returns {Array} Array of alias objects
+ * @param {ListAliasesOptions} [options] - Options object
+ * @returns {AliasListItem[]} Array of alias objects, newest first
  */
 function listAliases(options = {}) {
   const { search = null, limit = null } = options;
@@ -299,16 +340,14 @@ function listAliases(options = {}) {
 /**
  * Delete an alias
  * @param {string} alias - Alias name to delete
- * @returns {object} Result with success status
+ * @returns {DeleteAliasResult} Result with success status
  */
 function deleteAliasUnlocked(alias) {
   const data = loadAliases();
-
-  if (!data.aliases[alias]) {
+  const deleted = data.aliases[alias];
+  if (!deleted) {
     return { success: false, error: `Alias '${alias}' not found` };
   }
-
-  const deleted = data.aliases[alias];
   delete data.aliases[alias];
 
   if (saveAliasesUnlocked(data)) {
@@ -326,12 +365,13 @@ function deleteAliasUnlocked(alias) {
  * Rename an alias
  * @param {string} oldAlias - Current alias name
  * @param {string} newAlias - New alias name
- * @returns {object} Result with success status
+ * @returns {RenameAliasResult} Result with success status
  */
 function renameAliasUnlocked(oldAlias, newAlias) {
   const data = loadAliases();
+  const aliasData = data.aliases[oldAlias];
 
-  if (!data.aliases[oldAlias]) {
+  if (!aliasData) {
     return { success: false, error: `Alias '${oldAlias}' not found` };
   }
 
@@ -357,7 +397,6 @@ function renameAliasUnlocked(oldAlias, newAlias) {
     return { success: false, error: `Alias '${newAlias}' already exists` };
   }
 
-  const aliasData = data.aliases[oldAlias];
   delete data.aliases[oldAlias];
 
   aliasData.updatedAt = new Date().toISOString();
@@ -379,7 +418,7 @@ function renameAliasUnlocked(oldAlias, newAlias) {
 /**
  * Get session path by alias (convenience function)
  * @param {string} aliasOrId - Alias name or session ID
- * @returns {string|null} Session path or null if not found
+ * @returns {string} The aliased session path, or the input unchanged
  */
 function resolveSessionAlias(aliasOrId) {
   // First try to resolve as alias
@@ -396,7 +435,7 @@ function resolveSessionAlias(aliasOrId) {
  * Update alias title
  * @param {string} alias - Alias name
  * @param {string|null} title - New title (string or null to clear)
- * @returns {object} Result with success status
+ * @returns {UpdateTitleResult} Result with success status
  */
 function updateAliasTitleUnlocked(alias, title) {
   if (title !== null && typeof title !== 'string') {
@@ -404,13 +443,14 @@ function updateAliasTitleUnlocked(alias, title) {
   }
 
   const data = loadAliases();
+  const entry = data.aliases[alias];
 
-  if (!data.aliases[alias]) {
+  if (!entry) {
     return { success: false, error: `Alias '${alias}' not found` };
   }
 
-  data.aliases[alias].title = title || null;
-  data.aliases[alias].updatedAt = new Date().toISOString();
+  entry.title = title || null;
+  entry.updatedAt = new Date().toISOString();
 
   if (saveAliasesUnlocked(data)) {
     return {
@@ -426,10 +466,11 @@ function updateAliasTitleUnlocked(alias, title) {
 /**
  * Get all aliases for a specific session
  * @param {string} sessionPath - Session path to find aliases for
- * @returns {Array} Array of alias names
+ * @returns {Array<{ name: string, createdAt: string, title: string | null }>} Aliases pointing at the session
  */
 function getAliasesForSession(sessionPath) {
   const data = loadAliases();
+  /** @type {Array<{ name: string, createdAt: string, title: string | null }>} */
   const aliases = [];
 
   for (const [name, info] of Object.entries(data.aliases)) {
@@ -447,8 +488,8 @@ function getAliasesForSession(sessionPath) {
 
 /**
  * Clean up aliases for non-existent sessions
- * @param {Function} sessionExists - Function to check if session exists
- * @returns {object} Cleanup result
+ * @param {(sessionPath: string) => boolean} sessionExists - Function to check if session exists
+ * @returns {CleanupResult} Cleanup result
  */
 function cleanupAliasesUnlocked(sessionExists) {
   if (typeof sessionExists !== 'function') {
@@ -456,6 +497,7 @@ function cleanupAliasesUnlocked(sessionExists) {
   }
 
   const data = loadAliases();
+  /** @type {Array<{ name: string, sessionPath: string }>} */
   const removed = [];
 
   for (const [name, info] of Object.entries(data.aliases)) {
@@ -488,8 +530,8 @@ function cleanupAliasesUnlocked(sessionExists) {
  * Create or update an alias using the latest snapshot under the transaction lock.
  * @param {string} alias - Alias name (alphanumeric, dash, underscore)
  * @param {string} sessionPath - Session directory path
- * @param {string|null} title - Optional title for the alias
- * @returns {object} Result with success status and the saved alias details
+ * @param {string|null} [title] - Optional title for the alias
+ * @returns {SetAliasResult} Result with success status and the saved alias details
  */
 function setAlias(alias, sessionPath, title = null) {
   return withAliasesLock(() => setAliasUnlocked(alias, sessionPath, title),
@@ -499,7 +541,7 @@ function setAlias(alias, sessionPath, title = null) {
 /**
  * Delete an alias without overwriting other writers' completed changes.
  * @param {string} alias - Alias name to delete
- * @returns {object} Result with success status and the deleted session path
+ * @returns {DeleteAliasResult} Result with success status and the deleted session path
  */
 function deleteAlias(alias) {
   return withAliasesLock(() => deleteAliasUnlocked(alias),
@@ -510,7 +552,7 @@ function deleteAlias(alias) {
  * Rename an existing alias in one locked read-modify-write transaction.
  * @param {string} oldAlias - Current alias name
  * @param {string} newAlias - New unused alias name
- * @returns {object} Result with success status and the renamed alias details
+ * @returns {RenameAliasResult} Result with success status and the renamed alias details
  */
 function renameAlias(oldAlias, newAlias) {
   return withAliasesLock(() => renameAliasUnlocked(oldAlias, newAlias),
@@ -521,7 +563,7 @@ function renameAlias(oldAlias, newAlias) {
  * Update an existing alias title using the latest locked snapshot.
  * @param {string} alias - Alias name
  * @param {string|null} title - New title, or null to clear it
- * @returns {object} Result with success status and the updated title
+ * @returns {UpdateTitleResult} Result with success status and the updated title
  */
 function updateAliasTitle(alias, title) {
   return withAliasesLock(() => updateAliasTitleUnlocked(alias, title),
@@ -531,8 +573,8 @@ function updateAliasTitle(alias, title) {
 /**
  * Remove aliases whose sessions no longer exist in a single locked transaction.
  * The synchronous callback must not write aliases; its exceptions propagate.
- * @param {function(string): boolean} sessionExists - Check whether a session exists
- * @returns {object} Checked count, removed aliases, and any operation failure
+ * @param {(sessionPath: string) => boolean} sessionExists - Check whether a session exists
+ * @returns {CleanupResult} Checked count, removed aliases, and any operation failure
  */
 function cleanupAliases(sessionExists) {
   return withAliasesLock(() => cleanupAliasesUnlocked(sessionExists),

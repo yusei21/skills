@@ -782,5 +782,8 @@ module.exports = {
   commandExists,
   runCommand,
   isGitRepo,
-  getGitModifiedFiles
+  getGitModifiedFiles,
+
+  // Errors
+  errorField
 };
