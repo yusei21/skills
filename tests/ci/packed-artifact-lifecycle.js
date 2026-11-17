@@ -391,7 +391,6 @@ function runTargetSmoke(options) {
   const installedSkillPath = path.join(
     options.targetRoot,
     'skills',
-    'admin',
     'skill-comply',
     'SKILL.md'
   );
@@ -595,7 +594,6 @@ function runLifecycle(options) {
     const guidedKimiSkillPath = path.join(
       guidedKimiRoot,
       'skills',
-      'admin',
       'skill-comply',
       'SKILL.md'
     );
@@ -710,13 +708,13 @@ function runLifecycle(options) {
       'installed ledger must include the Itô baskets module'
     );
     for (const relativePath of [
-      'skills/verticals/ito-baskets/SKILL.md',
-      'skills/verticals/ito-baskets/agents/openai.yaml',
-      'skills/verticals/ito-baskets/scripts/ito-baskets.js',
-      'skills/verticals/ito-compute/SKILL.md',
-      'skills/verticals/ito-compute/agents/openai.yaml',
-      'skills/verticals/ito-inference/SKILL.md',
-      'skills/verticals/ito-training/SKILL.md',
+      'skills/ito-baskets/SKILL.md',
+      'skills/ito-baskets/agents/openai.yaml',
+      'skills/ito-baskets/scripts/ito-baskets.js',
+      'skills/ito-compute/SKILL.md',
+      'skills/ito-compute/agents/openai.yaml',
+      'skills/ito-inference/SKILL.md',
+      'skills/ito-training/SKILL.md',
     ]) {
       const installedPath = path.join(cursorRoot, relativePath);
       const installedStat = fs.lstatSync(installedPath);
@@ -743,7 +741,9 @@ function runLifecycle(options) {
       },
     });
     assert.match(itoStatus.stderr, /canonical ito-compute-cli is unpublished/i);
-    assert.doesNotMatch(itoStatus.stderr, /npx|npm exec|npm link|install -g/i);
+    // npm 12 prints its own "npm notice run ..." lines; only yus's message matters here.
+    const itoMessage = itoStatus.stderr.split(/\r?\n/).filter(line => !/^npm notice\b/.test(line)).join('\n');
+    assert.doesNotMatch(itoMessage, /npx|npm exec|npm link|install -g/i);
     assert.ok(!fs.existsSync(hostileItoSentinel), 'packed Itô bridge executed a PATH collision');
     const managedSnapshot = getManagedOperationSnapshot(initialState, cursorRoot);
     assert.ok(managedSnapshot.length > 0, 'initial install must create managed Cursor files');

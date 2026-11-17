@@ -97,10 +97,11 @@ function parseCounts(combined) {
     }
     return { passed, failed, definite: true };
   }
-  // node:test's default `spec` reporter ends with an "(info) pass N" / "(info) fail N"
-  // block. As with the legacy summaries, the last block in the output wins.
-  const nodeTestPass = [...combined.matchAll(/^\u2139 pass (\d+)\r?$/gm)];
-  const nodeTestFail = [...combined.matchAll(/^\u2139 fail (\d+)\r?$/gm)];
+  // node:test ends with a "pass N" / "fail N" block: "(info) pass N" from the
+  // `spec` reporter, "# pass N" from `tap`, which Node 22 picks when stdout is
+  // not a terminal. As with the legacy summaries, the last block wins.
+  const nodeTestPass = [...combined.matchAll(/^(?:\u2139|#) pass (\d+)\r?$/gm)];
+  const nodeTestFail = [...combined.matchAll(/^(?:\u2139|#) fail (\d+)\r?$/gm)];
   if (nodeTestPass.length && nodeTestFail.length) {
     return {
       passed: Number(nodeTestPass[nodeTestPass.length - 1][1]),

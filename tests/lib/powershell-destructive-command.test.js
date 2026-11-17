@@ -53,6 +53,10 @@ function classify(command) {
   return findings;
 }
 
+// Coverage instrumentation (c8 sets NODE_V8_COVERAGE) slows the analyzer about 2.5x;
+// the budgets below guard against superlinear blowups, not instrumented runs.
+const TIME_SCALE = process.env.NODE_V8_COVERAGE ? 3 : 1;
+
 function expectRules(command, expected) {
   const actual = classify(command);
   assert.deepStrictEqual(
@@ -847,7 +851,7 @@ test('scans large comments and unmatched openers in bounded time', () => {
   ]);
   expectSafe('$('.repeat(40000));
   expectSafe('()'.repeat(10000));
-  assert.ok(Date.now() - started < 2000, 'large malformed input should remain bounded');
+  assert.ok(Date.now() - started < 2000 * TIME_SCALE, 'large malformed input should remain bounded');
 });
 
 test('resolves long invoked-function chains within the hook time budget', () => {
@@ -860,7 +864,7 @@ test('resolves long invoked-function chains within the hook time budget', () => 
   }
   const started = Date.now();
   expectRules(`${definitions.join('; ')}; f0`, [RULES.REMOVE_FORCE]);
-  assert.ok(Date.now() - started < 4000, 'function resolution should remain below hook timeout');
+  assert.ok(Date.now() - started < 4000 * TIME_SCALE, 'function resolution should remain below hook timeout');
 });
 
 test('scans many sibling executable containers within the hook time budget', () => {
@@ -872,7 +876,7 @@ test('scans many sibling executable containers within the hook time budget', () 
   ).join(' ');
   const started = Date.now();
   expectRules(command, [RULES.REMOVE_FORCE]);
-  assert.ok(Date.now() - started < 4000, 'sibling containers should remain bounded');
+  assert.ok(Date.now() - started < 4000 * TIME_SCALE, 'sibling containers should remain bounded');
 });
 
 console.log('\nBenign controls:');

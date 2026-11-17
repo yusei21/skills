@@ -72,7 +72,9 @@ test('a tampered index or exhausted budget fails open to no suggestion', () => f
 test('the hook runs through run-with-flags and returns its text on stdout', () => fixture(({ env }) => {
   const wrapper = path.join(__dirname, '../../scripts/hooks/run-with-flags.js');
   const result = spawnSync(process.execPath, [wrapper, 'user-prompt:context-suggestions', 'scripts/hooks/context-prompt-suggestions.js'],
-    { input: PROMPT, encoding: 'utf8', env: { PATH: process.env.PATH, ...env }, timeout: 30000 });
+    // A cold process on a slow CI runner can spend the default 150 ms budget before
+    // the hook starts; this test checks the wiring, so give it the maximum budget.
+    { input: PROMPT, encoding: 'utf8', env: { PATH: process.env.PATH, ...env, YUS_CONTEXT_SUGGEST_BUDGET_MS: '1000' }, timeout: 30000 });
   assert.equal(result.status, 0);
   assert.match(result.stdout, /skill:feature/);
 }));

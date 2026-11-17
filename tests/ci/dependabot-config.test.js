@@ -34,8 +34,21 @@ function run() {
   if (test('keeps both Python manifests under Dependabot coverage', () => {
     assert.deepStrictEqual(
       pipUpdates.map(update => update.directory).sort(),
-      ['/', '/skills/skill-comply'],
+      ['/', '/skills/admin/skill-comply'],
     );
+  })) passed++; else failed++;
+
+  if (test('every configured directory exists and holds its manifest', () => {
+    const manifests = { pip: ['pyproject.toml', 'requirements.txt'], npm: ['package.json'], cargo: ['Cargo.toml'] };
+    for (const update of config.updates) {
+      const dir = path.join(__dirname, '../..', update.directory);
+      assert.ok(fs.existsSync(dir), `${update['package-ecosystem']} directory ${update.directory} does not exist`);
+      const expected = manifests[update['package-ecosystem']];
+      if (expected) {
+        assert.ok(expected.some(name => fs.existsSync(path.join(dir, name))),
+          `${update.directory} has none of ${expected.join(', ')}`);
+      }
+    }
   })) passed++; else failed++;
 
   if (test('does not raise already-compatible Python minimum versions', () => {

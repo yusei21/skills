@@ -70,7 +70,8 @@ function runMigrated(source) {
   try {
     const file = path.join(dir, 'sample.test.js');
     fs.writeFileSync(file, source);
-    return spawnSync(process.execPath, [file], { encoding: 'utf8' });
+    // Node 22 defaults to the tap reporter when stdout is a pipe; pin spec.
+    return spawnSync(process.execPath, ['--test-reporter=spec', file], { encoding: 'utf8' });
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }

@@ -63,7 +63,7 @@ updates:
           - "patch"
 
   - package-ecosystem: "pip"
-    directory: "/skills/skill-comply"
+    directory: "/skills/admin/skill-comply"
     schedule:
       interval: "weekly"
       day: "monday"

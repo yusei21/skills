@@ -72,6 +72,13 @@ const tests = [
     assert.strictEqual(result.status, 1);
     assert.ok(result.logs.some(line => /Failed:\s+2\s/.test(line)), result.logs.join('\n'));
   }],
+  ['node:test tap summaries (Node 22 without a terminal) are counted', () => {
+    const tap = ['TAP version 13', '# Subtest: suite', '    ok 1 - a', '    ok 2 - b', 'ok 1 - suite',
+      '1..1', '# tests 2', '# suites 1', '# pass 2', '# fail 0', '# cancelled 0'].join('\n');
+    const result = run({ status: 0, stdout: tap });
+    assert.strictEqual(result.status, 0);
+    assert.ok(result.logs.some(line => /Passed:\s+2\s/.test(line)), result.logs.join('\n'));
+  }],
   ['the last node:test summary owns the totals', () => {
     const nested = `${nodeTestSummary(1, 1)}\n${nodeTestSummary(9, 0)}`;
     const result = run({ status: 0, stdout: nested });
