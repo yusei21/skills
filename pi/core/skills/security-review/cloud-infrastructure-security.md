@@ -66,11 +66,14 @@ aws iam enable-mfa-device \
 
 ```typescript
 // PASS: CORRECT: Use cloud secrets manager
-import { SecretsManager } from '@aws-sdk/client-secrets-manager';
+import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
 
-const client = new SecretsManager({ region: 'us-east-1' });
-const secret = await client.getSecretValue({ SecretId: 'prod/api-key' });
-const apiKey = JSON.parse(secret.SecretString).key;
+const client = new SecretsManagerClient({ region: 'us-east-1' });
+const { SecretString } = await client.send(
+  new GetSecretValueCommand({ SecretId: 'prod/api-key' })
+);
+if (!SecretString) throw new Error('Secret prod/api-key has no string value');
+const apiKey = JSON.parse(SecretString).key;
 
 // FAIL: WRONG: Hardcoded or in environment variables only
 const apiKey = process.env.API_KEY; // Not rotated, not audited
@@ -99,33 +102,35 @@ aws secretsmanager rotate-secret \
 #### VPC and Firewall Configuration
 
 ```terraform
-# PASS: CORRECT: Restricted security group
+# PASS: CORRECT: Restricted security group, one resource per rule
+# (AWS provider 5+; inline ingress/egress blocks cannot be tagged or
+# changed one rule at a time, and must not be mixed with rule resources)
 resource "aws_security_group" "app" {
-  name = "app-sg"
+  name   = "app-sg"
+  vpc_id = aws_vpc.main.id
+}
 
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"]  # Internal VPC only
-  }
+resource "aws_vpc_security_group_ingress_rule" "app_https" {
+  security_group_id = aws_security_group.app.id
+  cidr_ipv4         = "10.0.0.0/16" # Internal VPC only
+  ip_protocol       = "tcp"
+  from_port         = 443
+  to_port           = 443
+}
 
-  egress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # Only HTTPS outbound
-  }
+resource "aws_vpc_security_group_egress_rule" "app_https_out" {
+  security_group_id = aws_security_group.app.id
+  cidr_ipv4         = "0.0.0.0/0" # Only HTTPS outbound
+  ip_protocol       = "tcp"
+  from_port         = 443
+  to_port           = 443
 }
 
 # FAIL: WRONG: Open to the internet
-resource "aws_security_group" "bad" {
-  ingress {
-    from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # All ports, all IPs!
-  }
+resource "aws_vpc_security_group_ingress_rule" "bad" {
+  security_group_id = aws_security_group.app.id
+  cidr_ipv4         = "0.0.0.0/0" # All IPs
+  ip_protocol       = "-1"        # All protocols and ports!
 }
 ```
 
@@ -143,10 +148,13 @@ resource "aws_security_group" "bad" {
 
 ```typescript
 // PASS: CORRECT: Comprehensive logging
-import { CloudWatchLogsClient, CreateLogStreamCommand } from '@aws-sdk/client-cloudwatch-logs';
+import { CloudWatchLogsClient, PutLogEventsCommand } from '@aws-sdk/client-cloudwatch-logs';
 
+const cloudwatch = new CloudWatchLogsClient({ region: 'us-east-1' });
+
+// The log group and stream must already exist (create them in Terraform).
 const logSecurityEvent = async (event: SecurityEvent) => {
-  await cloudwatch.putLogEvents({
+  await cloudwatch.send(new PutLogEventsCommand({
     logGroupName: '/aws/security/events',
     logStreamName: 'authentication',
     logEvents: [{
@@ -159,7 +167,7 @@ const logSecurityEvent = async (event: SecurityEvent) => {
         // Never log sensitive data
       })
     }]
-  });
+  }));
 };
 ```
 
@@ -189,13 +197,19 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read  # Minimal permissions
+      id-token: write # Required to request the OIDC token below
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # The secret scanner needs history to diff against
 
-      # Scan for secrets
+      # Scan for secrets. Pin third-party actions to a full commit SHA, never
+      # a branch such as @main: whoever controls the branch controls your job.
       - name: Secret scanning
-        uses: trufflesecurity/trufflehog@main
+        uses: trufflesecurity/trufflehog@3bd2b5887eb0efb8fa18bfd1d296032924e4ffdc # v3.99.9
+        with:
+          extra_args: --results=verified
 
       # Dependency audit
       - name: Audit dependencies
@@ -203,7 +217,7 @@ jobs:
 
       # Use OIDC, not long-lived tokens
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           role-to-assume: arn:aws:iam::123456789:role/GitHubActionsRole
           aws-region: us-east-1
@@ -211,15 +225,12 @@ jobs:
 
 #### Supply Chain Security
 
-```json
-// package.json - Use lock files and integrity checks
-{
-  "scripts": {
-    "install": "npm ci",  // Use ci for reproducible builds
-    "audit": "npm audit --audit-level=moderate",
-    "check": "npm outdated"
-  }
-}
+```bash
+# Commit the lock file and install from it in CI: npm ci fails instead of
+# silently resolving new versions when package.json and the lock disagree
+npm ci --ignore-scripts      # skip install scripts of dependencies
+npm audit --audit-level=high # fail on known vulnerabilities
+npm audit signatures         # verify registry signatures and provenance
 ```
 
 #### Verification Steps
@@ -327,11 +338,19 @@ Before ANY production cloud deployment:
 ### S3 Bucket Exposure
 
 ```bash
-# FAIL: WRONG: Public bucket
+# FAIL: WRONG: Public bucket (turning off Block Public Access, then a public ACL)
+aws s3api delete-public-access-block --bucket my-bucket
+aws s3api put-bucket-ownership-controls --bucket my-bucket \
+  --ownership-controls 'Rules=[{ObjectOwnership=ObjectWriter}]'
 aws s3api put-bucket-acl --bucket my-bucket --acl public-read
 
-# PASS: CORRECT: Private bucket with specific access
-aws s3api put-bucket-acl --bucket my-bucket --acl private
+# PASS: CORRECT: Block Public Access on, ACLs disabled (the default for new
+# buckets since April 2023), access granted only through the bucket policy
+aws s3api put-public-access-block --bucket my-bucket \
+  --public-access-block-configuration \
+  BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+aws s3api put-bucket-ownership-controls --bucket my-bucket \
+  --ownership-controls 'Rules=[{ObjectOwnership=BucketOwnerEnforced}]'
 aws s3api put-bucket-policy --bucket my-bucket --policy file://policy.json
 ```
 
@@ -356,6 +375,6 @@ resource "aws_db_instance" "good" {
 - [CIS AWS Foundations Benchmark](https://www.cisecurity.org/benchmark/amazon_web_services)
 - [Cloudflare Security Documentation](https://developers.cloudflare.com/security/)
 - [OWASP Cloud Security](https://owasp.org/www-project-cloud-security/)
-- [Terraform Security Best Practices](https://www.terraform.io/docs/cloud/guides/recommended-practices/)
+- [Terraform Recommended Practices](https://developer.hashicorp.com/terraform/cloud-docs/recommended-practices)
 
 **Remember**: Cloud misconfigurations are the leading cause of data breaches. A single exposed S3 bucket or overly permissive IAM policy can compromise your entire infrastructure. Always follow the principle of least privilege and defense in depth.

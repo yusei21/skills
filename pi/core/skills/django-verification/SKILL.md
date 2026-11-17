@@ -400,7 +400,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:14
+        image: postgres:18 # 14 reached end of life in November 2026
         env:
           POSTGRES_PASSWORD: postgres
         options: >-

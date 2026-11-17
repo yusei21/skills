@@ -54,7 +54,7 @@ Patterns:
 @WebMvcTest(MarketController.class)
 class MarketControllerTest {
   @Autowired MockMvc mockMvc;
-  @MockBean MarketService marketService;
+  @MockitoBean MarketService marketService; // @MockBean was removed in Spring Boot 4
 
   @Test
   void returnsMarkets() throws Exception {
@@ -112,7 +112,9 @@ class MarketRepositoryTest {
 ## Testcontainers
 
 - Use reusable containers for Postgres/Redis to mirror production
-- Wire via `@DynamicPropertySource` to inject JDBC URLs into Spring context
+- Annotate the container with `@ServiceConnection` so Spring Boot wires the
+  JDBC URL and credentials itself; keep `@DynamicPropertySource` for
+  properties no connection detail covers
 
 ## Coverage (JaCoCo)
 

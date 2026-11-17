@@ -95,16 +95,12 @@ Test against a real database instead of H2:
 @Testcontainers
 class UserRepositoryIntegrationTest {
 
+  // Testcontainers 2: org.testcontainers.postgresql.PostgreSQLContainer (no type parameter).
+  // @ServiceConnection sets spring.datasource.* from the running container.
   @Container
-  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
+  @ServiceConnection
+  static PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:18-alpine")
       .withDatabaseName("testdb");
-
-  @DynamicPropertySource
-  static void configureProperties(DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", postgres::getJdbcUrl);
-    registry.add("spring.datasource.username", postgres::getUsername);
-    registry.add("spring.datasource.password", postgres::getPassword);
-  }
 
   @Autowired private UserRepository userRepository;
 
@@ -129,7 +125,7 @@ Test controller layer with full Spring context:
 class UserControllerTest {
 
   @Autowired private MockMvc mockMvc;
-  @MockBean private UserService userService;
+  @MockitoBean private UserService userService;
 
   @Test
   void createUser_validInput_returns201() throws Exception {

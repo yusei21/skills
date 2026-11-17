@@ -533,10 +533,10 @@ val first20 = fibonacci.take(20).toList()
 ```kotlin
 // Check for latest versions: https://kotlinlang.org/docs/releases.html
 plugins {
-    kotlin("jvm") version "2.3.10"
-    kotlin("plugin.serialization") version "2.3.10"
-    id("io.ktor.plugin") version "3.4.0"
-    id("org.jetbrains.kotlinx.kover") version "0.9.7"
+    kotlin("jvm") version "2.4.21"
+    kotlin("plugin.serialization") version "2.4.21"
+    id("io.ktor.plugin") version "3.6.1"
+    id("org.jetbrains.kotlinx.kover") version "0.9.11"
     id("io.gitlab.arturbosch.detekt") version "1.23.8"
 }
 
@@ -549,30 +549,30 @@ kotlin {
 
 dependencies {
     // Ktor
-    implementation("io.ktor:ktor-server-core:3.4.0")
-    implementation("io.ktor:ktor-server-netty:3.4.0")
-    implementation("io.ktor:ktor-server-content-negotiation:3.4.0")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:3.4.0")
+    implementation("io.ktor:ktor-server-core:3.6.1")
+    implementation("io.ktor:ktor-server-netty:3.6.1")
+    implementation("io.ktor:ktor-server-content-negotiation:3.6.1")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.6.1")
 
     // Exposed
-    implementation("org.jetbrains.exposed:exposed-core:1.0.0")
-    implementation("org.jetbrains.exposed:exposed-dao:1.0.0")
-    implementation("org.jetbrains.exposed:exposed-jdbc:1.0.0")
-    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0")
+    implementation("org.jetbrains.exposed:exposed-core:1.6.1")
+    implementation("org.jetbrains.exposed:exposed-dao:1.6.1")
+    implementation("org.jetbrains.exposed:exposed-jdbc:1.6.1")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.6.1")
 
     // Koin
-    implementation("io.insert-koin:koin-ktor:4.2.0")
+    implementation("io.insert-koin:koin-ktor:4.2.2")
 
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
 
     // Testing
-    testImplementation("io.kotest:kotest-runner-junit5:6.1.4")
-    testImplementation("io.kotest:kotest-assertions-core:6.1.4")
-    testImplementation("io.kotest:kotest-property:6.1.4")
-    testImplementation("io.mockk:mockk:1.14.9")
-    testImplementation("io.ktor:ktor-server-test-host:3.4.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+    testImplementation("io.kotest:kotest-runner-junit5:6.2.7")
+    testImplementation("io.kotest:kotest-assertions-core:6.2.7")
+    testImplementation("io.kotest:kotest-property:6.2.7")
+    testImplementation("io.mockk:mockk:1.14.12")
+    testImplementation("io.ktor:ktor-server-test-host:3.6.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
 }
 
 tasks.withType<Test> {

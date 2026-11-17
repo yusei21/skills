@@ -53,8 +53,8 @@ final router = GoRouter(
 // Riverpod derived provider with safe firstWhereOrNull
 @riverpod
 double cartTotal(Ref ref) {
-  final cart = ref.watch(cartNotifierProvider);
-  final products = ref.watch(productsProvider).valueOrNull ?? [];
+  final cart = ref.watch(cartProvider);
+  final products = ref.watch(productsProvider).value ?? []; // Riverpod 3 removed valueOrNull
   return cart.fold(0.0, (total, item) {
     final product = products.firstWhereOrNull((p) => p.id == item.productId);
     return total + (product?.price ?? 0) * item.quantity;
@@ -371,7 +371,7 @@ Future<List<Product>> products(Ref ref) async {
 
 // Notifier with complex mutations
 @riverpod
-class CartNotifier extends _$CartNotifier {
+class Cart extends _$Cart { // generates cartProvider
   @override
   List<CartItem> build() => [];
 
@@ -396,12 +396,12 @@ class CartNotifier extends _$CartNotifier {
 
 // Derived provider (selector pattern)
 @riverpod
-int cartCount(Ref ref) => ref.watch(cartNotifierProvider).length;
+int cartCount(Ref ref) => ref.watch(cartProvider).length;
 
 @riverpod
 double cartTotal(Ref ref) {
-  final cart = ref.watch(cartNotifierProvider);
-  final products = ref.watch(productsProvider).valueOrNull ?? [];
+  final cart = ref.watch(cartProvider);
+  final products = ref.watch(productsProvider).value ?? []; // Riverpod 3 removed valueOrNull
   return cart.fold(0.0, (total, item) {
     // firstWhereOrNull (from collection package) avoids StateError when product is missing
     final product = products.firstWhereOrNull((p) => p.id == item.productId);
@@ -542,7 +542,7 @@ blocTest<AuthCubit, AuthState>(
 testWidgets('CartBadge shows item count', (tester) async {
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [cartNotifierProvider.overrideWith(() => FakeCartNotifier(count: 3))],
+      overrides: [cartProvider.overrideWith(() => FakeCart(count: 3))],
       child: const MaterialApp(home: CartBadge()),
     ),
   );

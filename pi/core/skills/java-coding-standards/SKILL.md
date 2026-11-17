@@ -288,7 +288,7 @@ src/test/java/... (mirrors main)
 - Static mutable state → prefer dependency injection
 - Silent catch blocks → log and act or rethrow
 - **[QUARKUS]**: `@Singleton` where `@ApplicationScoped` is intended — breaks proxying and interception
-- **[QUARKUS]**: Mixing `quarkus-resteasy-reactive` and `quarkus-resteasy` (classic) — pick one stack
+- **[QUARKUS]**: Mixing `quarkus-rest` (formerly `quarkus-resteasy-reactive`) and `quarkus-resteasy` (classic) — pick one stack
 - **[QUARKUS]**: Panache active-record + repository pattern in the same bounded context — pick one
 
 ## Logging
@@ -344,21 +344,21 @@ int maxPageSize;
 ### [SPRING]
 - `@WebMvcTest` for controller slices, `@DataJpaTest` for repository slices
 - `@SpringBootTest` reserved for full integration tests
-- `@MockBean` for replacing beans in Spring context
+- `@MockitoBean` for replacing beans in Spring context (`@MockBean` was deprecated in Spring Boot 3.4 and removed in 4.0)
 
 ### [QUARKUS]
 - Plain JUnit 5 + Mockito for unit tests (no `@QuarkusTest`)
 - `@QuarkusTest` reserved for CDI integration tests
 - `@InjectMock` for replacing CDI beans in integration tests
 - Dev Services for database/Kafka/Redis — avoid manual Testcontainers setup when Dev Services suffice
-- `@QuarkusTestResource` for custom external service lifecycle
+- `@WithTestResource` for custom external service lifecycle (`@QuarkusTestResource` is deprecated)
 
 ```java
 // [SPRING] Controller test
 @WebMvcTest(MarketController.class)
 class MarketControllerTest {
   @Autowired MockMvc mockMvc;
-  @MockBean MarketService marketService;
+  @MockitoBean MarketService marketService;
 }
 
 // [QUARKUS] Integration test

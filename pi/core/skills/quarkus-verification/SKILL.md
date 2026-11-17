@@ -101,7 +101,7 @@ Test with real database (Testcontainers):
 
 ```java
 @QuarkusTest
-@QuarkusTestResource(PostgresTestResource.class)
+@WithTestResource(PostgresTestResource.class) // replaces the deprecated @QuarkusTestResource
 class UserRepositoryIntegrationTest {
 
   @Inject

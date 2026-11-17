@@ -9,7 +9,7 @@
     "id": "claude-sonnet-5-5",
     "source": "claude-subscription-login"
   },
-  "registryDigest": "44d52c0dea9796edfbd36c99e309a3ccbe6a4a60090cd4d1d39bcabb34648691",
+  "registryDigest": "a8ceb0a6c40e3cdc02772d99634bc6c75846480b0a93e27f3798b03bdf468bae",
   "schemaVersion": 1,
   "triggers": {
     "skill:accessibility": [

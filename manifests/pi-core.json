@@ -483,6 +483,7 @@
       "dart.dev",
       "developer.android.com",
       "developer.apple.com",
+      "developer.hashicorp.com",
       "developers.cloudflare.com",
       "docs.flutter.dev",
       "docs.spring.io",
@@ -502,7 +503,6 @@
       "vite.dev",
       "www.cisecurity.org",
       "www.speedscope.app",
-      "www.terraform.io",
       "www.w3.org"
     ],
     "defaultAllowedHosts": [
