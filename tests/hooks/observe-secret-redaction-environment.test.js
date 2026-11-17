@@ -11,7 +11,7 @@ let failed = 0;
 if (process.platform === 'win32') {
   console.log('Skipping non-Windows Python availability control.');
 } else {
-  const emptyPath = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-missing-python-'));
+  const emptyPath = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-missing-python-'));
   try {
     const result = spawnSync(process.execPath, [path.join(__dirname, 'observe-secret-redaction.test.js')], {
       env: { ...process.env, PATH: emptyPath }, encoding: 'utf8', timeout: 15000

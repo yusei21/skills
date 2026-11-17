@@ -369,7 +369,7 @@ function renderDashboard(options = {}) {
   const textParts = [];
 
   const header = [
-    'ECC Skill Health Dashboard',
+    'yus Skill Health Dashboard',
     `Generated: ${now}`,
     `Skills: ${summary.total_skills} total, ${summary.measured_skills} measured, ${summary.healthy_skills} healthy, ${summary.declining_skills} declining, ${summary.unmeasured_skills} unmeasured`,
     '',

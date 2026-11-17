@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Hermes native hook (ported from ECC's scripts/hooks/config-protection.js).
+Hermes native hook (ported from yus's scripts/hooks/config-protection.js).
 
 pre_tool_call guard: BLOCK edits to existing linter/formatter config files.
 Agents under pressure weaken configs to make checks pass instead of fixing
@@ -40,7 +40,7 @@ EDIT_TOOLS = {"patch", "write_file", "edit", "write", "apply_patch", "str_replac
 
 
 def _warn(msg: str) -> None:
-    sys.stderr.write(f"[ecc-config-protection] {msg}\n")
+    sys.stderr.write(f"[yus-config-protection] {msg}\n")
 
 
 def main() -> int:

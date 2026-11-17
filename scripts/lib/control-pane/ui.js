@@ -6,7 +6,7 @@ function renderControlPaneHtml() {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ECC Control Pane</title>
+  <title>yus Control Pane</title>
   <style>
     :root {
       color-scheme: dark;
@@ -353,8 +353,8 @@ function renderControlPaneHtml() {
   <div class="shell">
     <header>
       <div class="brand">
-        <img src="/assets/ecc-icon.svg" alt="">
-        <h1>ECC Control Pane</h1>
+        <img src="/assets/yus-icon.svg" alt="">
+        <h1>yus Control Pane</h1>
       </div>
       <form class="query" id="query-form">
         <input id="query" type="search" placeholder="Recall operator memory, session context, runbooks">
@@ -503,7 +503,7 @@ function renderControlPaneHtml() {
 
     function renderSessions(sessions) {
       if (!sessions.length) {
-        return '<div class="empty">No ECC2 sessions found.</div>';
+        return '<div class="empty">No yus2 sessions found.</div>';
       }
 
       return '<table><thead><tr><th>State</th><th>Session</th><th>Harness</th><th>Worktree</th><th>Updated</th></tr></thead><tbody>' +
@@ -573,9 +573,9 @@ function renderControlPaneHtml() {
         button.addEventListener('click', () => {
           const id = button.getAttribute('data-wi-id');
           if (button.getAttribute('data-wi-action') === 'claim') {
-            eccClaimItem(id);
+            yusClaimItem(id);
           } else {
-            eccMoveItem(id, button.getAttribute('data-wi-lane'));
+            yusMoveItem(id, button.getAttribute('data-wi-lane'));
           }
         });
       });
@@ -765,7 +765,7 @@ function renderControlPaneHtml() {
       await load();
     }
 
-    window.eccClaimItem = function (id) {
+    window.yusClaimItem = function (id) {
       if (!state.allowActions) return;
       const owner = window.prompt('Claim "' + id + '" as (owner name):');
       if (!owner) return;
@@ -773,7 +773,7 @@ function renderControlPaneHtml() {
       postWorkItem(encodeURIComponent(id) + '/claim', { owner: owner.trim(), as: as === 'agent' ? 'agent' : 'human' })
         .catch(error => showError('#app', error));
     };
-    window.eccMoveItem = function (id, lane) {
+    window.yusMoveItem = function (id, lane) {
       if (!state.allowActions) return;
       postWorkItem(encodeURIComponent(id) + '/move', { lane })
         .catch(error => showError('#app', error));

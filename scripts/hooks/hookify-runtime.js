@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * ECC-native Hookify runtime.
+ * yus-native Hookify runtime.
  *
  * Loads project-local Hookify markdown rules and evaluates them against
  * Claude Code lifecycle payloads. Invalid configuration fails open with a
@@ -305,7 +305,7 @@ function loadRules(projectRoot, options = {}) {
   if (eligibleCandidates.length !== candidates.length) {
     diagnostics.push(diagnostic(
       '.claude',
-      'tracked local rules require explicit approval via ECC_HOOKIFY_ALLOW_TRACKED=1'
+      'tracked local rules require explicit approval via YUS_HOOKIFY_ALLOW_TRACKED=1'
     ));
   }
   if (eligibleCandidates.length > MAX_RULES) {
@@ -361,7 +361,7 @@ function normalizeTrackedPath(value) {
 }
 
 function allowTrackedRules(env) {
-  return /^(?:1|true|yes|on)$/i.test(String(env.ECC_HOOKIFY_ALLOW_TRACKED || '').trim());
+  return /^(?:1|true|yes|on)$/i.test(String(env.YUS_HOOKIFY_ALLOW_TRACKED || '').trim());
 }
 
 function loadTrustedRules(projectRoot, env) {
@@ -731,7 +731,7 @@ function handleTruncatedInput(raw, projectRoot, env, maxStdin, options = {}) {
 }
 
 async function readStdin() {
-  const maxStdin = resolveMaxStdin(process.env.ECC_HOOK_INPUT_MAX_BYTES, {
+  const maxStdin = resolveMaxStdin(process.env.YUS_HOOK_INPUT_MAX_BYTES, {
     writeDiagnostic: message => process.stderr.write(message),
   });
   const decoder = new StringDecoder('utf8');

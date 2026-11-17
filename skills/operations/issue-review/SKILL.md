@@ -2,7 +2,7 @@
 name: issue-review
 description: Review a GitHub issue the way /code-review reviews a PR. Fetches the issue with the gh CLI, checks the report against the current codebase, searches for duplicates and prior fixes, scores completeness, assigns severity, and writes a triage report plus a draft reply. Posting comments or labels is opt-in only. Use when the user asks to check, triage, validate, or review a GitHub issue.
 metadata:
-  origin: ECC
+  origin: yus
 ---
 
 # Issue Review

@@ -1,5 +1,5 @@
 {
-  "schema_version": "ecc.evaluator-rag.verifier.v1",
+  "schema_version": "yus.evaluator-rag.verifier.v1",
   "scenario_id": "public-feedback-goal-fidelity",
   "run_id": "illustrative-goal-fidelity",
   "read_only": true,

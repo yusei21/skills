@@ -1,27 +1,27 @@
 ---
 name: deepseek-harness-setup
-description: "Install and operate Everything Claude Code (ECC) on the DeepSeek Harness (DSH): native skill roots (~/.dsh/skills, .agents/skills), the @deepseek-ai/dsh-hooks-claude-code bridge for command hooks, bare-insert patch mounting, generator usage, event-support limits, and update workflow. Use when setting up ECC on DeepSeek Harness, wiring ECC hooks into a DSH profile, or debugging why ECC skills or hooks do not appear in a DSH session."
+description: "Install and operate Everything Claude Code (yus) on the DeepSeek Harness (DSH): native skill roots (~/.dsh/skills, .agents/skills), the @deepseek-ai/dsh-hooks-claude-code bridge for command hooks, bare-insert patch mounting, generator usage, event-support limits, and update workflow. Use when setting up yus on DeepSeek Harness, wiring yus hooks into a DSH profile, or debugging why yus skills or hooks do not appear in a DSH session."
 metadata:
   origin: community
 ---
 
 # DeepSeek Harness Setup
 
-Run ECC on the DeepSeek Harness. Full guide: `docs/DEEPSEEK-HARNESS-GUIDE.md`.
+Run yus on the DeepSeek Harness. Full guide: `docs/DEEPSEEK-HARNESS-GUIDE.md`.
 
 ## When to Use
 
-- Installing ECC skills or hooks on a DeepSeek Harness install.
-- Deciding which ECC surfaces work on DSH and which do not.
-- Debugging a DSH session that does not show ECC skills or does not fire ECC hooks.
+- Installing yus skills or hooks on a DeepSeek Harness install.
+- Deciding which yus surfaces work on DSH and which do not.
+- Debugging a DSH session that does not show yus skills or does not fire yus hooks.
 
 ## How It Works
 
 1. **Skills need no conversion.** DSH reads `SKILL.md` frontmatter
-   (name/description) from native skill roots. Link the ECC catalog once:
+   (name/description) from native skill roots. Link the yus catalog once:
 
    ```bash
-   ln -s /path/to/ECC/skills/<skill-name> ~/.dsh/skills/<skill-name>
+   ln -s /path/to/yus/skills/<skill-name> ~/.dsh/skills/<skill-name>
    ```
 
    Root priority (project `.dsh` and `.agents` roots beat `~/.dsh`): skip
@@ -30,14 +30,14 @@ Run ECC on the DeepSeek Harness. Full guide: `docs/DEEPSEEK-HARNESS-GUIDE.md`.
    not shell syntax.
 
 2. **Hooks go through the first-party bridge.** Generate a DSH-format config
-   from the canonical ECC hooks file:
+   from the canonical yus hooks file:
 
    ```bash
-   node scripts/dsh/generate-hooks-config.js --ecc-root /path/to/ECC --out ~/.dsh/ecc/hooks-dsh.json
+   node scripts/dsh/generate-hooks-config.js --yus-root /path/to/yus --out ~/.dsh/yus/hooks-dsh.json
    ```
 
    The generator lower-cases tool-name matchers, prefixes
-   `CLAUDE_PLUGIN_ROOT`/`ECC_PLUGIN_ROOT` inline (the bridge does not export
+   `CLAUDE_PLUGIN_ROOT`/`YUS_PLUGIN_ROOT` inline (the bridge does not export
    the plugin root), preserves timeouts, and skips events DSH cannot bridge:
    `PreCompact`, `PostToolUseFailure`, `SessionEnd`.
 
@@ -45,7 +45,7 @@ Run ECC on the DeepSeek Harness. Full guide: `docs/DEEPSEEK-HARNESS-GUIDE.md`.
 
    ```yaml
    - insert:
-       - id: ecc-hooks-claude-code
+       - id: yus-hooks-claude-code
          name: "@deepseek-ai/dsh-hooks-claude-code"
          config:
            configPath: /absolute/path/to/hooks-dsh.json
@@ -60,7 +60,7 @@ Run ECC on the DeepSeek Harness. Full guide: `docs/DEEPSEEK-HARNESS-GUIDE.md`.
 
    ```bash
    cd ~/.dsh && dsh --profile web --dump-config > /tmp/dump.yml
-   grep ecc-hooks /tmp/dump.yml
+   grep yus-hooks /tmp/dump.yml
    ```
 
    Compose exit status stays 0 even when the loader drops or rejects an
@@ -72,7 +72,7 @@ Run ECC on the DeepSeek Harness. Full guide: `docs/DEEPSEEK-HARNESS-GUIDE.md`.
 ## Updating
 
 `git pull` reflects into linked skills immediately; regenerate the hooks
-config with the same generator command. If the ECC checkout moves, regenerate
+config with the same generator command. If the yus checkout moves, regenerate
 (the path is embedded in every hook command) and relink skills.
 
 ## Limits
@@ -86,4 +86,4 @@ config with the same generator command. If the ECC checkout moves, regenerate
 
 The validated setup here targets the CLI/web profile. Desktop profiles have a separate
 installation-owned runtime and skill discovery must be verified there independently.
-Generate hooks only from a reviewed ECC checkout; the linked checkout supplies their runtime.
+Generate hooks only from a reviewed yus checkout; the linked checkout supplies their runtime.

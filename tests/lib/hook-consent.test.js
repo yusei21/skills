@@ -81,8 +81,8 @@ function buildHookPlan() {
     assert.strictEqual(
       isHookRuntimeOperation({
         moduleId: 'platform-configs',
-        sourceRelativePath: '.opencode/plugins/ecc-hooks.ts',
-        destinationPath: '/root/.config/opencode/plugins/ecc-hooks.ts',
+        sourceRelativePath: '.opencode/plugins/yus-hooks.ts',
+        destinationPath: '/root/.config/opencode/plugins/yus-hooks.ts',
       }),
       true
     );
@@ -95,13 +95,13 @@ function buildHookPlan() {
       kind: 'copy-file',
       moduleId: 'platform-configs',
       sourceRelativePath: '.opencode/opencode.json',
-      contentTransform: 'opencode-disable-ecc-hooks',
+      contentTransform: 'opencode-disable-yus-hooks',
     }), false);
     assert.strictEqual(isHookRuntimeOperation({
       kind: 'merge-json',
       moduleId: 'platform-configs',
       sourceRelativePath: '.opencode/opencode.json',
-      contentTransform: 'opencode-disable-ecc-hooks',
+      contentTransform: 'opencode-disable-yus-hooks',
     }), true);
     assert.strictEqual(isHookRuntimeOperation({ sourceRelativePath: 'rules/common.md' }), false);
     assert.strictEqual(
@@ -111,7 +111,7 @@ function buildHookPlan() {
   });
 
   test('OpenCode auto-discovered entrypoints require selected runtime and consent', () => {
-    const entrypoints = ['.opencode/plugins/ecc-hooks.ts', '.opencode/plugins/index.ts'];
+    const entrypoints = ['.opencode/plugins/yus-hooks.ts', '.opencode/plugins/index.ts'];
     const operations = entrypoints.map(sourceRelativePath => ({
       kind: 'copy-file', moduleId: 'platform-configs', sourceRelativePath,
     }));
@@ -156,7 +156,7 @@ function buildHookPlan() {
     assert.strictEqual(planMaterializesHookRuntime({}), false);
   });
 
-  test('removes only ECC hook activation from OpenCode config', () => {
+  test('removes only yus hook activation from OpenCode config', () => {
     const transformed = disableOpenCodeHookPluginRegistration(JSON.stringify({
       plugin: ['./plugins', 'example-plugin'],
       instructions: ['AGENTS.md'],
@@ -178,7 +178,7 @@ function buildHookPlan() {
       request: {}, resolution: { selectedModules: ['platform-configs'] },
       operations: [
         { kind: 'copy-file', moduleId: 'platform-configs', sourceRelativePath: '.opencode/opencode.json' },
-        { kind: 'copy-file', moduleId: 'platform-configs', sourceRelativePath: '.opencode/plugins/ecc-hooks.ts' },
+        { kind: 'copy-file', moduleId: 'platform-configs', sourceRelativePath: '.opencode/plugins/yus-hooks.ts' },
       ],
     };
     assert.strictEqual(getRecordedHookConsent(state), null);

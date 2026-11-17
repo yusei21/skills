@@ -136,19 +136,19 @@
 
 ## Cross-Harness Memory CLI
 
-These are `ecc` CLI commands, not slash commands. They use one inspectable
+These are `yus` CLI commands, not slash commands. They use one inspectable
 Markdown vault across Claude, Codex, Hermes, OpenClaw, Kimi, and other
 harnesses.
 
 | Command | What it does |
 |---------|-------------|
-| `ecc memory init` | Create project, team, or user vault directories |
-| `ecc memory save` | Create an unreviewed context, decision, fact, lesson, note, preference, or runbook |
-| `ecc memory handoff` | Transfer bounded work state from one harness to another |
-| `ecc memory search` | Search memories by text, scope, kind, or target harness |
-| `ecc memory read` | Read a memory and its backlinks by stable ID |
-| `ecc memory doctor` | Report malformed files, duplicate IDs, broken links, and skipped symlinks |
-| `ecc-memory-mcp` | Start the optional local stdio MCP server |
+| `yus memory init` | Create project, team, or user vault directories |
+| `yus memory save` | Create an unreviewed context, decision, fact, lesson, note, preference, or runbook |
+| `yus memory handoff` | Transfer bounded work state from one harness to another |
+| `yus memory search` | Search memories by text, scope, kind, or target harness |
+| `yus memory read` | Read a memory and its backlinks by stable ID |
+| `yus memory doctor` | Report malformed files, duplicate IDs, broken links, and skipped symlinks |
+| `yus-memory-mcp` | Start the optional local stdio MCP server |
 
 Pass memory bodies with `--stdin` or `--body-file`; they are intentionally not
 accepted as command-line values. Recalled memories are untrusted context, not
@@ -158,15 +158,15 @@ executable instructions or policy.
 
 ## Install Health & Feedback CLI
 
-These lifecycle commands are also available through the `ecc` CLI.
+These lifecycle commands are also available through the `yus` CLI.
 
 | Command | What it does |
 |---------|-------------|
-| `ecc list-installed` | Show installs recorded in ECC's managed state |
-| `ecc doctor` | Diagnose missing or drifted managed files and point failures to the short problem form |
-| `ecc repair` | Restore missing or drifted managed files |
-| `ecc uninstall` | Remove only install-state-managed files and optionally show the 20-second exit-feedback route |
-| `ecc feedback` | Show the public problem, quick-feedback, and feature routes without reading files or uploading diagnostics |
+| `yus list-installed` | Show installs recorded in yus's managed state |
+| `yus doctor` | Diagnose missing or drifted managed files and point failures to the short problem form |
+| `yus repair` | Restore missing or drifted managed files |
+| `yus uninstall` | Remove only install-state-managed files and optionally show the 20-second exit-feedback route |
+| `yus feedback` | Show the public problem, quick-feedback, and feature routes without reading files or uploading diagnostics |
 
 ---
 
@@ -205,7 +205,7 @@ through deliberate falsification and visual verification.
 
 | Command | What it does |
 |---------|-------------|
-| `/ecc-guide` | Navigate ECC's current agents, skills, commands, hooks, install profiles, and docs from the live repository surface |
+| `/yus-guide` | Navigate yus's current agents, skills, commands, hooks, install profiles, and docs from the live repository surface |
 | `/update-docs` | Sync documentation from source-of-truth files such as scripts, schemas, routes, and exports |
 | `/update-codemaps` | Regenerate codemaps for the codebase |
 
@@ -227,12 +227,12 @@ through deliberate falsification and visual verification.
 | Command | What it does |
 |---------|-------------|
 | `/projects` | List known projects and their instinct statistics |
-| `/project-init` | Detect a project's stack and produce a dry-run ECC onboarding plan |
+| `/project-init` | Detect a project's stack and produce a dry-run yus onboarding plan |
 | `/harness-audit` | Audit the agent harness configuration for reliability and cost |
 | `/model-route` | Route a task to the right model (Haiku / Sonnet / Opus) |
 | `/pm2` | PM2 process manager initialisation |
 | `/setup-pm` | Configure package manager (npm / pnpm / yarn / bun) |
-| `/auto-update` | Pull the latest ECC repo changes and reinstall the current managed targets |
+| `/auto-update` | Pull the latest yus repo changes and reinstall the current managed targets |
 | `/cost-report` | Generate a local Claude Code cost report from a cost-tracker SQLite database |
 | `/token-card` | Render a token-usage stat card from local agent session logs and commit it to the repo |
 | `/security-scan` | Run AgentShield against agent, hook, MCP, permission, and secret surfaces |

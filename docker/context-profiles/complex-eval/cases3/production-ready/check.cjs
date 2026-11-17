@@ -1,6 +1,6 @@
 'use strict';
 // Hidden grader for production-ready: probes every dimension of the documented
-// production bar. Prints ECC_EVAL_SCORE and always exits 0.
+// production bar. Prints YUS_EVAL_SCORE and always exits 0.
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -13,7 +13,7 @@ function finish() {
   for (let i = checks.length; i < 16; i++) record(`unreached-${i + 1}`, false);
   const ok = checks.filter(c => c.ok).length;
   for (const c of checks) process.stdout.write(`${c.ok ? 'ok' : 'not ok'} - ${c.name}\n`);
-  process.stdout.write(`ECC_EVAL_SCORE ${JSON.stringify({ score: ok / 16, passed: ok, total: 16 })}\n`);
+  process.stdout.write(`YUS_EVAL_SCORE ${JSON.stringify({ score: ok / 16, passed: ok, total: 16 })}\n`);
   process.exit(0);
 }
 // A crashing agent server must not kill the grader: score what completed.

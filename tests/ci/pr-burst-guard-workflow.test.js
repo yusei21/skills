@@ -15,7 +15,7 @@ function recordMutation(mutations, req, route, body) {
 }
 
 test('actual CLI closes six excess PRs, locks them, blocks with owner identity, and deduplicates alerts over HTTP', async () => {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-pr-guard-'));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-pr-guard-'));
   const mutations = [];
   let issue;
   let permission = 'read';
@@ -95,7 +95,7 @@ test('actual CLI closes six excess PRs, locks them, blocks with owner identity, 
 });
 
 for (const permission of ['read', 'write']) test(`actual CLI caps ${permission} author without closing twenty earlier PRs`, async () => {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-pr-cap-'));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-pr-cap-'));
   const closedTrigger = permission === 'write';
   const extraNewer = closedTrigger ? 5 : 0;
   let rows = Array.from({ length: 21 + extraNewer }, (_, i) => ({ number: i < 20 ? i + 1 : 3649 + i - 20,

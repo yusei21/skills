@@ -1,12 +1,12 @@
-# Hermes x ECC Demo Prompts
+# Hermes x yus Demo Prompts
 
-## Prompt 1: ECC Builds ECC
+## Prompt 1: yus Builds yus
 
-Use the current ECC repo and the public release pack at `docs/releases/2.0.0-rc.1/`.
+Use the current yus repo and the public release pack at `docs/releases/2.0.0-rc.1/`.
 
 Do 4 things in order:
 
-1. Inspect git status and the current repo diff, then give me a concise ECC v2.0.0-rc.1 PR or release summary that proves ECC is being used to build ECC itself.
+1. Inspect git status and the current repo diff, then give me a concise yus v2.0.0-rc.1 PR or release summary that proves yus is being used to build yus itself.
 2. Finalize one strong X thread.
 3. Finalize one strong LinkedIn post.
 4. Tell me the exact 3 recordings I should do next plus what Hermes can generate automatically after I record.
@@ -18,8 +18,8 @@ Keep it decisive and practical.
 Assume I just recorded:
 
 - one face-camera hook
-- one screen capture of Hermes using ECC to ship ECC v2.0.0-rc.1
-- one setup walkthrough of the Hermes x ECC workspace
+- one screen capture of Hermes using yus to ship yus v2.0.0-rc.1
+- one setup walkthrough of the Hermes x yus workspace
 
 Give me:
 
@@ -32,7 +32,7 @@ Keep it operational.
 
 ## Prompt 3: Public Launch Push
 
-Using the ECC v2.0.0-rc.1 release pack, give me:
+Using the yus v2.0.0-rc.1 release pack, give me:
 
 1. one release tweet
 2. one follow-up tweet

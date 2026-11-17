@@ -16,8 +16,8 @@ const script = path.join(__dirname, '..', '..', 'scripts', 'hooks', 'check-hook-
 function runScript(args = [], envOverrides = {}) {
   const env = { ...process.env, ...envOverrides };
   // Remove potentially interfering env vars unless explicitly set
-  if (!envOverrides.ECC_HOOK_PROFILE) delete env.ECC_HOOK_PROFILE;
-  if (!envOverrides.ECC_DISABLED_HOOKS) delete env.ECC_DISABLED_HOOKS;
+  if (!envOverrides.YUS_HOOK_PROFILE) delete env.YUS_HOOK_PROFILE;
+  if (!envOverrides.YUS_DISABLED_HOOKS) delete env.YUS_DISABLED_HOOKS;
 
   const result = spawnSync('node', [script, ...args], {
     encoding: 'utf8',
@@ -65,24 +65,24 @@ describe(sectionTitle('\nDefault profile (standard):'), () => {
 
 describe(sectionTitle('\nDisabled hooks:'), () => {
   test('returns no when hook is disabled via env', () => {
-    const result = runScript(['my-hook'], { ECC_DISABLED_HOOKS: 'my-hook' });
+    const result = runScript(['my-hook'], { YUS_DISABLED_HOOKS: 'my-hook' });
     assert.strictEqual(result.stdout, 'no');
   });
 
   test('returns yes when different hook is disabled', () => {
-    const result = runScript(['my-hook'], { ECC_DISABLED_HOOKS: 'other-hook' });
+    const result = runScript(['my-hook'], { YUS_DISABLED_HOOKS: 'other-hook' });
     assert.strictEqual(result.stdout, 'yes');
   });
 });
 
 describe(sectionTitle('\nProfile overrides:'), () => {
   test('returns yes for strict profile with strict-only hook', () => {
-    const result = runScript(['my-hook', 'strict'], { ECC_HOOK_PROFILE: 'strict' });
+    const result = runScript(['my-hook', 'strict'], { YUS_HOOK_PROFILE: 'strict' });
     assert.strictEqual(result.stdout, 'yes');
   });
 
   test('returns yes for minimal profile with minimal-only hook', () => {
-    const result = runScript(['my-hook', 'minimal'], { ECC_HOOK_PROFILE: 'minimal' });
+    const result = runScript(['my-hook', 'minimal'], { YUS_HOOK_PROFILE: 'minimal' });
     assert.strictEqual(result.stdout, 'yes');
   });
 });

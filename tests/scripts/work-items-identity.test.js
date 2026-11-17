@@ -9,16 +9,16 @@ const { test } = require('node:test');
 const { createStateStore } = require('../../scripts/lib/state-store');
 
 const CLI = path.join(__dirname, '..', '..', 'scripts', 'work-items.js');
-const SYNC_MARKER = 'ecc-work-items-sync-github';
+const SYNC_MARKER = 'yus-work-items-sync-github';
 
 function fixture(t) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-work-item-identity-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-work-item-identity-'));
   const dbPath = path.join(dir, 'state.db');
   const responsePath = path.join(dir, 'response.json');
   const shimPath = path.join(dir, 'gh-shim.cjs');
   fs.writeFileSync(shimPath, [
     "const fs = require('node:fs');",
-    'const response = JSON.parse(fs.readFileSync(process.env.ECC_IDENTITY_RESPONSE, "utf8"));',
+    'const response = JSON.parse(fs.readFileSync(process.env.YUS_IDENTITY_RESPONSE, "utf8"));',
     'process.stdout.write(JSON.stringify(response[process.argv[2]]));'
   ].join('\n'));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
@@ -26,7 +26,7 @@ function fixture(t) {
   function run(args) {
     return spawnSync(process.execPath, [CLI, ...args, '--db', dbPath], {
       encoding: 'utf8',
-      env: { ...process.env, ECC_GH_SHIM: shimPath, ECC_IDENTITY_RESPONSE: responsePath }
+      env: { ...process.env, YUS_GH_SHIM: shimPath, YUS_IDENTITY_RESPONSE: responsePath }
     });
   }
 

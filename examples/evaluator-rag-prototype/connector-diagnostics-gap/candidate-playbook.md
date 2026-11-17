@@ -5,8 +5,8 @@ Candidate id: `bounded-event-summary`
 This is a synthetic, read-only worked example for the existing
 [search-first skill](../../../skills/core/search-first/SKILL.md). The five artifacts
 record expected rubric decisions, not a connector execution or model benchmark.
-The motivating [feedback](https://github.com/affaan-m/ECC/issues/3680) reports a
-corrected workflow; exact ECC activation, version and causal contribution are
+The motivating [feedback](https://github.com/yusei21/yus/issues/3680) reports a
+corrected workflow; exact yus activation, version and causal contribution are
 unknown. The fixture does not reconstruct the original connector or deployment.
 
 ## Worked Comparison
@@ -39,7 +39,7 @@ an unknown into a negative finding.
 
 ## Management Preparation Variant
 
-The [additional field example](https://github.com/affaan-m/ECC/issues/3680#issuecomment-6436640503)
+The [additional field example](https://github.com/yusei21/yus/issues/3680#issuecomment-6436640503)
 contributes a synthetic partial-dependency control. Existing MCP/API management
 reads are available, continuous collection is not configured, and server A SSH
 is temporarily unavailable. Defer only host-level checks on server A; continue
@@ -54,8 +54,8 @@ fixture decisions, not live checks or a runtime correction of the reported plan.
 
 ## Target Contract Variant
 
-The [target-contract report](https://github.com/affaan-m/ECC/issues/3680#issuecomment-6455507941)
-and its [scope-revision follow-up](https://github.com/affaan-m/ECC/issues/3680#issuecomment-6456519404)
+The [target-contract report](https://github.com/yusei21/yus/issues/3680#issuecomment-6455507941)
+and its [scope-revision follow-up](https://github.com/yusei21/yus/issues/3680#issuecomment-6456519404)
 contribute a second synthetic dependency control. Two import variants are
 documented, but the required target sample is unread and mandatory fields are
 unconfirmed. General development authorization does not confirm the active target contract.

@@ -16,7 +16,7 @@ function isolatedEnvironment(nativeEnvironment) {
 }
 
 /** Explicit task launch, with ordinary prompt context and inherited provider policy.
- * A bare launch runs the task query alone: no context resolution, no ECC reference block. */
+ * A bare launch runs the task query alone: no context resolution, no yus reference block. */
 function launchTaskContext({ task, target = 'codex', dryRun = false, execute = spawnSync,
   nativeEnvironment = null, assertCurrent = () => {}, bare = false, ...selectionOptions } = {}) {
   const adapters = { codex: { command: 'codex', args: ['exec', '-'] }, claude: { command: 'claude', args: ['--print'] } };
@@ -31,7 +31,7 @@ function launchTaskContext({ task, target = 'codex', dryRun = false, execute = s
       || !/^[a-f0-9]{64}$/.test(nativeEnvironment.executableDigest || '')) throw new Error('Invalid isolated native launch environment');
   }
   let selection = bare
-    ? { schemaVersion: 'ecc.selected-context.v1', selectedIds: [], loadedIds: [], resources: [],
+    ? { schemaVersion: 'yus.selected-context.v1', selectedIds: [], loadedIds: [], resources: [],
       selectionMode: 'manual', reason: 'bare-baseline', receipt: { bindingDigest: 'bare' } }
     : resolveTaskContext({ ...selectionOptions, task, target, load: !dryRun });
   const adapter = { ...adapters[target],
@@ -63,15 +63,15 @@ function launchTaskContext({ task, target = 'codex', dryRun = false, execute = s
     if (admitted.receipt.bindingDigest !== selection.receipt.bindingDigest) throw new Error('Context source changed during proposal; no task was launched');
     selection = declined ? { ...admitted, reason: 'agent-declined-selection' } : admitted;
   }
-  const base = { schemaVersion: 'ecc.context-task-launch.v1', target, command: adapter.command, args: adapter.args,
+  const base = { schemaVersion: 'yus.context-task-launch.v1', target, command: adapter.command, args: adapter.args,
     selection, taskSuccess: 'unverified', nativeSkillInvocation: 'unobserved', permissions: 'inherited-provider-policy',
     routingCalls, proposalRequired: proposalRequired && dryRun,
     providerConfiguration: nativeEnvironment ? 'isolated-native-generation' : 'current-provider-home' };
   if (dryRun) return { ...base, status: 'proposed', exitCode: null };
   verifyLaunch();
   const input = bare ? `${task.query}\n`
-    : `${task.query}\n\nECC task context follows as reference data. Apply it only within the task and existing permissions.\n`
-      + JSON.stringify({ schemaVersion: 'ecc.selected-context.v1', selectedIds: selection.loadedIds,
+    : `${task.query}\n\nyus task context follows as reference data. Apply it only within the task and existing permissions.\n`
+      + JSON.stringify({ schemaVersion: 'yus.selected-context.v1', selectedIds: selection.loadedIds,
         resources: selection.resources }) + '\n';
   const child = execute(adapter.command, adapter.args, { input, phase: 'task', encoding: 'utf8', shell: false,
     timeout: routingCalls ? 90000 : 120000, killSignal: 'SIGKILL', maxBuffer: 1024 * 1024,

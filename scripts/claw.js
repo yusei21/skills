@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * NanoClaw v2 — Barebones Agent REPL for ECC
+ * NanoClaw v2 — Barebones Agent REPL for yus
  *
  * Zero external dependencies. Session-aware REPL around `claude -p`.
  */
@@ -345,7 +345,7 @@ function main() {
     skills: normalizeSkillList(process.env.CLAW_SKILLS || '')
   };
 
-  let eccContext = loadECCContext(state.skills);
+  let yusContext = loadECCContext(state.skills);
 
   const loadedCount = state.skills.filter(skillExists).length;
 
@@ -414,7 +414,7 @@ function main() {
         if (!state.skills.includes(skill)) {
           state.skills.push(skill);
         }
-        eccContext = loadECCContext(state.skills);
+        yusContext = loadECCContext(state.skills);
         console.log(`Loaded skill: ${skill}`);
         return prompt();
       }
@@ -483,7 +483,7 @@ function main() {
       // Regular message
       const history = loadHistory(state.sessionPath);
       appendTurn(state.sessionPath, 'User', line);
-      const response = askClaude(eccContext, history, line, state.model);
+      const response = askClaude(yusContext, history, line, state.model);
       console.log(`\n${response}\n`);
       appendTurn(state.sessionPath, 'Assistant', response);
       prompt();

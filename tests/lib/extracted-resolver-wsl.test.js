@@ -12,7 +12,7 @@ function test(name, run) {
 // These tests execute extracted JavaScript with simulated POSIX path/OS/filesystem APIs.
 // Serialized Bash quoting is covered separately by serialized-hook-wsl.test.js.
 test('INLINE_RESOLVE extracted expression converts Windows CLAUDE_CONFIG_DIR on simulated WSL', () => {
-  const { INLINE_RESOLVE } = require('../../scripts/lib/resolve-ecc-root');
+  const { INLINE_RESOLVE } = require('../../scripts/lib/resolve-yus-root');
   // INLINE_RESOLVE is backslash-free, so it embeds verbatim in bash double-quoted `node -e "..."` strings.
   const jsResolveExpr = INLINE_RESOLVE;
   const scriptContent = `
@@ -45,7 +45,7 @@ test('INLINE_RESOLVE extracted expression converts Windows CLAUDE_CONFIG_DIR on 
       if (request === 'fs') return mockedFs;
       if (request === 'os') return mockedOs;
       if (request === 'path') return posixPath;
-      if (request.endsWith('/scripts/lib/resolve-ecc-root')) {
+      if (request.endsWith('/scripts/lib/resolve-yus-root')) {
         const error = new Error('No installed resolver in this fixture');
         error.code = 'MODULE_NOT_FOUND';
         throw error;
@@ -114,7 +114,7 @@ test('codex-hooks.json extracted resolver converts Windows CLAUDE_CONFIG_DIR to 
       if (request === 'fs') return mockedFs;
       if (request === 'os') return mockedOs;
       if (request === 'path') return posixPath;
-      if (request.endsWith('/scripts/lib/resolve-ecc-root')) {
+      if (request.endsWith('/scripts/lib/resolve-yus-root')) {
         const error = new Error('No installed resolver in this fixture');
         error.code = 'MODULE_NOT_FOUND';
         throw error;

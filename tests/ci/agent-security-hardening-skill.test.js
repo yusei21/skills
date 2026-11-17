@@ -50,7 +50,7 @@ print(json.dumps(results))
 `;
 
 function classify(python, requests) {
-  const workspace = fs.mkdtempSync(path.join(os.tmpdir(), "ecc-workspace-path-"));
+  const workspace = fs.mkdtempSync(path.join(os.tmpdir(), "yus-workspace-path-"));
   try {
     const result = spawnSync(python, ["-c", HARNESS, workspace, JSON.stringify(requests)], {
       input: workspacePathSnippet(),

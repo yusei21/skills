@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Hermes native hook (ported from ECC's scripts/hooks/check-console-log.js).
+Hermes native hook (ported from yus's scripts/hooks/check-console-log.js).
 
 post_tool_call observer: after any file edit, WARN (never block) when the
 edited file now contains console.log(). Print to stderr only — Hermes shows
@@ -24,7 +24,7 @@ EXCLUDE = re.compile(r"(\.d\.ts$|/__tests?__/|\.test\.[tj]sx?$|\.spec\.[tj]sx?$|
 
 
 def _warn(msg: str) -> None:
-    sys.stderr.write(f"[ecc-check-console-log] {msg}\n")
+    sys.stderr.write(f"[yus-check-console-log] {msg}\n")
 
 
 def main() -> int:

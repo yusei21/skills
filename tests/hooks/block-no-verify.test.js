@@ -1966,7 +1966,7 @@ for (const n of [8, 12]) {
 const pureOnly = process.argv.includes('--pure-only');
 if (pureOnly) console.log('Pure classifier mode: 3 bounded Node routing checks omitted.');
 else {
-  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-no-verify-'));
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-no-verify-'));
   try {
     for (const [name, input, disabled, code, direct] of [
       ['raw stdin passes through direct hook', 'git status', false, 0, true],
@@ -1978,8 +1978,8 @@ else {
         const result = spawnSync(process.execPath, args, {
           input, encoding: 'utf8', timeout: 3000,
           env: { PATH: path.dirname(process.execPath), HOME: home, USERPROFILE: home, TMPDIR: home, TMP: home, TEMP: home,
-            ECC_HOOK_PROFILE: 'standard', ECC_HOOK_CONFIG: path.join(home, 'absent.json'),
-            ECC_DISABLED_HOOKS: disabled ? 'pre:bash:block-no-verify' : '' },
+            YUS_HOOK_PROFILE: 'standard', YUS_HOOK_CONFIG: path.join(home, 'absent.json'),
+            YUS_DISABLED_HOOKS: disabled ? 'pre:bash:block-no-verify' : '' },
           stdio: ['pipe', 'pipe', 'pipe'],
         });
         assert.ifError(result.error);
@@ -2043,7 +2043,7 @@ for (const [name, command, expected] of [
   ],
   [
     "allows unrelated config value",
-    "git -c user.name=ECC commit -m x",
+    "git -c user.name=yus commit -m x",
     0
   ],
   [

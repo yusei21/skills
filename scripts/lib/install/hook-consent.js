@@ -38,7 +38,7 @@ const HOOK_CAPABILITY_GROUPS = Object.freeze([
 
 const HOOK_CONSENT_DECISIONS = Object.freeze(['enabled', 'declined']);
 const HOOK_RUNTIME_MODULE_ID = 'hooks-runtime';
-const OPENCODE_DISABLE_ECC_HOOKS_TRANSFORM = 'opencode-disable-ecc-hooks';
+const OPENCODE_DISABLE_YUS_HOOKS_TRANSFORM = 'opencode-disable-yus-hooks';
 const OPENCODE_DISABLE_PLUGIN_TRANSFORM = 'opencode-disable-plugin-entrypoint';
 
 function normalizeOperationPath(value) {
@@ -188,7 +188,7 @@ function getDisabledOpenCodePluginContent() {
   // (`export default async () => ({})`) is rejected at startup with
   // PluginModule.LoadError / SchemaError(Expected object at ["default"]), which
   // is the same failure reported for the V1 hook plugin in issue #3537.
-  return 'export default { id: "ecc-hooks", setup() {} };\n';
+  return 'export default { id: "yus-hooks", setup() {} };\n';
 }
 
 // Installs made before the V2 stub fix wrote this stub. It is inert either way;
@@ -217,7 +217,7 @@ function isHookRuntimeOperation(operation = {}) {
       operation.kind === 'copy-file'
       && operation.contentTransform === (isOpenCodePluginEntrypoint(operation)
         ? OPENCODE_DISABLE_PLUGIN_TRANSFORM
-        : OPENCODE_DISABLE_ECC_HOOKS_TRANSFORM)
+        : OPENCODE_DISABLE_YUS_HOOKS_TRANSFORM)
     );
   }
 
@@ -277,7 +277,7 @@ function withoutOpenCodeHookActivation(operation) {
     ...operation,
     contentTransform: isOpenCodePluginEntrypoint(operation)
       ? OPENCODE_DISABLE_PLUGIN_TRANSFORM
-      : OPENCODE_DISABLE_ECC_HOOKS_TRANSFORM,
+      : OPENCODE_DISABLE_YUS_HOOKS_TRANSFORM,
   };
 }
 
@@ -298,7 +298,7 @@ function disableUnselectedOpenCodeHooks(plan) {
   const runtimeSelected = planSelectsHookRuntime(plan);
   const transformOperations = operations => (Array.isArray(operations) ? operations : []).map(operation => {
     // The source barrel is needed by the published package, but OpenCode scans
-    // plugins/index.ts and plugins/ecc-hooks.ts independently in home installs.
+    // plugins/index.ts and plugins/yus-hooks.ts independently in home installs.
     if (!runtimeSelected || normalizeOperationPath(operation.sourceRelativePath) === '.opencode/plugins/index.ts') {
       return withoutOpenCodeHookActivation(operation);
     }
@@ -422,11 +422,11 @@ function assertHookConsentReady(plan = {}) {
     return;
   }
   throw new Error(
-    'This install would enable ECC\'s automatic hook runtime, which can:\n'
+    'This install would enable yus\'s automatic hook runtime, which can:\n'
       + `${formatHookCapabilityDisclosure()}\n`
       + 'Confirm with --enable-hooks to install it, or --no-hooks to install '
       + 'everything else without the hook runtime. The guided installer '
-      + '(ecc install --guided) collects this choice interactively.'
+      + '(yus install --guided) collects this choice interactively.'
   );
 }
 

@@ -16,7 +16,7 @@ readStdin({ includeMetadata: true }).then(({ raw, truncated, readError }) => {
     const filePath = [input.file_path, input.path, input.file]
       .find(value => typeof value === 'string' && value.trim()) || '';
     if (/\.(env|key|pem)$|\.env\.|credentials|secret/i.test(filePath)) {
-      console.error('[ECC] BLOCKED: Tab cannot read sensitive file: ' + filePath);
+      console.error('[yus] BLOCKED: Tab cannot read sensitive file: ' + filePath);
       process.exit(2);
     }
   } catch {

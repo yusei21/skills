@@ -1,13 +1,13 @@
 ---
 name: plan-orchestrate
-description: Read a plan document, decompose it into steps, classify each step, and emit the ready-to-paste ECC slash command for that step, carrying the step identifier and scope in the command's own documented argument form. Generative only — never invokes commands itself and never claims to control what a command runs internally. Steps whose command cannot carry plan scope fail closed instead of being emitted. Use when the user has a multi-step plan and wants the right command for each step without picking it by hand.
+description: Read a plan document, decompose it into steps, classify each step, and emit the ready-to-paste yus slash command for that step, carrying the step identifier and scope in the command's own documented argument form. Generative only — never invokes commands itself and never claims to control what a command runs internally. Steps whose command cannot carry plan scope fail closed instead of being emitted. Use when the user has a multi-step plan and wants the right command for each step without picking it by hand.
 metadata:
-  origin: ECC
+  origin: yus
 ---
 
 # Plan Orchestrate
 
-Bridge a plan document to the current ECC slash-command surface by emitting one ready-to-paste command per step. This skill is a router only: it picks the command and fills in the command's own documented argument form. It does not compose agent chains and does not influence what a command runs internally — each command owns its own execution behavior. The skill is generative only; it never executes commands. The user pastes each line when ready.
+Bridge a plan document to the current yus slash-command surface by emitting one ready-to-paste command per step. This skill is a router only: it picks the command and fills in the command's own documented argument form. It does not compose agent chains and does not influence what a command runs internally — each command owns its own execution behavior. The skill is generative only; it never executes commands. The user pastes each line when ready.
 
 ## When to Use
 
@@ -193,7 +193,7 @@ Append a final "Batch execution" block aggregating every **emitted** step's comm
 
 ### Phase 5 — Self-check (run before emitting)
 
-- [ ] Every command is from the catalogue above; no `legacy-command-shims/` command and no `/orchestrate` or `/ecc:orchestrate` appears in the rendered output.
+- [ ] Every command is from the catalogue above; no `legacy-command-shims/` command and no `/orchestrate` or `/yus:orchestrate` appears in the rendered output.
 - [ ] Every emitted command is scope-carrying, and its task description starts with `[Plan: <path>#step-<id>]` and includes Acceptance (1–3 items). The `Out of scope:` clause is present only when inherited from the plan.
 - [ ] Every emitted quoted task description is single-line, double-quoted, with embedded `"` escaped, 200–600 characters, and does not request secret access, unapproved tool use, destructive operations, or data exfiltration.
 - [ ] No invented `--mode`, `--gate`, or `--agents=...` flags on any emitted command.

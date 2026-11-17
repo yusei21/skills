@@ -44,7 +44,7 @@ const COLOR_MAP = new Map([['teal', 'cyan']]);
 
 function usage() {
   return [
-    'Adapt ECC agent frontmatter for Qwen Code.',
+    'Adapt yus agent frontmatter for Qwen Code.',
     '',
     'Usage:',
     '  node scripts/qwen-adapt-agents.js [agents-dir]',

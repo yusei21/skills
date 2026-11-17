@@ -59,7 +59,7 @@ test('both scanners use canonical, error-visible, NUL-delimited discovery', () =
 if (process.platform === 'win32') {
   console.log('  ↷ POSIX symlink and newline-path integration cases skipped on Windows');
 } else {
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-skill-stocktake-'));
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-skill-stocktake-'));
   try {
     const projectSkills = path.join(tempRoot, 'project', '.claude', 'skills');
     const directSkill = path.join(projectSkills, 'direct skill');
@@ -149,7 +149,7 @@ if (process.platform === 'win32') {
 }
 
 if (process.platform !== 'win32') {
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-stocktake-inventory-'));
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-stocktake-inventory-'));
   try {
     const globalSkills = path.join(tempRoot, 'global', '.claude', 'skills');
     const projectSkills = path.join(tempRoot, 'project', '.claude', 'skills');
@@ -213,20 +213,20 @@ if (process.platform !== 'win32') {
         // Emit a real partial record, then fail only the selected scope.
         fs.writeFileSync(path.join(binDir, 'find'), [
           '#!/usr/bin/env bash',
-          'if [[ "$2" == "$ECC_TEST_FIND_DIR" ]]; then',
-          '  printf "%s\\0" "$ECC_TEST_FIND_PARTIAL"',
-          '  printf "fixture find failure: %s\\n" "$ECC_TEST_FIND_DIR" >&2',
+          'if [[ "$2" == "$YUS_TEST_FIND_DIR" ]]; then',
+          '  printf "%s\\0" "$YUS_TEST_FIND_PARTIAL"',
+          '  printf "fixture find failure: %s\\n" "$YUS_TEST_FIND_DIR" >&2',
           '  exit 1',
           'fi',
-          'exec "$ECC_TEST_REAL_FIND" "$@"',
+          'exec "$YUS_TEST_REAL_FIND" "$@"',
           '',
         ].join('\n'), { mode: 0o755 });
         const result = runBash(scanScript, [], {
           ...env, TMPDIR: scanTmp,
           PATH: `${binDir}${path.delimiter}${process.env.PATH}`,
-          ECC_TEST_FIND_DIR: skillsDir,
-          ECC_TEST_FIND_PARTIAL: path.join(skillsDir, 'active', 'SKILL.md'),
-          ECC_TEST_REAL_FIND: realFind,
+          YUS_TEST_FIND_DIR: skillsDir,
+          YUS_TEST_FIND_PARTIAL: path.join(skillsDir, 'active', 'SKILL.md'),
+          YUS_TEST_REAL_FIND: realFind,
         });
         assert.strictEqual(result.status, 1, 'A failed find must not publish a partial inventory');
         assert.strictEqual(result.stdout, '', 'Incomplete discovery must not produce inventory JSON');
@@ -300,7 +300,7 @@ if (process.platform !== 'win32') {
   const inventoryBlock = inventorySection.match(/```bash\n([\s\S]*?)\n```/)[1];
   for (const scenario of ['changed', 'missing mtime', 'null mtime', 'matching', 'legacy matching']) {
     test('documented resume reevaluates stale skills and preserves current evaluations (' + scenario + ')', () => {
-      const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-stocktake-resume-'));
+      const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-stocktake-resume-'));
       try {
         const home = path.join(tempRoot, 'home');
         const skills = path.join(home, '.claude', 'skills');

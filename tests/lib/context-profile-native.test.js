@@ -11,7 +11,7 @@ const native = () => require('../../scripts/lib/context-profile-native');
 
 function fixture(callback) {
   return withFixture(repoRoot => {
-    const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'ecc-native-test-'));
+    const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'yus-native-test-'));
     const options = { stateRoot: path.join(parent, 'managed'), nativeRoot: path.join(parent, 'native'), codexPath: process.execPath };
     try {
       store.applyStore({ repoRoot, stateRoot: options.stateRoot, target: 'codex' });
@@ -33,7 +33,7 @@ function provider(overrides = {}) {
     if (args[0] === 'plugin' && args[1] === 'add') {
       const base = path.dirname(options.env.HOME);
       const marketplace = JSON.parse(fs.readFileSync(path.join(base, 'marketplace/.agents/plugins/marketplace.json')));
-      const cache = path.join(options.env.CODEX_HOME, 'plugins/cache', marketplace.name, 'ecc-context-carrier/local');
+      const cache = path.join(options.env.CODEX_HOME, 'plugins/cache', marketplace.name, 'yus-context-carrier/local');
       fs.mkdirSync(path.dirname(cache), { recursive: true });
       fs.cpSync(path.join(base, 'marketplace/carrier'), cache, { recursive: true });
     }
@@ -42,9 +42,9 @@ function provider(overrides = {}) {
   const discover = (_command, options) => {
     const base = path.dirname(options.env.HOME);
     const marketplace = JSON.parse(fs.readFileSync(path.join(base, 'marketplace/.agents/plugins/marketplace.json')));
-    const cache = path.join(options.env.CODEX_HOME, 'plugins/cache', marketplace.name, 'ecc-context-carrier/local');
-    const skills = fs.readdirSync(path.join(cache, 'skills')).map(name => ({ name: `ecc-context-carrier:${name}`,
-      pluginId: `ecc-context-carrier@${marketplace.name}`, enabled: true, scope: 'user',
+    const cache = path.join(options.env.CODEX_HOME, 'plugins/cache', marketplace.name, 'yus-context-carrier/local');
+    const skills = fs.readdirSync(path.join(cache, 'skills')).map(name => ({ name: `yus-context-carrier:${name}`,
+      pluginId: `yus-context-carrier@${marketplace.name}`, enabled: true, scope: 'user',
       path: path.join(cache, 'skills', name, 'SKILL.md') }));
     if (overrides.alter) overrides.alter({ skills, cache });
     return { data: [{ cwd: options.cwd, errors: [], skills }] };
@@ -214,7 +214,7 @@ test('provider project trust bookkeeping does not invalidate native readiness', 
   // Codex rewrites config.toml with a project trust entry at every session start;
   // that bookkeeping does not change skill discovery.
   fs.appendFileSync(path.join(prepared.codexHome, 'config.toml'),
-    '\n[trust."/tmp/ecc-workspace"]\ntrust_level = "trusted"\n');
+    '\n[trust."/tmp/yus-workspace"]\ntrust_level = "trusted"\n');
   const status = native().getNativeProfileStatus(options, dependency);
   assert.equal(status.status, 'ready');
   assert.equal(status.ready, true);

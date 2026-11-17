@@ -90,7 +90,7 @@ function applySync(repo, options = {}, context = {}) {
     limit: options.limit || 100,
     label: policy.labels && policy.labels.epic,
   });
-  const marker = policy.sectionMarker || 'ecc-coordination';
+  const marker = policy.sectionMarker || 'yus-coordination';
   const coordinatedIssues = listIssues(repo, {
     ...options,
     state: options.state || 'all',

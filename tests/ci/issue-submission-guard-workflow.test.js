@@ -11,7 +11,7 @@ const exec = promisify(execFile);
 const root = path.resolve(__dirname, '../..');
 
 test('actual Issue workflow CLI caps a new Issue, handles bursts, and keeps credentials separate', async () => {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-issue-guard-'));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-issue-guard-'));
   const mutations = [];
   const start = Date.parse('2026-10-25T00:00:00Z');
   const rows = Array.from({ length: 20 }, (_, i) => ({ number: i + 1, state: 'open',

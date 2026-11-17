@@ -3,13 +3,13 @@
  * Regenerate pi/core/ deterministically from manifests/pi-core.json.
  *
  * The profile is a curated, Pi-native, skills+prompts-only package:
- *   pi/core/package.json  - { name: "ecc-pi-core", version: <root VERSION>, license: MIT,
+ *   pi/core/package.json  - { name: "yus-pi-core", version: <root VERSION>, license: MIT,
  *                             keywords: ["pi-package", "skills"],
  *                             pi: { skills: ["./skills"], prompts: ["./commands"] } }
  *   pi/core/LICENSE       - copy of the root LICENSE
  *   pi/core/README.md     - short generated overview
  *   pi/core/CURATION.md   - every excluded skill/command with its reason
- *   pi/core/skills/       - curated skill directories (council renamed to ecc-council)
+ *   pi/core/skills/       - curated skill directories (council renamed to yus-council)
  *   pi/core/commands/     - curated prompt command files
  *
  * Safety checks (build fails if violated; semantics documented in
@@ -189,9 +189,9 @@ const skillCount = manifest.skills.include.length;
 const commandCount = manifest.commands.include.length;
 const descChars = skillDescriptions.reduce((n, d) => n + d.length, 0);
 
-fs.writeFileSync(path.join(tmpDir, 'README.md'), `# ecc-pi-core
+fs.writeFileSync(path.join(tmpDir, 'README.md'), `# yus-pi-core
 
-A curated, Pi-native profile of ECC: ${skillCount} portable
+A curated, Pi-native profile of yus: ${skillCount} portable
 engineering skills and ${commandCount} pure prompt-workflow commands, with no extensions,
 no hooks, no runtime downloads, and no network or SaaS dependencies.
 
@@ -236,7 +236,7 @@ and commit the result. CI verifies the committed profile is up to date.
   lines.push('# Curation');
   lines.push('');
   lines.push(`pi/core includes ${skillCount} of ${Object.keys(manifest.skills.exclude).length + skillCount} skills ` +
-    `and ${commandCount} of ${Object.keys(manifest.commands.exclude).length + commandCount} commands from the root of ECC.`);
+    `and ${commandCount} of ${Object.keys(manifest.commands.exclude).length + commandCount} commands from the root of yus.`);
   lines.push('Everything excluded is listed here with its reason.');
   lines.push('');
   lines.push('## Rules');

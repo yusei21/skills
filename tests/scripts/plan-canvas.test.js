@@ -1037,7 +1037,7 @@ async function main(suite = createTestRunner()) {
 
     await integrationTest('GET /health identifies the app and version', async ({ request }) => {
       const res = await request(port, 'GET', '/health');
-      assert.deepStrictEqual(jsonBody(res), { ok: true, app: 'ecc-plan-canvas', version: '9.9.9-test' });
+      assert.deepStrictEqual(jsonBody(res), { ok: true, app: 'yus-plan-canvas', version: '9.9.9-test' });
     });
 
     await integrationTest('requests with a non-loopback Host header are rejected', async ({ request }) => {
@@ -1064,7 +1064,7 @@ async function main(suite = createTestRunner()) {
       assert.strictEqual(res.statusCode, 404);
     });
 
-    await integrationTest('GET /canvas/:key serves the ECC chrome with CSP', async ({ request }) => {
+    await integrationTest('GET /canvas/:key serves the yus chrome with CSP', async ({ request }) => {
       const res = await request(port, 'GET', `/canvas/${key}`);
       assert.strictEqual(res.statusCode, 200);
       assert.ok(res.headers['content-security-policy'].includes("default-src 'self'"));
@@ -1074,7 +1074,7 @@ async function main(suite = createTestRunner()) {
       assert.ok(res.body.includes('sandbox="allow-scripts allow-forms allow-popups"'));
     });
 
-    await integrationTest('markdown artifacts render in the ECC plan template with the SDK', async ({ request }) => {
+    await integrationTest('markdown artifacts render in the yus plan template with the SDK', async ({ request }) => {
       const res = await request(port, 'GET', `/artifact/${key}/`);
       assert.strictEqual(res.statusCode, 200);
       assert.ok(res.body.includes('<h1 id="plan-demo">'));
@@ -1399,7 +1399,7 @@ async function main(suite = createTestRunner()) {
       assert.strictEqual(res.statusCode, 409);
     });
 
-    await integrationTest('GET / lists sessions in the ECC shell', async ({ request }) => {
+    await integrationTest('GET / lists sessions in the yus shell', async ({ request }) => {
       const res = await request(port, 'GET', '/');
       assert.ok(res.body.includes('Plan Canvas sessions'));
       assert.ok(res.body.includes('demo.plan.md'));

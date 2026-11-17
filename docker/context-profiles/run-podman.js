@@ -9,8 +9,8 @@ const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
 const repoRoot = path.resolve(__dirname, '../..');
-const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-context-podman-'));
-const image = `localhost/ecc-context-profiles:${process.pid}-${Date.now()}`;
+const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-context-podman-'));
+const image = `localhost/yus-context-profiles:${process.pid}-${Date.now()}`;
 function run(command, args, capture = false) {
   const result = spawnSync(command, args, { cwd: repoRoot, encoding: 'utf8',
     timeout: 600000, maxBuffer: 32 * 1024 * 1024, stdio: capture ? 'pipe' : 'inherit' });
@@ -39,7 +39,7 @@ try {
   const packageDigest = crypto.createHash('sha256').update(fs.readFileSync(path.join(temp, 'package.tgz'))).digest('hex');
   process.stdout.write(`${JSON.stringify({ packageDigest, image })}\n`);
   const args = ['build', '--tag', image];
-  if (process.env.ECC_CONTEXT_NODE_IMAGE) args.push('--build-arg', `NODE_IMAGE=${process.env.ECC_CONTEXT_NODE_IMAGE}`);
+  if (process.env.YUS_CONTEXT_NODE_IMAGE) args.push('--build-arg', `NODE_IMAGE=${process.env.YUS_CONTEXT_NODE_IMAGE}`);
   args.push(temp);
   run('podman', args);
   run('podman', ['run', '--rm', '--network=none', '--cap-drop=all', '--security-opt=no-new-privileges', image]);

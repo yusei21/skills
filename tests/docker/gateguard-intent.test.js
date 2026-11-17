@@ -86,7 +86,7 @@ test('a scenario that declares targetQuestions is rejected without asserting aut
     JSON.stringify({ id: 'leaky', trap: 't', prompt: 'p', evidence: ['e'], targetQuestions: ['no-duplicate'] })
   );
   fs.writeFileSync(path.join(scenario, 'intent.json'), JSON.stringify(INTENT));
-  fs.writeFileSync(path.join(scenario, 'grader.cjs'), 'console.log("ECC_EVAL_SCORE {\\"score\\":0}");');
+  fs.writeFileSync(path.join(scenario, 'grader.cjs'), 'console.log("YUS_EVAL_SCORE {\\"score\\":0}");');
   assert.throws(() => intentEval.loadIntentScenarios(dir), /must not encode gate-taxonomy targets/);
 });
 
@@ -99,7 +99,7 @@ test('an intent with no decisive fact is rejected', () => {
     path.join(scenario, 'intent.json'),
     JSON.stringify({ ...INTENT, facts: [{ id: 'ordering', fact: 'Order does not matter.', decisive: false }] })
   );
-  fs.writeFileSync(path.join(scenario, 'grader.cjs'), 'console.log("ECC_EVAL_SCORE {\\"score\\":0}");');
+  fs.writeFileSync(path.join(scenario, 'grader.cjs'), 'console.log("YUS_EVAL_SCORE {\\"score\\":0}");');
   assert.throws(() => intentEval.loadIntentScenarios(dir), /exactly one decisive fact; found 0/);
 });
 
@@ -109,7 +109,7 @@ test('an intent with multiple decisive facts is rejected', () => {
   fs.mkdirSync(path.join(scenario, 'workspace'), { recursive: true });
   fs.writeFileSync(path.join(scenario, 'task.json'), JSON.stringify({ id: 'multi', trap: 't', prompt: 'p', evidence: ['e'] }));
   fs.writeFileSync(path.join(scenario, 'intent.json'), JSON.stringify(INTENT));
-  fs.writeFileSync(path.join(scenario, 'grader.cjs'), 'console.log("ECC_EVAL_SCORE {\\"score\\":0}");');
+  fs.writeFileSync(path.join(scenario, 'grader.cjs'), 'console.log("YUS_EVAL_SCORE {\\"score\\":0}");');
   assert.throws(() => intentEval.loadIntentScenarios(dir), /exactly one decisive fact; found 2/);
 });
 
@@ -633,7 +633,7 @@ function syntheticIntentRunner(root, { fakeEnv = {}, arms = 'off,gate' } = {}) {
     const path = require('path');
     const spawn = cp.spawnSync;
     cp.spawnSync = (file, args, options) => {
-      if (file !== 'ecc-intent-fake') return spawn(file, args, options);
+      if (file !== 'yus-intent-fake') return spawn(file, args, options);
       fs.appendFileSync(${JSON.stringify(calls)}, (args.includes('--settings') ? 'agent' : 'judge') + '\\n');
       if (!args.includes('--settings')) return spawn(process.execPath, ['-e', 'console.log(JSON.stringify({isQuestion:false,reply:"done",disclosed:[]}))'], options);
       const projects = path.join(options.env.CLAUDE_CONFIG_DIR, 'projects');
@@ -646,7 +646,7 @@ function syntheticIntentRunner(root, { fakeEnv = {}, arms = 'off,gate' } = {}) {
       return spawn(process.execPath, [${JSON.stringify(path.join(copied, 'fake-claude.js'))}, ...args], { ...options, env: fakeEnv });
     };
   `);
-  const args = ['--require', preload, path.join(copied, 'run-intent.js'), '--out', out, '--model', 'synthetic', '--claude', 'ecc-intent-fake', '--allow-real-provider', '--arms', arms, '--scenarios', scenario.id, '--reps', '1'];
+  const args = ['--require', preload, path.join(copied, 'run-intent.js'), '--out', out, '--model', 'synthetic', '--claude', 'yus-intent-fake', '--allow-real-provider', '--arms', arms, '--scenarios', scenario.id, '--reps', '1'];
   const run = () => spawnSync(process.execPath, args, { cwd: repo, env, encoding: 'utf8', timeout: 60000 });
   return { copied, out, calls, config, scenario, run };
 }

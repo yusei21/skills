@@ -645,11 +645,11 @@ function normalizePlanPath(value) {
       assert.ok(fs.existsSync(path.join(claudeRoot, 'skills', 'security-review', 'SKILL.md')),
         'Should install security-review skill from --with');
       // Core profile modules should be installed
-      assert.ok(fs.existsSync(path.join(claudeRoot, 'rules', 'ecc', 'common', 'coding-style.md')),
+      assert.ok(fs.existsSync(path.join(claudeRoot, 'rules', 'yus', 'common', 'coding-style.md')),
         'Should install core rules');
 
       // Install state should record include/exclude
-      const statePath = path.join(claudeRoot, 'ecc', 'install-state.json');
+      const statePath = path.join(claudeRoot, 'yus', 'install-state.json');
       const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
       assert.strictEqual(state.request.profile, 'core');
       assert.strictEqual(state.request.hookConsent, 'enabled');
@@ -686,12 +686,12 @@ function normalizePlanPath(value) {
       assert.ok(!fs.existsSync(path.join(claudeRoot, 'skills', 'dmux-workflows', 'SKILL.md')),
         'Should not install orchestration skills');
       // Developer profile base modules should be installed
-      assert.ok(fs.existsSync(path.join(claudeRoot, 'rules', 'ecc', 'common', 'coding-style.md')),
+      assert.ok(fs.existsSync(path.join(claudeRoot, 'rules', 'yus', 'common', 'coding-style.md')),
         'Should install core rules');
       assert.ok(fs.existsSync(path.join(claudeRoot, 'skills', 'tdd-workflow', 'SKILL.md')),
         'Should install workflow skills');
 
-      const statePath = path.join(claudeRoot, 'ecc', 'install-state.json');
+      const statePath = path.join(claudeRoot, 'yus', 'install-state.json');
       const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
       assert.strictEqual(state.request.profile, 'developer');
       assert.strictEqual(state.request.hookConsent, 'enabled');
@@ -725,10 +725,10 @@ function normalizePlanPath(value) {
       assert.ok(fs.existsSync(path.join(claudeRoot, 'skills', 'coding-standards', 'SKILL.md')),
         'Should install framework-language skills');
       // Its dependencies should be installed
-      assert.ok(fs.existsSync(path.join(claudeRoot, 'rules', 'ecc', 'common', 'coding-style.md')),
+      assert.ok(fs.existsSync(path.join(claudeRoot, 'rules', 'yus', 'common', 'coding-style.md')),
         'Should install dependency rules-core');
 
-      const statePath = path.join(claudeRoot, 'ecc', 'install-state.json');
+      const statePath = path.join(claudeRoot, 'yus', 'install-state.json');
       const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
       assert.strictEqual(state.request.profile, null);
       assert.deepStrictEqual(state.request.includeComponents, ['lang:typescript']);
@@ -766,7 +766,7 @@ function normalizePlanPath(value) {
         'Should not install unrelated workflow-quality skills'
       );
 
-      const statePath = path.join(claudeRoot, 'ecc', 'install-state.json');
+      const statePath = path.join(claudeRoot, 'yus', 'install-state.json');
       const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
       assert.deepStrictEqual(state.request.includeComponents, ['skill:continuous-learning-v2']);
       assert.deepStrictEqual(state.resolution.selectedModules, ['skill-continuous-learning-v2']);

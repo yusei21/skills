@@ -17,7 +17,7 @@ const { fingerprintExecutable, resolveExecutable } = require('./context-profile-
 const DIGEST = /^[a-f0-9]{64}$/;
 const ID = /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/;
 const KEYS = new Set(['stateRoot', 'nativeRoot', 'expectedRevision', 'expectedCarrierDigest', 'codexPath', 'claudePath']);
-const PLUGIN = 'ecc-context-carrier';
+const PLUGIN = 'yus-context-carrier';
 // Claude loads the carrier per session with --plugin-dir; nothing is installed.
 // Official marketplace auto-install would add plugins to the isolated home.
 const CLAUDE_ISOLATION_ENV = Object.freeze({ CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1',
@@ -108,7 +108,7 @@ function inputs(options) {
 }
 
 function owner(options, create = false) {
-  const marker = { schemaVersion: 'ecc.native-context-root.v1',
+  const marker = { schemaVersion: 'yus.native-context-root.v1',
     bindingDigest: digestObject({ nativeRoot: options.nativeRoot, stateRoot: options.stateRoot }) };
   if (!exists(options.nativeRoot)) {
     if (!create) return false;
@@ -118,7 +118,7 @@ function owner(options, create = false) {
   if (!stat.isDirectory() || (process.platform !== 'win32' && ((stat.mode & 0o077) !== 0
     || (process.getuid && stat.uid !== process.getuid())))) throw new Error('Native root must be a private owned directory');
   const file = path.join(options.nativeRoot, 'owner.json');
-  if (!exists(file) || !equal(io.readJson(file), marker)) throw new Error('Native root is not an owned ECC isolated root');
+  if (!exists(file) || !equal(io.readJson(file), marker)) throw new Error('Native root is not an owned yus isolated root');
   return true;
 }
 
@@ -141,7 +141,7 @@ function readState(options) {
   const file = path.join(options.nativeRoot, 'state.json');
   if (!exists(file)) return null;
   const state = io.readJson(file);
-  if (state.schemaVersion !== 'ecc.native-context-state.v1' || !Number.isSafeInteger(state.revision)
+  if (state.schemaVersion !== 'yus.native-context-state.v1' || !Number.isSafeInteger(state.revision)
     || state.revision < 1 || !Number.isSafeInteger(state.storeRevision) || state.storeRevision < 1
     || !DIGEST.test(state.receiptDigest) || !DIGEST.test(state.generationReceiptDigest) || !ID.test(state.generationId)
     || (state.previousGenerationId !== null && (!ID.test(state.previousGenerationId) || !DIGEST.test(state.previousGenerationReceiptDigest)))
@@ -179,7 +179,7 @@ function loadReceipt(options, state, { allowRefresh = false } = {}) {
   const receipt = io.readJson(path.join(root, 'receipt.json'));
   // Receipts written before Claude support carry no target and are Codex receipts.
   const target = receipt.target ?? 'codex';
-  if (digestObject(receipt) !== state.generationReceiptDigest || receipt.schemaVersion !== 'ecc.native-context-receipt.v1'
+  if (digestObject(receipt) !== state.generationReceiptDigest || receipt.schemaVersion !== 'yus.native-context-receipt.v1'
     || receipt.generationId !== state.generationId || !Object.hasOwn(PROVIDERS, target)
     || !PROVIDERS[target].admits(receipt.providerVersion)
     || receipt.bindingDigest !== digestObject({ nativeRoot: options.nativeRoot, stateRoot: options.stateRoot })) {
@@ -210,7 +210,7 @@ function providerPaths(target, root) {
 }
 
 function response(options, state, current, pending = false, allowRefresh = false) {
-  const base = { schemaVersion: 'ecc.native-context-status.v1', nativeRoot: options.nativeRoot,
+  const base = { schemaVersion: 'yus.native-context-status.v1', nativeRoot: options.nativeRoot,
     stateRoot: options.stateRoot, active: false, ready: false, revision: state?.revision || 0,
     status: pending ? 'recovery-required' : 'unconfigured', target: current.target,
     providerVersion: providerFor(current.target).requiredVersion, home: null, ...providerPaths(current.target, null),
@@ -333,21 +333,21 @@ function verifyClaude(options, root, carrier, dependencies) {
 function verifyNative(options, root, carrier, dependencies) {
   if (options.target === 'claude') return verifyClaude(options, root, carrier, dependencies);
   if (command(options, root, ['--version'], dependencies) !== `codex-cli ${options.providerVersion}`) throw new Error('Native Codex version changed since verification');
-  const env = environment(root, 'codex'); const marketplaceName = `ecc-context-${carrier.carrierDigest.slice(0, 16)}`;
-  const cache = path.join(env.CODEX_HOME, 'plugins/cache', marketplaceName, 'ecc-context-carrier/local');
+  const env = environment(root, 'codex'); const marketplaceName = `yus-context-${carrier.carrierDigest.slice(0, 16)}`;
+  const cache = path.join(env.CODEX_HOME, 'plugins/cache', marketplaceName, 'yus-context-carrier/local');
   const result = (dependencies.discover || discoverSync)(options.executablePath, { cwd: path.join(root, 'project'), env });
   if (!result || !Array.isArray(result.data) || result.data.length !== 1 || !equal(result.data[0].errors, [])
     || result.data[0].cwd !== path.join(root, 'project')
     || !Array.isArray(result.data[0].skills)) throw new Error('Native skill discovery shape, project binding or parser errors');
-  const selected = result.data[0].skills.filter(skill => skill.pluginId === `ecc-context-carrier@${marketplaceName}`);
-  const expectedNames = carrier.entries.map(entry => `ecc-context-carrier:${entry.name}`).sort();
+  const selected = result.data[0].skills.filter(skill => skill.pluginId === `yus-context-carrier@${marketplaceName}`);
+  const expectedNames = carrier.entries.map(entry => `yus-context-carrier:${entry.name}`).sort();
   if (!equal(selected.map(skill => skill.name).sort(), expectedNames)) throw new Error('Native skill discovery selection mismatch');
   for (const skill of result.data[0].skills) {
-    if (skill.pluginId !== `ecc-context-carrier@${marketplaceName}`) {
+    if (skill.pluginId !== `yus-context-carrier@${marketplaceName}`) {
       if (skill.scope !== 'system' || skill.pluginId || !inside(skill.path, path.join(env.CODEX_HOME, 'skills/.system'))) throw new Error('Native extra skill discovery');
       continue;
     }
-    const name = skill.name.slice('ecc-context-carrier:'.length);
+    const name = skill.name.slice('yus-context-carrier:'.length);
     if (!skill.enabled || skill.path !== path.join(cache, 'skills', name, 'SKILL.md')) throw new Error('Native skill discovery enabled state or path mismatch');
   }
   verifyFiles(cache, carrier);
@@ -382,7 +382,7 @@ function publish(options, before, current, generationId, receipt, dependencies) 
   loadReceipt(options, { generationId, generationReceiptDigest: digestObject(receipt) });
   if (before) loadReceipt(options, before, { allowRefresh: true });
   if (!equal(readState(options), before)) throw new Error('Native state changed before publication');
-  const transition = { schemaVersion: 'ecc.native-context-state.v1', revision: (before?.revision || 0) + 1,
+  const transition = { schemaVersion: 'yus.native-context-state.v1', revision: (before?.revision || 0) + 1,
     generationId, previousGenerationId: before?.generationId || null,
     previousGenerationReceiptDigest: before?.generationReceiptDigest || null,
     generationReceiptDigest: digestObject(receipt), storeRevision: current.revision };
@@ -429,12 +429,12 @@ function register(options, root, carrier, current, dependencies) {
   }
   const providerVersion = providerVersionFor(options, root, dependencies);
   copyCarrier(root, 'marketplace/carrier', carrier, current);
-  const name = `ecc-context-${carrier.carrierDigest.slice(0, 16)}`;
+  const name = `yus-context-${carrier.carrierDigest.slice(0, 16)}`;
   io.writeExclusive(path.join(root, 'marketplace/.agents/plugins/marketplace.json'), io.jsonBytes({ name,
-    plugins: [{ name: 'ecc-context-carrier', source: { source: 'local', path: './carrier' },
+    plugins: [{ name: 'yus-context-carrier', source: { source: 'local', path: './carrier' },
       policy: { installation: 'AVAILABLE', authentication: 'ON_INSTALL' } }] }));
   command(options, root, ['plugin', 'marketplace', 'add', path.join(root, 'marketplace'), '--json'], dependencies);
-  command(options, root, ['plugin', 'add', `ecc-context-carrier@${name}`, '--json'], dependencies);
+  command(options, root, ['plugin', 'add', `yus-context-carrier@${name}`, '--json'], dependencies);
   checkpoint(dependencies, 'registered');
   verifyNative({ ...options, providerVersion }, root, carrier, dependencies);
   return { providerVersion, nativeObservation: null };
@@ -461,7 +461,7 @@ function prepareNativeProfile(input, dependencies = {}) {
       }
     }
     const generationId = crypto.randomUUID();
-    const pending = { schemaVersion: 'ecc.native-context-pending.v1', before, generationId,
+    const pending = { schemaVersion: 'yus.native-context-pending.v1', before, generationId,
       carrierDigest: current.carrierDigest, storeRevision: current.revision };
     io.atomicJson(path.join(options.nativeRoot, 'pending.json'), pending); checkpoint(dependencies, 'prepared');
     io.mkdir(path.join(options.nativeRoot, 'generations'));
@@ -473,7 +473,7 @@ function prepareNativeProfile(input, dependencies = {}) {
     io.writeExclusive(path.join(root, 'carrier.json'), io.jsonBytes(carrier));
     const { providerVersion, nativeObservation } = register(options, root, carrier, current, dependencies);
     io.writeExclusive(path.join(root, provider.bootstrapPath), bootstrap.bytes);
-    const receipt = { schemaVersion: 'ecc.native-context-receipt.v1', generationId,
+    const receipt = { schemaVersion: 'yus.native-context-receipt.v1', generationId,
       bindingDigest: digestObject({ nativeRoot: options.nativeRoot, stateRoot: options.stateRoot }),
       ...(current.target === 'codex' ? {} : { target: current.target }),
       carrierDigest: carrier.carrierDigest, providerVersion, executable, bootstrap: bootstrap.binding,
@@ -501,7 +501,7 @@ function rollbackNativeProfile(input, dependencies = {}) {
     }
     verifyNative({ ...options, target: previous.target, providerVersion: receipt.providerVersion,
       executablePath: receipt.executable.path, executableBinding: receipt.executable }, root, previous.carrier, dependencies);
-    io.atomicJson(path.join(options.nativeRoot, 'pending.json'), { schemaVersion: 'ecc.native-context-pending.v1',
+    io.atomicJson(path.join(options.nativeRoot, 'pending.json'), { schemaVersion: 'yus.native-context-pending.v1',
       before, generationId: before.previousGenerationId, carrierDigest: current.carrierDigest, storeRevision: current.revision });
     return publish(options, before, current, before.previousGenerationId, receipt, dependencies);
   });
@@ -514,7 +514,7 @@ function recoverNativeProfile(input) {
     const file = path.join(options.nativeRoot, 'pending.json');
     if (!exists(file)) return response(options, readState(options), current, false, true);
     const pending = io.readJson(file); const state = readState(options);
-    if (pending.schemaVersion !== 'ecc.native-context-pending.v1' || !ID.test(pending.generationId)
+    if (pending.schemaVersion !== 'yus.native-context-pending.v1' || !ID.test(pending.generationId)
       || !DIGEST.test(pending.carrierDigest) || !Number.isSafeInteger(pending.storeRevision)) throw new Error('Native pending integrity failed');
     const committed = state && state.generationId === pending.generationId
       && state.storeRevision === pending.storeRevision && state.revision === (pending.before?.revision || 0) + 1;

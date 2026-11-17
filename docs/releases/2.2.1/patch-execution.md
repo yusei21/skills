@@ -1,13 +1,13 @@
-# ECC 2.2.1 bug and security patch execution
+# yus 2.2.1 bug and security patch execution
 
-Status: in progress, 2026-09-07. Ticket: ECC-031.
+Status: in progress, 2026-09-07. Ticket: yus-031.
 
 ## Outcome and authority
 
 The user authorized reviewing, repairing, and merging critical bug and security
-PRs, followed by publishing ECC 2.2.1. This advances the M0 distribution and
-release-evidence contract. ECC retains policy, canonical state, and release
-authority. New feature platforms, ECC 3 contracts, and broad refactoring remain
+PRs, followed by publishing yus 2.2.1. This advances the M0 distribution and
+release-evidence contract. yus retains policy, canonical state, and release
+authority. New feature platforms, yus 3 contracts, and broad refactoring remain
 outside this patch.
 
 ## Integration sequence
@@ -46,7 +46,7 @@ outside this patch.
 - Base: e04ea0b9cc8248686edf5ac751cadff550e162b8.
 - Current GitHub account: haelyra, repository write permission verified.
 - Repository NPM_TOKEN secret is configured; validity still needs publication.
-- No remote v2.2.1 tag; registry lookup returns E404 for ecc-universal@2.2.1.
+- No remote v2.2.1 tag; registry lookup returns E404 for yus-universal@2.2.1.
 - Registry latest is 2.2.0. No local GPG private signing key or loaded SSH agent
   identity was available in the initial check. Signing remains an open gate.
 - Independent review found that a later scalar assignment could mask an earlier
@@ -91,7 +91,7 @@ writes. Final full-suite and hosted validation are pending.
 
 Windows hosted checks exposed fixture-owned descriptor cleanup and directory
 rename assumptions in two new settings tests. The repaired fixtures preserve
-Windows OS-refusal assertions and ECC parent-identity checks. CodeQL findings
+Windows OS-refusal assertions and yus parent-identity checks. CodeQL findings
 338-341 were confined to test-source patterns; minimal assertion/interception
 changes preserve coverage without alert dismissals. Hosted rescanning remains
 required.

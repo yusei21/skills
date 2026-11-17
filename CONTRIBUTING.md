@@ -1,4 +1,4 @@
-# Contributing to ECC
+# Contributing to yus
 
 **English** | [Português](CONTRIBUTING.pt-BR.md) | [中文](CONTRIBUTING.zh-CN.md)
 
@@ -58,8 +58,8 @@ Slash commands that invoke useful workflows:
 
 ```bash
 # 1. Fork and clone
-gh repo fork affaan-m/ECC --clone
-cd ECC
+gh repo fork yusei21/yus --clone
+cd yus
 
 # 2. Create a branch
 git checkout -b feat/my-contribution
@@ -106,7 +106,7 @@ up.
 ---
 name: your-skill-name
 description: Brief description shown in skill list and used for auto-activation
-origin: ECC
+origin: yus
 ---
 
 # Your Skill Title
@@ -163,8 +163,8 @@ If you are porting an idea from another repo, plugin, harness, or personal promp
 Short version:
 
 - copy the underlying idea, not the external product identity
-- rename the skill when ECC materially changes or expands the surface
-- prefer ECC-native rules, skills, scripts, and MCPs over new default third-party dependencies
+- rename the skill when yus materially changes or expands the surface
+- prefer yus-native rules, skills, scripts, and MCPs over new default third-party dependencies
 - do not ship a skill whose main value is telling users to install an unvetted package
 
 ### Skill Checklist
@@ -422,7 +422,7 @@ Skills and agents can use **MCP (Model Context Protocol)** tools to pull in up-t
 
 ### Skill subsets (Codex and Cursor)
 
-ECC ships skill subsets for other harnesses:
+yus ships skill subsets for other harnesses:
 
 - **Codex:** `.agents/skills/` — skills listed in `agents/openai.yaml` are loaded by Codex.
 - **Cursor:** `.cursor/skills/` — a subset of skills is bundled for Cursor.
@@ -575,8 +575,7 @@ Never move or re-tag a published version; ship a new patch version instead.
 
 ## Questions?
 
-- **Issues:** [github.com/affaan-m/ECC/issues](https://github.com/affaan-m/ECC/issues)
-- **X/Twitter:** [@affaanmustafa](https://x.com/affaanmustafa)
+- **Issues:** [github.com/yusei21/yus/issues](https://github.com/yusei21/yus/issues)
 
 ---
 

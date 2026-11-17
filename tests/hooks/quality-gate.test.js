@@ -168,7 +168,7 @@ function withFormatterFixture(formatter, fallback, fn) {
     fs.mkdirSync(binDir, { recursive: true });
     fs.writeFileSync(path.join(root, 'package.json'), '{}');
     fs.writeFileSync(path.join(root, formatter === 'biome' ? 'biome.json' : '.prettierrc'), '{}');
-    const fileName = 'edited %ECC_TEST_LITERAL% !ECC_TEST_LITERAL! & file';
+    const fileName = 'edited %YUS_TEST_LITERAL% !YUS_TEST_LITERAL! & file';
     const filePath = path.join(srcDir, fileName + (formatter === 'biome' ? '.json' : '.js'));
     const original = formatter === 'biome' ? '{"value":1}\n' : 'const value=1;\n';
     fs.writeFileSync(filePath, original);
@@ -178,9 +178,9 @@ function withFormatterFixture(formatter, fallback, fn) {
       "const fs = require('fs');",
       "const path = require('path');",
       'const args = process.argv.slice(2);',
-      'fs.writeFileSync(process.env.ECC_TEST_CAPTURE, JSON.stringify({ args, cwd: process.cwd() }));',
+      'fs.writeFileSync(process.env.YUS_TEST_CAPTURE, JSON.stringify({ args, cwd: process.cwd() }));',
       "if (args.includes('--write')) fs.appendFileSync(args.find(arg => path.isAbsolute(arg)), 'formatted\\n');",
-      'process.exit(Number(process.env.ECC_TEST_EXIT || 0));'
+      'process.exit(Number(process.env.YUS_TEST_EXIT || 0));'
     ].join('\n'));
     const binName = fallback ? 'npx' : formatter;
     const shimPath = path.join(binDir, binName + (process.platform === 'win32' ? '.cmd' : ''));
@@ -193,11 +193,11 @@ function withFormatterFixture(formatter, fallback, fn) {
     Object.assign(env, {
       PATH: binDir,
       CLAUDE_PACKAGE_MANAGER: 'npm',
-      ECC_QUALITY_GATE_FIX: 'false',
-      ECC_QUALITY_GATE_STRICT: 'true',
-      ECC_TEST_CAPTURE: capturePath,
-      ECC_TEST_LITERAL: 'must-not-expand',
-      ECC_TEST_EXIT: '0'
+      YUS_QUALITY_GATE_FIX: 'false',
+      YUS_QUALITY_GATE_STRICT: 'true',
+      YUS_TEST_CAPTURE: capturePath,
+      YUS_TEST_LITERAL: 'must-not-expand',
+      YUS_TEST_EXIT: '0'
     });
     const input = JSON.stringify({ tool_input: { file_path: filePath } });
     const runHook = (overrides, nodeArguments = []) => spawnSync(process.execPath, [...nodeArguments, hookPath], {
@@ -225,7 +225,7 @@ for (const formatter of ['prettier', 'biome']) {
   for (const fix of [false, true]) {
     if (test(`runs local ${formatter} in ${fix ? 'fix' : 'check'} mode with literal spaces and shell metacharacters`, () => {
       withFormatterFixture(formatter, false, fixture => {
-        const result = fixture.runHook({ ECC_QUALITY_GATE_FIX: String(fix) });
+        const result = fixture.runHook({ YUS_QUALITY_GATE_FIX: String(fix) });
         const args = formatter === 'biome'
           ? ['check', fixture.filePath, ...(fix ? ['--write'] : [])]
           : [fix ? '--write' : '--check', fixture.filePath];
@@ -269,7 +269,7 @@ if (test('preserves literal formatter arguments even if invocation options drift
 
 if (test('reports a real formatter failure in strict mode while preserving hook input', () => {
   withFormatterFixture('prettier', false, fixture => {
-    const result = fixture.runHook({ ECC_TEST_EXIT: '2' });
+    const result = fixture.runHook({ YUS_TEST_EXIT: '2' });
     assertInvocation(fixture, result, ['--check', fixture.filePath]);
     assert.ok(result.stderr.includes(`[QualityGate] Prettier check failed for ${fixture.filePath}`));
     assert.strictEqual(fs.readFileSync(fixture.filePath, 'utf8'), fixture.original);

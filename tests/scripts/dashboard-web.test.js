@@ -18,11 +18,11 @@ let testFailed = 0;
 const asyncTests = [];
 const REQUEST_TIMEOUT_MS = 5000;
 
-for (const override of ['ECC_AGENT_DATA_HOME', 'CLAUDE_CONFIG_DIR']) {
+for (const override of ['YUS_AGENT_DATA_HOME', 'CLAUDE_CONFIG_DIR']) {
   asyncTest(`activity HTTP feed reads real hook output with ${override}`, async () => {
     const { spawnSync } = require('child_process');
-    const dir = createTempDir('ecc-activity-override-');
-    const saved = Object.fromEntries(['ECC_AGENT_DATA_HOME', 'CLAUDE_CONFIG_DIR', 'CURSOR_VERSION', 'CURSOR_PROJECT_DIR'].map(key => [key, process.env[key]]));
+    const dir = createTempDir('yus-activity-override-');
+    const saved = Object.fromEntries(['YUS_AGENT_DATA_HOME', 'CLAUDE_CONFIG_DIR', 'CURSOR_VERSION', 'CURSOR_PROJECT_DIR'].map(key => [key, process.env[key]]));
     try {
       for (const key of Object.keys(saved)) delete process.env[key];
       process.env[override] = dir;
@@ -59,11 +59,11 @@ test('renderHTML emits executable scripts without syntax errors', () => {
 });
 
 asyncTest('served activity UI shows HTTP failures as errors and preserves healthy empty and populated feeds', async () => {
-  const dir = createTempDir('ecc-activity-response-');
-  const savedDataHome = process.env.ECC_AGENT_DATA_HOME;
+  const dir = createTempDir('yus-activity-response-');
+  const savedDataHome = process.env.YUS_AGENT_DATA_HOME;
   const originalClose = fs.closeSync;
   try {
-    process.env.ECC_AGENT_DATA_HOME = dir;
+    process.env.YUS_AGENT_DATA_HOME = dir;
     const log = path.join(dir, 'metrics', 'tool-usage.jsonl');
     writeFile(dir, 'metrics/tool-usage.jsonl', '');
     const reported = [];
@@ -114,15 +114,15 @@ asyncTest('served activity UI shows HTTP failures as errors and preserves health
     }, { reportError: (message, error) => reported.push({ message, error }) });
   } finally {
     fs.closeSync = originalClose;
-    if (savedDataHome === undefined) delete process.env.ECC_AGENT_DATA_HOME;
-    else process.env.ECC_AGENT_DATA_HOME = savedDataHome;
+    if (savedDataHome === undefined) delete process.env.YUS_AGENT_DATA_HOME;
+    else process.env.YUS_AGENT_DATA_HOME = savedDataHome;
     cleanup(dir);
   }
 });
 
 test('activity loading bounds large logs and ignores malformed rows', () => {
   const { loadActivity } = require(SCRIPT);
-  withTempDir('ecc-activity-', dir => {
+  withTempDir('yus-activity-', dir => {
     const log = path.join(dir, 'usage.jsonl');
     const row = name => JSON.stringify({ session_id: 'fixture', tool_name: name });
     fs.writeFileSync(log, 'x'.repeat(1024 * 1024) + '\n' + row('Read') + '\nnull\n{"session_id":42,"tool_name":"Read"}\nnot-json\n' + row('Skill') + '\n');
@@ -181,7 +181,7 @@ function withTempDir(prefix, fn) {
 test('withTempDir removes temp directories when the callback throws', () => {
   let createdDir = '';
   assert.throws(() => {
-    withTempDir('ecc-test-', dirPath => {
+    withTempDir('yus-test-', dirPath => {
       createdDir = dirPath;
       assert.ok(fs.existsSync(createdDir));
       throw new Error('fixture failure');
@@ -359,7 +359,7 @@ test('parsePort returns 3456 for non-numeric string', () => {
 
 test('readFrontmatter parses simple frontmatter', () => {
   const { readFrontmatter } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'test.md', [
     '---',
     'name: test-agent',
@@ -380,7 +380,7 @@ test('readFrontmatter parses simple frontmatter', () => {
 
 test('readFrontmatter parses array tools field', () => {
   const { readFrontmatter } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'agent.md', [
     '---',
     'name: array-agent',
@@ -398,7 +398,7 @@ test('readFrontmatter parses array tools field', () => {
 
 test('readFrontmatter preserves scoped tools in legacy flow sequences', () => {
   const { readFrontmatter } = require(SCRIPT);
-  withTempDir('ecc-test-', tempDir => {
+  withTempDir('yus-test-', tempDir => {
     writeFile(tempDir, 'agent.md', [
       '---',
       'name: scoped-agent',
@@ -418,7 +418,7 @@ test('readFrontmatter preserves scoped tools in legacy flow sequences', () => {
 
 test('readFrontmatter normalizes comma-separated scalar tools to an array', () => {
   const { readFrontmatter } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'agent.md', [
     '---',
     'name: test-agent',
@@ -435,7 +435,7 @@ test('readFrontmatter normalizes comma-separated scalar tools to an array', () =
 
 test('readFrontmatter handles quoted values', () => {
   const { readFrontmatter } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'test.md', [
     '---',
     'name: "quoted-name"',
@@ -452,7 +452,7 @@ test('readFrontmatter handles quoted values', () => {
 
 test('readFrontmatter returns empty object for file without frontmatter', () => {
   const { readFrontmatter } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'no-fm.md', '# Just a heading\nNo frontmatter here.');
 
   const fm = readFrontmatter(path.join(testRoot, 'no-fm.md'));
@@ -470,7 +470,7 @@ test('readFrontmatter returns empty object for missing file', () => {
 
 test('readSkill parses skill frontmatter and body', () => {
   const { readSkill } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'SKILL.md', [
     '---',
     'name: test-skill',
@@ -489,7 +489,7 @@ test('readSkill parses skill frontmatter and body', () => {
 
 test('readSkill reads each skill file only once', () => {
   const { readSkill } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   const skillPath = path.join(testRoot, 'SKILL.md');
   writeFile(testRoot, 'SKILL.md', '---\ndescription: A test skill\n---\nbody');
   const originalReadFileSync = fs.readFileSync;
@@ -526,7 +526,7 @@ test('loadAgents returns empty array for missing directory', () => {
 
 test('loadAgents loads agent markdown files', () => {
   const { loadAgents } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'agents/typescript-reviewer.md', [
     '---',
     'name: typescript-reviewer',
@@ -560,7 +560,7 @@ test('loadAgents loads agent markdown files', () => {
 
 test('loadAgents defaults missing fields', () => {
   const { loadAgents } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'agents/minimal.md', [
     '# Minimal Agent',
     'No frontmatter at all.',
@@ -577,7 +577,7 @@ test('loadAgents defaults missing fields', () => {
 
 test('loadAgents ignores non-markdown files', () => {
   const { loadAgents } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'agents/agent.md', '---\nname: real-agent\n---\nbody');
   writeFile(testRoot, 'agents/README.txt', 'not an agent');
 
@@ -597,7 +597,7 @@ test('loadSkills returns empty array for missing directory', () => {
 
 test('loadSkills loads skill directories with SKILL.md', () => {
   const { loadSkills } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'skills/seo-audit/SKILL.md', [
     '---',
     'name: seo-audit',
@@ -624,7 +624,7 @@ test('loadSkills loads skill directories with SKILL.md', () => {
 
 test('loadSkills ignores non-directories', () => {
   const { loadSkills } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'skills/README.md', 'no skill here');
   writeFile(testRoot, 'skills/real-skill/SKILL.md', '---\ndescription: A real skill\n---\nbody');
 
@@ -644,7 +644,7 @@ test('loadCommands returns empty array for missing directory', () => {
 
 test('loadCommands loads command markdown files with category detection', () => {
   const { loadCommands } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'commands/pr.md', [
     '---',
     'description: Create a pull request',
@@ -692,7 +692,7 @@ test('loadRules returns empty array for missing directory', () => {
 
 test('loadRules loads language directories with rule files', () => {
   const { loadRules } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'rules/python/coding-style.md', '');
   writeFile(testRoot, 'rules/python/testing.md', '');
   writeFile(testRoot, 'rules/python/patterns.md', '');
@@ -717,7 +717,7 @@ test('loadRules loads language directories with rule files', () => {
 
 test('loadRules ignores non-directories in rules folder', () => {
   const { loadRules } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'rules/README.md', 'no rules here');
   writeFile(testRoot, 'rules/go/testing.md', '');
 
@@ -733,7 +733,7 @@ test('loadRules ignores non-directories in rules folder', () => {
 
 test('loadMcps returns empty array when no configs exist', () => {
   const { loadMcps } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
 
   const mcps = loadMcps(testRoot);
   assert.deepStrictEqual(mcps, []);
@@ -742,7 +742,7 @@ test('loadMcps returns empty array when no configs exist', () => {
 
 test('loadMcps loads .mcp.json config', () => {
   const { loadMcps } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, '.mcp.json', JSON.stringify({
     mcpServers: {
       'test-server': {
@@ -769,7 +769,7 @@ test('loadMcps loads .mcp.json config', () => {
 
 test('loadMcps loads mcp-configs/ directory files', () => {
   const { loadMcps } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'mcp-configs/brave.json', JSON.stringify({
     mcpServers: {
       'brave-search': {
@@ -790,7 +790,7 @@ test('loadMcps loads mcp-configs/ directory files', () => {
 
 test('loadMcps masks environment variables', () => {
   const { loadMcps } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'mcp-configs/with-env.json', JSON.stringify({
     mcpServers: {
       server: {
@@ -808,7 +808,7 @@ test('loadMcps masks environment variables', () => {
 
 test('loadMcps handles url-based MCP servers', () => {
   const { loadMcps } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, '.mcp.json', JSON.stringify({
     mcpServers: {
       'remote-server': {
@@ -826,7 +826,7 @@ test('loadMcps handles url-based MCP servers', () => {
 
 test('loadMcps handles malformed JSON gracefully', () => {
   const { loadMcps } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, '.mcp.json', '{not valid json}');
 
   const mcps = loadMcps(testRoot);
@@ -838,7 +838,7 @@ test('loadMcps handles malformed JSON gracefully', () => {
 
 test('loadHooks returns empty array when hooks.json missing', () => {
   const { loadHooks } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
 
   const hooks = loadHooks(testRoot);
   assert.deepStrictEqual(hooks, []);
@@ -847,7 +847,7 @@ test('loadHooks returns empty array when hooks.json missing', () => {
 
 test('loadHooks loads hook definitions', () => {
   const { loadHooks } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'hooks/hooks.json', JSON.stringify({
     hooks: {
       'post-commit': [
@@ -879,12 +879,12 @@ test('loadHooks exposes consolidated PostToolUse child IDs', () => {
   assert.ok(hooks.some(hook => hook.id === 'post:dispatcher:async'));
   assert.ok(hooks.some(hook => hook.id === 'post:quality-gate'));
   assert.ok(hooks.some(hook => hook.id === 'post:edit:accumulator'));
-  assert.ok(hooks.some(hook => hook.id === 'post:ecc-context-monitor'));
+  assert.ok(hooks.some(hook => hook.id === 'post:yus-context-monitor'));
 });
 
 test('loadHooks handles malformed JSON gracefully', () => {
   const { loadHooks } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'hooks/hooks.json', '{invalid}');
 
   const hooks = loadHooks(testRoot);
@@ -976,7 +976,7 @@ test('renderHTML includes LANG and LANG_KEYS in the output', () => {
   const { renderHTML } = require(SCRIPT);
   const data = { agents: [], skills: [], commands: [], rules: [], mcps: [], hooks: [] };
   const html = renderHTML(data);
-  assert.ok(html.includes('ECC Capabilities'));
+  assert.ok(html.includes('yus Capabilities'));
   assert.ok(html.includes('const L ='));
   assert.ok(html.includes('const LANG_KEYS'));
 });
@@ -985,8 +985,8 @@ test('renderHTML includes the dashboard title and footer', () => {
   const { renderHTML } = require(SCRIPT);
   const data = { agents: [], skills: [], commands: [], rules: [], mcps: [], hooks: [] };
   const html = renderHTML(data);
-  assert.ok(html.includes('ECC Capabilities'));
-  assert.ok(html.includes('github.com/affaan-m/ECC'));
+  assert.ok(html.includes('yus Capabilities'));
+  assert.ok(html.includes('github.com/yusei21/yus'));
 });
 
 // ===================== Server / HTTP =====================
@@ -994,21 +994,21 @@ test('renderHTML includes the dashboard title and footer', () => {
 test('resolveDashboardHost defaults to IPv4 loopback', () => {
   const { resolveDashboardHost } = require(SCRIPT);
   assert.strictEqual(resolveDashboardHost({}), '127.0.0.1');
-  assert.strictEqual(resolveDashboardHost({ ECC_DASHBOARD_HOST: '' }), '127.0.0.1');
+  assert.strictEqual(resolveDashboardHost({ YUS_DASHBOARD_HOST: '' }), '127.0.0.1');
 });
 
 test('resolveDashboardHost accepts only normalized loopback hosts', () => {
   const { resolveDashboardHost } = require(SCRIPT);
   assert.strictEqual(
-    resolveDashboardHost({ ECC_DASHBOARD_HOST: ' LOCALHOST ' }),
+    resolveDashboardHost({ YUS_DASHBOARD_HOST: ' LOCALHOST ' }),
     'localhost'
   );
   assert.strictEqual(
-    resolveDashboardHost({ ECC_DASHBOARD_HOST: '::1' }),
+    resolveDashboardHost({ YUS_DASHBOARD_HOST: '::1' }),
     '::1'
   );
   assert.strictEqual(
-    resolveDashboardHost({ ECC_DASHBOARD_HOST: '[::1]' }),
+    resolveDashboardHost({ YUS_DASHBOARD_HOST: '[::1]' }),
     '::1'
   );
 });
@@ -1017,8 +1017,8 @@ test('resolveDashboardHost rejects wildcard, LAN, and arbitrary hosts', () => {
   const { resolveDashboardHost } = require(SCRIPT);
   for (const host of ['0.0.0.0', '::', '192.168.1.10', 'dashboard.internal', '127.0.0.1:3456']) {
     assert.throws(
-      () => resolveDashboardHost({ ECC_DASHBOARD_HOST: host }),
-      /ECC_DASHBOARD_HOST must be loopback-only/
+      () => resolveDashboardHost({ YUS_DASHBOARD_HOST: host }),
+      /YUS_DASHBOARD_HOST must be loopback-only/
     );
   }
 });
@@ -1045,7 +1045,7 @@ test('listenDashboardServer always passes an explicit loopback host to listen', 
   assert.deepStrictEqual(calls, [[3456, '127.0.0.1', onListening]]);
   assert.throws(
     () => listenDashboardServer(fakeServer, { host: '0.0.0.0', port: 3456 }),
-    /ECC_DASHBOARD_HOST must be loopback-only/
+    /YUS_DASHBOARD_HOST must be loopback-only/
   );
   assert.strictEqual(calls.length, 1);
 });
@@ -1057,7 +1057,7 @@ asyncTest('server returns no-store HTML on GET /', async () => {
     assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8');
     assert.strictEqual(response.headers['cache-control'], 'no-store');
     assert.ok(response.body.includes('<!DOCTYPE html>'));
-    assert.ok(response.body.includes('ECC Capabilities'));
+    assert.ok(response.body.includes('yus Capabilities'));
   });
 });
 
@@ -1142,7 +1142,7 @@ asyncTest('server returns a generic no-store 500 for render failures and remains
 
     const followUpResponse = await requestDashboard(port);
     assert.strictEqual(followUpResponse.statusCode, 200);
-    assert.ok(followUpResponse.body.includes('ECC Capabilities'));
+    assert.ok(followUpResponse.body.includes('yus Capabilities'));
     assert.strictEqual(loggedErrors.length, 1);
     assert.strictEqual(loggedErrors[0].error.message, 'sensitive render detail');
   }, {
@@ -1245,7 +1245,7 @@ test('parsePort handles whitespace', () => {
 
 test('readFrontmatter handles empty file', () => {
   const { readFrontmatter } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'empty.md', '');
 
   const fm = readFrontmatter(path.join(testRoot, 'empty.md'));
@@ -1255,7 +1255,7 @@ test('readFrontmatter handles empty file', () => {
 
 test('readFrontmatter handles malformed frontmatter', () => {
   const { readFrontmatter } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   writeFile(testRoot, 'malformed.md', [
     '---',
     'name: test',
@@ -1272,7 +1272,7 @@ test('readFrontmatter handles malformed frontmatter', () => {
 
 test('loadAgents handles empty agents directory', () => {
   const { loadAgents } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   fs.mkdirSync(path.join(testRoot, 'agents'));
 
   const agents = loadAgents(testRoot);
@@ -1282,7 +1282,7 @@ test('loadAgents handles empty agents directory', () => {
 
 test('loadSkills handles empty skills directory', () => {
   const { loadSkills } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   fs.mkdirSync(path.join(testRoot, 'skills'));
 
   const skills = loadSkills(testRoot);
@@ -1292,7 +1292,7 @@ test('loadSkills handles empty skills directory', () => {
 
 test('loadMcps handles empty mcp-configs directory', () => {
   const { loadMcps } = require(SCRIPT);
-  testRoot = createTempDir('ecc-test-');
+  testRoot = createTempDir('yus-test-');
   fs.mkdirSync(path.join(testRoot, 'mcp-configs'));
 
   const mcps = loadMcps(testRoot);
@@ -1316,7 +1316,7 @@ function findFreePort() {
 if (process.platform !== 'win32') {
   asyncTest('entrypoint keeps serving when the browser launcher is missing', async () => {
     const { spawn } = require('child_process');
-    const dir = createTempDir('ecc-dashboard-no-launcher-');
+    const dir = createTempDir('yus-dashboard-no-launcher-');
     const emptyBin = path.join(dir, 'bin');
     fs.mkdirSync(emptyBin);
     const port = await findFreePort();
@@ -1335,7 +1335,7 @@ if (process.platform !== 'win32') {
       await new Promise((resolve, reject) => {
         const timer = setTimeout(() => reject(new Error(`banner not printed; stderr: ${stderr}`)), 10000);
         const check = () => {
-          if (stdout.includes('ECC Capabilities')) {
+          if (stdout.includes('yus Capabilities')) {
             clearTimeout(timer);
             resolve();
           }

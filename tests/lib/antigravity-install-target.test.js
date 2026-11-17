@@ -181,7 +181,7 @@ test('every planned operation is contained within .agents', () => {
 
 test('Antigravity installs non-Markdown agent assets byte-for-byte while adapting Markdown agents', () => {
   const { createManifestInstallPlan, applyInstallPlan } = require('../../scripts/lib/install-executor');
-  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-antigravity-agent-assets-'));
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-antigravity-agent-assets-'));
   try {
     const sourceRoot = path.join(temp, 'source');
     fs.mkdirSync(path.join(sourceRoot, 'manifests'), { recursive: true });

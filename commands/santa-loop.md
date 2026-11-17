@@ -74,7 +74,7 @@ Launch an Agent (subagent_type: `code-reviewer`, model: `opus`) with the full ru
 
 Codex uses its configured model or CLI default. Set `model` in your Codex configuration to choose a reviewer model supported by your account.
 
-Antigravity is optional and requires the external `ccg-workflow` runtime; it is not included in the base ECC install. An existing installation must provide both an executable `~/.claude/bin/codeagent-wrapper` and a readable regular reviewer role file at `~/.claude/.ccg/prompts/antigravity/reviewer.md`. Otherwise, retain the Claude fallback. Use the wrapper's maintained model-selection contract; do not add an Antigravity model pin.
+Antigravity is optional and requires the external `ccg-workflow` runtime; it is not included in the base yus install. An existing installation must provide both an executable `~/.claude/bin/codeagent-wrapper` and a readable regular reviewer role file at `~/.claude/.ccg/prompts/antigravity/reviewer.md`. Otherwise, retain the Claude fallback. Use the wrapper's maintained model-selection contract; do not add an Antigravity model pin.
 
 Run detection, prompt creation, and the selected external review together in this single Bash subshell. Replace the prompt placeholder with the same rubric, file contents, and review-only instructions given to Reviewer A. The order remains Codex, Gemini, Antigravity, then Claude. The Claude fallback creates no prompt file.
 

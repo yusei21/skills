@@ -73,7 +73,7 @@ try {
     }
 
     try {
-      const futureRoot = path.join(linkedParent, '.cursor', 'ecc');
+      const futureRoot = path.join(linkedParent, '.cursor', 'yus');
       const futureDestination = path.join(futureRoot, 'session-data', 'session.json');
       assert.strictEqual(isWithinRoot(futureDestination, futureRoot), true);
       assert.strictEqual(
@@ -81,7 +81,7 @@ try {
         path.join(
           fs.realpathSync(realParent),
           '.cursor',
-          'ecc',
+          'yus',
           'session-data',
           'session.json'
         )

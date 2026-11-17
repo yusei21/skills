@@ -3,9 +3,9 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ecc-tasteforge"
+name = "yus-tasteforge"
 version = "1.0.0"
-description = "ECC reusable TasteForge media contracts and creative adapters"
+description = "yus reusable TasteForge media contracts and creative adapters"
 requires-python = ">=3.9"
 license = {file = "LICENSE"}
 dependencies = []

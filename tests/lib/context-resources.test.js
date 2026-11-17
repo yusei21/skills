@@ -28,8 +28,8 @@ function entryIn(document, id = FEATURE) {
 test('v1 entries expose empty declarations separately from mandatory entrypoints and bundled files', () => withFixture(root => {
   const registry = loadContextRegistry({ repoRoot: root });
   const plan = compileContextProfile({ repoRoot: root });
-  assert.equal(registry.schemaVersion, 'ecc.context-registry.v1');
-  assert.equal(plan.schemaVersion, 'ecc.context-plan.v1');
+  assert.equal(registry.schemaVersion, 'yus.context-registry.v1');
+  assert.equal(plan.schemaVersion, 'yus.context-plan.v1');
   for (const entry of registry.entries) {
     assert.ok(Object.hasOwn(entry, 'requiredResources'));
     assert.deepEqual(entry.requiredResources, []);

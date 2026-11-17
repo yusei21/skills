@@ -84,7 +84,7 @@ updates:
           - "patch"
 
   - package-ecosystem: "cargo"
-    directory: "/ecc2"
+    directory: "/yus2"
     schedule:
       interval: "weekly"
       day: "monday"

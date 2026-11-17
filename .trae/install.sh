@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# ECC Trae Installer
-# Installs ECC workflows into a Trae project.
+# yus Trae Installer
+# Installs yus workflows into a Trae project.
 #
 # Usage:
 #   ./install.sh              # Install to current directory
@@ -115,7 +115,7 @@ do_install() {
         trae_full_path="$target_dir/$trae_dir"
     fi
 
-    echo "ECC Trae Installer"
+    echo "yus Trae Installer"
     echo "=================="
     echo ""
     echo "Source:  $REPO_ROOT"
@@ -131,7 +131,7 @@ do_install() {
     done
 
     # Manifest file to track installed files
-    MANIFEST="$trae_full_path/.ecc-manifest"
+    MANIFEST="$trae_full_path/.yus-manifest"
     touch "$MANIFEST"
 
     # Counters for summary
@@ -229,7 +229,7 @@ do_install() {
     done
 
     # Add manifest file itself to manifest
-    ensure_manifest_entry "$MANIFEST" ".ecc-manifest"
+    ensure_manifest_entry "$MANIFEST" ".yus-manifest"
 
     # Installation summary
     echo "Installation complete!"
@@ -245,7 +245,7 @@ do_install() {
     echo "Next steps:"
     echo "  1. Open your project in Trae"
     echo "  2. Type / to see available commands"
-    echo "  3. Enjoy the ECC workflows!"
+    echo "  3. Enjoy the yus workflows!"
     echo ""
     echo "To uninstall later:"
     echo "  cd $trae_full_path"

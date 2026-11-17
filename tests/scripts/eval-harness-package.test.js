@@ -74,7 +74,7 @@ try {
     });
     assert.strictEqual(result.status, 0, result.error?.message || result.stderr || result.stdout);
     assert.match(result.stdout, /all steps passed/);
-    const runs = fs.readdirSync(runtimeTemp).filter(name => name.startsWith('ecc-eval-harness-example-'));
+    const runs = fs.readdirSync(runtimeTemp).filter(name => name.startsWith('yus-eval-harness-example-'));
     assert.strictEqual(runs.length, 1);
     const run = path.join(runtimeTemp, runs[0]);
     const journal = fs.readFileSync(path.join(run, 'capsule/journal.ndjson'), 'utf8').trim().split('\n').map(JSON.parse);

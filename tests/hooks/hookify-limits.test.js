@@ -1,5 +1,5 @@
 /**
- * Resource-limit and truncated-input tests for the ECC-native Hookify runtime.
+ * Resource-limit and truncated-input tests for the yus-native Hookify runtime.
  */
 
 'use strict';
@@ -25,7 +25,7 @@ function test(name, fn) {
 }
 
 function createProject() {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-hookify-limits-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-hookify-limits-'));
   fs.mkdirSync(path.join(root, '.claude'), { recursive: true });
   return root;
 }

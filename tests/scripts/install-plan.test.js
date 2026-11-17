@@ -32,7 +32,7 @@ function run(args = [], options = {}) {
   test('shows help with no arguments', () => {
     const result = run();
     assert.strictEqual(result.code, 0);
-    assert.ok(result.stdout.includes('Inspect ECC selective-install manifests'));
+    assert.ok(result.stdout.includes('Inspect yus selective-install manifests'));
   });
 
   test('lists install profiles', () => {
@@ -108,9 +108,9 @@ function run(args = [], options = {}) {
     assert.ok(!parsed.operations.some(operation => operation.sourceRelativePath === 'skills/core/tdd-workflow'));
   });
 
-  test('loads planning intent from ecc-install.json', () => {
+  test('loads planning intent from yus-install.json', () => {
     const configDir = path.join(__dirname, '..', 'fixtures', 'tmp-install-plan-config');
-    const configPath = path.join(configDir, 'ecc-install.json');
+    const configPath = path.join(configDir, 'yus-install.json');
 
     try {
       require('fs').mkdirSync(configDir, { recursive: true });
@@ -164,9 +164,9 @@ function run(args = [], options = {}) {
     }
   });
 
-  test('auto-detects planning intent from project ecc-install.json', () => {
+  test('auto-detects planning intent from project yus-install.json', () => {
     const configDir = path.join(__dirname, '..', 'fixtures', 'tmp-install-plan-autodetect');
-    const configPath = path.join(configDir, 'ecc-install.json');
+    const configPath = path.join(configDir, 'yus-install.json');
 
     try {
       require('fs').mkdirSync(configDir, { recursive: true });

@@ -93,11 +93,11 @@ test('keeps the external reference optional rather than making it a dependency',
   assert.match(canonical, /does not require it to perform the static review/i);
 });
 
-test('keeps the same review workflow across ECC, Codex, and Cursor surfaces', () => {
+test('keeps the same review workflow across yus, Codex, and Cursor surfaces', () => {
   assert.strictEqual(body(codex), body(canonical));
   assert.strictEqual(body(cursor), body(canonical));
   assert.match(codex, /license:\s*MIT/);
-  assert.match(cursor, /origin:\s*ECC/);
+  assert.match(cursor, /origin:\s*yus/);
 });
 
 console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);

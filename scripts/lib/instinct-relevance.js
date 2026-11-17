@@ -11,7 +11,7 @@
  * ranking degrades to confidence-only (unchanged behaviour).
  *
  * Resolves part (b) of:
- * https://github.com/affaan-m/ECC/issues/2371
+ * https://github.com/yusei21/yus/issues/2371
  */
 
 const fs = require('fs');
@@ -60,12 +60,12 @@ function fileExists(root, name) {
 
 /**
  * Resolve whether relevance ranking is enabled. Default on; opt out by setting
- * `ECC_INSTINCT_RELEVANCE_RANKING` to `off`, `false`, `0`, or `no`
+ * `YUS_INSTINCT_RELEVANCE_RANKING` to `off`, `false`, `0`, or `no`
  * (case-insensitive). Any other value (including unset) keeps ranking on.
  * @returns {boolean}
  */
 function isRelevanceRankingEnabled() {
-  const raw = process.env.ECC_INSTINCT_RELEVANCE_RANKING;
+  const raw = process.env.YUS_INSTINCT_RELEVANCE_RANKING;
   if (raw === undefined || raw === null || raw === '') return true;
   const normalized = String(raw).trim().toLowerCase();
   return !['off', 'false', '0', 'no'].includes(normalized);

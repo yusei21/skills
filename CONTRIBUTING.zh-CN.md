@@ -1,4 +1,4 @@
-# 为 ECC 做贡献
+# 为 yus 做贡献
 
 [English](CONTRIBUTING.md) | [Português](CONTRIBUTING.pt-BR.md) | **中文**
 
@@ -58,8 +58,8 @@
 
 ```bash
 # 1. Fork 并克隆
-gh repo fork affaan-m/ECC --clone
-cd ECC
+gh repo fork yusei21/yus --clone
+cd yus
 
 # 2. 创建分支
 git checkout -b feat/my-contribution
@@ -108,7 +108,7 @@ skills/
 ---
 name: your-skill-name
 description: Brief description shown in skill list and used for auto-activation
-origin: ECC
+origin: yus
 ---
 
 # Your Skill Title
@@ -166,8 +166,8 @@ Link to complementary skills (e.g., `related-skill-1`, `related-skill-2`).
 简要说明：
 
 - 借鉴的是背后的想法，而不是外部产品的身份
-- 当 ECC 对技能做了实质改动或扩展时，给它改名
-- 优先使用 ECC 原生的规则、技能、脚本和 MCP，而不是默认引入新的第三方依赖
+- 当 yus 对技能做了实质改动或扩展时，给它改名
+- 优先使用 yus 原生的规则、技能、脚本和 MCP，而不是默认引入新的第三方依赖
 - 不要发布主要价值只是让用户安装未经审查的包的技能
 
 ### 技能检查清单
@@ -432,7 +432,7 @@ What the user receives.
 
 ### 技能子集（Codex 和 Cursor）
 
-ECC 为其他环境提供技能子集：
+yus 为其他环境提供技能子集：
 
 - **Codex：** `.agents/skills/`——`agents/openai.yaml` 中列出的技能由 Codex 加载。
 - **Cursor：** `.cursor/skills/`——为 Cursor 打包了一部分技能。
@@ -580,8 +580,7 @@ How you tested this.
 
 ## 有问题？
 
-- **Issues：**[github.com/affaan-m/ECC/issues](https://github.com/affaan-m/ECC/issues)
-- **X/Twitter：**[@affaanmustafa](https://x.com/affaanmustafa)
+- **Issues：**[github.com/yusei21/yus/issues](https://github.com/yusei21/yus/issues)
 
 ---
 

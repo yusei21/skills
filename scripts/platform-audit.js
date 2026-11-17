@@ -9,13 +9,13 @@ const {
   fetchDiscussionSummary,
 } = require('./lib/github-discussions');
 
-const SCHEMA_VERSION = 'ecc.platform-audit.v1';
+const SCHEMA_VERSION = 'yus.platform-audit.v1';
 const DEFAULT_REPOS = Object.freeze([
-  'affaan-m/ECC',
+  'yusei21/yus',
   'affaan-m/agentshield',
   'affaan-m/JARVIS',
   'ECC-Tools/ECC-Tools',
-  'ECC-Tools/ECC-website',
+  'ECC-Tools/yus-website',
 ]);
 const DEFAULT_THRESHOLDS = Object.freeze({
   maxOpenPrs: 20,
@@ -26,7 +26,7 @@ function usage() {
   console.log([
     'Usage: node scripts/platform-audit.js [options]',
     '',
-    'Operator readiness audit for ECC queue, discussion, roadmap, release, and security evidence.',
+    'Operator readiness audit for yus queue, discussion, roadmap, release, and security evidence.',
     '',
     'Options:',
     '  --format <text|json|markdown>',
@@ -242,7 +242,7 @@ function runCommand(command, args, options = {}) {
 }
 
 function runGhJson(args, options = {}) {
-  const shimPath = process.env.ECC_GH_SHIM;
+  const shimPath = process.env.YUS_GH_SHIM;
   const command = shimPath ? process.execPath : 'gh';
   const commandArgs = shimPath ? [shimPath, ...args] : args;
   const env = { ...process.env };
@@ -423,7 +423,7 @@ function buildGithubReport(options) {
 function buildLocalEvidenceChecks(rootDir) {
   const packageJson = safeParseJson(readText(rootDir, 'package.json')) || {};
   const packageScripts = packageJson.scripts || {};
-  const roadmap = readText(rootDir, 'docs/ECC-2.0-GA-ROADMAP.md');
+  const roadmap = readText(rootDir, 'docs/yus-2.0-GA-ROADMAP.md');
   const progressSync = readText(rootDir, 'docs/architecture/progress-sync-contract.md');
   const supplyChain = readText(rootDir, 'docs/security/supply-chain-incident-response.md');
   const evidence = readText(rootDir, 'docs/releases/2.0.0-rc.1/publication-evidence-2026-05-19.md');
@@ -451,9 +451,9 @@ function buildLocalEvidenceChecks(rootDir) {
     ),
     buildCheck(
       'roadmap-linear-mirror',
-      includesAll(roadmap, ['linear.app/itomarkets/project/ecc-platform-roadmap', 'ITO-44', 'ITO-59']) ? 'pass' : 'fail',
+      includesAll(roadmap, ['linear.app/itomarkets/project/yus-platform-roadmap', 'ITO-44', 'ITO-59']) ? 'pass' : 'fail',
       'repo roadmap mirrors the Linear roadmap and security/operator lanes',
-      { path: 'docs/ECC-2.0-GA-ROADMAP.md' }
+      { path: 'docs/yus-2.0-GA-ROADMAP.md' }
     ),
     buildCheck(
       'progress-sync-contract',
@@ -517,7 +517,7 @@ function buildReport(options) {
     'github-fetch',
     github.skipped ? 'warn' : (github.totals.errors === 0 ? 'pass' : 'fail'),
     github.skipped ? 'live GitHub checks skipped' : `GitHub fetch errors: ${github.totals.errors}`,
-    { fix: 'Re-run with working gh authentication or ECC_GH_SHIM for deterministic tests.' }
+    { fix: 'Re-run with working gh authentication or YUS_GH_SHIM for deterministic tests.' }
   ));
 
   checks.push(buildCheck(
@@ -580,7 +580,7 @@ function buildReport(options) {
 
 function renderText(report) {
   const lines = [
-    `ECC Platform Audit: ${report.ready ? 'ready' : 'attention required'}`,
+    `yus Platform Audit: ${report.ready ? 'ready' : 'attention required'}`,
     `Generated: ${report.generatedAt}`,
     `Root: ${report.root}`,
     '',
@@ -635,7 +635,7 @@ function markdownStatus(status) {
 
 function renderMarkdown(report) {
   const lines = [
-    '# ECC Platform Audit',
+    '# yus Platform Audit',
     '',
     `Generated: ${report.generatedAt}`,
     `Status: ${report.ready ? 'ready' : 'attention required'}`,

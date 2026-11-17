@@ -62,7 +62,7 @@ async function writeMinimalDatabase(dbPath) {
       id, task, agent_type, harness, detected_harnesses_json, working_dir, state,
       created_at, updated_at, last_heartbeat_at
     ) VALUES (
-      'session-a', 'Build the control pane', 'codex', 'codex', '["codex"]', '/repo/ecc',
+      'session-a', 'Build the control pane', 'codex', 'codex', '["codex"]', '/repo/yus',
       'running', '2026-06-03T10:00:00Z', '2026-06-03T10:05:00Z', '2026-06-03T10:05:00Z'
     );
   `);
@@ -84,7 +84,7 @@ function waitForCliReady(child) {
 
     child.stdout.on('data', chunk => {
       stdout += chunk.toString('utf8');
-      if (!settled && stdout.includes('ECC Control Pane:') && stdout.includes('Actions:')) {
+      if (!settled && stdout.includes('yus Control Pane:') && stdout.includes('Actions:')) {
         settled = true;
         clearTimeout(timer);
         resolve({ stdout, stderr });
@@ -143,9 +143,9 @@ async function runTests() {
         '--port',
         '8788',
         '--db',
-        '/tmp/ecc2.db',
+        '/tmp/yus2.db',
         '--state-db',
-        '/tmp/ecc-state.db',
+        '/tmp/yus-state.db',
         '--query',
         'Hermes memory',
         '--no-open'
@@ -153,8 +153,8 @@ async function runTests() {
 
       assert.strictEqual(parsed.host, '127.0.0.1');
       assert.strictEqual(parsed.port, 8788);
-      assert.strictEqual(parsed.dbPath, '/tmp/ecc2.db');
-      assert.strictEqual(parsed.stateDbPath, '/tmp/ecc-state.db');
+      assert.strictEqual(parsed.dbPath, '/tmp/yus2.db');
+      assert.strictEqual(parsed.stateDbPath, '/tmp/yus-state.db');
       assert.strictEqual(parsed.query, 'Hermes memory');
       assert.strictEqual(parsed.openBrowser, false);
     })
@@ -181,9 +181,9 @@ async function runTests() {
   else failed++;
 
   if (
-    await test('serves HTML and snapshot JSON from a temp ECC2 database', async () => {
-      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-control-pane-server-'));
-      const dbPath = path.join(tempDir, 'ecc2.db');
+    await test('serves HTML and snapshot JSON from a temp yus2 database', async () => {
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-control-pane-server-'));
+      const dbPath = path.join(tempDir, 'yus2.db');
 
       try {
         await writeMinimalDatabase(dbPath);
@@ -199,7 +199,7 @@ async function runTests() {
         await app.listen();
         try {
           const html = await fetchLocal(`${app.url}/`).then(response => response.text());
-          assert.ok(html.includes('ECC Control Pane'));
+          assert.ok(html.includes('yus Control Pane'));
           assert.ok(html.includes('id="app"'));
           assert.ok(html.includes('id="work-items"'));
           assert.ok(html.includes('function renderWorkItems'));
@@ -208,10 +208,10 @@ async function runTests() {
           // Board controls must use escaped data-* attributes + delegated
           // listeners, never ids concatenated into inline onclick JS (XSS).
           assert.ok(html.includes('data-wi-action'));
-          assert.ok(!/onclick="ecc(Claim|Move)Item\(/.test(html), 'no inline onclick handlers with interpolated ids');
+          assert.ok(!/onclick="yus(Claim|Move)Item\(/.test(html), 'no inline onclick handlers with interpolated ids');
 
           const snapshot = await fetchLocal(`${app.url}/api/snapshot?query=control`).then(response => response.json());
-          assert.strictEqual(snapshot.schemaVersion, 'ecc.control-pane.snapshot.v1');
+          assert.strictEqual(snapshot.schemaVersion, 'yus.control-pane.snapshot.v1');
           assert.strictEqual(snapshot.summary.totalSessions, 1);
           assert.strictEqual(snapshot.workItems.totalCount, 0);
           assert.strictEqual(snapshot.sessions[0].id, 'session-a');
@@ -228,8 +228,8 @@ async function runTests() {
 
   if (
     await test('serves the 3D agent-airspace page and the proximity JSON feed', async () => {
-      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-control-pane-proximity-'));
-      const dbPath = path.join(tempDir, 'ecc2.db');
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-control-pane-proximity-'));
+      const dbPath = path.join(tempDir, 'yus2.db');
 
       try {
         await writeMinimalDatabase(dbPath);
@@ -271,8 +271,8 @@ async function runTests() {
 
   if (
     await test('serves the control-plane live view page, the view JSON and the event feed', async () => {
-      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-control-plane-view-'));
-      const dbPath = path.join(tempDir, 'ecc2.db');
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-control-plane-view-'));
+      const dbPath = path.join(tempDir, 'yus2.db');
 
       try {
         await writeMinimalDatabase(dbPath);
@@ -290,13 +290,13 @@ async function runTests() {
           assert.strictEqual(page.status, 200);
           assert.ok((page.headers.get('content-type') || '').includes('text/html'));
           const html = await page.text();
-          assert.ok(html.includes('ECC Control Plane'), 'page is titled ECC Control Plane');
+          assert.ok(html.includes('yus Control Plane'), 'page is titled yus Control Plane');
           assert.ok(html.includes('<canvas'), 'page renders the 2D projection canvas');
           assert.ok(html.includes('/api/control-plane'), 'page polls the view feed');
           assert.ok(!html.includes('<script src='), 'page loads no external scripts');
 
           const view = await fetchLocal(`${app.url}/api/control-plane`).then(r => r.json());
-          assert.strictEqual(view.schemaVersion, 'ecc.control-plane.view.v1');
+          assert.strictEqual(view.schemaVersion, 'yus.control-plane.view.v1');
           assert.deepStrictEqual(view.thresholds, { ta: 0.35, ra: 0.7, source: 'static' });
           assert.ok(Array.isArray(view.tasks) && view.tasks.length === 1, 'one session becomes one task');
           assert.strictEqual(view.tasks[0].id, 'session-a');
@@ -310,7 +310,7 @@ async function runTests() {
           assert.strictEqual(view.counts.tasks, 1);
 
           const events = await fetchLocal(`${app.url}/api/control-plane/events`).then(r => r.json());
-          assert.strictEqual(events.schemaVersion, 'ecc.control-plane.view.v1');
+          assert.strictEqual(events.schemaVersion, 'yus.control-plane.view.v1');
           assert.deepStrictEqual(events.events, []);
           assert.deepStrictEqual(events.counts, { events: 0, advisories: 0, resolutions: 0 });
 
@@ -330,7 +330,7 @@ async function runTests() {
 
   if (
     await test('serves health, asset, not-found, invalid body, and read-only action responses', async () => {
-      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-control-pane-routes-'));
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-control-pane-routes-'));
 
       try {
         const app = await createControlPaneServer({
@@ -356,14 +356,14 @@ async function runTests() {
           });
           await realAssetApp.listen();
           try {
-            const realAsset = await fetchLocal(`${realAssetApp.url}/assets/ecc-icon.svg`);
+            const realAsset = await fetchLocal(`${realAssetApp.url}/assets/yus-icon.svg`);
             assert.strictEqual(realAsset.status, 200);
             assert.match(await realAsset.text(), /<svg/);
           } finally {
             await realAssetApp.close();
           }
 
-          const missingAsset = await fetchLocal(`${app.url}/assets/ecc-icon.svg`);
+          const missingAsset = await fetchLocal(`${app.url}/assets/yus-icon.svg`);
           assert.strictEqual(missingAsset.status, 404);
           assert.strictEqual(await missingAsset.text(), 'not found');
 
@@ -555,7 +555,7 @@ async function runTests() {
 
       const spawnError = await runAction({
         id: 'spawn-error',
-        command: 'definitely-not-ecc-control-pane-command',
+        command: 'definitely-not-yus-control-pane-command',
         args: [],
         cwd: repoRoot
       });
@@ -640,14 +640,14 @@ async function runTests() {
         stdio: ['ignore', 'pipe', 'pipe'],
         env: {
           ...process.env,
-          ECC2_DB_PATH: path.join(os.tmpdir(), 'missing-ecc2-cli.db')
+          YUS2_DB_PATH: path.join(os.tmpdir(), 'missing-yus2-cli.db')
         }
       });
       const exitPromise = waitForExit(child);
 
       try {
         const ready = await waitForCliReady(child);
-        assert.match(ready.stdout, /ECC Control Pane: http:\/\/127\.0\.0\.1:\d+/);
+        assert.match(ready.stdout, /yus Control Pane: http:\/\/127\.0\.0\.1:\d+/);
         assert.match(ready.stdout, /Actions: read-only/);
       } finally {
         if (child.exitCode === null && child.signalCode === null) child.kill('SIGTERM');
@@ -662,7 +662,7 @@ async function runTests() {
   if (
     await test('interactive board: claim and move work items via POST endpoints', async () => {
       const { createStateStore } = require('../../scripts/lib/state-store');
-      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-control-pane-board-'));
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-control-pane-board-'));
       const stateDbPath = path.join(tempDir, 'state.db');
 
       try {

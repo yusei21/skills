@@ -1,11 +1,11 @@
 {
-  "name": "ecc",
+  "name": "yus",
   "interface": {
-    "displayName": "ECC"
+    "displayName": "yus"
   },
   "plugins": [
     {
-      "name": "ecc",
+      "name": "yus",
       "version": "2.2.3",
       "source": {
         "source": "local",

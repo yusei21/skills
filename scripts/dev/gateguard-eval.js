@@ -667,7 +667,7 @@ function renderSarif(report) {
         tool: {
           driver: {
             name: 'gateguard-eval',
-            informationUri: 'https://github.com/affaan-m/ECC/blob/main/docs/gateguard/evaluation.md',
+            informationUri: 'https://github.com/yusei21/yus/blob/main/docs/gateguard/evaluation.md',
             rules: SARIF_RULES.map(rule => ({
               id: rule.id,
               name: rule.name,

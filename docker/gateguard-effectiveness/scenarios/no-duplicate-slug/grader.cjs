@@ -19,4 +19,4 @@ try {
 } catch (_) {
   passed = 0;
 }
-console.log(`ECC_EVAL_SCORE ${JSON.stringify({ score: passed / names.length })}`);
+console.log(`YUS_EVAL_SCORE ${JSON.stringify({ score: passed / names.length })}`);

@@ -30,7 +30,7 @@ function run(args = [], options = {}) {
 }
 
 function createTempDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-gemini-adapt-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'yus-gemini-adapt-'));
 }
 
 function cleanupTempDir(dirPath) {
@@ -45,7 +45,7 @@ function writeAgent(dirPath, name, body) {
   test('shows help with an explicit help flag', () => {
     const result = run(['--help']);
     assert.strictEqual(result.code, 0, result.stderr);
-    assert.ok(result.stdout.includes('Adapt ECC agent frontmatter for Gemini CLI'));
+    assert.ok(result.stdout.includes('Adapt yus agent frontmatter for Gemini CLI'));
     assert.ok(result.stdout.includes('Usage:'));
   });
 

@@ -23,7 +23,7 @@ function test(name, fn) {
 }
 
 function withFixture(fn, extraEnv = {}) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-observer-lifecycle-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-observer-lifecycle-'));
   const project = path.join(root, 'project');
   const store = path.join(root, 'homunculus');
   const observerDir = path.join(store, 'projects', 'fixture-project');
@@ -35,14 +35,14 @@ function withFixture(fn, extraEnv = {}) {
   const overrides = {
     HOME: root,
     USERPROFILE: root,
-    ECC_AGENT_DATA_HOME: path.join(root, 'agent-data'),
+    YUS_AGENT_DATA_HOME: path.join(root, 'agent-data'),
     CLAUDE_CONFIG_DIR: path.join(root, 'claude-config'),
     CLV2_HOMUNCULUS_DIR: store,
     XDG_DATA_HOME: path.join(root, 'xdg'),
     CLAUDE_PROJECT_DIR: project,
     CLAUDE_PACKAGE_MANAGER: 'npm',
-    ECC_SESSION_START_CONTEXT: 'off',
-    ECC_SESSION_ID: undefined,
+    YUS_SESSION_START_CONTEXT: 'off',
+    YUS_SESSION_ID: undefined,
     CLAUDE_SESSION_ID: undefined,
     ...extraEnv
   };
@@ -222,7 +222,7 @@ test('in-process SessionEnd keeps observers running while another session still 
   }));
 });
 
-for (const envKey of ['ECC_SESSION_ID', 'CLAUDE_SESSION_ID']) {
+for (const envKey of ['YUS_SESSION_ID', 'CLAUDE_SESSION_ID']) {
   test(`both lifecycle hooks retain ${envKey} fallback for malformed stdin`, () => {
     withFixture(fixture => {
       const input = '{malformed payload\n';
@@ -239,13 +239,13 @@ test('payload ID overrides environment IDs in both lifecycle hooks', () => {
     const input = '{"session_id":"payload-session","hook_event_name":"SessionStart","source":"startup"}';
     assertStartOutput(runHook('session-start.js', input, fixture));
     assert.ok(fs.existsSync(leaseFile(fixture, 'payload-session')));
-    assert.ok(!fs.existsSync(leaseFile(fixture, 'ecc-session')));
+    assert.ok(!fs.existsSync(leaseFile(fixture, 'yus-session')));
     assert.ok(!fs.existsSync(leaseFile(fixture, 'claude-session')));
-    seedLease(fixture, 'ecc-session');
+    seedLease(fixture, 'yus-session');
     assert.strictEqual(runHook('session-end-marker.js', input, fixture).stdout, input);
     assert.ok(!fs.existsSync(leaseFile(fixture, 'payload-session')));
-    assert.ok(fs.existsSync(leaseFile(fixture, 'ecc-session')));
-  }, { ECC_SESSION_ID: 'ecc-session', CLAUDE_SESSION_ID: 'claude-session' });
+    assert.ok(fs.existsSync(leaseFile(fixture, 'yus-session')));
+  }, { YUS_SESSION_ID: 'yus-session', CLAUDE_SESSION_ID: 'claude-session' });
 });
 
 test('observer lease filenames sanitize path characters and Windows reserved IDs', () => {

@@ -102,10 +102,10 @@ function runTests() {
     assert.ok(/all worktrees of one clone/i.test(body), 'missing worktree coverage');
   })) passed++; else failed++;
 
-  if (test('bounds the ledger to opt-in planning, never canonical ECC state', () => {
+  if (test('bounds the ledger to opt-in planning, never canonical yus state', () => {
     assert.ok(body.includes('## Authority'), 'missing Authority section');
     assert.ok(/opt-in planning projection/i.test(body), 'missing opt-in projection statement');
-    assert.ok(/never canonical ECC Task, Evidence,\s+Completion, or Integration state/i.test(body),
+    assert.ok(/never canonical yus Task, Evidence,\s+Completion, or Integration state/i.test(body),
       'missing canonical-state exclusion');
     assert.ok(/that system stays authoritative/i.test(body), 'external systems must stay authoritative');
     assert.ok(/`\.stories\/` follows the checkout/.test(body), 'missing branch-local statement');

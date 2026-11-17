@@ -1,5 +1,5 @@
 {
-  "schema_version": "ecc.evaluator-rag.scenario.v1",
+  "schema_version": "yus.evaluator-rag.scenario.v1",
   "scenario_id": "stale-pr-salvage-maintainer-branch",
   "title": "Recover useful stale PR work through maintainer-owned branches",
   "mode": "read_only_prototype",
@@ -17,17 +17,17 @@
     },
     {
       "kind": "roadmap",
-      "path": "docs/ECC-2.0-GA-ROADMAP.md",
+      "path": "docs/yus-2.0-GA-ROADMAP.md",
       "purpose": "Operating rule and current execution lane"
     },
     {
       "kind": "github_pr",
-      "url": "https://github.com/affaan-m/ECC/pull/1815",
+      "url": "https://github.com/yusei21/yus/pull/1815",
       "purpose": "Example maintainer-owned stale salvage PR with attribution"
     },
     {
       "kind": "github_pr",
-      "url": "https://github.com/affaan-m/ECC/pull/1818",
+      "url": "https://github.com/yusei21/yus/pull/1818",
       "purpose": "Example gap pass classifying already-present and skipped stale work"
     }
   ],

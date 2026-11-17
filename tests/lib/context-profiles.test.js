@@ -9,7 +9,7 @@ const { KERNEL, update, withFixture, write } = require('./helpers/context-fixtur
 
 test('Lean selects three discoverable skills and leaves remaining workflows routed', () => withFixture(root => {
   const plan = compileContextProfile({ repoRoot: root, profileId: 'lean@1', target: 'codex' });
-  assert.equal(plan.schemaVersion, 'ecc.context-plan.v1');
+  assert.equal(plan.schemaVersion, 'yus.context-plan.v1');
   assert.deepEqual(plan.selectedIds, KERNEL.map(id => `skill:${id}`));
   assert.deepEqual(plan.routedIds, ['skill:feature', 'skill:shared']);
   assert.deepEqual(plan.excludedIds, []);
@@ -70,7 +70,7 @@ test('invalid selectors, mode, target and unsafe profile names fail closed', () 
     { include: ['skill:missing'] }, { exclude: ['skill:missing'] },
     { include: ['skill:feature', 'skill:feature'] },
     { include: ['skill:feature'], exclude: ['skill:feature'] },
-    { exclude: ['skill:ecc-guide'] }, { selectionMode: 'maybe' },
+    { exclude: ['skill:yus-guide'] }, { selectionMode: 'maybe' },
     { target: 'unknown' }, { profileId: '../outside' },
     { include: 'skill:feature' },
   ]) assert.throws(() => compileContextProfile({ repoRoot: root, ...options }));
@@ -80,7 +80,7 @@ test('profile schema rejects unknown fields, duplicate IDs and missing required 
   const file = 'manifests/context-profiles/lean@1.json';
   update(root, file, value => ({ ...value, activation: true }));
   assert.throws(() => loadContextProfile('lean', { repoRoot: root }), /schema|additional/i);
-  update(root, file, ({ activation: _, ...value }) => ({ ...value, selection: { ...value.selection, eager: ['skill:ecc-guide'] } }));
+  update(root, file, ({ activation: _, ...value }) => ({ ...value, selection: { ...value.selection, eager: ['skill:yus-guide'] } }));
   assert.throws(() => compileContextProfile({ repoRoot: root }), /required|missing/i);
 }));
 
@@ -93,7 +93,7 @@ test('profile descriptions reject terminal controls and normalize ordinary white
 }));
 
 test('metadata ceiling blocks Lean while Full reports the estimate without certification', () => withFixture(root => {
-  write(root, 'skills/core/ecc-guide/SKILL.md', `---\nname: ecc-guide\ndescription: ${'x'.repeat(33000)}\n---\n`);
+  write(root, 'skills/core/yus-guide/SKILL.md', `---\nname: yus-guide\ndescription: ${'x'.repeat(33000)}\n---\n`);
   assert.throws(() => compileContextProfile({ repoRoot: root }), error => {
     assert.equal(error.code, 'CONTEXT_PROFILE_BUDGET_EXCEEDED');
     assert.ok(error.plan.estimate.estimatedTokens > 8000);
@@ -106,7 +106,7 @@ test('metadata ceiling blocks Lean while Full reports the estimate without certi
 
 test('body changes alter provenance without being charged to discovery metadata', () => withFixture(root => {
   const before = compileContextProfile({ repoRoot: root });
-  fs.appendFileSync(path.join(root, 'skills/core/ecc-guide/SKILL.md'), '\nLarge on-demand body. '.repeat(5000));
+  fs.appendFileSync(path.join(root, 'skills/core/yus-guide/SKILL.md'), '\nLarge on-demand body. '.repeat(5000));
   const after = compileContextProfile({ repoRoot: root });
   assert.equal(before.estimate.estimatedTokens, after.estimate.estimatedTokens);
   assert.notEqual(before.registryDigest, after.registryDigest);
@@ -115,7 +115,7 @@ test('body changes alter provenance without being charged to discovery metadata'
 
 test('exact 8000 estimate passes and 8001 blocks while provider totals remain unknown', () => withFixture(root => {
   const before = compileContextProfile({ repoRoot: root });
-  const file = path.join(root, 'skills/core/ecc-guide/SKILL.md');
+  const file = path.join(root, 'skills/core/yus-guide/SKILL.md');
   const source = fs.readFileSync(file, 'utf8');
   const padding = 'x'.repeat(4 * (8000 - before.estimate.estimatedTokens));
   fs.writeFileSync(file, source.replace('description: ', `description: ${padding}`));

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "ECC read-only context profile",
+  "title": "yus read-only context profile",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "id", "description", "registryId", "selection", "budget"],

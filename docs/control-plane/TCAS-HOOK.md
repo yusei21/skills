@@ -11,7 +11,7 @@ Push plan wording: "a PreToolUse/Edit hook that reads the advisory feed and retu
 ## Inputs
 
 1. The event feed: `GET /api/control-plane/events` on the local control pane, or the same document written to a file by `scripts/proximity-tick.js --json` for sessions without a pane. Events of kind `proximity.advisory` with `action.type` `transmit` or `steer` and a deterministic `id`.
-2. The hook's own session id. Claude Code passes `session_id` on stdin; the ECC session adapter maps it to the ECC2 `sessions.id` the scan uses. Codex and Hermes use the instruction-backed equivalent (see below).
+2. The hook's own session id. Claude Code passes `session_id` on stdin; the yus session adapter maps it to the yus2 `sessions.id` the scan uses. Codex and Hermes use the instruction-backed equivalent (see below).
 3. The tool call: `tool_name` and `tool_input.file_path` for Edit, Write and MultiEdit. Bash is out of scope for v1.
 
 ## Decision
@@ -57,15 +57,15 @@ The capsule is the baseline counter for the 85 percent goal: rebase and merge-co
 
 ## Where it plugs in
 
-- **Claude Code**: a `PreToolUse` entry in `hooks/hooks.json` with matcher `Edit|Write|MultiEdit`, routed through `scripts/hooks/run-with-flags.js` so `ECC_HOOK_PROFILE` and `ECC_DISABLED_HOOKS` gate it. Script under `scripts/hooks/tcas-pre-edit.js`, helpers in `scripts/lib/control-pane/tcas.js`. Budget: under 200 ms, no network beyond loopback, exit 0 on any parse or fetch error.
-- **Codex**: no PreToolUse. The instruction-backed equivalent is the `proximity_steer` / `proximity_hold` message the tick already writes into the ECC2 `messages` table, surfaced on the next turn. `pause` degrades to a strong instruction.
+- **Claude Code**: a `PreToolUse` entry in `hooks/hooks.json` with matcher `Edit|Write|MultiEdit`, routed through `scripts/hooks/run-with-flags.js` so `YUS_HOOK_PROFILE` and `YUS_DISABLED_HOOKS` gate it. Script under `scripts/hooks/tcas-pre-edit.js`, helpers in `scripts/lib/control-pane/tcas.js`. Budget: under 200 ms, no network beyond loopback, exit 0 on any parse or fetch error.
+- **Codex**: no PreToolUse. The instruction-backed equivalent is the `proximity_steer` / `proximity_hold` message the tick already writes into the yus2 `messages` table, surfaced on the next turn. `pause` degrades to a strong instruction.
 - **Hermes**: gateway hook on the tool-call path, same decision table, same capsule entry.
 
 ## Off switch and safety
 
-- Disabled by default. On with `ECC_TCAS_HOOK=1` or the hook profile.
+- Disabled by default. On with `YUS_TCAS_HOOK=1` or the hook profile.
 - Read-only against the pane. It never writes to the sessions or messages tables.
-- No lease is acquired. Durable leases are slice (c), the worktree lease table in ecc2 `session/store.rs` next to `messages`; until then a `pause` is a per-call block, not a lock, and two hooks racing on the same file is possible but harmless (both see the same event and the same `steer`).
+- No lease is acquired. Durable leases are slice (c), the worktree lease table in yus2 `session/store.rs` next to `messages`; until then a `pause` is a per-call block, not a lock, and two hooks racing on the same file is possible but harmless (both see the same event and the same `steer`).
 - Fails open. Any error is exit 0 with a `[TCAS]` line on stderr.
 
 ## Tests to write with it

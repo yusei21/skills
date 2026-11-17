@@ -18,7 +18,7 @@ async function waitFor(file, children) {
 }
 function start(root, role, action) {
   const child = spawn(process.execPath, [worker, root, role, action], {
-    env: { ...process.env, HOME: root, USERPROFILE: root, ECC_AGENT_DATA_HOME: path.join(root, '.claude') },
+    env: { ...process.env, HOME: root, USERPROFILE: root, YUS_AGENT_DATA_HOME: path.join(root, '.claude') },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   let stdout = '';
@@ -38,7 +38,7 @@ function start(root, role, action) {
   return child;
 }
 async function race(action) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-alias-race-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-alias-race-'));
   const dataDir = path.join(root, '.claude');
   fs.mkdirSync(dataDir);
   const aliasesPath = path.join(dataDir, 'session-aliases.json');

@@ -1,7 +1,7 @@
 'use strict';
 
 // Antigravity only attaches a workspace rule when its frontmatter declares an
-// activation trigger (always_on, glob, model_decision or manual). ECC's
+// activation trigger (always_on, glob, model_decision or manual). yus's
 // canonical rules are written for Claude Code: common rules have no
 // frontmatter and language rules scope themselves with a `paths:` list, which
 // Antigravity does not read. Without a trigger the installed files sit in

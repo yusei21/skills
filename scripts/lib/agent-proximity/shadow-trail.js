@@ -146,7 +146,7 @@ function encode(value) {
 function digest(trailId, receipt, payload = receipt.payload) {
   const encoded = encode([VERSION, trailId, receipt.id, receipt.kind, receipt.at,
     receipt.previousHash, payload]);
-  return crypto.createHash('sha256').update('ecc.tcas.shadow.v1\n').update(encoded).digest('hex');
+  return crypto.createHash('sha256').update('yus.tcas.shadow.v1\n').update(encoded).digest('hex');
 }
 function newReceipt(trail, id, kind, at, payload) {
   if (trail.receipts.length >= MAX_RECEIPTS) invalid();

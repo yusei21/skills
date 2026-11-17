@@ -12,7 +12,7 @@ const { createStateStore } = require('../../scripts/lib/state-store');
 const SCRIPT = path.resolve(__dirname, '../../scripts/sessions-cli.js');
 
 async function withTempHome(fn) {
-  const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-sessions-cli-'));
+  const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-sessions-cli-'));
   try {
     await fn(homeDir);
   } finally {

@@ -85,10 +85,10 @@ function runProcess(args = [], options = {}) {
 
     try {
       const shimPath = writeGhShim(rootDir, {
-        [discussionEnabledGhKey('affaan-m', 'ECC')]: {
+        [discussionEnabledGhKey('yusei21', 'yus')]: {
           data: { repository: { hasDiscussionsEnabled: true } }
         },
-        [discussionGhKey('affaan-m', 'ECC')]: {
+        [discussionGhKey('yusei21', 'yus')]: {
           data: {
             repository: {
               hasDiscussionsEnabled: true,
@@ -125,11 +125,11 @@ function runProcess(args = [], options = {}) {
       const parsed = JSON.parse(run([
         '--json',
         '--repo',
-        'affaan-m/ECC'
+        'yusei21/yus'
       ], {
         cwd: rootDir,
         env: {
-          ECC_GH_SHIM: shimPath,
+          YUS_GH_SHIM: shimPath,
           GITHUB_TOKEN: 'must-be-removed'
         }
       }));
@@ -148,10 +148,10 @@ function runProcess(args = [], options = {}) {
 
     try {
       const shimPath = writeGhShim(rootDir, {
-        [discussionEnabledGhKey('affaan-m', 'ECC')]: {
+        [discussionEnabledGhKey('yusei21', 'yus')]: {
           data: { repository: { hasDiscussionsEnabled: true } }
         },
-        [discussionGhKey('affaan-m', 'ECC')]: {
+        [discussionGhKey('yusei21', 'yus')]: {
           data: {
             repository: {
               hasDiscussionsEnabled: true,
@@ -178,11 +178,11 @@ function runProcess(args = [], options = {}) {
       const result = runProcess([
         '--json',
         '--repo',
-        'affaan-m/ECC',
+        'yusei21/yus',
         '--exit-code'
       ], {
         cwd: rootDir,
-        env: { ECC_GH_SHIM: shimPath }
+        env: { YUS_GH_SHIM: shimPath }
       });
       const parsed = JSON.parse(result.stdout);
 
@@ -203,10 +203,10 @@ function runProcess(args = [], options = {}) {
 
     try {
       const shimPath = writeGhShim(rootDir, {
-        [discussionEnabledGhKey('affaan-m', 'ECC')]: {
+        [discussionEnabledGhKey('yusei21', 'yus')]: {
           data: { repository: { hasDiscussionsEnabled: true } }
         },
-        [discussionGhKey('affaan-m', 'ECC')]: {
+        [discussionGhKey('yusei21', 'yus')]: {
           data: {
             repository: {
               hasDiscussionsEnabled: true,
@@ -220,15 +220,15 @@ function runProcess(args = [], options = {}) {
         '--write',
         outputPath,
         '--repo',
-        'affaan-m/ECC'
+        'yusei21/yus'
       ], {
         cwd: rootDir,
-        env: { ECC_GH_SHIM: shimPath }
+        env: { YUS_GH_SHIM: shimPath }
       });
       const written = fs.readFileSync(outputPath, 'utf8');
 
       assert.strictEqual(stdout, written);
-      assert.ok(written.includes('# ECC Discussion Audit'));
+      assert.ok(written.includes('# yus Discussion Audit'));
       assert.ok(written.includes('Answerable discussions missing accepted answer'));
       assert.ok(written.includes('- none'));
     } finally {
@@ -241,7 +241,7 @@ function runProcess(args = [], options = {}) {
 
     try {
       const shimPath = writeGhShim(rootDir, {
-        [discussionEnabledGhKey('ECC-Tools', 'ECC-website')]: {
+        [discussionEnabledGhKey('ECC-Tools', 'yus-website')]: {
           data: { repository: { hasDiscussionsEnabled: false } }
         }
       });
@@ -249,10 +249,10 @@ function runProcess(args = [], options = {}) {
       const parsed = JSON.parse(run([
         '--json',
         '--repo',
-        'ECC-Tools/ECC-website'
+        'ECC-Tools/yus-website'
       ], {
         cwd: rootDir,
-        env: { ECC_GH_SHIM: shimPath }
+        env: { YUS_GH_SHIM: shimPath }
       }));
 
       assert.strictEqual(parsed.ready, true);

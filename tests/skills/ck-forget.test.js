@@ -14,7 +14,7 @@ let passed = 0;
 let failed = 0;
 
 function test(description, fn) {
-  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-ck-forget-'));
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-ck-forget-'));
   try {
     fn(home);
     console.log(`  ✓ ${description}`);

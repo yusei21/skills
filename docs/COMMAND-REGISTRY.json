@@ -22,7 +22,7 @@
     },
     {
       "command": "auto-update",
-      "description": "Pull the latest ECC repo changes and reinstall the current managed targets.",
+      "description": "Pull the latest yus repo changes and reinstall the current managed targets.",
       "type": "testing",
       "primaryAgents": [],
       "allAgents": [],
@@ -58,7 +58,7 @@
     },
     {
       "command": "cost-report",
-      "description": "Generate a local Claude Code cost report from the ECC cost-tracker metrics log. Use for a terminal summary or CSV export of tracked spend; the cost-tracking skill covers the same metrics log for on-demand cost/budget questions asked in conversation.",
+      "description": "Generate a local Claude Code cost report from the yus cost-tracker metrics log. Use for a terminal summary or CSV export of tracked spend; the cost-tracking skill covers the same metrics log for on-demand cost/budget questions asked in conversation.",
       "type": "testing",
       "primaryAgents": [],
       "allAgents": [],
@@ -107,18 +107,6 @@
         "tdd-workflow"
       ],
       "path": "commands/cpp-test.md"
-    },
-    {
-      "command": "ecc-guide",
-      "description": "Navigate ECC's current agents, skills, commands, hooks, install profiles, and docs from the live repository surface. This is the slash-command entrypoint for that navigation; the ecc-guide skill covers the same map for on-demand use in conversation.",
-      "type": "review",
-      "primaryAgents": [],
-      "allAgents": [],
-      "skills": [
-        "ecc-guide",
-        "security-scan"
-      ],
-      "path": "commands/ecc-guide.md"
     },
     {
       "command": "epic-claim",
@@ -559,7 +547,7 @@
     },
     {
       "command": "multi-plan",
-      "description": "Create a multi-model (Codex + Antigravity) implementation plan without modifying production code. Requires the external ccg-workflow runtime, not part of the base ECC install (see Prerequisite below). Use when the user explicitly wants dual-model plan drafts; for a single-model plan with no extra runtime use /plan.",
+      "description": "Create a multi-model (Codex + Antigravity) implementation plan without modifying production code. Requires the external ccg-workflow runtime, not part of the base yus install (see Prerequisite below). Use when the user explicitly wants dual-model plan drafts; for a single-model plan with no extra runtime use /plan.",
       "type": "orchestration",
       "primaryAgents": [],
       "allAgents": [],
@@ -702,12 +690,12 @@
     },
     {
       "command": "project-init",
-      "description": "Detect a project's stack and produce a dry-run ECC onboarding plan using the repository's install manifests and stack mappings. Use to onboard ECC into a target project via a reviewable dry-run plan; for general feature discovery and navigation use the ecc-guide skill or /ecc-guide command instead.",
+      "description": "Detect a project's stack and produce a dry-run yus onboarding plan using the repository's install manifests and stack mappings. Use to onboard yus into a target project via a reviewable dry-run plan; for general feature discovery and navigation use the yus-guide skill or /yus-guide command instead.",
       "type": "testing",
       "primaryAgents": [],
       "allAgents": [],
       "skills": [
-        "ecc-guide"
+        "yus-guide"
       ],
       "path": "commands/project-init.md"
     },
@@ -807,7 +795,7 @@
     },
     {
       "command": "quality-gate",
-      "description": "Run the ECC formatter quality gate for a single file and report remediation steps.",
+      "description": "Run the yus formatter quality gate for a single file and report remediation steps.",
       "type": "testing",
       "primaryAgents": [],
       "allAgents": [],
@@ -1004,7 +992,7 @@
     },
     {
       "command": "skill-host-compat",
-      "description": "Lint ECC skills for Codex/Cursor-safe frontmatter and Claude-only substitutions before a skill PR.",
+      "description": "Lint yus skills for Codex/Cursor-safe frontmatter and Claude-only substitutions before a skill PR.",
       "type": "general",
       "primaryAgents": [],
       "allAgents": [],
@@ -1067,6 +1055,18 @@
         "vue-patterns"
       ],
       "path": "commands/vue-review.md"
+    },
+    {
+      "command": "yus-guide",
+      "description": "Navigate yus's current agents, skills, commands, hooks, install profiles, and docs from the live repository surface. This is the slash-command entrypoint for that navigation; the yus-guide skill covers the same map for on-demand use in conversation.",
+      "type": "review",
+      "primaryAgents": [],
+      "allAgents": [],
+      "skills": [
+        "security-scan",
+        "yus-guide"
+      ],
+      "path": "commands/yus-guide.md"
     }
   ],
   "statistics": {

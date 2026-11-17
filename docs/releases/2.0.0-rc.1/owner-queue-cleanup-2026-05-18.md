@@ -1,6 +1,6 @@
 # Owner-Wide Queue Cleanup - 2026-05-18
 
-This note records the live GitHub queue cleanup outside the five ECC release
+This note records the live GitHub queue cleanup outside the five yus release
 repos tracked by `scripts/platform-audit.js`.
 
 ## Commands
@@ -27,13 +27,13 @@ gh search issues --owner affaan-m --state open --json repository,number,title,ur
 
 ## Final PR Disposition
 
-- `affaan-m/dprc-autotrader-v2#5`: closed stale generated ECC bundle with
+- `affaan-m/dprc-autotrader-v2#5`: closed stale generated yus bundle with
   failing checks and dependency-update base.
 - `affaan-m/x-algorithm-score#2`: closed stale/conflicting external feature
   PR with accidental local AI-tool directories noted in the PR body.
-- `affaan-m/dexploy#28`: closed stale generated ECC skill PR with requested
+- `affaan-m/dexploy#28`: closed stale generated yus skill PR with requested
   changes.
-- `affaan-m/zenith#5`: closed stale generated ECC skill PR.
+- `affaan-m/zenith#5`: closed stale generated yus skill PR.
 - `affaan-m/zenith#4`: closed test/noise PR whose diff only added a
   non-actionable script comment.
 - `affaan-m/affaan-m#1`: closed stale/conflicting third-party README-card PR.
@@ -58,7 +58,7 @@ gh search issues --owner affaan-m --state open --json repository,number,title,ur
 ## Disposition
 
 The closed dependency PRs were stale generated version bumps and should be
-regenerated from current bases if still needed. The closed generated ECC bundle
+regenerated from current bases if still needed. The closed generated yus bundle
 PRs should be regenerated from the current ECC Tools flow if those repositories
 become active again. The closed legacy payments/0EM issues were old planning
 items superseded by the ECC Tools native-payments, hosted analysis,

@@ -46,8 +46,8 @@ for (const target of ['claude', 'claude-project', 'cursor', 'antigravity', 'code
       component => component.id === 'capability:module-governance'
     ));
     const plan = createManifestInstallPlan({
-      sourceRoot: ROOT, target, homeDir: '/private/tmp/ecc-module-plan-preview',
-      projectRoot: '/private/tmp/ecc-module-plan-preview', profileId: 'minimal',
+      sourceRoot: ROOT, target, homeDir: '/private/tmp/yus-module-plan-preview',
+      projectRoot: '/private/tmp/yus-module-plan-preview', profileId: 'minimal',
       includeComponentIds: ['capability:module-governance'],
       // This checks skill-copy planning; installer tests validate the compiled payload.
       exemptValidationCodes: ['opencode-plugin-not-built'],
@@ -66,8 +66,8 @@ for (const target of ['hermes', 'openclaw', 'kimi', 'adal', 'copilot']) {
       component => component.id === 'capability:module-governance'
     ), `module governance is not installable on ${target}`);
     const plan = createManifestInstallPlan({
-      sourceRoot: ROOT, target, homeDir: '/private/tmp/ecc-module-plan-preview',
-      projectRoot: '/private/tmp/ecc-module-plan-preview', profileId: 'minimal',
+      sourceRoot: ROOT, target, homeDir: '/private/tmp/yus-module-plan-preview',
+      projectRoot: '/private/tmp/yus-module-plan-preview', profileId: 'minimal',
       includeComponentIds: ['capability:module-governance'],
     });
     assert.ok(plan.skippedModuleIds.includes('documentation-module-governance'));

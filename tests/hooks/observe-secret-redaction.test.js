@@ -17,7 +17,7 @@ function test(name, fn) {
 }
 
 function capture(phase, input, expectedEvent) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-observe-redaction-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-observe-redaction-'));
   try {
     const data = path.join(root, 'data');
     const result = spawnSync(process.execPath, [runner, `${phase}:observe`,
@@ -27,8 +27,8 @@ function capture(phase, input, expectedEvent) {
       cwd: root, encoding: 'utf8', timeout: 12000,
       env: { ...process.env, HOME: root, USERPROFILE: root,
         CLV2_HOMUNCULUS_DIR: data, CLAUDE_CODE_ENTRYPOINT: 'cli',
-        ECC_HOOK_PROFILE: 'standard', ECC_SKIP_OBSERVE: '0',
-        ECC_DISABLED_HOOKS: '', ECC_OBSERVER_ENABLED: 'false' }
+        YUS_HOOK_PROFILE: 'standard', YUS_SKIP_OBSERVE: '0',
+        YUS_DISABLED_HOOKS: '', YUS_OBSERVER_ENABLED: 'false' }
     });
     assert.equal(result.status, 0, result.stderr);
     assert.doesNotMatch(result.stderr, /runner failed|timed out/i);

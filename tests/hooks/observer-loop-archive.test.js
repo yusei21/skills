@@ -44,7 +44,7 @@ function skipOnWindows() {
 }
 
 function createTempDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-observer-archive-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'yus-observer-archive-'));
 }
 
 function cleanupDir(dir) {
@@ -108,7 +108,7 @@ function runAnalyzeOnce(options = {}) {
       '  wait',
       'fi',
       'if [ "${CLAUDE_STUB_PROBE_RESULT_PATH:-false}" = "true" ]; then',
-      '  for candidate in "${PROJECT_DIR}"/.observer-tmp/ecc-observer-result.*; do',
+      '  for candidate in "${PROJECT_DIR}"/.observer-tmp/yus-observer-result.*; do',
       '    [ -e "$candidate" ] || [ -L "$candidate" ] || continue',
       "    printf 'found\n' > \"${CLAUDE_STUB_ATTACK_FILE}\"",
       '    rm -f "$candidate"',
@@ -149,7 +149,7 @@ function runAnalyzeOnce(options = {}) {
 
     const inheritedEnv = Object.fromEntries(
       Object.entries(process.env).filter(
-        ([key]) => key !== 'CLAUDE_PLUGIN_ROOT' && !key.startsWith('ECC_OBSERVER_')
+        ([key]) => key !== 'CLAUDE_PLUGIN_ROOT' && !key.startsWith('YUS_OBSERVER_')
       )
     );
     const childEnv = {
@@ -174,11 +174,11 @@ function runAnalyzeOnce(options = {}) {
       INSTINCTS_DIR: path.join(projectDir, 'instincts'),
       CONFIG_DIR: projectDir,
       CLV2_IS_WINDOWS: 'false',
-      ECC_OBSERVER_TIMEOUT_SECONDS: String(observerTimeoutSeconds),
-      ECC_OBSERVER_MAX_ANALYSIS_LINES: '500',
-      ECC_OBSERVER_MAX_TURNS: '20',
-      ECC_OBSERVER_MODEL: 'haiku',
-      ECC_OBSERVER_ALLOW_WINDOWS: 'false',
+      YUS_OBSERVER_TIMEOUT_SECONDS: String(observerTimeoutSeconds),
+      YUS_OBSERVER_MAX_ANALYSIS_LINES: '500',
+      YUS_OBSERVER_MAX_TURNS: '20',
+      YUS_OBSERVER_MODEL: 'haiku',
+      YUS_OBSERVER_ALLOW_WINDOWS: 'false',
     };
 
     const startedAt = Date.now();

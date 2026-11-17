@@ -79,8 +79,8 @@ test('workspace-level legacy repos are inventoried without personal paths', () =
   const source = read('docs/legacy-artifact-inventory.md');
 
   for (const dir of [
-    '../_legacy-documents-ecc-context-2026-04-30',
-    '../_legacy-documents-ecc-everything-claude-code-2026-04-30',
+    '../_legacy-documents-yus-context-2026-04-30',
+    '../_legacy-documents-yus-everything-claude-code-2026-04-30',
   ]) {
     assert.ok(source.includes(dir), `Missing workspace legacy repo ${dir}`);
   }

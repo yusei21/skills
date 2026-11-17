@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Refactored ECC installer runtime.
+ * Refactored yus installer runtime.
  *
  * Keeps the legacy language-based install entrypoint intact while moving
  * target-specific mutation logic into testable Node code.
@@ -30,12 +30,12 @@ Usage: install.sh [--target <${LEGACY_INSTALL_TARGETS.join('|')}>] [--dry-run] [
        install.sh [--dry-run] [--json] --config <path>
 
 Targets:
-  claude       (default) - Install ECC into ~/.claude/ with managed rules under rules/ecc and flat skills under skills/
-  claude-project - Install ECC into ./.claude/ (per-project) with managed rules under rules/ecc and flat skills under skills/
+  claude       (default) - Install yus into ~/.claude/ with managed rules under rules/yus and flat skills under skills/
+  claude-project - Install yus into ./.claude/ (per-project) with managed rules under rules/yus and flat skills under skills/
   cursor       - Install rules, hooks, and bundled Cursor configs to ./.cursor/
   antigravity  - Install rules, workflows, skills, and agents to ./.agents/
   codex        - Install shared agents/config into ~/.codex/
-  copilot      - Install skills and agents into ./.github/ for GitHub Copilot CLI (ECC hooks not configured)
+  copilot      - Install skills and agents into ./.github/ for GitHub Copilot CLI (yus hooks not configured)
   gemini       - Install project-local Gemini config into ./.gemini/
   opencode     - Install into OPENCODE_CONFIG_DIR, XDG_CONFIG_HOME/opencode, or ~/.config/opencode/
   codebuddy    - Install commands, agents, skills, and flattened rules into ./.codebuddy/
@@ -43,7 +43,7 @@ Targets:
   qwen         - Install commands, agents, skills, rules, and Qwen config into ~/.qwen/
   zed          - Install project settings, commands, agents, skills, and flattened rules into ./.zed/
   hermes       - Install shared rules/skills/commands into ~/.hermes/
-  kimi         - Install Kimi Code project instructions, skills, and MCP config into ./.kimi-code/ (ECC hooks not configured)
+  kimi         - Install Kimi Code project instructions, skills, and MCP config into ./.kimi-code/ (yus hooks not configured)
   openclaw     - Install shared rules/skills/commands into ~/.openclaw/
   adal         - Install shared rules/skills/commands into ./.adal/
 
@@ -54,7 +54,7 @@ Options:
   --skills <ids>      Install one or more skill directories by ID, e.g. continuous-learning-v2
   --without <component>
                       Exclude a user-facing install component
-  --config <path>     Load install intent from ecc-install.json
+  --config <path>     Load install intent from yus-install.json
   --enable-hooks      Confirm installing the automatic hook runtime (required
                       when the selected profile/modules materialize hooks)
   --no-hooks          Install everything except the automatic hook runtime

@@ -24,7 +24,7 @@ const {
 
 // Create a temporary directory for testing
 function createTempDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-test-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'yus-test-'));
 }
 
 // Clean up temp directory

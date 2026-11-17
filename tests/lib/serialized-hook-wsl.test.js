@@ -11,7 +11,7 @@ const config = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../hooks/h
 const command = config.hooks.SessionStart.flatMap(entry => entry.hooks || [])
   .map(hook => hook.command).find(value => typeof value === 'string' && value.includes('CLAUDE_CONFIG_DIR') && value.endsWith('node scripts/hooks/session-start-bootstrap.js'));
 assert.ok(command, 'Expected the shipped SessionStart bootstrap command');
-const folder = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-shell-wsl-'));
+const folder = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-shell-wsl-'));
 const preload = path.join(folder, 'preload.cjs');
 fs.writeFileSync(preload, `
 const Module = require('module');
@@ -37,7 +37,7 @@ const simulatedOs = new Proxy(os, { get(target, key) {
 Module._load = function(request, parent, isMain) {
   if (request === 'fs') return simulatedFs;
   if (request === 'os') return simulatedOs;
-  if (request.startsWith('/mnt/c') && request.endsWith('/scripts/lib/resolve-ecc-root')) {
+  if (request.startsWith('/mnt/c') && request.endsWith('/scripts/lib/resolve-yus-root')) {
     const error = new Error('Isolated fixture has no installed resolver'); error.code = 'MODULE_NOT_FOUND'; throw error;
   }
   // Observe the resolved bootstrap and forwarded arguments without running host hooks.

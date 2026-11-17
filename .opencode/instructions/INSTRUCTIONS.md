@@ -1,4 +1,4 @@
-# ECC - OpenCode Instructions
+# yus - OpenCode Instructions
 
 This document consolidates the core rules and guidelines from the Claude Code configuration for use with OpenCode.
 
@@ -302,7 +302,7 @@ interface Repository<T> {
 ## OpenCode-Specific Notes
 
 OpenCode supports hooks through its [plugin system](https://opencode.ai/docs/plugins/).
-The ECC plugin automates selected checks when installed and enabled; see
+The yus plugin automates selected checks when installed and enabled; see
 [Hook Runtime Controls](../README.md#hook-runtime-controls) for hook profiles and disabled hook IDs.
 Formatting and type checking require the `strict` profile. Type checking runs only for
 qualifying TypeScript edits; check newly written files manually. Confirm which checks

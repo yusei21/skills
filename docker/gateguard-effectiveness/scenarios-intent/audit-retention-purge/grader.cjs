@@ -36,4 +36,4 @@ try {
 }
 
 const score = checks.filter(Boolean).length / 4;
-console.log(`ECC_EVAL_SCORE ${JSON.stringify({ score })}`);
+console.log(`YUS_EVAL_SCORE ${JSON.stringify({ score })}`);

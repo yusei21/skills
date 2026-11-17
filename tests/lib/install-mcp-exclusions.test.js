@@ -25,12 +25,12 @@ function writeJson(filePath, value) {
 }
 
 function createFixture(t, { allExcluded = false, userConfig = false } = {}) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-mcp-exclusions-'));
-  const previousDisabled = process.env.ECC_DISABLED_MCPS;
-  delete process.env.ECC_DISABLED_MCPS;
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-mcp-exclusions-'));
+  const previousDisabled = process.env.YUS_DISABLED_MCPS;
+  delete process.env.YUS_DISABLED_MCPS;
   t.after(() => {
-    if (previousDisabled === undefined) delete process.env.ECC_DISABLED_MCPS;
-    else process.env.ECC_DISABLED_MCPS = previousDisabled;
+    if (previousDisabled === undefined) delete process.env.YUS_DISABLED_MCPS;
+    else process.env.YUS_DISABLED_MCPS = previousDisabled;
     fs.rmSync(root, { recursive: true, force: true });
   });
   const sourceRoot = path.join(root, 'source');
@@ -38,7 +38,7 @@ function createFixture(t, { allExcluded = false, userConfig = false } = {}) {
   const projectRoot = path.join(root, 'project');
   const targetRoot = path.join(projectRoot, '.cursor');
   const configPath = path.join(targetRoot, 'mcp.json');
-  const statePath = path.join(targetRoot, 'ecc-install-state.json');
+  const statePath = path.join(targetRoot, 'yus-install-state.json');
   const json = (relativePath, value) => writeJson(path.join(sourceRoot, relativePath), value);
   const module = (id, paths) => ({
     id, kind: 'platform', description: 'MCP lifecycle fixture', paths,
@@ -92,12 +92,12 @@ function createFixture(t, { allExcluded = false, userConfig = false } = {}) {
 }
 
 function installWithExclusion(fixture, dependencies) {
-  process.env.ECC_DISABLED_MCPS = 'excluded';
+  process.env.YUS_DISABLED_MCPS = 'excluded';
   try {
     return fixture.install(dependencies);
   } finally {
     // Lifecycle commands must honor recorded ownership without this environment.
-    delete process.env.ECC_DISABLED_MCPS;
+    delete process.env.YUS_DISABLED_MCPS;
   }
 }
 
@@ -230,7 +230,7 @@ test('preview and apply share MCP filtering without changing the plan or other J
   const payloadFor = (operations, destinationPath) => operations.find(operation => (
     operation.destinationPath === destinationPath
   )).mergePayload;
-  process.env.ECC_DISABLED_MCPS = 'excluded';
+  process.env.YUS_DISABLED_MCPS = 'excluded';
   try {
     const preview = previewInstallPlan(plan);
     assert.ok(!fs.existsSync(fixture.statePath));
@@ -242,7 +242,7 @@ test('preview and apply share MCP filtering without changing the plan or other J
     assert.deepEqual(plan, before, 'Preview must not mutate the original plan');
     applyInstallPlan(plan);
   } finally {
-    delete process.env.ECC_DISABLED_MCPS;
+    delete process.env.YUS_DISABLED_MCPS;
   }
   assert.deepEqual(plan, before, 'Apply must not mutate the original plan');
   assert.deepEqual(fixture.readConfig(), expectedMcp);
@@ -285,7 +285,7 @@ for (const [name, payload, expected] of [
     const payloadFor = operations => operations.find(operation => (
       operation.destinationPath === fixture.configPath
     )).mergePayload;
-    process.env.ECC_DISABLED_MCPS = 'excluded';
+    process.env.YUS_DISABLED_MCPS = 'excluded';
 
     const preview = previewInstallPlan(plan);
     assert.deepEqual(payloadFor(preview.operations), payload);

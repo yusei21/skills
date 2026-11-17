@@ -55,7 +55,7 @@ function operationFor(plan, suffix) {
 }
 
 const INERT_OPENCODE_PLUGIN = getDisabledOpenCodePluginContent();
-const OPENCODE_ENTRYPOINTS = ['ecc-hooks.ts', 'index.ts'];
+const OPENCODE_ENTRYPOINTS = ['yus-hooks.ts', 'index.ts'];
 
 function snapshotFiles(root) {
   const entries = [];
@@ -132,7 +132,7 @@ function writeManifestSourceFixture(root) {
           'standalone.txt',
           'missing.txt',
           'skills/demo',
-          path.join('runtime', 'ecc', 'install-state.json'),
+          path.join('runtime', 'yus', 'install-state.json'),
           '.claude-plugin',
         ],
         targets: ['claude'],
@@ -161,12 +161,12 @@ function writeManifestSourceFixture(root) {
   writeFile(root, path.join('src', 'stray.pyc'), 'ignored\n');
   writeFile(root, path.join('src', 'stray.pyo'), 'ignored\n');
   writeFile(root, path.join('src', 'stray.pyd'), 'ignored\n');
-  writeFile(root, path.join('src', 'nested', 'ecc-install-state.json'), '{}\n');
+  writeFile(root, path.join('src', 'nested', 'yus-install-state.json'), '{}\n');
   writeFile(root, path.join('rules', 'common', 'coding-style.md'), '# Common\n');
-  writeFile(root, path.join('rules', 'common', 'agents.md'), 'Use the `ecc:planner` agent.\n');
+  writeFile(root, path.join('rules', 'common', 'agents.md'), 'Use the `yus:planner` agent.\n');
   writeFile(root, path.join('skills', 'demo', 'SKILL.md'), '# Demo\n');
   writeFile(root, 'standalone.txt', 'standalone\n');
-  writeFile(root, path.join('runtime', 'ecc', 'install-state.json'), '{}\n');
+  writeFile(root, path.join('runtime', 'yus', 'install-state.json'), '{}\n');
   writeJson(root, path.join('.claude-plugin', 'plugin.json'), { name: 'fixture' });
 }
 
@@ -324,7 +324,7 @@ function writeManifestSourceFixture(root) {
     }
   });
 
-  test('plans Claude legacy rules under the default ECC-managed rules directory', () => {
+  test('plans Claude legacy rules under the default yus-managed rules directory', () => {
     const sourceRoot = createTempDir('install-executor-source-');
     const homeDir = createTempDir('install-executor-home-');
     const projectRoot = createTempDir('install-executor-project-');
@@ -340,10 +340,10 @@ function writeManifestSourceFixture(root) {
         languages: ['typescript'],
       });
 
-      const managedRulesDir = path.join(homeDir, '.claude', 'rules', 'ecc');
+      const managedRulesDir = path.join(homeDir, '.claude', 'rules', 'yus');
       assert.strictEqual(plan.installRoot, managedRulesDir);
-      assert.ok(operationFor(plan, path.join('.claude', 'rules', 'ecc', 'common', 'coding-style.md')));
-      assert.ok(operationFor(plan, path.join('.claude', 'rules', 'ecc', 'typescript', 'testing.md')));
+      assert.ok(operationFor(plan, path.join('.claude', 'rules', 'yus', 'common', 'coding-style.md')));
+      assert.ok(operationFor(plan, path.join('.claude', 'rules', 'yus', 'typescript', 'testing.md')));
       assert.ok(!operationFor(plan, path.join('.claude', 'rules', 'common', 'coding-style.md')));
       assert.ok(!plan.warnings.some(warning => warning.includes('files may be overwritten')));
     } finally {
@@ -372,7 +372,7 @@ function writeManifestSourceFixture(root) {
       assert.strictEqual(plan.installRoot, targetRoot);
       assert.ok(operationFor(plan, path.join('.cursor', 'rules', 'common-style.md')));
       assert.ok(operationFor(plan, path.join('.cursor', 'rules', 'typescript-style.md')));
-      assert.ok(operationFor(plan, path.join('.cursor', 'agents', 'ecc-planner.md')));
+      assert.ok(operationFor(plan, path.join('.cursor', 'agents', 'yus-planner.md')));
       assert.ok(!plan.operations.some(operation => (
         operation.destinationPath.endsWith(path.join('.cursor', 'agents', 'planner.md'))
       )));
@@ -485,8 +485,8 @@ function writeManifestSourceFixture(root) {
       assert.ok(normalizedSources.includes('standalone.txt'));
       assert.ok(normalizedSources.includes('.claude-plugin/plugin.json'));
       assert.ok(!normalizedSources.includes('missing.txt'));
-      assert.ok(!normalizedSources.includes('runtime/ecc/install-state.json'));
-      assert.ok(!normalizedSources.includes('src/nested/ecc-install-state.json'));
+      assert.ok(!normalizedSources.includes('runtime/yus/install-state.json'));
+      assert.ok(!normalizedSources.includes('src/nested/yus-install-state.json'));
       assert.ok(!normalizedSources.some(source => source.includes('node_modules')));
       assert.ok(!normalizedSources.some(source => source.includes('.git')));
       assert.ok(!normalizedSources.some(source => source.includes('__pycache__')));
@@ -498,7 +498,7 @@ function writeManifestSourceFixture(root) {
       )));
       assert.ok(plan.operations.some(operation => (
         operation.sourceRelativePath === path.join('rules', 'common', 'coding-style.md')
-        && operation.destinationPath === path.join(homeDir, '.claude', 'rules', 'ecc', 'common', 'coding-style.md')
+        && operation.destinationPath === path.join(homeDir, '.claude', 'rules', 'yus', 'common', 'coding-style.md')
       )));
       assert.ok(plan.operations.some(operation => (
         operation.sourceRelativePath === path.join('skills', 'demo', 'SKILL.md')
@@ -671,17 +671,17 @@ function writeManifestSourceFixture(root) {
       const applied = applyInstallPlan(plan);
 
       assert.strictEqual(applied.applied, true);
-      assert.ok(fs.existsSync(path.join(homeDir, '.claude', 'rules', 'ecc', 'common', 'coding-style.md')));
+      assert.ok(fs.existsSync(path.join(homeDir, '.claude', 'rules', 'yus', 'common', 'coding-style.md')));
       assert.ok(fs.existsSync(path.join(homeDir, '.claude', 'skills', 'demo', 'SKILL.md')));
       assert.ok(fs.existsSync(path.join(homeDir, '.claude', 'src', 'app.js')));
       assert.ok(fs.existsSync(path.join(homeDir, '.claude', 'standalone.txt')));
       assert.ok(fs.existsSync(path.join(homeDir, '.claude', 'plugin.json')));
       const installedAgentsRule = fs.readFileSync(
-        path.join(homeDir, '.claude', 'rules', 'ecc', 'common', 'agents.md'),
+        path.join(homeDir, '.claude', 'rules', 'yus', 'common', 'agents.md'),
         'utf8'
       );
       assert.strictEqual(installedAgentsRule, 'Use the `planner` agent.\n');
-      const state = JSON.parse(fs.readFileSync(path.join(homeDir, '.claude', 'ecc', 'install-state.json'), 'utf8'));
+      const state = JSON.parse(fs.readFileSync(path.join(homeDir, '.claude', 'yus', 'install-state.json'), 'utf8'));
       assert.strictEqual(state.request.profile, 'minimal');
       assert.deepStrictEqual(state.resolution.selectedModules, ['fixture-core']);
       for (const operation of state.operations) {
@@ -702,11 +702,11 @@ function writeManifestSourceFixture(root) {
     const tempDir = createTempDir('install-executor-write-guard-');
     try {
       const targetRoot = path.join(tempDir, 'target');
-      const sourcePath = writeFile(tempDir, path.join('source', 'security.md'), 'ecc\n');
+      const sourcePath = writeFile(tempDir, path.join('source', 'security.md'), 'yus\n');
       const destinationPath = path.join(targetRoot, 'rules', 'security.md');
       const plan = {
         adapter: { id: 'kimi-project', target: 'kimi', kind: 'project' },
-        installStatePath: path.join(targetRoot, 'ecc-install-state.json'),
+        installStatePath: path.join(targetRoot, 'yus-install-state.json'),
         operations: [{
           kind: 'copy-file',
           moduleId: 'core',
@@ -993,7 +993,7 @@ function writeManifestSourceFixture(root) {
         sourceRoot,
         targetRoot,
         installRoot: targetRoot,
-        installStatePath: path.join(targetRoot, 'ecc-install-state.json'),
+        installStatePath: path.join(targetRoot, 'yus-install-state.json'),
         warnings: [],
         statePreview: {
           target: 'kimi',
@@ -1042,7 +1042,7 @@ function writeManifestSourceFixture(root) {
         sourceRoot: path.join(tempDir, 'source'),
         targetRoot,
         installRoot: targetRoot,
-        installStatePath: path.join(targetRoot, 'ecc', 'install-state.json'),
+        installStatePath: path.join(targetRoot, 'yus', 'install-state.json'),
         warnings: [],
         statePreview: {
           target: 'claude',
@@ -1078,7 +1078,7 @@ function writeManifestSourceFixture(root) {
         rawDefaultPlan.operations.find(operation => (
           operation.sourceRelativePath.split(path.sep).join('/') === '.opencode/opencode.json'
         )).contentTransform,
-        'opencode-disable-ecc-hooks'
+        'opencode-disable-yus-hooks'
       );
       const defaultPlan = createInstallPlanFromRequest(
         normalizeInstallRequest({ target: 'opencode', profileId: 'opencode' }),
@@ -1091,10 +1091,10 @@ function writeManifestSourceFixture(root) {
         operation.sourceRelativePath.split(path.sep).join('/') === '.opencode/opencode.json'
       ));
 
-      assert.strictEqual(defaultConfig.contentTransform, 'opencode-disable-ecc-hooks');
-      assert.strictEqual(defaultStateConfig.contentTransform, 'opencode-disable-ecc-hooks');
+      assert.strictEqual(defaultConfig.contentTransform, 'opencode-disable-yus-hooks');
+      assert.strictEqual(defaultStateConfig.contentTransform, 'opencode-disable-yus-hooks');
       assert.ok(defaultPlan.operations.some(operation => (
-        operation.sourceRelativePath.split(path.sep).join('/') === '.opencode/plugins/ecc-hooks.ts'
+        operation.sourceRelativePath.split(path.sep).join('/') === '.opencode/plugins/yus-hooks.ts'
       )), 'Default plan should still copy dormant plugin source');
 
       for (const name of OPENCODE_ENTRYPOINTS) {
@@ -1129,7 +1129,7 @@ function writeManifestSourceFixture(root) {
         enabledWithoutRuntime.operations.find(operation => (
           operation.sourceRelativePath.split(path.sep).join('/') === '.opencode/opencode.json'
         )).contentTransform,
-        'opencode-disable-ecc-hooks'
+        'opencode-disable-yus-hooks'
       );
 
       const declinedPlan = createInstallPlanFromRequest(
@@ -1140,7 +1140,7 @@ function writeManifestSourceFixture(root) {
         declinedPlan.operations.find(operation => (
           operation.sourceRelativePath.split(path.sep).join('/') === '.opencode/opencode.json'
         )).contentTransform,
-        'opencode-disable-ecc-hooks'
+        'opencode-disable-yus-hooks'
       );
       assert.ok(!declinedPlan.operations.some(operation => operation.moduleId === 'hooks-runtime'));
 
@@ -1198,7 +1198,7 @@ function writeManifestSourceFixture(root) {
   });
 
   test('OpenCode disabled install refuses user-owned activation files before any writes', () => {
-    for (const relativePath of ['opencode.json', path.join('plugins', 'ecc-hooks.ts'), path.join('plugins', 'index.ts')]) {
+    for (const relativePath of ['opencode.json', path.join('plugins', 'yus-hooks.ts'), path.join('plugins', 'index.ts')]) {
       const homeDir = createTempDir('install-opencode-user-owned-');
       try {
         const plan = createOpenCodePlan(homeDir, 'declined');
@@ -1221,7 +1221,7 @@ function writeManifestSourceFixture(root) {
         const enabledPlan = createOpenCodePlan(homeDir, 'enabled', true);
         applyInstallPlanDirect(enabledPlan);
         const state = JSON.parse(fs.readFileSync(enabledPlan.installStatePath, 'utf8'));
-        const pluginPath = path.join(enabledPlan.targetRoot, 'plugins', 'ecc-hooks.ts');
+        const pluginPath = path.join(enabledPlan.targetRoot, 'plugins', 'yus-hooks.ts');
         if (scenario === 'modified-plugin') {
           fs.appendFileSync(pluginPath, '// user modification\n');
         } else if (scenario === 'modified-config') {
@@ -1254,7 +1254,7 @@ function writeManifestSourceFixture(root) {
     try {
       const enabledPlan = createOpenCodePlan(homeDir, 'enabled', true);
       applyInstallPlanDirect(enabledPlan);
-      const pluginPath = path.join(enabledPlan.targetRoot, 'plugins', 'ecc-hooks.ts');
+      const pluginPath = path.join(enabledPlan.targetRoot, 'plugins', 'yus-hooks.ts');
       const changedContent = 'globalThis.userChangedHook = true;\n';
       const stateBefore = fs.readFileSync(enabledPlan.installStatePath);
       let changed = false;
@@ -1303,7 +1303,7 @@ function writeManifestSourceFixture(root) {
         sourceRoot,
         targetRoot,
         installRoot: targetRoot,
-        installStatePath: path.join(targetRoot, 'ecc', 'install-state.json'),
+        installStatePath: path.join(targetRoot, 'yus', 'install-state.json'),
         warnings: [],
         hookConsent: 'enabled',
         statePreview: {

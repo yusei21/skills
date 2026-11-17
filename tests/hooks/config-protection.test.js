@@ -66,7 +66,7 @@ function runHook(input, env = {}) {
     encoding: 'utf8',
     env: {
       ...process.env,
-      ECC_HOOK_PROFILE: 'standard',
+      YUS_HOOK_PROFILE: 'standard',
       ...env
     },
     timeout: 15000,
@@ -88,7 +88,7 @@ function runCustomHook(pluginRoot, hookId, relScriptPath, input, env = {}) {
     env: {
       ...process.env,
       CLAUDE_PLUGIN_ROOT: pluginRoot,
-      ECC_HOOK_PROFILE: 'standard',
+      YUS_HOOK_PROFILE: 'standard',
       ...env
     },
     timeout: 15000,
@@ -109,7 +109,7 @@ function runTests() {
 
   results.push(
     test('blocks protected config file edits through run-with-flags', () => {
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-protect-')), tmpDir => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-protect-')), tmpDir => {
         const absPath = path.join(tmpDir, '.eslintrc.js');
         fs.writeFileSync(absPath, 'module.exports = {};');
 
@@ -166,7 +166,7 @@ function runTests() {
 
   results.push(
     test('allows first-time creation of a protected config file', () => {
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-protect-')), tmpDir => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-protect-')), tmpDir => {
         const absPath = path.join(tmpDir, 'eslint.config.mjs');
         const input = {
           tool_name: 'Write',
@@ -186,7 +186,7 @@ function runTests() {
 
   results.push(
     test('allows first-time creation when the parent directory does not exist yet', () => {
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-protect-')), tmpDir => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-protect-')), tmpDir => {
         // Path under a non-existent subdirectory — statSync returns ENOENT
         // on the final segment, which should be treated as "does not exist"
         // and allow the write. (Agent or CLI is expected to create parents
@@ -209,7 +209,7 @@ function runTests() {
 
   results.push(
     test('blocks protected paths that exist as a dangling symlink', () => {
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-protect-')), tmpDir => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-protect-')), tmpDir => {
         const missingTarget = path.join(tmpDir, 'nowhere.js');
         const linkPath = path.join(tmpDir, '.eslintrc.js');
         try {
@@ -242,7 +242,7 @@ function runTests() {
 
   results.push(
     test('blocks case-variant writes that resolve to an existing protected config', () => {
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-protect-')), tmpDir => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-protect-')), tmpDir => {
         const realPath = path.join(tmpDir, '.eslintrc.js');
         const variantPath = path.join(tmpDir, '.ESLINTRC.JS');
         fs.writeFileSync(realPath, 'module.exports = { rules: { "no-explicit-any": "error" } };');
@@ -278,7 +278,7 @@ function runTests() {
 
   results.push(
     test('still blocks writes to an existing protected config file', () => {
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-protect-')), tmpDir => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-protect-')), tmpDir => {
         const absPath = path.join(tmpDir, '.eslintrc.js');
         fs.writeFileSync(absPath, 'module.exports = { rules: {} };');
 
@@ -305,7 +305,7 @@ function runTests() {
       // stop, and it was allowed. Measured before the fix: .eslintignore,
       // .prettierignore, .stylelintignore and .markdownlintignore all
       // returned exit 0.
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-protect-')), tmpDir => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-protect-')), tmpDir => {
         for (const name of [
           '.eslintignore',
           '.prettierignore',
@@ -335,7 +335,7 @@ function runTests() {
       // Only the legacy `.stylelintrc*` / `.markdownlint.json` names were
       // listed, so a project on the documented `stylelint.config.js` or
       // markdownlint-cli2 had no protection at all.
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-protect-')), tmpDir => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-protect-')), tmpDir => {
         for (const name of [
           'stylelint.config.js',
           'stylelint.config.cjs',
@@ -373,7 +373,7 @@ function runTests() {
 
   results.push(
     test('a first-time ignore file and a lookalike name are still allowed', () => {
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-protect-')), tmpDir => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-protect-')), tmpDir => {
         // Scaffolding a brand-new ignore file is the same legitimate bootstrap
         // path the hook already allows for configs.
         const fresh = runHook({
@@ -396,7 +396,7 @@ function runTests() {
 
   results.push(
     test('legacy hooks do not echo raw input when they fail without stdout', () => {
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-legacy-')), pluginRoot => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-legacy-')), pluginRoot => {
         const scriptDir = path.join(pluginRoot, 'scripts', 'hooks');
         const scriptPath = path.join(scriptDir, 'legacy-block.js');
         fs.mkdirSync(scriptDir, { recursive: true });
@@ -424,7 +424,7 @@ function runTests() {
       // the ignore list and rule severities, imported by per-workspace
       // `eslint.config.mjs` files. Matching basenames alone protected the
       // leaves and left the trunk -- the file that carries the rules -- editable.
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-protect-base-')), tmpDir => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-protect-base-')), tmpDir => {
         const names = [
           'eslint.config.base.mjs', 'prettier.config.shared.cjs', '.eslintrc.base.json', 'ESLint.Config.Base.MJS',
           'stylelint.config.local.ts', 'commitlint.config.shared.cts', 'oxlint.config.base.mts',
@@ -449,7 +449,7 @@ function runTests() {
 
   results.push(
     test("blocks Prettier's TypeScript and JSON5 rc files", () => {
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-protect-prettier-')), tmpDir => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-protect-prettier-')), tmpDir => {
         for (const name of ['.prettierrc.ts', '.prettierrc.mts', '.prettierrc.cts', '.prettierrc.json5', '.prettierrc.shared.ts']) {
           const absPath = path.join(tmpDir, name);
           fs.writeFileSync(absPath, 'export default {};\n');
@@ -468,7 +468,7 @@ function runTests() {
 
   results.push(
     test('blocks a MultiEdit whose existing config target is only in edits[].file_path (#3761)', () => {
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-protect-multi-')), tmpDir => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-protect-multi-')), tmpDir => {
         const ruff = path.join(tmpDir, 'ruff.toml');
         const eslintrc = path.join(tmpDir, '.eslintrc.json');
         fs.writeFileSync(ruff, '{}');
@@ -513,7 +513,7 @@ function runTests() {
 
   results.push(
     test('allows a MultiEdit that only creates or touches non-protected files', () => {
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-protect-multi-ok-')), tmpDir => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-protect-multi-ok-')), tmpDir => {
         const result = runHook({
           tool_name: 'MultiEdit',
           tool_input: {
@@ -534,7 +534,7 @@ function runTests() {
     test('does not block build or test tooling configs', () => {
       // Pins the boundary: this hook guards LINTER configs. A future widening
       // of the patterns must not quietly start blocking ordinary work.
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-protect-allow-')), tmpDir => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-protect-allow-')), tmpDir => {
         const names = [
           'vite.config.ts', 'vitest.config.ts', 'jest.config.js', 'playwright.config.ts', 'tsconfig.json',
           'pyproject.toml', 'package.json', '.eslintignore.bak', 'not-eslint.config.base.mjs',
@@ -561,7 +561,7 @@ function runTests() {
 
   results.push(
     test('Biome filenames protect discovered configs without blocking ordinary result files', () => {
-      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-config-protect-biome-')), tmpDir => {
+      return withOwnedDirectory(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-config-protect-biome-')), tmpDir => {
         // Arbitrary --config-path/extends targets need reference context; their
         // basename alone does not prove that a file is Biome configuration.
         const cases = [

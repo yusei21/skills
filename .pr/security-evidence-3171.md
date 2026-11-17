@@ -7,7 +7,7 @@ Commit under review: observe.sh Layer-1 allowlist adds `sdk-cli`.
 
 ## Threat model (bounded)
 - **Risk if missing `sdk-cli`**: interactive Agent SDK CLI sessions never observe (availability/coverage gap).
-- **Risk if allowlist too broad**: non-interactive bots could start the observer. Mitigated by Layers 2–5 (`ECC_HOOK_PROFILE=minimal`, `ECC_SKIP_OBSERVE=1`, `agent_id`, path exclusions) — unchanged by this PR.
+- **Risk if allowlist too broad**: non-interactive bots could start the observer. Mitigated by Layers 2–5 (`YUS_HOOK_PROFILE=minimal`, `YUS_SKIP_OBSERVE=1`, `agent_id`, path exclusions) — unchanged by this PR.
 - **No secrets / auth tokens / billing / webhook handlers** were modified.
 
 ## Security-focused validation artifacts (this PR)
@@ -39,10 +39,10 @@ All Layer-1 security checks passed.
 ### npm run security:ioc-scan
 ```text
 
-> ecc-universal@2.2.1 security:ioc-scan
+> yus-universal@2.2.1 security:ioc-scan
 > node scripts/ci/scan-supply-chain-iocs.js
 
-Supply-chain IOC scan passed for /workspace/pr-work/ECC-3171 (12 files inspected)
+Supply-chain IOC scan passed for /workspace/pr-work/yus-3171 (12 files inspected)
 ```
 
 ## Conclusion

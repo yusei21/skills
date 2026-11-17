@@ -71,10 +71,10 @@ function runTests() {
     assert.strictEqual(glyphSet({ LANG: 'en_US.UTF-8' }), UNICODE_GLYPHS);
     assert.strictEqual(glyphSet({ LC_ALL: 'C.utf8' }), UNICODE_GLYPHS);
   });
-  t('ECC_BAR_GLYPHS forces either set', () => {
+  t('YUS_BAR_GLYPHS forces either set', () => {
     const { glyphSet, ASCII_GLYPHS, UNICODE_GLYPHS } = require('../../scripts/lib/statusline-render');
-    assert.strictEqual(glyphSet({ LANG: 'en_US.UTF-8', ECC_BAR_GLYPHS: 'ascii' }), ASCII_GLYPHS);
-    assert.strictEqual(glyphSet({ LANG: 'C', ECC_BAR_GLYPHS: 'unicode' }), UNICODE_GLYPHS);
+    assert.strictEqual(glyphSet({ LANG: 'en_US.UTF-8', YUS_BAR_GLYPHS: 'ascii' }), ASCII_GLYPHS);
+    assert.strictEqual(glyphSet({ LANG: 'C', YUS_BAR_GLYPHS: 'unicode' }), UNICODE_GLYPHS);
   });
 
   console.log('\npctColor:');
@@ -201,12 +201,12 @@ function runTests() {
   console.log('\nbuildEccLine:');
   t('shows version, hooks profile, plugins, dirname', () => {
     const line = buildEccLine({
-      eccVersion: '2.2.0',
+      yusVersion: '2.2.0',
       hooks: { enabled: true, profile: 'standard', disabledCount: 0 },
-      plugins: [{ name: 'ecc', version: '2.2.0' }, { name: 'swift-lsp', version: '1.0.0' }],
+      plugins: [{ name: 'yus', version: '2.2.0' }, { name: 'swift-lsp', version: '1.0.0' }],
       dirname: 'myproject',
     });
-    assert.ok(line.includes('ECC 2.2.0'), 'expected ECC version');
+    assert.ok(line.includes('yus 2.2.0'), 'expected yus version');
     assert.ok(line.includes('hooks standard'), 'expected hooks profile');
     assert.ok(line.includes('swift-lsp'), 'expected plugin name');
     assert.ok(line.includes('1.0.0'), 'expected plugin version');
@@ -227,25 +227,25 @@ function runTests() {
   });
 
   console.log('\nreadInstalledPlugins:');
-  t('reads v2 plugin file and filters disabled plugins, ecc first', () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-render-test-'));
+  t('reads v2 plugin file and filters disabled plugins, yus first', () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-render-test-'));
     try {
       fs.mkdirSync(path.join(tmpDir, 'plugins'), { recursive: true });
       fs.writeFileSync(path.join(tmpDir, 'plugins', 'installed_plugins.json'), JSON.stringify({
         version: 2,
         plugins: {
           'zeta@market': [{ version: '0.5.0', scope: 'user' }],
-          'ecc@ecc': [{ version: '2.2.0', scope: 'user' }],
+          'yus@yus': [{ version: '2.2.0', scope: 'user' }],
           'off-plugin@market': [{ version: '9.9.9', scope: 'user' }],
         },
       }));
       fs.writeFileSync(path.join(tmpDir, 'settings.json'), JSON.stringify({
-        enabledPlugins: { 'zeta@market': true, 'ecc@ecc': true, 'off-plugin@market': false },
+        enabledPlugins: { 'zeta@market': true, 'yus@yus': true, 'off-plugin@market': false },
       }));
 
       const plugins = readInstalledPlugins(tmpDir);
       assert.strictEqual(plugins.length, 2);
-      assert.strictEqual(plugins[0].name, 'ecc');
+      assert.strictEqual(plugins[0].name, 'yus');
       assert.strictEqual(plugins[0].version, '2.2.0');
       assert.strictEqual(plugins[1].name, 'zeta');
     } finally {
@@ -253,7 +253,7 @@ function runTests() {
     }
   });
   t('missing plugin file returns empty array', () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-render-test-'));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-render-test-'));
     try {
       assert.deepStrictEqual(readInstalledPlugins(tmpDir), []);
     } finally {
@@ -268,13 +268,13 @@ function runTests() {
     assert.strictEqual(summary.profile, 'standard');
     assert.strictEqual(summary.disabledCount, 0);
   });
-  t('respects ECC_HOOKS_ENABLED=false', () => {
-    assert.strictEqual(getHooksSummary({ ECC_HOOKS_ENABLED: 'false' }).enabled, false);
+  t('respects YUS_HOOKS_ENABLED=false', () => {
+    assert.strictEqual(getHooksSummary({ YUS_HOOKS_ENABLED: 'false' }).enabled, false);
   });
   t('reports profile and disabled hook count', () => {
     const summary = getHooksSummary({
-      ECC_HOOK_PROFILE: 'minimal',
-      ECC_DISABLED_HOOKS: 'a,b',
+      YUS_HOOK_PROFILE: 'minimal',
+      YUS_DISABLED_HOOKS: 'a,b',
     });
     assert.strictEqual(summary.profile, 'minimal');
     assert.strictEqual(summary.disabledCount, 2);

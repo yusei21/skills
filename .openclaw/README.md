@@ -1,11 +1,11 @@
-# ECC for OpenClaw
+# yus for OpenClaw
 
-This directory contains the ECC configuration for the OpenClaw harness.
+This directory contains the yus configuration for the OpenClaw harness.
 
 ## What is installed
 
-- `rules/ecc/` — shared coding rules and guidelines
-- `skills/ecc/` — reusable skills
+- `rules/yus/` — shared coding rules and guidelines
+- `skills/yus/` — reusable skills
 - `commands/` — slash commands
 - `AGENTS.md` — agent instructions
 
@@ -17,5 +17,5 @@ bash ./install.sh --target openclaw --profile minimal
 
 ## Notes
 
-- OpenClaw config files (`openclaw.json`, `config.toml`, `.env`, etc.) are **not** touched by ECC install.
-- Use `npx ecc-universal doctor --target openclaw` to check install health.
+- OpenClaw config files (`openclaw.json`, `config.toml`, `.env`, etc.) are **not** touched by yus install.
+- Use `npx yus-universal doctor --target openclaw` to check install health.

@@ -18,7 +18,7 @@
  *
  * Best-effort: never blocks tool execution. Under Claude Code it runs via the
  * PostToolUse dispatcher, which owns stdin, pass-through, and exit codes; under
- * OpenCode the ecc-hooks plugin calls run() directly with an equivalent payload.
+ * OpenCode the yus-hooks plugin calls run() directly with an equivalent payload.
  *
  * Cross-platform (Windows, macOS, Linux); CommonJS.
  */

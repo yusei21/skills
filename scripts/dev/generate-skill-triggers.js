@@ -11,7 +11,7 @@
 // offline. Rerun this script after adding or re-describing skills.
 //
 // Usage:
-//   node scripts/dev/generate-skill-triggers.js --auth-home ~/.ecc-eval/auth \
+//   node scripts/dev/generate-skill-triggers.js --auth-home ~/.yus-eval/auth \
 //     [--model gpt-5.6-sol] [--executable /path/to/codex] [--batch 25] [--dry-run]
 //   node scripts/dev/generate-skill-triggers.js --provider claude \
 //     [--model claude-sonnet-5] [--executable /path/to/claude] [--batch 40] [--dry-run]
@@ -110,7 +110,7 @@ function main() {
     keepTriggers(repoRoot, registry, entries);
     return;
   }
-  const executable = flags.executable || (flags.provider === 'claude' ? 'claude' : `${process.env.HOME}/.ecc-eval/codex/node_modules/.bin/codex`);
+  const executable = flags.executable || (flags.provider === 'claude' ? 'claude' : `${process.env.HOME}/.yus-eval/codex/node_modules/.bin/codex`);
   const family = flags.provider || providerFamily(executable);
   const model = flags.model || DEFAULT_MODEL[family];
   if (flags.dryRun) {
@@ -123,7 +123,7 @@ function main() {
   const triggers = {};
   const failed = [];
   const callProvider = batch => {
-    const home = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'ecc-trigger-gen-'));
+    const home = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'yus-trigger-gen-'));
     try {
       if (family === 'codex') {
         let parsed = null;

@@ -9,14 +9,14 @@ const COMMANDS = Object.freeze(['show', 'preview', 'explain', 'carrier']);
 const VALUES = Object.freeze(['--target', '--selection', '--include', '--exclude']);
 
 function helpText() {
-  return `ECC context profiles (read-only preview)
+  return `yus context profiles (read-only preview)
 
 Usage:
-  ecc profile show [lean@1|full@1] [--json]
-  ecc profile preview [lean@1|full@1] [--target codex] [--selection auto|manual|suggest]
+  yus profile show [lean@1|full@1] [--json]
+  yus profile preview [lean@1|full@1] [--target codex] [--selection auto|manual|suggest]
       [--include skill:<id>] [--exclude skill:<id>] [--json]
-  ecc profile explain skill:<id> [--target codex] [--json]
-  ecc profile carrier [lean@1|full@1] [--target codex] [--selection auto|manual|suggest]
+  yus profile explain skill:<id> [--target codex] [--json]
+  yus profile carrier [lean@1|full@1] [--target codex] [--selection auto|manual|suggest]
       [--include skill:<id>] [--exclude skill:<id>] [--json]
 
 Include/exclude flags may be repeated. Preview defaults: lean@1, codex, auto.
@@ -27,20 +27,20 @@ Token estimates cover skill metadata only; actual host context remains unobserve
 The existing install --profile and hook profile flags keep their own meanings.
 
 Experimental managed profiles and bounded task context:
-  ecc profile resolve [lean|full] --task-input task.json|- [--load] [--previous receipt.json] [--json]
-  ecc profile run --task-input task.json|- [--state-root <directory>] [--target codex|claude] [--dry-run] [--json]
-  ecc profile set lean|full --state-root <dedicated-directory> [--selection auto|manual|suggest]
+  yus profile resolve [lean|full] --task-input task.json|- [--load] [--previous receipt.json] [--json]
+  yus profile run --task-input task.json|- [--state-root <directory>] [--target codex|claude] [--dry-run] [--json]
+  yus profile set lean|full --state-root <dedicated-directory> [--selection auto|manual|suggest]
       [--target codex|claude] [--include skill:<id>] [--exclude skill:<id>] [--dry-run] [--json]
-  ecc profile status --state-root <directory> [--json]
-  ecc profile mode auto|manual|suggest --state-root <directory> [--dry-run] [--json]
-  ecc profile rollback --state-root <directory> [--expected-revision N] [--json]
-  ecc profile recover --state-root <directory> [--json]
-  ecc profile routing-index --state-root <directory> [--dry-run] [--json]
-  ecc profile start --state-root <directory> --native-root <directory> [--dry-run]
-  ecc profile prepare-native --state-root <directory> --native-root <dedicated-directory> [--dry-run] [--json]
-  ecc profile native-status --state-root <directory> --native-root <directory> [--json]
-  ecc profile native-rollback --state-root <directory> --native-root <directory> [--json]
-  ecc profile native-recover --state-root <directory> --native-root <directory> [--json]
+  yus profile status --state-root <directory> [--json]
+  yus profile mode auto|manual|suggest --state-root <directory> [--dry-run] [--json]
+  yus profile rollback --state-root <directory> [--expected-revision N] [--json]
+  yus profile recover --state-root <directory> [--json]
+  yus profile routing-index --state-root <directory> [--dry-run] [--json]
+  yus profile start --state-root <directory> --native-root <directory> [--dry-run]
+  yus profile prepare-native --state-root <directory> --native-root <dedicated-directory> [--dry-run] [--json]
+  yus profile native-status --state-root <directory> --native-root <directory> [--json]
+  yus profile native-rollback --state-root <directory> --native-root <directory> [--json]
+  yus profile native-recover --state-root <directory> --native-root <directory> [--json]
 Task input may be one bounded UTF-8 JSON object on stdin with --task-input - (65536 bytes maximum).
 Start requires prepare-native, launches the pinned native TUI with inherited stdio and provider permissions,
 and reads a receipt-bound isolated bootstrap (Codex AGENTS.md, Claude CLAUDE.md). Claude loads the carrier with --plugin-dir;
@@ -93,7 +93,7 @@ function parseArgs(argv) {
 }
 
 function envelope(status, summary, values = {}) {
-  return { schemaVersion: 'ecc.profile-inspection.v1', status, summary,
+  return { schemaVersion: 'yus.profile-inspection.v1', status, summary,
     activation: 'unobserved', next_actions: [], artifacts: [], ...values };
 }
 
@@ -147,7 +147,7 @@ function formatText(response) {
       `Selected: ${plan.selectedIds.join(', ') || '(none)'}`,
       `Routed: ${plan.routedIds.length}; excluded: ${plan.excludedIds.length}`,
       `Metadata estimate: ${plan.estimate.estimatedTokens} tokens (${plan.estimate.method}).`,
-      'Whole ECC startup budget: unobserved; this estimate does not certify a native host.',
+      'Whole yus startup budget: unobserved; this estimate does not certify a native host.',
       `Plan digest: ${plan.planDigest}`, ...plan.limitations);
   }
   if (response.carrier) {
@@ -183,7 +183,7 @@ function main(argv = process.argv.slice(2)) {
     return 0;
   } catch (error) {
     const response = envelope('error', error.message, {
-      next_actions: ['Run ecc profile --help and correct the request or source contract. No activation was attempted.'],
+      next_actions: ['Run yus profile --help and correct the request or source contract. No activation was attempted.'],
     });
     if (argv.includes('--json')) process.stdout.write(`${JSON.stringify(response, null, 2)}\n`);
     else process.stderr.write(formatText(response));

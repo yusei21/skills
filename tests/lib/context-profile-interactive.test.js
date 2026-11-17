@@ -16,7 +16,7 @@ function provider() {
       if (args[0] === 'plugin' && args[1] === 'add') {
         const root = path.dirname(options.env.HOME);
         const name = JSON.parse(fs.readFileSync(path.join(root, 'marketplace/.agents/plugins/marketplace.json'))).name;
-        const cache = path.join(options.env.CODEX_HOME, 'plugins/cache', name, 'ecc-context-carrier/local');
+        const cache = path.join(options.env.CODEX_HOME, 'plugins/cache', name, 'yus-context-carrier/local');
         fs.mkdirSync(path.dirname(cache), { recursive: true });
         fs.cpSync(path.join(root, 'marketplace/carrier'), cache, { recursive: true });
       }
@@ -25,16 +25,16 @@ function provider() {
     discover(_binary, options) {
       const plugins = path.join(options.env.CODEX_HOME, 'plugins/cache');
       const name = fs.readdirSync(plugins)[0];
-      const root = path.join(plugins, name, 'ecc-context-carrier/local/skills');
+      const root = path.join(plugins, name, 'yus-context-carrier/local/skills');
       return { data: [{ cwd: options.cwd, errors: [], skills: fs.readdirSync(root).map(skill => ({
-        name: `ecc-context-carrier:${skill}`, enabled: true, scope: 'user',
-        pluginId: `ecc-context-carrier@${name}`, path: path.join(root, skill, 'SKILL.md') })) }] };
+        name: `yus-context-carrier:${skill}`, enabled: true, scope: 'user',
+        pluginId: `yus-context-carrier@${name}`, path: path.join(root, skill, 'SKILL.md') })) }] };
     },
   };
 }
 
 function fixture(callback) {
-  const root = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'ecc-interactive-'));
+  const root = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'yus-interactive-'));
   const options = { stateRoot: path.join(root, 'state'), nativeRoot: path.join(root, 'native') };
   try {
     store.applyStore({ stateRoot: options.stateRoot, target: 'codex' });

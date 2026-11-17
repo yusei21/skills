@@ -2,9 +2,9 @@
 'use strict';
 
 /**
- * ECC Agent IR — converter CLI.
+ * yus Agent IR — converter CLI.
  *
- * Converts ECC's canonical agents from one harness format to another. v1
+ * Converts yus's canonical agents from one harness format to another. v1
  * supports a single direction: `claude -> pi`. Future emitters (cursor,
  * opencode, gemini, codex, zed) plug into the same IR.
  *
@@ -67,7 +67,7 @@ function parseArgs(argv) {
 }
 
 function showHelp() {
-  console.log(`ECC Agent IR converter (v1)
+  console.log(`yus Agent IR converter (v1)
 
 Usage:
   node scripts/agent-convert.js --check
@@ -138,9 +138,9 @@ function main() {
 
   if (args.check) {
     if (args.json) {
-      console.log(JSON.stringify({ schema: 'ecc.agent-ir.v1', checked: irs.length, ok: true }, null, 2));
+      console.log(JSON.stringify({ schema: 'yus.agent-ir.v1', checked: irs.length, ok: true }, null, 2));
     } else {
-      console.log(`OK: ${irs.length} agents parsed and validated against ecc.agent-ir.v1`);
+      console.log(`OK: ${irs.length} agents parsed and validated against yus.agent-ir.v1`);
     }
     process.exit(0);
   }
@@ -161,7 +161,7 @@ function main() {
         throw new Error('output directory must not be a symlink');
       }
       // Check the whole batch before writing. Existing operator-owned agents
-      // cannot be replaced simply because they share an ECC dispatch name.
+      // cannot be replaced simply because they share an yus dispatch name.
       for (const r of results) {
         const target = path.join(dir, `${r.id}.md`);
         if (isIdenticalExistingAgent(target, r.markdown)) identicalOutputs.add(target);
@@ -191,7 +191,7 @@ function main() {
   }
 
   const summary = {
-    schema: 'ecc.agent-ir.v1',
+    schema: 'yus.agent-ir.v1',
     from: args.from,
     to: args.to,
     converted: results.length,

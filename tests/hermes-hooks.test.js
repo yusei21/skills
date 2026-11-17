@@ -63,7 +63,7 @@ function decision(stdout) {
 
 // ─── config-protection: blocking ───────────────────────────────────────────
 
-const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-hermes-hooks-'));
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-hermes-hooks-'));
 const protectedConfigs = [
   'eslint.config.mjs',
   '.eslintrc.json',
@@ -244,7 +244,7 @@ run('unreadable file: skips AND reports on stderr', () => {
 
 // --- installer integration: the hermes-hooks module installs and the landed copy runs ---
 run('hermes-hooks module installs via the real installer and the landed guard blocks', () => {
-  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-mod-'));
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-mod-'));
   const inst = spawnSync('node', ['scripts/install-apply.js', '--target', 'hermes', '--modules', 'hermes-hooks', '--enable-hooks'], {
     cwd: repoRoot, encoding: 'utf8', env: { ...process.env, HOME: home }, timeout: 60000,
   });
@@ -252,7 +252,7 @@ run('hermes-hooks module installs via the real installer and the landed guard bl
   const landed = path.join(home, '.hermes', 'hooks', 'hermes', 'config-protection.py');
   assert.ok(fs.existsSync(landed), 'guard must land under ~/.hermes/hooks/hermes/');
   assert.ok(fs.existsSync(path.join(home, '.hermes', 'docs', 'HERMES-HOOKS.md')), 'doc must land');
-  const t = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-guard-'));
+  const t = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-guard-'));
   const target = path.join(t, 'ESLINT.CONFIG.MJS');
   fs.writeFileSync(target, 'export default {}\n');
   const g = runPython(landed, {

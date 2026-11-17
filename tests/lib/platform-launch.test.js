@@ -6,13 +6,13 @@ const { openBrowser, openerCommandFor } = require('../../scripts/lib/platform-la
 
 // These values are private fixtures; no test reads or changes process.env.
 const privateEnvironment = Object.freeze({
-  Path: '/synthetic/bin', ECC_BROWSER_URL: 'old-upper',
-  ecc_browser_url: 'old-lower', EcC_BrOwSeR_Url: 'old-mixed', FIXTURE_VALUE: 'keep',
+  Path: '/synthetic/bin', YUS_BROWSER_URL: 'old-upper',
+  yus_browser_url: 'old-lower', EcC_BrOwSeR_Url: 'old-mixed', FIXTURE_VALUE: 'keep',
 });
 const expectedWindowsScript = `$ErrorActionPreference = 'Stop'
 try {
-  $value = [System.Environment]::GetEnvironmentVariable('ECC_BROWSER_URL', 'Process')
-  [System.Environment]::SetEnvironmentVariable('ECC_BROWSER_URL', $null, 'Process')
+  $value = [System.Environment]::GetEnvironmentVariable('YUS_BROWSER_URL', 'Process')
+  [System.Environment]::SetEnvironmentVariable('YUS_BROWSER_URL', $null, 'Process')
   $uri = $null
   if (-not [System.Uri]::TryCreate($value, [System.UriKind]::Absolute, [ref]$uri) -or @('http', 'https') -notcontains $uri.Scheme -or $uri.UserInfo) { exit 1 }
   $info = New-Object System.Diagnostics.ProcessStartInfo
@@ -179,7 +179,7 @@ for (const [input, normalized] of [
       assert.notEqual(options.windowsVerbatimArguments, true);
       if (platform === 'win32') {
         assert.equal(command, 'powershell.exe');
-        assert.equal(options.env.ECC_BROWSER_URL, normalized);
+        assert.equal(options.env.YUS_BROWSER_URL, normalized);
         assert.equal(options.windowsHide, true);
       } else {
         assert.equal(command, platform === 'darwin' ? 'open' : 'xdg-open');
@@ -209,7 +209,7 @@ test('openBrowser: different untrusted URL data leaves Windows code and argv ide
     assert.ok(!args.some(arg => arg.includes(input)));
     if (firstArgs) assert.deepEqual(args, firstArgs);
     else firstArgs = args;
-    assert.equal(options.env.ECC_BROWSER_URL, new URL(input).href);
+    assert.equal(options.env.YUS_BROWSER_URL, new URL(input).href);
     assert.equal(options.shell, false);
   }
   assert.doesNotMatch(expectedWindowsScript, /Invoke-Expression|Start-Process|\.Arguments|cmd|ExecutionPolicy/);
@@ -222,8 +222,8 @@ test('openBrowser: Windows child environment removes case-insensitive aliases wi
   assert.equal(calls.length, 1);
   const childEnvironment = calls[0].options.env;
   assert.notEqual(childEnvironment, privateEnvironment);
-  assert.deepEqual(Object.keys(childEnvironment).filter(key => key.toLowerCase() === 'ecc_browser_url'), ['ECC_BROWSER_URL']);
-  assert.equal(childEnvironment.ECC_BROWSER_URL, 'https://example.test/');
+  assert.deepEqual(Object.keys(childEnvironment).filter(key => key.toLowerCase() === 'yus_browser_url'), ['YUS_BROWSER_URL']);
+  assert.equal(childEnvironment.YUS_BROWSER_URL, 'https://example.test/');
   assert.equal(childEnvironment.Path, before.Path);
   assert.equal(childEnvironment.FIXTURE_VALUE, before.FIXTURE_VALUE);
   assert.deepEqual(privateEnvironment, before);

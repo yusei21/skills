@@ -75,7 +75,7 @@ const ALIAS_PARAMETER_ABBREVIATIONS = Object.freeze({
 });
 const MAX_SCAN_DEPTH = 4;
 const MAX_CONTEXT_LENGTH = 4096;
-const DYNAMIC_EXECUTION_MARKER = '__ecc_dynamic_execution__';
+const DYNAMIC_EXECUTION_MARKER = '__yus_dynamic_execution__';
 
 function normalizeSmartQuotes(value) {
   return String(value || '')

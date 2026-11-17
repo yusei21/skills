@@ -1,4 +1,4 @@
-# ECC — Agent Instructions
+# yus — Agent Instructions
 
 This is a **production-ready AI coding plugin** providing 71 specialized agents, 326 skills, 98 commands, and automated hook workflows for software development.
 
@@ -89,26 +89,26 @@ This is a **production-ready AI coding plugin** providing 71 specialized agents,
 ## Agent Orchestration
 
 Use agents proactively without user prompt:
-- Complex feature requests → **ecc:planner**
-- Code just written/modified → **ecc:code-reviewer**
-- Bug fix or new feature → **ecc:tdd-guide**
-- Architectural decision → **ecc:architect**
-- Security-sensitive code → **ecc:security-reviewer**
-- Brownfield project onboarding → **ecc:spec-miner**
-- Autonomous loops / loop monitoring → **ecc:loop-operator**
-- Harness config reliability and cost → **ecc:harness-optimizer**
-- RAG/retrieval pipeline changes → **ecc:rag-pipeline-reviewer**
-- Performance bottleneck or slow code → **ecc:performance-optimizer**
-- React/JSX changes → **ecc:react-reviewer**
-- Vue changes → **ecc:vue-reviewer**
-- Swift changes → **ecc:swift-reviewer**
-- C# changes → **ecc:csharp-reviewer**
-- PHP changes → **ecc:php-reviewer**
-- Flutter/Dart changes → **ecc:flutter-reviewer**
-- Healthcare/clinical code → **ecc:healthcare-reviewer**
-- UI component design → **ecc:a11y-architect**
-- Open-source release prep → **ecc:opensource-forker** → **ecc:opensource-sanitizer** → **ecc:opensource-packager**
-- Agent output quality check → **ecc:agent-evaluator**
+- Complex feature requests → **yus:planner**
+- Code just written/modified → **yus:code-reviewer**
+- Bug fix or new feature → **yus:tdd-guide**
+- Architectural decision → **yus:architect**
+- Security-sensitive code → **yus:security-reviewer**
+- Brownfield project onboarding → **yus:spec-miner**
+- Autonomous loops / loop monitoring → **yus:loop-operator**
+- Harness config reliability and cost → **yus:harness-optimizer**
+- RAG/retrieval pipeline changes → **yus:rag-pipeline-reviewer**
+- Performance bottleneck or slow code → **yus:performance-optimizer**
+- React/JSX changes → **yus:react-reviewer**
+- Vue changes → **yus:vue-reviewer**
+- Swift changes → **yus:swift-reviewer**
+- C# changes → **yus:csharp-reviewer**
+- PHP changes → **yus:php-reviewer**
+- Flutter/Dart changes → **yus:flutter-reviewer**
+- Healthcare/clinical code → **yus:healthcare-reviewer**
+- UI component design → **yus:a11y-architect**
+- Open-source release prep → **yus:opensource-forker** → **yus:opensource-sanitizer** → **yus:opensource-packager**
+- Agent output quality check → **yus:agent-evaluator**
 
 Use parallel execution for independent operations — launch multiple agents simultaneously.
 
@@ -162,9 +162,9 @@ Troubleshoot failures: check test isolation → verify mocks → fix implementat
 
 ## Development Workflow
 
-1. **Plan** — Use ecc:planner agent, identify dependencies and risks, break into phases
-2. **TDD** — Use ecc:tdd-guide agent, write tests first, implement, refactor
-3. **Review** — Use ecc:code-reviewer agent immediately, address CRITICAL/HIGH issues
+1. **Plan** — Use yus:planner agent, identify dependencies and risks, break into phases
+2. **TDD** — Use yus:tdd-guide agent, write tests first, implement, refactor
+3. **Review** — Use yus:code-reviewer agent immediately, address CRITICAL/HIGH issues
 4. **Capture knowledge in the right place**
    - Personal debugging notes, preferences, and temporary context → auto memory
    - Team/project knowledge (architecture decisions, API changes, runbooks) → the project's existing docs structure

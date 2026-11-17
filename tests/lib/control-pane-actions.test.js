@@ -1,5 +1,5 @@
 /**
- * Tests for allowlisted ECC2 control-pane actions.
+ * Tests for allowlisted yus2 control-pane actions.
  */
 
 const assert = require('node:assert');
@@ -12,7 +12,7 @@ const {
   shellQuote,
 } = require('../../scripts/lib/control-pane/actions');
 
-  test('builds copyable and executable allowlisted ECC2 actions', () => {
+  test('builds copyable and executable allowlisted yus2 actions', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const actions = buildControlPaneActions({
       repoRoot,
@@ -38,13 +38,13 @@ const {
       '--limit',
       '25',
     ]);
-    assert.strictEqual(sync.cwd, path.join(repoRoot, 'ecc2'));
+    assert.strictEqual(sync.cwd, path.join(repoRoot, 'yus2'));
     assert.ok(sync.commandLine.includes('connector-sync'));
   });
 
   test('preserves recall query as a single argument instead of shell text', () => {
     const action = buildControlPaneAction('recall-knowledge', {
-      repoRoot: '/repo/ecc',
+      repoRoot: '/repo/yus',
       query: 'Hermes "Desktop"; rm -rf ~',
       limit: 7,
     });
@@ -65,7 +65,7 @@ const {
 
   test('rejects unknown action identifiers', () => {
     assert.throws(
-      () => buildControlPaneAction('rm -rf', { repoRoot: '/repo/ecc' }),
+      () => buildControlPaneAction('rm -rf', { repoRoot: '/repo/yus' }),
       /Unknown control-pane action/
     );
   });

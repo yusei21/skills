@@ -172,7 +172,7 @@ test("has valid discoverable frontmatter and trigger phrases", () => {
   const skill = read("skills/media/tasteforge-video/SKILL.md");
   assert.match(
     skill,
-    /^---\nname: tasteforge-video\ndescription: [^\n]+\nmetadata:\n {2}origin: ECC\n---\n/
+    /^---\nname: tasteforge-video\ndescription: [^\n]+\nmetadata:\n {2}origin: yus\n---\n/
   );
   for (const trigger of [
     /interview .*video taste|video .*taste interview/i,
@@ -199,7 +199,7 @@ test("distinguishes local deterministic operations from provider generation", ()
   assert.match(skill, /provider generation/i);
   assert.match(skill, /must fail closed/i);
   assert.match(skill, /explicit separately authorized execution/i);
-  assert.match(skill, /ECC never calls Fal/i);
+  assert.match(skill, /yus never calls Fal/i);
   assert.match(
     skill,
     /never\s+reads\s+any\s+API\s+key\s+or\s+other\s+credentials/i,
@@ -217,13 +217,13 @@ test("never claims a Fal workflow is saved from a local reference", () => {
   assert.match(skill, /dry[- ]run|dry_run/i);
 });
 
-test("assigns reusable runtime ownership to ECC and the example to ito-video", () => {
+test("assigns reusable runtime ownership to yus and the example to ito-video", () => {
   const skill = read("skills/media/tasteforge-video/SKILL.md");
   assert.match(skill, /ito-video/i);
   assert.match(skill, /Ito-Markets\/ito-video/i);
   assert.match(skill, /python3 -m tasteforge/);
   assert.match(skill, /skills\/(?:media\/)?taste-application\/scripts/);
-  assert.match(skill, /ecc-tasteforge/);
+  assert.match(skill, /yus-tasteforge/);
   assert.match(skill, /example project/i);
   assert.doesNotMatch(skill, /canonical implementation is the[\s\S]{0,100}Itô video repository/);
 });
@@ -387,10 +387,10 @@ test("is discoverable in the source tree and in a simulated packed artifact", ()
 
   // The media department plugin ships the skill (skills/<department>/<skill>).
   const marketplace = readJson(".claude-plugin/marketplace.json");
-  const mediaPlugin = marketplace.plugins.find((plugin) => plugin.name === "ecc-media");
-  assert.ok(mediaPlugin, "marketplace must publish the ecc-media department plugin");
+  const mediaPlugin = marketplace.plugins.find((plugin) => plugin.name === "yus-media");
+  assert.ok(mediaPlugin, "marketplace must publish the yus-media department plugin");
   assert.strictEqual(mediaPlugin.source, "./skills/media");
-  assert.ok(mediaPlugin.skills.includes("./tasteforge-video"), "ecc-media must list tasteforge-video");
+  assert.ok(mediaPlugin.skills.includes("./tasteforge-video"), "yus-media must list tasteforge-video");
 
   // Simulated installed layout: the files entry must name the skill dir and
   // the SKILL.md must exist beneath it with non-empty content.
@@ -410,11 +410,11 @@ test("passes the curated skill validator", () => {
 });
 
 // Opt-in slow path: verifies the real npm tarball contents. Enabled with
-// ECC_TEST_NPM_PACK=1 (release/CI verification); the default suite relies on
+// YUS_TEST_NPM_PACK=1 (release/CI verification); the default suite relies on
 // the files-array assertions above.
 test("ships inside the real npm tarball (opt-in)", () => {
-  if (process.env.ECC_TEST_NPM_PACK !== "1") {
-    return { skipped: "set ECC_TEST_NPM_PACK=1 to run real npm pack inclusion" };
+  if (process.env.YUS_TEST_NPM_PACK !== "1") {
+    return { skipped: "set YUS_TEST_NPM_PACK=1 to run real npm pack inclusion" };
   }
   const result = spawnSync("npm", ["pack", "--dry-run", "--ignore-scripts"], {
     cwd: REPO_ROOT,

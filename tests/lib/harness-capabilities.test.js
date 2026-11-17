@@ -122,8 +122,8 @@ function runTests() {
 
     const kimiHooks = getHarnessCapability('kimi').hooks;
     assert.strictEqual(kimiHooks.mode, 'not-configured');
-    assert.strictEqual(kimiHooks.eccConfigured, false);
-    assert.match(kimiHooks.note, /ECC hooks are not configured/i);
+    assert.strictEqual(kimiHooks.yusConfigured, false);
+    assert.match(kimiHooks.note, /yus hooks are not configured/i);
     assert.strictEqual(kimiHooks.summary, kimiHooks.note);
     assert.doesNotMatch(kimiHooks.note, /provider.*unsupported|Kimi.*unsupported/i);
   })) passed++; else failed++;
@@ -137,8 +137,8 @@ function runTests() {
     assert.strictEqual(copilot.guidedReady, false);
     assert.strictEqual(copilot.availability, 'advanced');
     assert.strictEqual(copilot.hooks.mode, 'not-configured');
-    assert.strictEqual(copilot.hooks.eccConfigured, false);
-    assert.match(copilot.hooks.note, /ECC hooks .*not installed for Copilot/i);
+    assert.strictEqual(copilot.hooks.yusConfigured, false);
+    assert.match(copilot.hooks.note, /yus hooks .*not installed for Copilot/i);
     // Copilot stays out of the guided wizard, which is Claude/Codex/Kimi only.
     assert.throws(
       () => normalizeHarnessSelection('copilot'),

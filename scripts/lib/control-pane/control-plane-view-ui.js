@@ -15,7 +15,7 @@ function renderControlPlaneViewHtml() {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ECC Control Plane</title>
+<title>yus Control Plane</title>
 <style>
   :root { color-scheme: dark; }
   * { box-sizing: border-box; }
@@ -56,7 +56,7 @@ function renderControlPlaneViewHtml() {
 </head>
 <body>
   <header>
-    <h1>ECC Control Plane</h1>
+    <h1>yus Control Plane</h1>
     <span class="sub" id="status">connecting...</span>
     <nav><a href="/">board</a><a href="/proximity">3D airspace</a><a href="/api/control-plane">json</a></nav>
   </header>
@@ -275,7 +275,7 @@ function renderControlPlaneViewHtml() {
   }
 
   function apply(data) {
-    if (!data || data.schemaVersion !== 'ecc.control-plane.view.v1' ||
+    if (!data || data.schemaVersion !== 'yus.control-plane.view.v1' ||
         !['tasks', 'lanes', 'pairs', 'events'].every(function (key) { return Array.isArray(data[key]); }) ||
         !data.projection || !Array.isArray(data.projection.agents) || !data.thresholds ||
         !Number.isFinite(data.thresholds.ta) || !Number.isFinite(data.thresholds.ra)) {

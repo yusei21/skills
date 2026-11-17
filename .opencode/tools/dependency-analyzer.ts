@@ -1,5 +1,5 @@
 /**
- * ECC Custom Tool: Dependency Analyzer
+ * yus Custom Tool: Dependency Analyzer
  *
  * Analyzes project dependencies for outdated packages, security vulnerabilities,
  * and unused dependencies. Supports multiple package managers.

@@ -37,7 +37,7 @@ function test(name, fn) {
 }
 
 function createProject() {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-hookify-registration-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-hookify-registration-'));
   fs.mkdirSync(path.join(root, '.claude'), { recursive: true });
   return root;
 }
@@ -57,7 +57,7 @@ function runRegisteredEntry(root, entry, input, env = {}) {
       ...process.env,
       CLAUDE_PLUGIN_ROOT: repoRoot,
       CLAUDE_PROJECT_DIR: root,
-      ECC_HOOK_PROFILE: 'minimal',
+      YUS_HOOK_PROFILE: 'minimal',
       ...env,
     },
     timeout: 15000,
@@ -114,7 +114,7 @@ if (test('registered hook commands enforce rules across all four events', () => 
         output => output.decision === 'block'],
     ];
     for (const [entry, input, assertion] of entries) {
-      const result = runRegisteredEntry(root, entry, input, { ECC_DISABLED_HOOKS: 'post:ecc-metrics-bridge' });
+      const result = runRegisteredEntry(root, entry, input, { YUS_DISABLED_HOOKS: 'post:yus-metrics-bridge' });
       assert.strictEqual(result.status, 0, result.stderr);
       const output = JSON.parse(result.stdout);
       assert.ok(assertion(output), entry.id + ' did not preserve the blocking decision');
@@ -135,7 +135,7 @@ if (test('registered Hookify IDs can be disabled independently', () => {
       hook_event_name: 'PreToolUse',
       tool_name: 'Bash',
       tool_input: { command: 'pwd' },
-    }, { ECC_DISABLED_HOOKS: 'pre:hookify-runtime' });
+    }, { YUS_DISABLED_HOOKS: 'pre:hookify-runtime' });
     assert.strictEqual(result.status, 0, result.stderr);
     assert.strictEqual(result.stdout, '');
   } finally {
@@ -249,7 +249,7 @@ if (test('oversized registered PostToolUse keeps its tool type after truncation'
       },
       hook_event_name: 'PostToolUse',
       tool_name: 'Write',
-    }, { ECC_DISABLED_HOOKS: 'post:ecc-metrics-bridge' });
+    }, { YUS_DISABLED_HOOKS: 'post:yus-metrics-bridge' });
     assert.strictEqual(result.status, 0, result.stderr);
     assert.strictEqual(result.stdout, '');
   } finally {
@@ -287,7 +287,7 @@ if (test('PostToolUse dispatcher preserves Hookify block decisions over sibling 
     { id: 'post:test:block', matcher: '*', profiles: 'standard,strict', run: () => ({ stdout: JSON.stringify({ decision: 'block', reason: 'Keep the block.' }) }) },
     { id: 'post:test:warning', matcher: '*', profiles: 'standard,strict', run: () => ({ additionalContext: 'Secondary warning.' }) },
     { id: 'post:test:failure', matcher: '*', profiles: 'standard,strict', run: () => ({ exitCode: 7 }) },
-  ], { toolName: 'Write', env: { ECC_HOOK_PROFILE: 'standard' } });
+  ], { toolName: 'Write', env: { YUS_HOOK_PROFILE: 'standard' } });
   const output = JSON.parse(result.stdout);
   assert.strictEqual(output.decision, 'block');
   assert.match(output.reason, /Keep the block/);
@@ -318,7 +318,7 @@ if (test('standalone Hookify honors the shared input ceiling and preserves root 
         cwd: root,
         input,
         encoding: 'utf8',
-        env: { ...process.env, CLAUDE_PROJECT_DIR: root, ECC_HOOK_INPUT_MAX_BYTES: String(limit) },
+        env: { ...process.env, CLAUDE_PROJECT_DIR: root, YUS_HOOK_INPUT_MAX_BYTES: String(limit) },
         timeout: 15000,
       });
       const bounded = invoke(100);

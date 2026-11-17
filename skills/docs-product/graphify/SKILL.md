@@ -74,7 +74,7 @@ Only when the path is one or more `https://github.com/...` URLs, or several loca
 
 ### Step 1 - Ensure graphify is installed
 
-> **ECC note.** This skill needs the `graphifyy` package from PyPI. If the check below exits with
+> **yus note.** This skill needs the `graphifyy` package from PyPI. If the check below exits with
 > status 3, stop and ask the user whether to install it. On a yes, run
 > `uv tool install graphifyy==0.9.111` (the version this skill text was reviewed against;
 > use `pipx install graphifyy==0.9.111` without uv). Never use `--break-system-packages`.
@@ -101,7 +101,7 @@ fi
 # 3. Fall back to python3
 if [ -z "$PYTHON" ]; then PYTHON="python3"; fi
 if ! "$PYTHON" -c "import graphify" 2>/dev/null; then
-    echo "graphify is not installed. ECC never installs it without consent." >&2
+    echo "graphify is not installed. yus never installs it without consent." >&2
     echo "Ask the user, then run: uv tool install graphifyy==0.9.111" >&2
     exit 3
 fi

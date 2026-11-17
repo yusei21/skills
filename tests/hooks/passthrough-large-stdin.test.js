@@ -17,7 +17,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const repoRoot = path.join(__dirname, '..', '..');
-const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-passthrough-'));
+const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-passthrough-'));
 const DIRECT_STDIN_LIMIT_BYTES = 16 * 1024 * 1024;
 
 const PASSTHROUGH_HOOKS = [

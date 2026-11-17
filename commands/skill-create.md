@@ -175,4 +175,4 @@ For advanced features (10k+ commits, team sharing, auto-PRs), use the [Skill Cre
 
 ---
 
-*Part of [ECC](https://github.com/affaan-m/ECC)*
+*Part of [yus](https://github.com/yusei21/yus)*

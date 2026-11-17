@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 
 const { resolveInvocationEnvironment } = require('../../scripts/lib/invocation-environment');
 
-const PROBE = 'ECC_INVOCATION_ENVIRONMENT_PROBE';
+const PROBE = 'YUS_INVOCATION_ENVIRONMENT_PROBE';
 
 function withProbe(value, fn) {
   const saved = process.env[PROBE];

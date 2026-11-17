@@ -31,7 +31,7 @@ function loadHook(id) {
 }
 
 function withTempPluginRoot(fn) {
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-observe-runner-'));
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-observe-runner-'));
   try {
     fs.mkdirSync(path.join(tempRoot, 'scripts', 'hooks'), { recursive: true });
     fs.mkdirSync(path.join(tempRoot, 'scripts', 'lib'), { recursive: true });
@@ -92,7 +92,7 @@ function runWithFlags(tempRoot, hookId, relScriptPath, stdin) {
     env: {
       ...process.env,
       CLAUDE_PLUGIN_ROOT: tempRoot,
-      ECC_HOOK_PROFILE: 'standard'
+      YUS_HOOK_PROFILE: 'standard'
     },
     stdio: ['pipe', 'pipe', 'pipe'],
     timeout: 10000

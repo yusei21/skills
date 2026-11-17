@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
-const SCHEMA_VERSION = 'ecc.release-approval-gate.v1';
+const SCHEMA_VERSION = 'yus.release-approval-gate.v1';
 const SCRIPT_PATH = 'scripts/release-approval-gate.js';
 const REQUIRED_COMMAND = 'npm run release:approval-gate -- --format json';
 
@@ -48,22 +48,22 @@ const REQUIRED_URL_SURFACES = [
   {
     id: 'github-prerelease-url',
     label: 'GitHub prerelease URL',
-    exampleUrl: 'https://github.com/affaan-m/ECC/releases/tag/v2.0.0-rc.1',
+    exampleUrl: 'https://github.com/yusei21/yus/releases/tag/v2.0.0-rc.1',
   },
   {
     id: 'npm-rc-package-url',
     label: 'npm rc package URL',
-    exampleUrl: 'https://www.npmjs.com/package/ecc-universal/v/2.0.0-rc.1',
+    exampleUrl: 'https://www.npmjs.com/package/yus-universal/v/2.0.0-rc.1',
   },
   {
     id: 'claude-plugin-tag-url',
     label: 'Claude plugin tag URL',
-    exampleUrl: 'https://github.com/affaan-m/ECC/releases/tag/ecc--v2.0.0-rc.1',
+    exampleUrl: 'https://github.com/yusei21/yus/releases/tag/yus--v2.0.0-rc.1',
   },
   {
     id: 'codex-repo-marketplace-evidence',
     label: 'Codex repo-marketplace evidence',
-    exampleUrl: 'https://github.com/affaan-m/ECC/tree/v2.0.0-rc.1/.codex-plugin',
+    exampleUrl: 'https://github.com/yusei21/yus/tree/v2.0.0-rc.1/.codex-plugin',
   },
   {
     id: 'primary-launch-video-url',
@@ -502,7 +502,7 @@ function buildReport(options = {}) {
 
 function renderText(report) {
   const lines = [
-    'ECC release approval gate',
+    'yus release approval gate',
     `Release: ${report.release}`,
     `Ready: ${report.ready ? 'yes' : 'no'}`,
     `Digest: ${report.digest}`,

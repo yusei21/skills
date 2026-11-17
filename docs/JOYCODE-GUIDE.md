@@ -1,6 +1,6 @@
 # JoyCode Adapter Guide
 
-JoyCode can consume ECC through the selective installer. The adapter installs shared ECC commands, agents, skills, and flattened rules into a project-local `.joycode/` directory.
+JoyCode can consume yus through the selective installer. The adapter installs shared yus commands, agents, skills, and flattened rules into a project-local `.joycode/` directory.
 
 ## Install
 
@@ -34,22 +34,22 @@ The project adapter writes managed files under:
   skills/
   mcp-configs/
   scripts/
-  ecc-install-state.json
+  yus-install-state.json
 ```
 
-Rules are flattened into namespaced filenames so a JoyCode project does not receive nested rule directories such as `rules/common/coding-style.md`. Commands, agents, and skills keep the same structure they use elsewhere in ECC.
-The full profile also includes shared MCP and setup helper files that other ECC project-local adapters use.
+Rules are flattened into namespaced filenames so a JoyCode project does not receive nested rule directories such as `rules/common/coding-style.md`. Commands, agents, and skills keep the same structure they use elsewhere in yus.
+The full profile also includes shared MCP and setup helper files that other yus project-local adapters use.
 
 ## Uninstall
 
-Use ECC's managed uninstall path instead of deleting files by hand:
+Use yus's managed uninstall path instead of deleting files by hand:
 
 ```bash
 node scripts/uninstall.js --target joycode
 ```
 
-The uninstall command reads `.joycode/ecc-install-state.json` and removes only files that ECC installed. User-created JoyCode files are preserved.
+The uninstall command reads `.joycode/yus-install-state.json` and removes only files that yus installed. User-created JoyCode files are preserved.
 
 ## Source PR
 
-This adapter salvages the useful project-local JoyCode intent from stale PR #1429 while replacing the standalone shell installer with ECC's current install-state and uninstall machinery.
+This adapter salvages the useful project-local JoyCode intent from stale PR #1429 while replacing the standalone shell installer with yus's current install-state and uninstall machinery.

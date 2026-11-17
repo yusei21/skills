@@ -1,4 +1,4 @@
-# ECC Roadmap
+# yus Roadmap
 
 Status: maintainer planning draft, updated 2026-09-09 against the integrated
 source candidate based on release 2.2.1. Source inclusion is not a release or live
@@ -6,13 +6,13 @@ verification claim. Dates are targets, not commitments; bracketed numbers remain
 planning choices.
 
 The two older planning docs stay as evidence and history:
-`docs/ECC-2.0-GA-ROADMAP.md` (2.0 milestones and control-plane deltas) and
-`docs/ECC-PRO-SECURITY-ROADMAP.md` (AgentShield and Pro conversion). This file
+`docs/yus-2.0-GA-ROADMAP.md` (2.0 milestones and control-plane deltas) and
+`docs/yus-PRO-SECURITY-ROADMAP.md` (AgentShield and Pro conversion). This file
 is the short, current view.
 
 ## Vision
 
-ECC is the operating layer between a developer and whatever coding agent they
+yus is the operating layer between a developer and whatever coding agent they
 run. Shared skills, rules, and agent guidance provide portable core workflows
 across Claude Code, Codex, OpenCode, Cursor, Gemini, and other harnesses.
 Hooks, installation paths, and feature coverage vary by host; consult the
@@ -49,7 +49,7 @@ Three things follow from that.
   receipt inspection, plus a protocol example. Candidate execution and staged
   gate runs are disabled: no actual OS containment exists. Offline validation
   and a receipt signature do not establish safe execution or promotion authority.
-- The README describes AgentShield scanning and the hosted ECC Pro surface.
+- The README describes AgentShield scanning and the hosted yus Pro surface.
   Further conversion and scan-history improvements below are proposals, not
   evidence of missing paid functionality or verified adoption.
 
@@ -146,7 +146,7 @@ Window: 2026-09-02 to 2026-12-01.
 
 - Online reinforcement learning or weight updates from capsule data.
 - Production transparency-log witnessing, GPU attestation, or key management
-  inside the ECC package.
+  inside the yus package.
 - Automatic merge or release driven by a gate verdict. The gate stops changes.
   A person promotes them.
 - Any desk, payment, provider, or counterparty integration. Those belong to

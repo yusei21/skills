@@ -27,22 +27,22 @@ function runTests() {
 
   const rulesReadme = fs.readFileSync(RULES_README, 'utf8');
 
-  if (test('rules README mirrors ECC namespaced install path', () => {
+  if (test('rules README mirrors yus namespaced install path', () => {
     assert.ok(
-      rulesReadme.includes('mkdir -p ~/.claude/rules/ecc'),
-      'rules README should create the ECC-owned user-level rules namespace'
+      rulesReadme.includes('mkdir -p ~/.claude/rules/yus'),
+      'rules README should create the yus-owned user-level rules namespace'
     );
     assert.ok(
-      rulesReadme.includes('cp -r rules/common ~/.claude/rules/ecc/'),
-      'rules README should copy common rules under ~/.claude/rules/ecc/'
+      rulesReadme.includes('cp -r rules/common ~/.claude/rules/yus/'),
+      'rules README should copy common rules under ~/.claude/rules/yus/'
     );
     assert.ok(
-      rulesReadme.includes('cp -r rules/typescript ~/.claude/rules/ecc/'),
-      'rules README should copy language rules under ~/.claude/rules/ecc/'
+      rulesReadme.includes('cp -r rules/typescript ~/.claude/rules/yus/'),
+      'rules README should copy language rules under ~/.claude/rules/yus/'
     );
     assert.ok(
-      rulesReadme.includes('mkdir -p .claude/rules/ecc'),
-      'rules README should document the project-local ECC namespace'
+      rulesReadme.includes('mkdir -p .claude/rules/yus'),
+      'rules README should document the project-local yus namespace'
     );
     assert.ok(
       !rulesReadme.includes('~/.claude/rules/typescript'),

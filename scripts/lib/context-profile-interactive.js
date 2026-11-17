@@ -25,7 +25,7 @@ function installedIdentity() {
 }
 
 function bootstrapFor(options, current) {
-  const binding = { schemaVersion: 'ecc.interactive-bootstrap.v1', source: installedIdentity(),
+  const binding = { schemaVersion: 'yus.interactive-bootstrap.v1', source: installedIdentity(),
     stateRoot: options.stateRoot, nativeRoot: options.nativeRoot, carrierDigest: current.carrierDigest };
   // All path values are JSON data, never shell fragments or interpolated task prose.
   for (const value of [binding.stateRoot, binding.nativeRoot, binding.source.root, binding.source.cli, binding.source.node.path]) {
@@ -35,7 +35,7 @@ function bootstrapFor(options, current) {
   const prefix = [binding.source.node.path, binding.source.cli];
   const resolve = [...prefix, 'resolve', '--state-root', binding.stateRoot, '--task-input', '-', '--json'];
   const status = [...prefix, 'native-status', '--state-root', binding.stateRoot, '--native-root', binding.nativeRoot, '--json'];
-  const text = `# ECC opt-in interactive task context
+  const text = `# yus opt-in interactive task context
 
 This bootstrap is advisory context for the active agent. It grants no tools, hooks, network access, installation, sandbox exceptions, approval bypass, or authority. Existing user instructions and provider permissions govern actions.
 
@@ -60,7 +60,7 @@ Honor the saved profile, selectionMode, includes, and exclusions. Manual uses on
 }
 
 function verifyBootstrap(binding) {
-  if (!binding || binding.schemaVersion !== 'ecc.interactive-bootstrap.v1'
+  if (!binding || binding.schemaVersion !== 'yus.interactive-bootstrap.v1'
     || stableStringify(binding.source) !== stableStringify(installedIdentity())) {
     throw new Error('Interactive installed CLI/source identity changed; explicitly prepare a fresh native generation');
   }
@@ -69,7 +69,7 @@ function verifyBootstrap(binding) {
 function startInteractiveProfile({ stateRoot, nativeRoot, dryRun = false } = {}, dependencies = {}) {
   const native = require('./context-profile-native');
   const input = { stateRoot, nativeRoot };
-  if (dryRun) return { schemaVersion: 'ecc.interactive-profile.v1', status: 'proposed',
+  if (dryRun) return { schemaVersion: 'yus.interactive-profile.v1', status: 'proposed',
     native: native.previewNativeProfile(input), launched: false, credentialsCopied: false };
   const prepared = native.getNativeProfileStatus(input);
   if (!prepared.ready || !prepared.bootstrap) throw new Error('Explicitly prepare-native before starting an interactive profile');
@@ -90,7 +90,7 @@ function startInteractiveProfile({ stateRoot, nativeRoot, dryRun = false } = {},
   const bootstrapDigest = io.hash(io.read(claude ? path.join(current.claudeConfigDir, 'CLAUDE.md') : path.join(current.codexHome, 'AGENTS.md')));
   const result = (dependencies.execute || spawnSync)(current.executable, claude ? ['--plugin-dir', current.pluginDir] : [], {
     cwd: process.cwd(), env, shell: false, stdio: 'inherit' });
-  return { schemaVersion: 'ecc.interactive-profile.v1', status: result.error || result.status !== 0 ? 'failed' : 'exited',
+  return { schemaVersion: 'yus.interactive-profile.v1', status: result.error || result.status !== 0 ? 'failed' : 'exited',
     launched: !result.error, exitCode: result.status ?? null, signal: result.signal || null,
     ...(result.error ? { error: `Native interactive ${claude ? 'Claude' : 'Codex'} could not be started` } : {}),
     nativeRevision: current.revision, providerVersion: current.providerVersion,

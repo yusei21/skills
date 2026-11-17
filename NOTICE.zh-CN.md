@@ -4,7 +4,7 @@
 
 ## 来源
 
-本项目是 [affaan-m/ECC](https://github.com/affaan-m/ECC) 的现代化分支。它把技能库
+yus 是 [affaan-m/ECC](https://github.com/affaan-m/ECC)（Everything Claude Code）的现代化分支，并已更名为 yus。它把技能库
 拆分为可以逐个安装的部门，用 TypeScript 7 对 Node.js 运行时做类型检查，并使用当前
 版本的 Node.js、Rust 和 Python 工具链。
 

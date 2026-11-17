@@ -152,7 +152,7 @@ def test_openai_compatible_provider_serializes_assistant_tool_calls(
     provider.generate(
         LLMInput(
             messages=[
-                Message(role=Role.USER, content="Find ECC"),
+                Message(role=Role.USER, content="Find yus"),
                 Message(
                     role=Role.ASSISTANT,
                     content="",
@@ -160,7 +160,7 @@ def test_openai_compatible_provider_serializes_assistant_tool_calls(
                         ToolCall(
                             id="call_1",
                             name="search",
-                            arguments={"query": "ecc"},
+                            arguments={"query": "yus"},
                         )
                     ],
                 ),
@@ -175,7 +175,7 @@ def test_openai_compatible_provider_serializes_assistant_tool_calls(
 
     assert client.completions.params is not None
     assert client.completions.params["messages"] == [
-        {"role": "user", "content": "Find ECC"},
+        {"role": "user", "content": "Find yus"},
         {
             "role": "assistant",
             "content": "",
@@ -185,7 +185,7 @@ def test_openai_compatible_provider_serializes_assistant_tool_calls(
                     "type": "function",
                     "function": {
                         "name": "search",
-                        "arguments": '{"query": "ecc"}',
+                        "arguments": '{"query": "yus"}',
                     },
                 },
             ],

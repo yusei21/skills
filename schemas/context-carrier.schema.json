@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "ECC read-only skill carrier proposal",
+  "title": "yus read-only skill carrier proposal",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "status", "active", "disposition", "nativeSupport", "target", "profileId", "selectionMode", "registryDigest", "profileDigest", "compilerDigest", "planDigest", "adapterDigest", "carrierDigest", "layout", "selectedIds", "routedIds", "excludedIds", "entries", "files", "limitations"],
   "properties": {
-    "schemaVersion": { "const": "ecc.context-carrier.v1" },
+    "schemaVersion": { "const": "yus.context-carrier.v1" },
     "status": { "enum": ["planned", "unsupported"] },
     "active": { "const": false },
     "disposition": { "const": "proposed" },

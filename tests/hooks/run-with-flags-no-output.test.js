@@ -15,7 +15,7 @@ const runner = path.join(repoRoot, 'scripts', 'hooks', 'run-with-flags.js');
 const sessionStartBootstrap = path.join(repoRoot, 'scripts', 'hooks', 'session-start-bootstrap.js');
 const { readHooksConfig } = require(path.join(repoRoot, 'scripts', 'lib', 'hooks-config.js'));
 const hooksConfig = readHooksConfig(path.join(repoRoot, 'hooks', 'hooks.json'));
-const pluginRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-hook-no-output-'));
+const pluginRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-hook-no-output-'));
 const hooksDir = path.join(pluginRoot, 'hooks');
 fs.mkdirSync(hooksDir, { recursive: true });
 
@@ -49,7 +49,7 @@ writeFixture('legacy-empty.js', "process.stdin.resume(); process.stdin.on('end',
 writeFixture('legacy-echo.js', 'process.stdin.pipe(process.stdout);\n');
 writeFixture(
   'legacy-inspect.js',
-  "let raw=''; process.stdin.setEncoding('utf8'); process.stdin.on('data', chunk => { raw += chunk; }); process.stdin.on('end', () => process.stdout.write(JSON.stringify({ bytes: Buffer.byteLength(raw, 'utf8'), truncated: process.env.ECC_HOOK_INPUT_TRUNCATED, maxStdin: process.env.ECC_HOOK_INPUT_MAX_BYTES })));\n"
+  "let raw=''; process.stdin.setEncoding('utf8'); process.stdin.on('data', chunk => { raw += chunk; }); process.stdin.on('end', () => process.stdout.write(JSON.stringify({ bytes: Buffer.byteLength(raw, 'utf8'), truncated: process.env.YUS_HOOK_INPUT_TRUNCATED, maxStdin: process.env.YUS_HOOK_INPUT_MAX_BYTES })));\n"
 );
 
 function run(args, env = {}, input = payload) {
@@ -60,7 +60,7 @@ function run(args, env = {}, input = payload) {
     env: {
       ...process.env,
       CLAUDE_PLUGIN_ROOT: pluginRoot,
-      ECC_HOOK_PROFILE: 'standard',
+      YUS_HOOK_PROFILE: 'standard',
       ...env
     },
     timeout: 30000,
@@ -76,9 +76,9 @@ function runConfiguredHook(entry, env = {}, input = payload) {
     env: {
       ...process.env,
       CLAUDE_PLUGIN_ROOT: repoRoot,
-      ECC_PLUGIN_ROOT: repoRoot,
-      ECC_AGENT_DATA_HOME: path.join(pluginRoot, 'agent-data'),
-      ECC_HOOK_PROFILE: 'standard',
+      YUS_PLUGIN_ROOT: repoRoot,
+      YUS_AGENT_DATA_HOME: path.join(pluginRoot, 'agent-data'),
+      YUS_HOOK_PROFILE: 'standard',
       ...env
     },
     shell: true,
@@ -88,7 +88,7 @@ function runConfiguredHook(entry, env = {}, input = payload) {
 }
 
 function runSessionStartBootstrapWithMissingRoot(input = payload) {
-  const missingRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-start-missing-root-'));
+  const missingRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-session-start-missing-root-'));
   fs.rmSync(missingRoot, { recursive: true, force: true });
   return spawnSync(process.execPath, [sessionStartBootstrap], {
     input,
@@ -97,7 +97,7 @@ function runSessionStartBootstrapWithMissingRoot(input = payload) {
     env: {
       ...process.env,
       CLAUDE_PLUGIN_ROOT: missingRoot,
-      ECC_PLUGIN_ROOT: missingRoot
+      YUS_PLUGIN_ROOT: missingRoot
     },
     timeout: 30000,
     maxBuffer: 4 * 1024 * 1024
@@ -106,17 +106,17 @@ function runSessionStartBootstrapWithMissingRoot(input = payload) {
 
 function runSessionStartBootstrapWithLargeOutput(channel, exitCode) {
   const outputBytes = 512 * 1024;
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-start-output-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-session-start-output-'));
   const fixtureRunner = path.join(root, 'scripts', 'hooks', 'run-with-flags.js');
   fs.mkdirSync(path.dirname(fixtureRunner), { recursive: true });
   fs.writeFileSync(
     fixtureRunner,
     [
-      "const size = Number(process.env.ECC_TEST_OUTPUT_BYTES);",
+      "const size = Number(process.env.YUS_TEST_OUTPUT_BYTES);",
       "const output = 'x'.repeat(size);",
-      "if (process.env.ECC_TEST_OUTPUT_CHANNEL !== 'stderr') process.stdout.write(output);",
-      "if (process.env.ECC_TEST_OUTPUT_CHANNEL !== 'stdout') process.stderr.write(output.replaceAll('x', 'y'));",
-      "process.exitCode = Number(process.env.ECC_TEST_EXIT_CODE);"
+      "if (process.env.YUS_TEST_OUTPUT_CHANNEL !== 'stderr') process.stdout.write(output);",
+      "if (process.env.YUS_TEST_OUTPUT_CHANNEL !== 'stdout') process.stderr.write(output.replaceAll('x', 'y'));",
+      "process.exitCode = Number(process.env.YUS_TEST_EXIT_CODE);"
     ].join('\n') + '\n'
   );
 
@@ -128,10 +128,10 @@ function runSessionStartBootstrapWithLargeOutput(channel, exitCode) {
       env: {
         ...process.env,
         CLAUDE_PLUGIN_ROOT: root,
-        ECC_PLUGIN_ROOT: root,
-        ECC_TEST_OUTPUT_BYTES: String(outputBytes),
-        ECC_TEST_OUTPUT_CHANNEL: channel,
-        ECC_TEST_EXIT_CODE: String(exitCode)
+        YUS_PLUGIN_ROOT: root,
+        YUS_TEST_OUTPUT_BYTES: String(outputBytes),
+        YUS_TEST_OUTPUT_CHANNEL: channel,
+        YUS_TEST_EXIT_CODE: String(exitCode)
       },
       timeout: 30000,
       maxBuffer: 4 * 1024 * 1024
@@ -142,11 +142,11 @@ function runSessionStartBootstrapWithLargeOutput(channel, exitCode) {
 }
 
 function runConfiguredHookWithMissingRoot(entry, input = payload) {
-  const missingRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-hook-missing-root-'));
+  const missingRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-hook-missing-root-'));
   fs.rmSync(missingRoot, { recursive: true, force: true });
   return runConfiguredHook(
     entry,
-    { CLAUDE_PLUGIN_ROOT: missingRoot, ECC_PLUGIN_ROOT: missingRoot },
+    { CLAUDE_PLUGIN_ROOT: missingRoot, YUS_PLUGIN_ROOT: missingRoot },
     input
   );
 }
@@ -175,8 +175,8 @@ let failed = 0;
 
 const silentCases = [
   ['missing arguments', [], {}],
-  ['disabled hook', ['post:test', 'hooks/undefined.js', 'standard'], { ECC_DISABLED_HOOKS: 'post:test' }],
-  ['dry run', ['post:test', 'hooks/undefined.js', 'standard'], { ECC_DRY_RUN: '1' }],
+  ['disabled hook', ['post:test', 'hooks/undefined.js', 'standard'], { YUS_DISABLED_HOOKS: 'post:test' }],
+  ['dry run', ['post:test', 'hooks/undefined.js', 'standard'], { YUS_DRY_RUN: '1' }],
   ['missing script', ['post:test', 'hooks/missing.js', 'standard'], {}],
   ['path traversal rejection', ['post:test', '../outside.js', 'standard'], {}],
   ['undefined run result', ['post:test', 'hooks/undefined.js', 'standard'], {}],
@@ -276,10 +276,10 @@ if (
 else failed++;
 
 if (
-  test('ECC_HOOK_INPUT_MAX_BYTES controls the runner cap and in-process context', () => {
+  test('YUS_HOOK_INPUT_MAX_BYTES controls the runner cap and in-process context', () => {
     const result = run(
       ['post:test', 'hooks/inspect-input.js', 'standard'],
-      { ECC_HOOK_INPUT_MAX_BYTES: '128' },
+      { YUS_HOOK_INPUT_MAX_BYTES: '128' },
       'x'.repeat(256)
     );
     assert.strictEqual(result.status, 0, result.stderr);
@@ -300,7 +300,7 @@ if (
     const input = String.fromCodePoint(0xe9).repeat(2);
     const result = run(
       ['post:test', 'hooks/inspect-input.js', 'standard'],
-      { ECC_HOOK_INPUT_MAX_BYTES: '4' },
+      { YUS_HOOK_INPUT_MAX_BYTES: '4' },
       input
     );
     assert.strictEqual(result.status, 0, result.stderr);
@@ -320,7 +320,7 @@ if (
     const character = String.fromCodePoint(0xe9);
     const result = run(
       ['post:test', 'hooks/inspect-input.js', 'standard'],
-      { ECC_HOOK_INPUT_MAX_BYTES: '3' },
+      { YUS_HOOK_INPUT_MAX_BYTES: '3' },
       character.repeat(2)
     );
     assert.strictEqual(result.status, 0, result.stderr);
@@ -341,7 +341,7 @@ if (
     for (const configuredLimit of ['0', '-1', '1.5', 'not-a-number']) {
       const result = run(
         ['post:test', 'hooks/inspect-input.js', 'standard'],
-        { ECC_HOOK_INPUT_MAX_BYTES: configuredLimit }
+        { YUS_HOOK_INPUT_MAX_BYTES: configuredLimit }
       );
       assert.strictEqual(result.status, 0, result.stderr);
       assert.strictEqual(JSON.parse(result.stdout).maxStdin, 1024 * 1024);
@@ -356,7 +356,7 @@ if (
   test('stdin cap override cannot exceed the 1 MiB safety maximum', () => {
     const result = run(
       ['post:test', 'hooks/undefined.js', 'standard'],
-      { ECC_HOOK_INPUT_MAX_BYTES: String(2 * 1024 * 1024) },
+      { YUS_HOOK_INPUT_MAX_BYTES: String(2 * 1024 * 1024) },
       'x'.repeat(1024 * 1024 + 1)
     );
     assertSilent(result);
@@ -371,7 +371,7 @@ if (
   test('legacy hooks receive the resolved stdin cap and truncation flag', () => {
     const result = run(
       ['post:test', 'hooks/legacy-inspect.js', 'standard'],
-      { ECC_HOOK_INPUT_MAX_BYTES: '128' },
+      { YUS_HOOK_INPUT_MAX_BYTES: '128' },
       'x'.repeat(256)
     );
     assert.strictEqual(result.status, 0, result.stderr);
@@ -390,7 +390,7 @@ for (const [eventName, entries] of Object.entries(hooksConfig.hooks)) {
   for (const entry of entries) {
     if (
       test(`${eventName}/${entry.id} registered disabled path stays silent`, () => {
-        const result = runConfiguredHook(entry, { ECC_HOOKS_ENABLED: '0' });
+        const result = runConfiguredHook(entry, { YUS_HOOKS_ENABLED: '0' });
         assertSilent(result);
       })
     )
@@ -435,9 +435,9 @@ for (const hookId of [
         tool_input: toolInput
       });
       const result = runConfiguredHook(entry, {
-        ECC_DISABLED_HOOKS: '',
-        ECC_DRY_RUN: '',
-        ECC_HOOK_INPUT_MAX_BYTES: '64'
+        YUS_DISABLED_HOOKS: '',
+        YUS_DRY_RUN: '',
+        YUS_HOOK_INPUT_MAX_BYTES: '64'
       }, input);
       assert.strictEqual(result.status, 2, result.stderr);
       assert.strictEqual(result.stdout, '');
@@ -454,7 +454,7 @@ for (const hookId of [
   'pre:edit-write:gateguard-fact-force'
 ]) {
   for (const env of [
-    { ECC_GATEGUARD: 'off' },
+    { YUS_GATEGUARD: 'off' },
     { GATEGUARD_DISABLED: '1' }
   ]) {
   if (
@@ -468,9 +468,9 @@ for (const hookId of [
         tool_input: { file_path: '/src/recovery.js', content: 'x'.repeat(256) }
       });
       const result = runConfiguredHook(entry, {
-        ECC_DISABLED_HOOKS: '',
-        ECC_DRY_RUN: '',
-        ECC_HOOK_INPUT_MAX_BYTES: '64',
+        YUS_DISABLED_HOOKS: '',
+        YUS_DRY_RUN: '',
+        YUS_HOOK_INPUT_MAX_BYTES: '64',
         ...env
       }, input);
       assert.strictEqual(result.status, 0, result.stderr);
@@ -493,10 +493,10 @@ if (
       tool_input: { query: 'x'.repeat(256) }
     });
     const result = runConfiguredHook(entry, {
-      ECC_DISABLED_HOOKS: '',
-      ECC_DRY_RUN: '',
-      ECC_HOOK_INPUT_MAX_BYTES: '64',
-      ECC_MCP_HEALTH_FAIL_OPEN: 'yes'
+      YUS_DISABLED_HOOKS: '',
+      YUS_DRY_RUN: '',
+      YUS_HOOK_INPUT_MAX_BYTES: '64',
+      YUS_MCP_HEALTH_FAIL_OPEN: 'yes'
     }, input);
     assert.strictEqual(result.status, 0, result.stderr);
     assert.strictEqual(result.stdout, '');
@@ -509,7 +509,7 @@ if (
   test('SessionStart bootstrap unresolved-root fallback stays silent', () => {
     const result = runSessionStartBootstrapWithMissingRoot();
     assertSilent(result);
-    assert.match(result.stderr, /could not resolve ECC plugin root/);
+    assert.match(result.stderr, /could not resolve yus plugin root/);
   })
 )
   passed++;

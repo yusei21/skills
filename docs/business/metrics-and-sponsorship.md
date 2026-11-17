@@ -17,26 +17,26 @@ Use four categories in every update:
 
 ```bash
 # Weekly downloads
-curl -s https://api.npmjs.org/downloads/point/last-week/ecc-universal
+curl -s https://api.npmjs.org/downloads/point/last-week/yus-universal
 curl -s https://api.npmjs.org/downloads/point/last-week/ecc-agentshield
 
 # Last 30 days
-curl -s https://api.npmjs.org/downloads/point/last-month/ecc-universal
+curl -s https://api.npmjs.org/downloads/point/last-month/yus-universal
 curl -s https://api.npmjs.org/downloads/point/last-month/ecc-agentshield
 ```
 
 ### GitHub repository adoption
 
 ```bash
-gh api repos/affaan-m/ECC \
+gh api repos/yusei21/yus \
   --jq '{stars:.stargazers_count,forks:.forks_count,contributors_url:.contributors_url,open_issues:.open_issues_count}'
 ```
 
 ### GitHub traffic (maintainer access required)
 
 ```bash
-gh api repos/affaan-m/ECC/traffic/views
-gh api repos/affaan-m/ECC/traffic/clones
+gh api repos/yusei21/yus/traffic/views
+gh api repos/yusei21/yus/traffic/clones
 ```
 
 ### GitHub App installs
@@ -66,7 +66,7 @@ Use these as starting points in negotiation:
 
 Use this on calls:
 
-> ECC is now positioned as an agent harness performance system, not a config repo.
+> yus is now positioned as an agent harness performance system, not a config repo.
 > We track adoption through npm distribution, GitHub App installs, and repository growth.
 > Claude plugin installs are structurally undercounted publicly, so we use a blended metrics model.
 > The project supports Claude Code, Cursor, OpenCode, and Codex app/CLI with production-grade hook reliability and a large passing test suite.

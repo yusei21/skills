@@ -15,21 +15,21 @@ function rewriteCopilotWorkflowPaths(content, sourceRelativePath) {
   let projectedDetector = false;
   let projected = content.replace(/(^[ \t]*```bash\r?\n)([\s\S]*?)(^[ \t]*```)/gm,
     (block, opening, body, closing) => {
-      if (!isTddWorkflow || !/^\s*ECC_ROOT=/m.test(body)
-        || !/^\s*node "\$ECC_ROOT\/scripts\/setup-package-manager\.js" --detect\s*$/m.test(body)) {
+      if (!isTddWorkflow || !/^\s*YUS_ROOT=/m.test(body)
+        || !/^\s*node "\$YUS_ROOT\/scripts\/setup-package-manager\.js" --detect\s*$/m.test(body)) {
         return block;
       }
       projectedDetector = true;
       const indent = opening.match(/^[ \t]*/)[0];
       const newline = opening.endsWith('\r\n') ? '\r\n' : '\n';
-      return `${opening}${indent}node .github/ecc/scripts/setup-package-manager.js --detect${newline}${closing}`;
+      return `${opening}${indent}node .github/yus/scripts/setup-package-manager.js --detect${newline}${closing}`;
     });
   if (projectedDetector) {
     projected = projected.replace(/^([ \t]*)The resolution lines (?:locate|use)[^\r\n]*$/gm,
-      '$1This Copilot projection runs the detector from the managed .github/ecc/scripts/ closure in the project root. It preserves the project working directory and does not use Claude plugin or home-directory resolution.');
+      '$1This Copilot projection runs the detector from the managed .github/yus/scripts/ closure in the project root. It preserves the project working directory and does not use Claude plugin or home-directory resolution.');
   }
   return projected.replace(/(^|[\s`"'(])scripts\/setup-package-manager\.js\b/g,
-    '$1.github/ecc/scripts/setup-package-manager.js');
+    '$1.github/yus/scripts/setup-package-manager.js');
 }
 
 function transformInstallContent(operation, content) {
@@ -57,7 +57,7 @@ function transformInstallContent(operation, content) {
   if (operation.contentTransform === 'copilot-rule-frontmatter') {
     return adaptCopilotRule(content, operation.sourceRelativePath);
   }
-  if (operation.contentTransform === 'opencode-disable-ecc-hooks') {
+  if (operation.contentTransform === 'opencode-disable-yus-hooks') {
     return transformInstallContent({ ...operation, contentTransform: 'opencode-home-skills-path' },
       disableOpenCodeHookPluginRegistration(content, operation.sourceRelativePath));
   }

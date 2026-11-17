@@ -2,7 +2,7 @@
 /**
  * scripts/codemaps/generate.ts
  *
- * Codemap Generator for ECC
+ * Codemap Generator for yus
  *
  * Scans the current working directory and generates architectural
  * codemap documentation under docs/CODEMAPS/ as specified by the

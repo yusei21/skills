@@ -1,5 +1,5 @@
 /**
- * Trust-boundary tests for the ECC-native Hookify runtime (#2561).
+ * Trust-boundary tests for the yus-native Hookify runtime (#2561).
  */
 
 'use strict';
@@ -24,7 +24,7 @@ function test(name, fn) {
   }
 }
 
-function createProject(prefix = 'ecc-hookify-security-') {
+function createProject(prefix = 'yus-hookify-security-') {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), prefix));
   fs.mkdirSync(path.join(root, '.claude'), { recursive: true });
   return root;
@@ -57,7 +57,7 @@ let failed = 0;
 if (test('does not follow rule symlinks outside the project .claude directory', () => {
   if (process.platform === 'win32') return;
   const root = createProject();
-  const outside = createProject('ecc-hookify-outside-');
+  const outside = createProject('yus-hookify-outside-');
   try {
     const externalRule = path.join(outside, 'external.md');
     fs.writeFileSync(externalRule, '---\nname: outside\nevent: bash\naction: block\npattern: .*\n---\nMust not load.\n');
@@ -81,7 +81,7 @@ if (test('rejects Git-tracked local rules unless explicitly approved', () => {
     const rejected = runHook(root, input);
     assert.strictEqual(rejected.stdout, rejected.raw);
     assert.match(rejected.stderr, /tracked local rules require explicit approval/);
-    const approved = JSON.parse(runHook(root, input, { ECC_HOOKIFY_ALLOW_TRACKED: '1' }).stdout);
+    const approved = JSON.parse(runHook(root, input, { YUS_HOOKIFY_ALLOW_TRACKED: '1' }).stdout);
     assert.strictEqual(approved.hookSpecificOutput.permissionDecision, 'deny');
     assert.match(approved.hookSpecificOutput.permissionDecisionReason, /UNTRUSTED LOCAL RULE DATA/);
   } finally {
@@ -90,7 +90,7 @@ if (test('rejects Git-tracked local rules unless explicitly approved', () => {
 })) passed++; else failed++;
 
 if (test('detects tracked rules through case-variant .claude paths', () => {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-hookify-case-trust-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-hookify-case-trust-'));
   try {
     assert.strictEqual(spawnSync('git', ['init', '-q'], { cwd: root }).status, 0);
     const trackedDir = path.join(root, '.CLAUDE');

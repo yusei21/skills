@@ -1,23 +1,23 @@
 #!/usr/bin/env node
 // @ts-check
 /**
- * Generate ECC's per-department Claude Code plugins from
+ * Generate yus's per-department Claude Code plugins from
  * manifests/skill-departments.json.
  *
  * Loading all ~340 curated skills puts every skill description into every
  * session (~26k tokens). The departments split that up:
  *
- * - `ecc` (the root plugin, .claude-plugin/plugin.json) keeps the runtime
+ * - `yus` (the root plugin, .claude-plugin/plugin.json) keeps the runtime
  *   (commands, agents, hooks, MCP, settings) and only the `core` department.
- * - `ecc-<department>` marketplace entries add one department each.
- * - `ecc-all-departments` adds every non-core department at once.
+ * - `yus-<department>` marketplace entries add one department each.
+ * - `yus-all-departments` adds every non-core department at once.
  *
  * Skills live at skills/<department>/<skill>/. Claude Code loads every
  * skills/<skill>/SKILL.md under a plugin root but does not recurse, so the
  * root plugin sees none of them unless plugin.json lists them, while each
- * `ecc-<department>` entry uses `source: "./skills/<department>"` and lists its
+ * `yus-<department>` entry uses `source: "./skills/<department>"` and lists its
  * skills. Rooting a department at "./" instead would also load the root's
- * default `agents/`, `commands/` and `hooks/hooks.json`, running ECC's hooks
+ * default `agents/`, `commands/` and `hooks/hooks.json`, running yus's hooks
  * once per installed department.
  *
  * Usage:
@@ -35,8 +35,8 @@ const PLUGIN_PATH = '.claude-plugin/plugin.json';
 const MARKETPLACE_PATH = '.claude-plugin/marketplace.json';
 const PACKAGE_PATH = 'package.json';
 const CORE_DEPARTMENT = 'core';
-const ROOT_PLUGIN = 'ecc';
-const ALL_PLUGIN = 'ecc-all-departments';
+const ROOT_PLUGIN = 'yus';
+const ALL_PLUGIN = 'yus-all-departments';
 const ID_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 /**
@@ -180,28 +180,28 @@ function buildManifests(root) {
   });
 
   const departmentEntries = others.map(department => entry(
-    `ecc-${department.id}`,
+    `yus-${department.id}`,
     `./skills/${department.id}`,
-    `ECC ${department.title} department: ${skillsOf(department).length} skills. ${department.description} Install alongside the "${ROOT_PLUGIN}" plugin.`,
+    `yus ${department.title} department: ${skillsOf(department).length} skills. ${department.description} Install alongside the "${ROOT_PLUGIN}" plugin.`,
     skillsOf(department),
-    ['ecc', 'skills', 'department', department.id]
+    ['yus', 'skills', 'department', department.id]
   ));
   const allSkills = others.flatMap(skillsOf);
   const allEntry = entry(
     ALL_PLUGIN,
     './skills',
-    `Every ECC department at once: ${allSkills.length} skills. Install alongside the "${ROOT_PLUGIN}" plugin instead of individual ecc-<department> plugins.`,
+    `Every yus department at once: ${allSkills.length} skills. Install alongside the "${ROOT_PLUGIN}" plugin instead of individual yus-<department> plugins.`,
     others.flatMap(department => skillsOf(department).map(skill => `${department.id}/${skill}`)),
-    ['ecc', 'skills', 'department', 'all']
+    ['yus', 'skills', 'department', 'all']
   );
 
   const generatedNames = new Set([ALL_PLUGIN, ...departmentEntries.map(e => e.name)]);
-  const kept = marketplace.plugins.filter((/** @type {any} */ e) => !generatedNames.has(e.name) && !String(e.name).startsWith('ecc-'));
+  const kept = marketplace.plugins.filter((/** @type {any} */ e) => !generatedNames.has(e.name) && !String(e.name).startsWith('yus-'));
   const nextMarketplace = { ...marketplace, plugins: [...kept, ...departmentEntries, allEntry] };
 
   const summary = [
     `${ROOT_PLUGIN}: runtime + ${coreSkills.length} core skills`,
-    ...others.map(department => `ecc-${department.id}: ${skillsOf(department).length} skills`),
+    ...others.map(department => `yus-${department.id}: ${skillsOf(department).length} skills`),
     `${ALL_PLUGIN}: ${allSkills.length} skills`
   ];
   // Pi reads each listed directory one level deep, so it gets one entry per department.

@@ -14,7 +14,7 @@ metadata:
 design system per site, real photography and product UI, a hero entrance, and a browser-based finish
 gate. Installed, it registers as the skill `design-taste-frontend`.
 
-ECC ships this pointer instead of the skill because the skill carries about 37 MB of photos, icons and
+yus ships this pointer instead of the skill because the skill carries about 37 MB of photos, icons and
 scene assets. Installing it is a one-time step the user approves.
 
 ## When to Use

@@ -22,41 +22,41 @@ The reviewer sees the diff, the rubric, and the repository through Codex's read-
 |-------------|--------------|
 | Codex CLI installed | `codex --version` (install: `npm i -g @openai/codex`) |
 | Logged in with ChatGPT | `codex login` once; `~/.codex/auth.json` shows `"auth_mode": "chatgpt"` |
-| `gpt-6-astra` on the account | open `codex` and check the model picker; otherwise set `ECC_ASTRA_MODEL` |
-| ECC installed with `commands-core` | `/ecc:astra-review` appears in the command list |
+| `gpt-6-astra` on the account | open `codex` and check the model picker; otherwise set `YUS_ASTRA_MODEL` |
+| yus installed with `commands-core` | `/yus:astra-review` appears in the command list |
 
 No OpenAI API key is needed. If one is in your environment it is **not** forwarded to the reviewer process.
 
 ### Plugin freshness
 
-The Claude Code plugin cache is keyed by ECC's version number, so editing the ECC checkout does not refresh an installed copy. If `/ecc:astra-review` is reported as unknown after updating ECC, uninstall and reinstall the plugin (or bump the version in `.claude-plugin/plugin.json`), then restart the session:
+The Claude Code plugin cache is keyed by yus's version number, so editing the yus checkout does not refresh an installed copy. If `/yus:astra-review` is reported as unknown after updating yus, uninstall and reinstall the plugin (or bump the version in `.claude-plugin/plugin.json`), then restart the session:
 
 ```bash
-claude plugin uninstall ecc@ecc && claude plugin install ecc@ecc
+claude plugin uninstall yus@yus && claude plugin install yus@yus
 ```
 
 ## Quick start
 
 ```text
-/ecc:astra-review                          # uncommitted changes (staged + unstaged + untracked)
-/ecc:astra-review --base main              # everything on this branch vs main
-/ecc:astra-review --commit HEAD            # one commit
-/ecc:astra-review Focus on the SQL layer   # free text becomes extra reviewer instructions
+/yus:astra-review                          # uncommitted changes (staged + unstaged + untracked)
+/yus:astra-review --base main              # everything on this branch vs main
+/yus:astra-review --commit HEAD            # one commit
+/yus:astra-review Focus on the SQL layer   # free text becomes extra reviewer instructions
 ```
 
-Plugin commands carry the `ecc:` prefix. With a manual (non-plugin) install the command is `/astra-review`.
+Plugin commands carry the `yus:` prefix. With a manual (non-plugin) install the command is `/astra-review`.
 
 Every invocation is your consent to send that diff to OpenAI. Do not run it on code you are not allowed to share. To see exactly what would leave the machine, run the script with `--dry-run` (see below).
 
 ## Day-to-day workflow in your own project
 
-The project does not need to live inside the ECC checkout. ECC is a user-scope plugin, so `/ecc:astra-review` is available from any directory, and the script reviews whichever git repository Claude Code was started in. Keep your project outside the ECC tree so its diffs are not mixed with ECC's.
+The project does not need to live inside the yus checkout. yus is a user-scope plugin, so `/yus:astra-review` is available from any directory, and the script reviews whichever git repository Claude Code was started in. Keep your project outside the yus tree so its diffs are not mixed with yus's.
 
-### 0. One-time preparation (in the ECC checkout)
+### 0. One-time preparation (in the yus checkout)
 
 ```bash
-# refresh the installed plugin whenever the ECC checkout changed
-claude plugin uninstall ecc@ecc && claude plugin install ecc@ecc
+# refresh the installed plugin whenever the yus checkout changed
+claude plugin uninstall yus@yus && claude plugin install yus@yus
 
 # confirm Codex CLI is installed and logged in with ChatGPT (otherwise: codex login)
 codex --version
@@ -71,24 +71,24 @@ git init          # required: the review reads git diffs
 claude            # this directory becomes the project root
 ```
 
-Run `/init` inside Claude Code if you want a project `CLAUDE.md`. ECC hooks and commands apply here because they are installed at user scope.
+Run `/init` inside Claude Code if you want a project `CLAUDE.md`. yus hooks and commands apply here because they are installed at user scope.
 
 ### 2. Implement as usual
 
-Ask Claude Code for the change, or start with `/ecc:plan`. For test-first development, run `/ecc:tdd-workflow` (optionally with a `*.plan.md` from `/ecc:plan`) or simply ask Claude Code to "use TDD"; language-specific entry points such as `/ecc:go-test` and `/ecc:react-test` also exist.
+Ask Claude Code for the change, or start with `/yus:plan`. For test-first development, run `/yus:tdd-workflow` (optionally with a `*.plan.md` from `/yus:plan`) or simply ask Claude Code to "use TDD"; language-specific entry points such as `/yus:go-test` and `/yus:react-test` also exist.
 
 ### 3. Ask Astra for a review
 
 ```text
-/ecc:astra-review                        # uncommitted changes
-/ecc:astra-review --base main            # the whole branch, before a PR
-/ecc:astra-review Focus on interrupt handling   # extra instructions
+/yus:astra-review                        # uncommitted changes
+/yus:astra-review --base main            # the whole branch, before a PR
+/yus:astra-review Focus on interrupt handling   # extra instructions
 ```
 
 Claude fixes confirmed CRITICAL/HIGH findings and re-runs, up to three rounds. To inspect what would be sent without sending it:
 
 ```bash
-node ~/.claude/plugins/cache/ecc/ecc/<version>/scripts/astra-review.js --dry-run | less
+node ~/.claude/plugins/cache/yus/yus/<version>/scripts/astra-review.js --dry-run | less
 ```
 
 (`<version>` is the plugin version shown by `claude plugin list`, for example `2.2.1`. Inside a command, the same path is `${CLAUDE_PLUGIN_ROOT}/scripts/astra-review.js`.)
@@ -100,10 +100,10 @@ Ask Claude Code to commit, or run `git commit` yourself.
 ### 5. Optionally gate the push
 
 ```bash
-node ~/.claude/plugins/cache/ecc/ecc/<version>/scripts/astra-review.js --consent-to-openai --base main && git push
+node ~/.claude/plugins/cache/yus/yus/<version>/scripts/astra-review.js --consent-to-openai --base main && git push
 ```
 
-Reminders: the command name carries the `ecc:` prefix; every run sends the diff to OpenAI and takes a few minutes; re-do step 0 after each ECC update because the plugin cache is refreshed only on version changes.
+Reminders: the command name carries the `yus:` prefix; every run sends the diff to OpenAI and takes a few minutes; re-do step 0 after each yus update because the plugin cache is refreshed only on version changes.
 
 ## Scopes
 
@@ -119,20 +119,20 @@ Diffs over 200 KB are truncated. The reviewer is then given exact git commands t
 
 ## Running the script directly
 
-The command is a thin workflow around `scripts/astra-review.js` (under the plugin root, or `./scripts/` in the ECC repo). Run it from the reviewed project's directory so git sees that project.
+The command is a thin workflow around `scripts/astra-review.js` (under the plugin root, or `./scripts/` in the yus repo). Run it from the reviewed project's directory so git sees that project.
 
 ```bash
-node "$ECC/scripts/astra-review.js" --dry-run                       # print the prompt, send nothing
-node "$ECC/scripts/astra-review.js" --consent-to-openai --base main # review, markdown report on stdout
-node "$ECC/scripts/astra-review.js" --consent-to-openai --json \
+node "$yus/scripts/astra-review.js" --dry-run                       # print the prompt, send nothing
+node "$yus/scripts/astra-review.js" --consent-to-openai --base main # review, markdown report on stdout
+node "$yus/scripts/astra-review.js" --consent-to-openai --json \
   --output "$(mktemp -d)/astra.json"                                # JSON for tooling, saved 0600
 ```
 
 | Option | Meaning |
 |--------|---------|
-| `--consent-to-openai` | required to send anything (or `ECC_ASTRA_CONSENT=1`) |
+| `--consent-to-openai` | required to send anything (or `YUS_ASTRA_CONSENT=1`) |
 | `--dry-run` | print the prompt and exit 0 without calling Codex |
-| `--model <slug>` | reviewer model, default `gpt-6-astra` (or `ECC_ASTRA_MODEL`) |
+| `--model <slug>` | reviewer model, default `gpt-6-astra` (or `YUS_ASTRA_MODEL`) |
 | `--timeout-seconds <30-900>` | Codex timeout, default 300 |
 | `--instructions "<text>"` | extra reviewer instructions appended to the rubric |
 | `--output <file>` | also write the JSON verdict to `<file>` (atomic, owner-only) |
@@ -182,8 +182,8 @@ The command runs on Opus. Opus verifies every finding, reviews every diff, and r
 The switch is automatic and Fable is not retried for the rest of the session. In fix mode Astra keeps the review isolation (no web search, no network, MCP disabled, user config ignored, no API keys) but may edit files inside the repository; `/tmp` and `$TMPDIR` are excluded from the writable roots. It never commits or pushes. Before the writer runs, Opus snapshots `git diff --binary HEAD` and the untracked file list, so it can tell the writer's hunks from your own uncommitted work and revert only the former. Astra's report lists fixed and skipped findings; Opus treats that as a claim and checks the diff against the snapshot before the tests and the next review round.
 
 ```bash
-node "$ECC/scripts/astra-review.js" --fix-findings confirmed.json --dry-run           # show the fix prompt
-node "$ECC/scripts/astra-review.js" --consent-to-openai --fix-findings confirmed.json  # let Astra fix
+node "$yus/scripts/astra-review.js" --fix-findings confirmed.json --dry-run           # show the fix prompt
+node "$yus/scripts/astra-review.js" --consent-to-openai --fix-findings confirmed.json  # let Astra fix
 ```
 
 `confirmed.json` is the `--output` payload, a `{"findings": [...]}` object, or a bare array of findings.
@@ -195,15 +195,15 @@ Astra tends to keep finding real but narrower edge cases on each round. Treat th
 Run the review before pushing and refuse on exit code 1:
 
 ```bash
-node "$ECC/scripts/astra-review.js" --consent-to-openai --base main && git push
+node "$yus/scripts/astra-review.js" --consent-to-openai --base main && git push
 ```
 
 Or as a `pre-push` hook (opt-in, since it sends code to OpenAI and takes a few minutes):
 
 ```bash
 #!/usr/bin/env sh
-ECC="${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}"
-exec node "$ECC/scripts/astra-review.js" --consent-to-openai --base "$(git rev-parse --abbrev-ref origin/HEAD | sed 's#origin/##')"
+yus="${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}"
+exec node "$yus/scripts/astra-review.js" --consent-to-openai --base "$(git rev-parse --abbrev-ref origin/HEAD | sed 's#origin/##')"
 ```
 
 For two independent reviewers (Claude Opus plus Astra) use `/santa-loop`.
@@ -226,9 +226,9 @@ Patches are collected with `--no-ext-diff --no-textconv`, so a configured extern
 
 | Symptom | Cause and fix |
 |---------|---------------|
-| `Unknown command: /astra-review` | Plugin commands are namespaced: use `/ecc:astra-review`. If that is unknown too, the installed plugin predates the command; reinstall it (see Plugin freshness). |
+| `Unknown command: /astra-review` | Plugin commands are namespaced: use `/yus:astra-review`. If that is unknown too, the installed plugin predates the command; reinstall it (see Plugin freshness). |
 | `Codex CLI is not installed` | Install `@openai/codex` and make sure `codex` is on PATH. On Windows the npm shim is resolved to its JavaScript entry point automatically. |
-| `Codex review failed: … model …` | `gpt-6-astra` is not available on the account. Pick another model with `ECC_ASTRA_MODEL` or `--model`. |
+| `Codex review failed: … model …` | `gpt-6-astra` is not available on the account. Pick another model with `YUS_ASTRA_MODEL` or `--model`. |
 | `cannot isolate MCP server name "a.b"` | Codex cannot disable a server whose name contains a dot; rename it in the Codex config or disable it there first. |
 | `Codex review timed out` | Raise `--timeout-seconds` (max 900) or narrow the scope. |
 | `Nothing to review` | The scope is empty. Stage or save changes, or pick another scope. |

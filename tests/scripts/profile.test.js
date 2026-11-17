@@ -9,7 +9,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '../..');
-const CLI = path.join(ROOT, 'scripts/ecc.js');
+const CLI = path.join(ROOT, 'scripts/yus.js');
 const PROFILE = path.join(ROOT, 'scripts/profile.js');
 
 function snapshot(directory) {
@@ -24,7 +24,7 @@ function snapshot(directory) {
 }
 
 function withFixture(fn) {
-  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-profile-cli-'));
+  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-profile-cli-'));
   let before;
   try {
     const userDirectory = path.join(fixture, 'user');
@@ -127,7 +127,7 @@ const tests = [
       ['show', 'lean@1', '--json'],
       ['preview', 'lean@1', '--target', 'codex', '--selection', 'auto',
         '--include', 'skill:security-review', '--exclude', 'skill:python-patterns', '--json'],
-      ['explain', 'skill:ecc-guide', '--target', 'codex', '--json'],
+      ['explain', 'skill:yus-guide', '--target', 'codex', '--json'],
     ]) {
       const expected = parseArgs(args);
       for (let index = 0; index <= args.length; index++) {
@@ -150,7 +150,7 @@ const tests = [
 for (const args of [
   ['show', 'lean@1', '--json'],
   ['preview', 'lean@1', '--target', 'codex', '--selection', 'auto', '--json'],
-  ['explain', 'skill:ecc-guide', '--target', 'codex', '--json'],
+  ['explain', 'skill:yus-guide', '--target', 'codex', '--json'],
 ]) {
   tests.push([`leading global dry-run preserves ${args[0]} through both CLI entrypoints`, () => withFixture(run => {
     const expected = success(run(args));
@@ -178,7 +178,7 @@ for (const args of [
   ['show', '--include', 'skill:security-review'],
   ['explain'],
   ['explain', 'skill:missing-workflow'],
-  ['explain', 'skill:ecc-guide', 'extra'],
+  ['explain', 'skill:yus-guide', 'extra'],
 ]) {
   tests.push([`rejects unsupported or malformed input: ${args.join(' ')}`, () => withFixture(run => {
     const result = run([...args, '--json']);

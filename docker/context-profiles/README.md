@@ -52,7 +52,7 @@ Test helpers are
 copied separately into the image; they are not part of the published package.
 
 An existing compatible Node image can be selected with
-`ECC_CONTEXT_NODE_IMAGE=<image-id>`. The default is `node:22-bookworm-slim`.
+`YUS_CONTEXT_NODE_IMAGE=<image-id>`. The default is `node:22-bookworm-slim`.
 The task image and private temporary build directory are removed afterward.
 Dependency download layers can remain in Podman's ordinary build cache. The
 runner never changes host harness configuration or mounts a host home.

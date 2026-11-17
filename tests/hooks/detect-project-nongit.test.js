@@ -51,7 +51,7 @@ function test(name, fn) {
 }
 
 function createTempDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-nongit-test-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'yus-nongit-test-'));
 }
 
 function cleanupDir(dir) {

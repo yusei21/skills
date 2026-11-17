@@ -1,6 +1,6 @@
 const AGENT_COUNT = require('fs').readdirSync(require('path').join(__dirname,'../../agents')).filter(f => f.endsWith('.md')).length;
 /**
- * Tests for the ECC Agent IR converter CLI (scripts/agent-convert.js).
+ * Tests for the yus Agent IR converter CLI (scripts/agent-convert.js).
  *
  * Verifies the CLI contract: `--check`, `--json`, `--out` (write and
  * side-effect-free `--dry-run`), and argument/exit-code behavior.
@@ -32,7 +32,7 @@ function runCli(args) {
 }
 
 function tmpdir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "ecc-agent-convert-"))
+  return fs.mkdtempSync(path.join(os.tmpdir(), "yus-agent-convert-"))
 }
 
 function main() {
@@ -48,7 +48,7 @@ function main() {
     ["--json emits a machine-readable summary", () => {
       const out = runCli(["--from", "claude", "--to", "pi", "--json"])
       const summary = JSON.parse(out)
-      assert.strictEqual(summary.schema, "ecc.agent-ir.v1")
+      assert.strictEqual(summary.schema, "yus.agent-ir.v1")
       assert.strictEqual(summary.from, "claude")
       assert.strictEqual(summary.to, "pi")
       assert.strictEqual(summary.converted, AGENT_COUNT)
@@ -150,7 +150,7 @@ function main() {
       const out = runCli(["--from", "claude", "--to", "pi", "--out", dir, "--json"])
       const summary = JSON.parse(out)
       assert.strictEqual(summary.converted, AGENT_COUNT)
-      assert.strictEqual(summary.schema, "ecc.agent-ir.v1")
+      assert.strictEqual(summary.schema, "yus.agent-ir.v1")
     }],
 
     ["missing value for --out exits non-zero", () => {

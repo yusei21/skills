@@ -20,36 +20,36 @@ const MARKETPLACE_ADD = [
   'plugin', 'marketplace', 'add', OFFICIAL_MARKETPLACE_REPO, '--json',
 ];
 const MARKETPLACE_UPGRADE = [
-  'plugin', 'marketplace', 'upgrade', 'ecc', '--json',
+  'plugin', 'marketplace', 'upgrade', 'yus', '--json',
 ];
-const PLUGIN_ADD = ['plugin', 'add', 'ecc@ecc', '--json'];
+const PLUGIN_ADD = ['plugin', 'add', 'yus@yus', '--json'];
 
 function marketplaceInventory(installed = false) {
   return JSON.stringify({
-    marketplaces: installed ? [{ name: 'ecc', root: '/cache/ecc' }] : [],
+    marketplaces: installed ? [{ name: 'yus', root: '/cache/yus' }] : [],
   });
 }
 
 function pluginInventory(installed = false, overrides = {}) {
-  const ecc = {
-    pluginId: 'ecc@ecc',
-    name: 'ecc',
-    marketplaceName: 'ecc',
+  const yus = {
+    pluginId: 'yus@yus',
+    name: 'yus',
+    marketplaceName: 'yus',
     version: '2.0.0',
     installed: true,
     enabled: true,
     ...overrides,
   };
   return JSON.stringify({
-    installed: installed ? [ecc] : [],
+    installed: installed ? [yus] : [],
     available: [],
   });
 }
 
 function marketplaceUpgradeResult(overrides = {}) {
   return JSON.stringify({
-    selectedMarketplaces: ['ecc'],
-    upgradedRoots: ['/cache/ecc'],
+    selectedMarketplaces: ['yus'],
+    upgradedRoots: ['/cache/yus'],
     errors: [],
     ...overrides,
   });
@@ -74,7 +74,7 @@ function createExecFile(steps) {
 function dependenciesFor(fake, overrides = {}) {
   return {
     execFile: fake.execFile,
-    resolveMarketplaceRepository: async () => 'https://github.com/affaan-m/ECC.git',
+    resolveMarketplaceRepository: async () => 'https://github.com/yusei21/yus.git',
     ...overrides,
   };
 }
@@ -109,31 +109,31 @@ async function runTests() {
     ['parses current Codex marketplace and plugin JSON inventory shapes', () => {
       assert.deepStrictEqual(
         parseMarketplaceInventory(marketplaceInventory(true)),
-        [{ name: 'ecc', root: '/cache/ecc' }]
+        [{ name: 'yus', root: '/cache/yus' }]
       );
       assert.strictEqual(
         parsePluginInventory(pluginInventory(true)).installed[0].pluginId,
-        'ecc@ecc'
+        'yus@yus'
       );
       assert.strictEqual(
-        normalizeGitHubGitOrigin('git@github.com:affaan-m/ECC.git'),
-        'affaan-m/ecc'
+        normalizeGitHubGitOrigin('git@github.com:yusei21/yus.git'),
+        'yusei21/yus'
       );
     }],
     ['resolves marketplace provenance with execFile and exact Git argv', async () => {
       const fake = createExecFile([{
         command: 'git',
-        args: ['-C', '/cache/ecc', 'remote', 'get-url', 'origin'],
-        stdout: 'https://github.com/affaan-m/ECC.git\n',
+        args: ['-C', '/cache/yus', 'remote', 'get-url', 'origin'],
+        stdout: 'https://github.com/yusei21/yus.git\n',
       }]);
 
       const repository = await resolveMarketplaceRepository(
-        { name: 'ecc', root: '/cache/ecc' },
+        { name: 'yus', root: '/cache/yus' },
         { cwd: '/workspace with spaces' },
         { execFile: fake.execFile }
       );
 
-      assert.strictEqual(repository, 'https://github.com/affaan-m/ECC.git');
+      assert.strictEqual(repository, 'https://github.com/yusei21/yus.git');
       assert.strictEqual(fake.calls[0].options.shell, false);
       assert.strictEqual(fake.calls[0].options.cwd, '/workspace with spaces');
       assert.ok(fake.calls[0].options.timeout > 0);
@@ -176,12 +176,12 @@ async function runTests() {
       });
       const provenance = createExecFile([{
         command: 'git',
-        args: ['-C', '/cache/ecc', 'remote', 'get-url', 'origin'],
+        args: ['-C', '/cache/yus', 'remote', 'get-url', 'origin'],
         error: provenanceTimeout,
       }]);
       await expectSetupError(
         resolveMarketplaceRepository(
-          { name: 'ecc', root: '/cache/ecc' },
+          { name: 'yus', root: '/cache/yus' },
           {},
           { execFile: provenance.execFile }
         ),
@@ -197,13 +197,13 @@ async function runTests() {
       });
       const fake = createExecFile([{
         command: 'git',
-        args: ['-C', '/cache/ecc', 'remote', 'get-url', 'origin'],
+        args: ['-C', '/cache/yus', 'remote', 'get-url', 'origin'],
         error: gitFailure,
       }]);
 
       await expectSetupError(
         resolveMarketplaceRepository(
-          { name: 'ecc', root: '/cache/ecc' },
+          { name: 'yus', root: '/cache/yus' },
           {},
           { execFile: fake.execFile }
         ),
@@ -218,7 +218,7 @@ async function runTests() {
         { args: PLUGIN_LIST, stdout: pluginInventory(false) },
         { args: MARKETPLACE_ADD, stdout: '{"alreadyAdded":false}' },
         { args: MARKETPLACE_LIST, stdout: marketplaceInventory(true) },
-        { args: PLUGIN_ADD, stdout: '{"pluginId":"ecc@ecc"}' },
+        { args: PLUGIN_ADD, stdout: '{"pluginId":"yus@yus"}' },
         { args: PLUGIN_LIST, stdout: pluginInventory(true) },
       ]);
 
@@ -230,7 +230,7 @@ async function runTests() {
       assert.deepStrictEqual(result, {
         action: 'installed',
         marketplaceAction: 'added',
-        pluginId: 'ecc@ecc',
+        pluginId: 'yus@yus',
         restartRequired: true,
       });
       assert.deepStrictEqual(fake.calls.map(call => call.args), [
@@ -265,7 +265,7 @@ async function runTests() {
       assert.deepStrictEqual(result, {
         action: 'updated',
         marketplaceAction: 'upgraded',
-        pluginId: 'ecc@ecc',
+        pluginId: 'yus@yus',
         restartRequired: true,
       });
       assert.deepStrictEqual(fake.calls.map(call => call.args), [
@@ -301,21 +301,21 @@ async function runTests() {
     ['accepts the provider root across Windows separator and case differences', () => {
       const result = parseMarketplaceUpgradeResult(
         marketplaceUpgradeResult({
-          upgradedRoots: ['c:/users/hira/.codex/marketplaces/ecc'],
+          upgradedRoots: ['c:/users/hira/.codex/marketplaces/yus'],
         }),
-        { name: 'ecc', root: 'C:\\Users\\Hira\\.codex\\marketplaces\\ecc' }
+        { name: 'yus', root: 'C:\\Users\\Hira\\.codex\\marketplaces\\yus' }
       );
 
-      assert.deepStrictEqual(result.selectedMarketplaces, ['ecc']);
+      assert.deepStrictEqual(result.selectedMarketplaces, ['yus']);
     }],
     ['rejects ambiguous native refresh results for a targeted upgrade', () => {
       assert.throws(
         () => parseMarketplaceUpgradeResult(
           marketplaceUpgradeResult({
-            selectedMarketplaces: ['ecc', 'other'],
-            upgradedRoots: ['/cache/ecc', '/cache/other'],
+            selectedMarketplaces: ['yus', 'other'],
+            upgradedRoots: ['/cache/yus', '/cache/other'],
           }),
-          { name: 'ecc', root: '/cache/ecc' }
+          { name: 'yus', root: '/cache/yus' }
         ),
         error => (
           error.code === 'MARKETPLACE_REFRESH_FAILED'
@@ -325,7 +325,7 @@ async function runTests() {
       assert.throws(
         () => parseMarketplaceUpgradeResult(
           marketplaceUpgradeResult({ errors: [{ message: 'dirty checkout' }] }),
-          { name: 'ecc', root: '/cache/ecc' }
+          { name: 'yus', root: '/cache/yus' }
         ),
         error => error.code === 'MARKETPLACE_REFRESH_FAILED'
       );
@@ -344,8 +344,8 @@ async function runTests() {
           resolveMarketplaceRepository: async () => {
             provenanceChecks += 1;
             return provenanceChecks === 1
-              ? 'https://github.com/affaan-m/ECC.git'
-              : 'https://github.com/attacker/ecc.git';
+              ? 'https://github.com/yusei21/yus.git'
+              : 'https://github.com/attacker/yus.git';
           },
         })),
         'MARKETPLACE_COLLISION',
@@ -388,7 +388,7 @@ async function runTests() {
         action: 'would-install',
         dryRun: true,
         marketplaceAction: 'would-add',
-        pluginId: 'ecc@ecc',
+        pluginId: 'yus@yus',
         restartRequired: true,
       });
       assert.deepStrictEqual(fake.calls.map(call => call.args), [
@@ -411,7 +411,7 @@ async function runTests() {
         action: 'would-update',
         dryRun: true,
         marketplaceAction: 'would-add',
-        pluginId: 'ecc@ecc',
+        pluginId: 'yus@yus',
         restartRequired: true,
       });
       assert.strictEqual(fake.calls.length, 2);
@@ -431,7 +431,7 @@ async function runTests() {
         action: 'unchanged',
         dryRun: true,
         marketplaceAction: 'would-upgrade',
-        pluginId: 'ecc@ecc',
+        pluginId: 'yus@yus',
         restartRequired: false,
       });
       assert.strictEqual(fake.calls.length, 2);
@@ -443,7 +443,7 @@ async function runTests() {
         { args: MARKETPLACE_UPGRADE, stdout: marketplaceUpgradeResult() },
         { args: MARKETPLACE_LIST, stdout: marketplaceInventory(true) },
         { args: PLUGIN_LIST, stdout: pluginInventory(false) },
-        { args: PLUGIN_ADD, stdout: '{"pluginId":"ecc@ecc"}' },
+        { args: PLUGIN_ADD, stdout: '{"pluginId":"yus@yus"}' },
         { args: PLUGIN_LIST, stdout: pluginInventory(true) },
       ]);
 
@@ -461,7 +461,7 @@ async function runTests() {
         PLUGIN_LIST,
       ]);
     }],
-    ['fails closed when the ecc marketplace has untrusted provenance', async () => {
+    ['fails closed when the yus marketplace has untrusted provenance', async () => {
       const fake = createExecFile([
         { args: MARKETPLACE_LIST, stdout: marketplaceInventory(true) },
         { args: PLUGIN_LIST, stdout: pluginInventory(false) },
@@ -470,12 +470,12 @@ async function runTests() {
       await expectSetupError(
         reconcileCodexPlugin({}, dependenciesFor(fake, {
           resolveMarketplaceRepository: async marketplace => {
-            assert.strictEqual(marketplace.root, '/cache/ecc');
-            return 'https://github.com/attacker/ecc.git';
+            assert.strictEqual(marketplace.root, '/cache/yus');
+            return 'https://github.com/attacker/yus.git';
           },
         })),
         'MARKETPLACE_COLLISION',
-        /refusing.*ecc.*marketplace/i
+        /refusing.*yus.*marketplace/i
       );
       assert.deepStrictEqual(fake.calls.map(call => call.args), [
         MARKETPLACE_LIST,
@@ -484,8 +484,8 @@ async function runTests() {
     }],
     ['rejects relative and insecure Git origins before marketplace mutation', async () => {
       for (const origin of [
-        'affaan-m/ecc',
-        'http://github.com/affaan-m/ECC.git',
+        'yusei21/yus',
+        'http://github.com/yusei21/yus.git',
       ]) {
         const fake = createExecFile([
           { args: MARKETPLACE_LIST, stdout: marketplaceInventory(true) },
@@ -527,14 +527,14 @@ async function runTests() {
       assert.throws(
         () => parseMarketplaceInventory(JSON.stringify({
           marketplaces: [
-            { name: 'ecc', root: '/one' },
-            { name: 'ecc', root: '/two' },
+            { name: 'yus', root: '/one' },
+            { name: 'yus', root: '/two' },
           ],
         })),
         error => error.code === 'INVALID_MARKETPLACE_INVENTORY'
       );
       assert.throws(
-        () => parseMarketplaceInventory('{"marketplaces":[{"name":"ecc","root":""}]}'),
+        () => parseMarketplaceInventory('{"marketplaces":[{"name":"yus","root":""}]}'),
         error => error.code === 'INVALID_MARKETPLACE_INVENTORY'
       );
       assert.throws(
@@ -544,8 +544,8 @@ async function runTests() {
       assert.throws(
         () => parsePluginInventory(JSON.stringify({
           installed: [
-            { pluginId: 'ecc@ecc', installed: true, enabled: true },
-            { pluginId: 'ecc@ecc', installed: true, enabled: true },
+            { pluginId: 'yus@yus', installed: true, enabled: true },
+            { pluginId: 'yus@yus', installed: true, enabled: true },
           ],
           available: [],
         })),
@@ -553,9 +553,9 @@ async function runTests() {
       );
       assert.strictEqual(normalizeGitHubGitOrigin(null), null);
       assert.strictEqual(normalizeGitHubGitOrigin('not a repository'), null);
-      assert.strictEqual(normalizeGitHubGitOrigin('affaan-m/ECC'), null);
+      assert.strictEqual(normalizeGitHubGitOrigin('yusei21/yus'), null);
       assert.strictEqual(
-        normalizeGitHubGitOrigin('http://github.com/affaan-m/ECC.git'),
+        normalizeGitHubGitOrigin('http://github.com/yusei21/yus.git'),
         null
       );
     }],
@@ -581,23 +581,23 @@ async function runTests() {
         }
       );
     }],
-    ['fails when post-install verification does not find enabled ECC', async () => {
+    ['fails when post-install verification does not find enabled yus', async () => {
       const fake = createExecFile([
         { args: MARKETPLACE_LIST, stdout: marketplaceInventory(false) },
         { args: PLUGIN_LIST, stdout: pluginInventory(false) },
         { args: MARKETPLACE_ADD, stdout: '{"alreadyAdded":false}' },
         { args: MARKETPLACE_LIST, stdout: marketplaceInventory(true) },
-        { args: PLUGIN_ADD, stdout: '{"pluginId":"ecc@ecc"}' },
+        { args: PLUGIN_ADD, stdout: '{"pluginId":"yus@yus"}' },
         { args: PLUGIN_LIST, stdout: pluginInventory(false) },
       ]);
 
       await expectSetupError(
         reconcileCodexPlugin({}, dependenciesFor(fake)),
         'PLUGIN_VERIFICATION_FAILED',
-        /verify.*ecc@ecc/i
+        /verify.*yus@yus/i
       );
     }],
-    ['fails when marketplace verification cannot observe ECC', async () => {
+    ['fails when marketplace verification cannot observe yus', async () => {
       const fake = createExecFile([
         { args: MARKETPLACE_LIST, stdout: marketplaceInventory(false) },
         { args: PLUGIN_LIST, stdout: pluginInventory(false) },
@@ -608,7 +608,7 @@ async function runTests() {
       await expectSetupError(
         reconcileCodexPlugin({}, dependenciesFor(fake)),
         'MARKETPLACE_VERIFICATION_FAILED',
-        /verify.*ecc marketplace/i
+        /verify.*yus marketplace/i
       );
       assert.strictEqual(fake.calls.length, 4);
     }],

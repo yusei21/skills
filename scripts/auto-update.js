@@ -13,7 +13,7 @@ function showHelp(exitCode = 0) {
   console.log(`
 Usage: node scripts/auto-update.js [--target <${SUPPORTED_INSTALL_TARGETS.join('|')}>] [--repo-root <path>] [--dry-run] [--json]
 
-Pull the latest ECC repo changes and reinstall the current context's managed targets
+Pull the latest yus repo changes and reinstall the current context's managed targets
 using the original install-state request.
 `);
   process.exit(exitCode);
@@ -78,7 +78,7 @@ function deriveRepoRootFromState(state) {
     return repoRoot;
   }
 
-  throw new Error('Unable to infer ECC repo root from install-state operations');
+  throw new Error('Unable to infer yus repo root from install-state operations');
 }
 
 function buildInstallApplyArgs(record) {
@@ -129,12 +129,12 @@ function determineInstallCwd(record, repoRoot) {
   return repoRoot;
 }
 
-// Recognized ECC package names. A repo root is only trusted to run its
-// install-apply.js if its package.json identifies it as ECC — otherwise a
+// Recognized yus package names. A repo root is only trusted to run its
+// install-apply.js if its package.json identifies it as yus — otherwise a
 // cloned project that ships a nested `evil/{package.json,scripts/install-apply.js}`
 // could drive auto-update into executing attacker code (GHSA-hfpv-w6mp-5g95).
 // 'everything-claude-code' is the legacy 1.x package name, kept for existing checkouts.
-const ECC_PACKAGE_NAMES = new Set(['ecc-universal', 'everything-claude-code']);
+const YUS_PACKAGE_NAMES = new Set(['yus-universal', 'everything-claude-code']);
 
 function validateRepoRoot(repoRoot) {
   const normalized = path.resolve(repoRoot);
@@ -142,21 +142,21 @@ function validateRepoRoot(repoRoot) {
   const installApplyPath = path.join(normalized, 'scripts', 'install-apply.js');
 
   if (!fs.existsSync(packageJsonPath)) {
-    throw new Error(`Invalid ECC repo root: missing package.json at ${packageJsonPath}`);
+    throw new Error(`Invalid yus repo root: missing package.json at ${packageJsonPath}`);
   }
 
   if (!fs.existsSync(installApplyPath)) {
-    throw new Error(`Invalid ECC repo root: missing install script at ${installApplyPath}`);
+    throw new Error(`Invalid yus repo root: missing install script at ${installApplyPath}`);
   }
 
   let pkgName;
   try {
     pkgName = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).name;
   } catch {
-    throw new Error(`Invalid ECC repo root: unreadable package.json at ${packageJsonPath}`);
+    throw new Error(`Invalid yus repo root: unreadable package.json at ${packageJsonPath}`);
   }
-  if (!ECC_PACKAGE_NAMES.has(pkgName)) {
-    throw new Error(`Refusing to run install from untrusted repo root ${normalized}: package.json name '${pkgName}' is not an official ECC package.`);
+  if (!YUS_PACKAGE_NAMES.has(pkgName)) {
+    throw new Error(`Refusing to run install from untrusted repo root ${normalized}: package.json name '${pkgName}' is not an official yus package.`);
   }
 
   return normalized;
@@ -245,7 +245,7 @@ function runAutoUpdate(options = {}, dependencies = {}) {
   if (!requestedRepoRoot) {
     const uniqueRepoRoots = [...new Set(inferredRepoRoots)];
     if (uniqueRepoRoots.length > 1) {
-      throw new Error(`Multiple ECC repo roots detected: ${uniqueRepoRoots.join(', ')}`);
+      throw new Error(`Multiple yus repo roots detected: ${uniqueRepoRoots.join(', ')}`);
     }
   }
 
@@ -332,8 +332,8 @@ function printHuman(result) {
   if (result.results.length === 0) {
     const hasWarnings = Array.isArray(result.warnings) && result.warnings.length > 0;
     console.log(hasWarnings
-      ? 'No active ECC install-state files found for the current home/project context.'
-      : 'No ECC install-state files found for the current home/project context.');
+      ? 'No active yus install-state files found for the current home/project context.'
+      : 'No yus install-state files found for the current home/project context.');
     for (const warning of Array.isArray(result.warnings) ? result.warnings : []) {
       console.log(`Warning: ${warning}`);
     }

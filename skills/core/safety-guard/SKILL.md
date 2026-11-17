@@ -2,7 +2,7 @@
 name: safety-guard
 description: "Guard against destructive operations with three modes: Careful intercepts dangerous commands (rm -rf, git push --force, DROP TABLE) for confirmation, Freeze locks writes to one directory, and Guard combines both. Advisory: the agent applies these rules itself; no hook ships with it. Use when working on production systems, running agents autonomously, restricting edits to a directory, or during migrations, deploys, and data changes."
 metadata:
-  origin: ECC
+  origin: yus
 ---
 
 # Safety Guard — Prevent Destructive Operations
@@ -57,9 +57,9 @@ Tell the agent to stop applying the rules.
 
 ## Enforcement
 
-This skill is advisory. ECC ships no `/safety-guard` command and no hook for it, so nothing blocks a tool call that breaks these rules. For blocking that does not depend on the agent, use Claude Code [permission deny rules](https://code.claude.com/docs/en/permissions) (for example `Bash(rm -rf *)`) or a [PreToolUse hook](https://code.claude.com/docs/en/hooks).
+This skill is advisory. yus ships no `/safety-guard` command and no hook for it, so nothing blocks a tool call that breaks these rules. For blocking that does not depend on the agent, use Claude Code [permission deny rules](https://code.claude.com/docs/en/permissions) (for example `Bash(rm -rf *)`) or a [PreToolUse hook](https://code.claude.com/docs/en/hooks).
 
 ## Integration
 
 - Enable by default for `codex -a never` sessions
-- Pair with observability risk scoring in ECC 2.0
+- Pair with observability risk scoring in yus 2.0

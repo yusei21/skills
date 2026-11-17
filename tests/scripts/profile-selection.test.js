@@ -6,11 +6,11 @@ const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const test = require('node:test');
 const { withFixture } = require('../lib/helpers/context-fixture');
-const CLI = path.resolve(__dirname, '../../scripts/ecc.js');
+const CLI = path.resolve(__dirname, '../../scripts/yus.js');
 const PROFILE_CLI = path.resolve(__dirname, '../../scripts/profile.js');
 
 function cliFixture(run) {
-  const root = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'ecc-selection-cli-'));
+  const root = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'yus-selection-cli-'));
   const stateRoot = path.join(root, 'managed');
   const input = path.join(root, 'task.json');
   const setTask = values => fs.writeFileSync(input, JSON.stringify({ sessionId: 'test', taskId: 'test',
@@ -39,16 +39,16 @@ function providerFixture(root) {
     const original = cp.spawnSync;
     cp.spawnSync = (command, ...args) => {
       if (command !== 'codex' && command !== 'claude') return original(command, ...args);
-      fs.writeFileSync(process.env.ECC_TEST_PROVIDER_SENTINEL, 'executed');
-      return { status: Number(process.env.ECC_TEST_PROVIDER_STATUS || 0),
+      fs.writeFileSync(process.env.YUS_TEST_PROVIDER_SENTINEL, 'executed');
+      return { status: Number(process.env.YUS_TEST_PROVIDER_STATUS || 0),
         stdout: 'fixture output', stderr: 'fixture provider failure' };
     };
   `);
-  return { preload, sentinel, env: { ECC_TEST_PROVIDER_SENTINEL: sentinel } };
+  return { preload, sentinel, env: { YUS_TEST_PROVIDER_SENTINEL: sentinel } };
 }
 
 test('CLI resolves and loads explicit task context with JSON output', () => {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-selection-cli-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-selection-cli-'));
   try {
     const input = path.join(root, 'task.json');
     fs.writeFileSync(input, JSON.stringify({ sessionId: 'test', taskId: 'test', revision: 1, phase: 'implement',
@@ -123,7 +123,7 @@ test('stored resolution and launch reject every configuration override before re
 
 test('launch dry runs never load bodies or execute a provider', () => cliFixture(({ root, input, invoke }) => {
   const provider = providerFixture(root);
-  for (const dry of [{ args: ['--dry-run'], env: {} }, { args: [], env: { ECC_DRY_RUN: '1' } }]) {
+  for (const dry of [{ args: ['--dry-run'], env: {} }, { args: [], env: { YUS_DRY_RUN: '1' } }]) {
     const result = invoke(['run', '--task-input', input, ...dry.args],
       { preload: provider.preload, env: { ...provider.env, ...dry.env } });
     assert.equal(result.code, 0, result.response.summary);
@@ -136,7 +136,7 @@ test('launch dry runs never load bodies or execute a provider', () => cliFixture
 test('provider exit failures produce a failed CLI result and preserve the native exit code', () => cliFixture(({ root, input, invoke }) => {
   const provider = providerFixture(root);
   const result = invoke(['run', '--task-input', input], { preload: provider.preload,
-    env: { ...provider.env, ECC_TEST_PROVIDER_STATUS: '23' } });
+    env: { ...provider.env, YUS_TEST_PROVIDER_STATUS: '23' } });
   assert.equal(fs.readFileSync(provider.sentinel, 'utf8'), 'executed');
   assert.equal(result.code, 1);
   assert.equal(result.response.status, 'error');

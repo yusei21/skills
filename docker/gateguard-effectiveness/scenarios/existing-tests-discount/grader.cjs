@@ -24,4 +24,4 @@ checks.push(suitePasses);
 checks.push(testFiles.some(file => /\b1800\b|0\.15|15\s*%/.test(fs.readFileSync(path.resolve('tests', file), 'utf8'))));
 
 const passed = checks.filter(Boolean).length;
-console.log(`ECC_EVAL_SCORE ${JSON.stringify({ score: passed / checks.length })}`);
+console.log(`YUS_EVAL_SCORE ${JSON.stringify({ score: passed / checks.length })}`);

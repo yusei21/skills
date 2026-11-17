@@ -4,7 +4,8 @@
 
 ## Origem
 
-Este é um fork modernizado do [affaan-m/ECC](https://github.com/affaan-m/ECC).
+O yus é um fork modernizado do [affaan-m/ECC](https://github.com/affaan-m/ECC)
+(Everything Claude Code), renomeado para yus.
 Ele divide a biblioteca de skills em departamentos que você instala um de cada
 vez, checa os tipos do runtime Node.js com TypeScript 7 e roda nas versões
 atuais das toolchains de Node.js, Rust e Python.

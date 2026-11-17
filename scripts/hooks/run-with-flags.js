@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Executes a hook script only when enabled by ECC hook profile flags.
+ * Executes a hook script only when enabled by yus hook profile flags.
  *
  * Usage:
  *   node run-with-flags.js <hookId> <scriptRelativePath> [profilesCsv]
@@ -28,17 +28,17 @@ const FAIL_CLOSED_ON_TRUNCATION_HOOKS = new Set([
   'pre:mcp-health-check'
 ]);
 
-const MAX_STDIN = resolveMaxStdin(process.env.ECC_HOOK_INPUT_MAX_BYTES, {
+const MAX_STDIN = resolveMaxStdin(process.env.YUS_HOOK_INPUT_MAX_BYTES, {
   writeDiagnostic: message => process.stderr.write(message)
 });
 const UPSTREAM_TRUNCATED = /^(1|true|yes)$/i.test(
-  String(process.env.ECC_HOOK_INPUT_TRUNCATED_UPSTREAM || '')
+  String(process.env.YUS_HOOK_INPUT_TRUNCATED_UPSTREAM || '')
 );
 
 function readUpstreamHookContext() {
   if (!UPSTREAM_TRUNCATED) return {};
   try {
-    const parsed = JSON.parse(String(process.env.ECC_HOOK_CONTEXT_JSON || '{}'));
+    const parsed = JSON.parse(String(process.env.YUS_HOOK_CONTEXT_JSON || '{}'));
     return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
   } catch {
     return {};
@@ -125,7 +125,7 @@ function resolveLegacySpawnStdout(result) {
 function truncatedInputResult(hookId, maxStdin) {
   if (!FAIL_CLOSED_ON_TRUNCATION_HOOKS.has(hookId)) return null;
   if (GATEGUARD_HOOKS.has(hookId)) {
-    const gateGuardValue = String(process.env.ECC_GATEGUARD || '').trim().toLowerCase();
+    const gateGuardValue = String(process.env.YUS_GATEGUARD || '').trim().toLowerCase();
     const legacyDisabled = String(process.env.GATEGUARD_DISABLED || '').trim() === '1';
     if (legacyDisabled || ['0', 'false', 'off', 'disabled', 'disable'].includes(gateGuardValue)) {
       return null;
@@ -133,7 +133,7 @@ function truncatedInputResult(hookId, maxStdin) {
   }
   if (hookId === 'pre:mcp-health-check') {
     const failOpen = /^(1|true|yes)$/i.test(
-      String(process.env.ECC_MCP_HEALTH_FAIL_OPEN || '')
+      String(process.env.YUS_MCP_HEALTH_FAIL_OPEN || '')
     );
     if (failOpen) return null;
   }
@@ -201,7 +201,7 @@ async function main() {
   // cut mid-stream is treated by the harness as a hook failure, blocking the
   // tool call (#2222). Empty stdout + exit 0 means "no opinion", so
   // silent/no-op paths fail open. The hook itself still runs and receives
-  // the truncated flag (run() context / ECC_HOOK_INPUT_TRUNCATED), so
+  // the truncated flag (run() context / YUS_HOOK_INPUT_TRUNCATED), so
   // security hooks like config-protection can still choose to block.
   const sanitizeEcho = text => (truncated && text === raw ? '' : text);
   if (truncated) {
@@ -305,7 +305,7 @@ async function main() {
   // Legacy path: spawn a child Node process for hooks without run() export
   // Direct runner invocations also need a deadline. Preserve an earlier
   // bootstrap deadline instead of granting another full 30 seconds.
-  const inheritedDeadline = Number(process.env.ECC_HOOK_DEADLINE_MS);
+  const inheritedDeadline = Number(process.env.YUS_HOOK_DEADLINE_MS);
   const deadline = Math.min(
     Date.now() + 30000,
     Number.isSafeInteger(inheritedDeadline) && inheritedDeadline > 0
@@ -324,11 +324,11 @@ async function main() {
     env: {
       ...process.env,
       CLAUDE_PLUGIN_ROOT: pluginRoot,
-      ECC_PLUGIN_ROOT: pluginRoot,
-      ECC_HOOK_ID: hookId,
-      ECC_HOOK_INPUT_TRUNCATED: truncated ? '1' : '0',
-      ECC_HOOK_INPUT_MAX_BYTES: String(MAX_STDIN),
-      ECC_HOOK_DEADLINE_MS: String(deadline)
+      YUS_PLUGIN_ROOT: pluginRoot,
+      YUS_HOOK_ID: hookId,
+      YUS_HOOK_INPUT_TRUNCATED: truncated ? '1' : '0',
+      YUS_HOOK_INPUT_MAX_BYTES: String(MAX_STDIN),
+      YUS_HOOK_DEADLINE_MS: String(deadline)
     },
     cwd: process.cwd(),
     timeout: remaining

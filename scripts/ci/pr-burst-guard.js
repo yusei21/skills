@@ -104,7 +104,7 @@ function capExcess(openRows, current, policy, alreadyClosed = new Set(), action 
     capExcess: excess.map(pr => ({ number: pr.number, state: pr.state })) };
 }
 
-const CAP_MARKER = '<!-- ecc-pr-open-cap -->';
+const CAP_MARKER = '<!-- yus-pr-open-cap -->';
 
 async function enforceCap(api, root, pr, current, result) {
   try {
@@ -137,12 +137,12 @@ async function blockAuthor(blockAPI, owner, login) {
 
 async function notify(api, root, current, result, policy) {
   // A bot-authored ledger prevents contributors from spoofing a suppression marker.
-  const marker = `<!-- ecc-pr-burst:${current.user.id}:${result.until.slice(0, 10)} -->`;
+  const marker = `<!-- yus-pr-burst:${current.user.id}:${result.until.slice(0, 10)} -->`;
   const issues = await listPages(api, `${root}/issues?state=all&sort=created&direction=desc`,
     batch => batch.some(issue => issue.created_at && issue.created_at.slice(0, 10) < result.until.slice(0, 10)));
   const existing = issues.find(issue => !issue.pull_request && issue.user.login === 'github-actions[bot]'
     && issue.body?.includes(marker));
-  const escalation = '<!-- ecc-pr-burst:block-threshold -->';
+  const escalation = '<!-- yus-pr-burst:block-threshold -->';
   if (existing?.body.includes(escalation) && !result.block) return;
   const mentions = policy.notify.map(login => `@${login}`).join(' ');
   const body = [marker, result.block ? escalation : '', `${mentions}: PR submission moderation triggered.`,

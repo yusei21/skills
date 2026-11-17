@@ -15,21 +15,21 @@ falta, em ordem. Atualize ao terminar cada item.
   por isso `npm run typecheck` chama `node_modules/typescript/bin/tsc`.
 - **Skills por departamento.** `skills/<departamento>/<skill>/`. O Claude Code
   carrega todo `skills/<skill>/SKILL.md` na raiz de um plugin e não entra em
-  subpastas: assim o plugin `ecc` lista só o núcleo e cada `ecc-<departamento>`
+  subpastas: assim o plugin `yus` lista só o núcleo e cada `yus-<departamento>`
   traz o resto. Medido com `claude plugin details`: ~33.800 tokens fixos por
-  sessão no ECC original, ~9.500 no `ecc` novo.
+  sessão no yus original, ~9.500 no `yus` novo.
 - **Instalação continua plana.** O instalador remove o nível do departamento no
   destino (`skills/<skill>/`), em `scripts/lib/install-targets/helpers.js`.
   Código de runtime que procura uma skill usa `scripts/lib/skill-layout.js`,
   que aceita os dois layouts. O `pi/core` também é plano: `build-pi-core.js`
   reescreve os links relativos ao copiar.
 - **Rust:** edition 2024, MSRV 1.85 (`rust-version`), toolchain fixada em 1.99
-  (`ecc2/rust-toolchain.toml`). Clippy no nível padrão (`all`); o `pedantic`
+  (`yus2/rust-toolchain.toml`). Clippy no nível padrão (`all`); o `pedantic`
   gera milhares de avisos neste crate de 55 mil linhas e ficou de fora.
 - **Python:** uv. `[dependency-groups] dev`, backend `uv_build`, `uv.lock`,
   `.python-version` 3.14, mínimo 3.11. O ruff só olha `src/` e `tests/`: o
   ruff 0.16 também formata blocos Python dentro de Markdown e scripts das skills.
-- **Fora do escopo por pedido:** renomear ECC, trazer as skills do repositório
+- **Fora do escopo por pedido:** renomear yus, trazer as skills do repositório
   Harnesses (só a ideia), traduções e patrocínios (removidos).
 
 ## Feito
@@ -54,10 +54,10 @@ falta, em ordem. Atualize ao terminar cada item.
 - **Testes:** as 6 suítes que falhavam foram corrigidas. O
   `audit-closed-references` não dependia de rede: uma data fixa tinha saído da
   janela de 30 dias.
-- **Rust (`ecc2/`):** edition 2024, `[lints]`, `cargo fix`/`clippy --fix`/`fmt`.
+- **Rust (`yus2/`):** edition 2024, `[lints]`, `cargo fix`/`clippy --fix`/`fmt`.
   Os testes que mudam `HOME`/`PATH` usam uma trava comum; os repositórios de
-  teste usam `git init -b main`. Comando novo `ecc skills suggest "<tarefa>"`
-  (ver `ecc2/README.md`).
+  teste usam `git init -b main`. Comando novo `yus skills suggest "<tarefa>"`
+  (ver `yus2/README.md`).
 - **Python (`src/llm/`):** migrado para uv. Três testes ainda apontavam para
   caminhos de skills antigos, escondidos por um erro de coleta.
 - **CI:** matriz Node 22/24/26, jobs fixos em 24, `typecheck` e
@@ -75,11 +75,20 @@ falta, em ordem. Atualize ao terminar cada item.
 - **node:test:** mais 48 suítes convertidas pelo codemod (mesma contagem de
   testes antes e depois).
 - **Tipagem:** `scripts/lib/utils.js` em `strict`, sem o `utils.d.ts`.
-- **Publicado** em `github.com/yusei21/skills` (`main`, 16/11/2026). Os 96
-  commits do projeto anterior (coleção de skills derivada do ECC, até
-  `22151ba`) continuam no histórico; o commit "restart from ECC upstream"
-  troca o conteúdo pelo ECC original e a modernização vem depois. Skills que
+- **Publicado** em `github.com/yusei21/yus` (`main`, 16/11/2026; o repositório
+  se chamava `yusei21/skills`). Os 96
+  commits do projeto anterior (coleção de skills derivada do yus, até
+  `22151ba`) continuam no histórico; o commit "restart from yus upstream"
+  troca o conteúdo pelo yus original e a modernização vem depois. Skills que
   só existiam no projeto anterior estão no histórico (`git show 22151ba:skills/`).
+- **Renomeado de ECC para yus** em todo o projeto: plugins (`yus@yus`,
+  `yus-<departamento>`), comando `yus`, variáveis `YUS_*`, pastas, arquivos
+  (`scripts/yus.js`, `yus2/`), skills (`yus-guide`, `configure-yus`) e textos
+  (sempre em minúsculas). Ficaram como estão: `LICENSE`, a atribuição no
+  `NOTICE`, os três guias assinados por Affaan Mustafa, produtos de terceiros
+  (app ECC Tools, `ecc.tools`, `ecc-agentshield`), nomes legados como
+  `everything-claude-code` e fixtures com bytes históricos verificados por
+  sha256.
 - `node scripts/dev/generate-skill-triggers.js --keep-triggers` atualiza o
   `registryDigest` sem chamar modelo. Use depois de editar skills sem mudar a
   `description`; com descrição nova ou skill nova, rode a geração completa.
@@ -102,11 +111,11 @@ falta, em ordem. Atualize ao terminar cada item.
 - `dmux-workflows`, `autonomous-loops` e `skill-host-compat` chamam scripts via
   `$CLAUDE_PLUGIN_ROOT/scripts/`. Num plugin de departamento essa raiz é a pasta
   do departamento; os snippets já mostram erro e pedem o caminho de um checkout.
-- Usar `ecc-all-departments` **ou** plugins individuais, nunca os dois.
+- Usar `yus-all-departments` **ou** plugins individuais, nunca os dois.
 - `.agents/skills/` (cópias para Codex) e `.cursor/skills/` continuam planos.
 - O job de Yarn no CI usa Corepack, que o Node 25+ não traz mais; por isso as
   linhas de gerenciador de pacotes da matriz ficam no Node 24.
-- O `ecc-tui` ainda tem ~20 avisos de código morto (`dead_code`) do upstream.
+- O `yus-tui` ainda tem ~20 avisos de código morto (`dead_code`) do upstream.
 
 ## Como verificar
 
@@ -115,7 +124,7 @@ npm ci && npm test        # validadores + suíte JS
 npm run typecheck
 npm run lint
 uv sync && uv run pytest && uv run ruff check && uv run mypy src
-(cd ecc2 && cargo fmt --check && cargo clippy --all-targets && cargo test)
+(cd yus2 && cargo fmt --check && cargo clippy --all-targets && cargo test)
 claude plugin validate .
 ```
 

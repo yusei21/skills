@@ -33,7 +33,7 @@ function resolveClaudeConfigDir(env = process.env) {
 }
 
 function resolveStateDir(env = process.env) {
-  const override = env.ECC_PLAN_CANVAS_STATE_DIR;
+  const override = env.YUS_PLAN_CANVAS_STATE_DIR;
   if (override && String(override).trim()) return path.resolve(String(override).trim());
   return path.join(resolveClaudeConfigDir(env), 'plan-canvas');
 }

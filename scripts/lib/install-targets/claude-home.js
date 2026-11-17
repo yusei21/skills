@@ -12,21 +12,21 @@ const {
   convertWindowsPathToWSL,
 } = require('./helpers');
 
-const CLAUDE_ECC_NAMESPACE = 'ecc';
+const CLAUDE_YUS_NAMESPACE = 'yus';
 
 function getClaudeManagedDestinationPath(adapter, sourceRelativePath, input) {
   const normalizedSourcePath = normalizeRelativePath(sourceRelativePath);
   const targetRoot = adapter.resolveRoot(input);
 
   if (normalizedSourcePath === 'rules') {
-    return path.join(targetRoot, 'rules', CLAUDE_ECC_NAMESPACE);
+    return path.join(targetRoot, 'rules', CLAUDE_YUS_NAMESPACE);
   }
 
   if (normalizedSourcePath.startsWith('rules/')) {
     return path.join(
       targetRoot,
       'rules',
-      CLAUDE_ECC_NAMESPACE,
+      CLAUDE_YUS_NAMESPACE,
       normalizedSourcePath.slice('rules/'.length)
     );
   }
@@ -67,7 +67,7 @@ function expandTilde(inputPath, homeDir) {
 // Claude Code loads its user-level config from CLAUDE_CONFIG_DIR when set,
 // otherwise ~/.claude. Resolve the install root the same way the runtime does
 // (see resolveClaudePaths/inventory and getDefaultClaudeAgentDataHome) so an
-// install lands where Claude Code will actually read it; without this, ECC
+// install lands where Claude Code will actually read it; without this, yus
 // writes to ~/.claude and "installs, but nothing loads" whenever CLAUDE_CONFIG_DIR
 // redirects the config root (common on WSL / dev-container / dotfile setups).
 // On WSL, convert Windows paths (e.g., C:\Users\name\.claude) to WSL paths
@@ -96,7 +96,7 @@ module.exports = createInstallTargetAdapter({
   kind: 'home',
   rootSegments: ['.claude'],
   resolveRoot: resolveClaudeConfigRoot,
-  installStatePathSegments: ['ecc', 'install-state.json'],
+  installStatePathSegments: ['yus', 'install-state.json'],
   excludedSourcePaths: HOME_INSTALL_EXCLUDED_SOURCE_PATHS,
   nativeRootRelativePath: '.claude-plugin',
   planOperations(input, adapter) {

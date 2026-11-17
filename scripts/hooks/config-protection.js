@@ -232,7 +232,7 @@ function checkTarget(filePath) {
 module.exports = { run };
 
 // Stdin fallback for spawnSync execution
-let truncated = /^(1|true|yes)$/i.test(String(process.env.ECC_HOOK_INPUT_TRUNCATED || ''));
+let truncated = /^(1|true|yes)$/i.test(String(process.env.YUS_HOOK_INPUT_TRUNCATED || ''));
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => {
   if (raw.length < MAX_STDIN) {
@@ -247,7 +247,7 @@ process.stdin.on('data', chunk => {
 process.stdin.on('end', () => {
   const result = run(raw, {
     truncated,
-    maxStdin: Number(process.env.ECC_HOOK_INPUT_MAX_BYTES) || MAX_STDIN
+    maxStdin: Number(process.env.YUS_HOOK_INPUT_MAX_BYTES) || MAX_STDIN
   });
 
   if (result.stderr) {

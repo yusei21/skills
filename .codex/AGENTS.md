@@ -1,4 +1,4 @@
-# ECC for Codex CLI
+# yus for Codex CLI
 
 This supplements the root `AGENTS.md` with Codex-specific guidance.
 
@@ -50,21 +50,21 @@ Available skills:
 
 ## MCP Servers
 
-Treat the project-local `.codex/config.toml` as the default Codex baseline for ECC. The current ECC baseline enables GitHub, Context7, Exa, Memory, Playwright, and Sequential Thinking; add heavier extras in `~/.codex/config.toml` only when a task actually needs them.
+Treat the project-local `.codex/config.toml` as the default Codex baseline for yus. The current yus baseline enables GitHub, Context7, Exa, Memory, Playwright, and Sequential Thinking; add heavier extras in `~/.codex/config.toml` only when a task actually needs them.
 
-ECC's canonical Codex section name is `[mcp_servers.context7]`. The launcher package remains `@upstash/context7-mcp`; only the TOML section name is normalized for consistency with `codex mcp list` and the reference config.
+yus's canonical Codex section name is `[mcp_servers.context7]`. The launcher package remains `@upstash/context7-mcp`; only the TOML section name is normalized for consistency with `codex mcp list` and the reference config.
 
 ### Automatic config.toml merging
 
-The sync script (`scripts/sync-ecc-to-codex.sh`) uses a Node-based TOML parser to safely merge ECC MCP servers into `~/.codex/config.toml`:
+The sync script (`scripts/sync-yus-to-codex.sh`) uses a Node-based TOML parser to safely merge yus MCP servers into `~/.codex/config.toml`:
 
-- **Add-only by default** — missing ECC servers are appended; existing servers are never modified or removed.
+- **Add-only by default** — missing yus servers are appended; existing servers are never modified or removed.
 - **7 managed servers** — Supabase, Playwright, Context7, Exa, GitHub, Memory, Sequential Thinking.
-- **Canonical naming** — ECC manages Context7 as `[mcp_servers.context7]`; legacy `[mcp_servers.context7-mcp]` entries are treated as aliases during updates.
+- **Canonical naming** — yus manages Context7 as `[mcp_servers.context7]`; legacy `[mcp_servers.context7-mcp]` entries are treated as aliases during updates.
 - **Package-manager aware** — uses the project's configured package manager (npm/pnpm/yarn/bun) instead of hardcoding `pnpm`.
-- **Drift warnings** — if an existing server's config differs from the ECC recommendation, the script logs a warning.
-- **`--update-mcp`** — explicitly replaces all ECC-managed servers with the latest recommended config (safely removes subtables like `[mcp_servers.supabase.env]`).
-- **User config is always preserved** — custom servers, args, env vars, and credentials outside ECC-managed sections are never touched.
+- **Drift warnings** — if an existing server's config differs from the yus recommendation, the script logs a warning.
+- **`--update-mcp`** — explicitly replaces all yus-managed servers with the latest recommended config (safely removes subtables like `[mcp_servers.supabase.env]`).
+- **User config is always preserved** — custom servers, args, env vars, and credentials outside yus-managed sections are never touched.
 
 ## External Action Boundaries
 

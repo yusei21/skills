@@ -6,7 +6,7 @@ description: >
   and package organization. Use when working with Go code to apply idiomatic
   Go patterns.
 metadata:
-  origin: ECC
+  origin: yus
   globs: ["**/*.go", "**/go.mod", "**/go.sum"]
 ---
 

@@ -19,10 +19,7 @@ possível e só para as linhas de versão com suporte.
 Sempre que possível, use o reporte privado de vulnerabilidades do GitHub; ele
 chega direto ao mantenedor:
 
-- <https://github.com/affaan-m/ECC/security/advisories/new>
-
-Você também pode mandar e-mail para **<affaan@ecc.tools>** (o alias
-`security@ecc.tools` não é monitorado; use `affaan@ecc.tools`).
+- <https://github.com/yusei21/yus/security/advisories/new>
 
 **Não** abra uma issue pública no GitHub para vulnerabilidades de segurança.
 
@@ -51,8 +48,8 @@ do escopo, já foi corrigido ou precisa de um caminho de ataque mais forte.
 
 Esta política cobre:
 
-- o repositório `affaan-m/ECC`
-- o pacote npm `ecc-universal`
+- o repositório `yusei21/yus`
+- o pacote npm `yus-universal`
 - as superfícies de plugin, instalação, reparo, dashboard, hook, regra, skill,
   MCP e comando distribuídas a partir deste repositório
 - os workflows de GitHub Actions e a automação de release deste repositório
@@ -64,33 +61,25 @@ Esta política cobre:
 
 ## Canais oficiais de distribuição
 
-Os canais oficiais do ECC são:
+Os canais oficiais do yus são:
 
-- repositório no GitHub: <https://github.com/affaan-m/ECC>
-- pacote npm: `ecc-universal`
-- GitHub App: <https://github.com/apps/ecc-tools>
-- slug de marketplace/plugin: `ecc@ecc`
-- site: <https://ecc.tools>
+- repositório no GitHub: <https://github.com/yusei21/yus>
+- slug de marketplace/plugin: `yus@yus`
 
-Canal oficial do AgentShield:
+O yus não é publicado no npm. O AgentShield (`ecc-agentshield`,
+<https://github.com/affaan-m/agentshield>) é uma ferramenta separada do autor
+do projeto ECC original; reporte os problemas dele lá.
 
-- pacote npm: `ecc-agentshield`
-- repositório no GitHub: <https://github.com/affaan-m/agentshield>
-
-Os pacotes a seguir foram vistos usando metadados do repositório ECC, mas
-**não são mantidos pelo ECC**:
+Os pacotes a seguir reaproveitam metadados do projeto ECC original e **não são
+mantidos aqui**:
 
 - `@chil_ntl/ecc-cli`
 - `ecc-100xprompt-plugin`
 
 Trate qualquer pacote que não esteja entre os canais oficiais como não oficial
 até que seja verificado. Não instale pacotes chamados `opencode-ecc`,
-`everything-claude-code` ou outros nomes parecidos com ECC, a menos que este
+`everything-claude-code` ou outros nomes parecidos com yus, a menos que este
 repositório os documente explicitamente como oficiais.
-
-O grafo de dependências do GitHub também pode mostrar aliases de módulos Go,
-como `github.com/affaan-m/ecc`, ou caminhos antigos do repositório. Hoje o ECC
-não é distribuído como módulo Go com suporte.
 
 ## Fora do escopo
 
@@ -99,12 +88,12 @@ Em geral, um reporte está fora do escopo quando mostra apenas:
 - execução de comando local em que o usuário já controla o shell local e
   nenhuma fronteira de confiança de privilégio maior é atravessada
 - capturas de tela, números de linha desatualizados ou reportes contra
-  `affaan-m/ECC` que não se reproduzem na versão atual de `affaan-m/ECC`
+  `yusei21/yus` que não se reproduzem na versão atual de `yusei21/yus`
 - self-XSS ou engenharia social sem caminho de exploração controlado pelo
   repositório
 - confusão de metadados de pacote ou do grafo de dependências sem um caminho de
-  instalação até um pacote oficial do ECC
-- vulnerabilidades em pacotes de terceiros, a menos que o ECC os fixe, instale
+  instalação até um pacote oficial do yus
+- vulnerabilidades em pacotes de terceiros, a menos que o yus os fixe, instale
   ou execute de um jeito que crie impacto adicional
 
 Ferramentas locais de desenvolvimento ainda podem ter problemas de segurança
@@ -114,7 +103,7 @@ usuário. Mostre essa fronteira de confiança no reporte.
 
 ## Regras de cadeia de suprimentos
 
-O ECC trata a exposição da cadeia de suprimentos como uma superfície de
+O yus trata a exposição da cadeia de suprimentos como uma superfície de
 segurança de primeira classe.
 
 - GitHub Actions de terceiros devem ser fixadas por SHA de commit.
@@ -122,7 +111,7 @@ segurança de primeira classe.
   blocos `run:`.
 - A documentação de release e instalação deve apontar apenas para pacotes
   oficiais.
-- Os metadados do pacote devem apontar para `affaan-m/ECC`, não para caminhos
+- Os metadados do pacote devem apontar para `yusei21/yus`, não para caminhos
   antigos do repositório.
 - Reportes privados de vulnerabilidade são triados em privado antes da
   divulgação pública.
@@ -178,7 +167,7 @@ interceptar o tráfego MCP.
 
 ## Triagem: blocos `<system-reminder>` suspeitos
 
-O ECC roda dentro de ambientes de agentes que podem injetar, a cada turno,
+O yus roda dentro de ambientes de agentes que podem injetar, a cada turno,
 lembretes de sistema temporários do lado do cliente na entrada do modelo.
 Esses blocos não são automaticamente conteúdo trazido pelo repositório.
 

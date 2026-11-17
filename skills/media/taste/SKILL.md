@@ -1,7 +1,7 @@
 ---
 name: taste
-description: Creative-direction layer for music videos and short-form edits in the angelcore / cloud-trance / hyperpop family — a named-genre aesthetic vocabulary, mood + color + light system, beat-synced editing grammar, and a pipeline chaining ECC's video skills from b-roll generation to distribution. Use when a video must feel intentional rather than merely functional — music videos, fancams, moodboard-driven reels, or giving AI-generated b-roll a coherent visual direction.
-origin: ECC
+description: Creative-direction layer for music videos and short-form edits in the angelcore / cloud-trance / hyperpop family — a named-genre aesthetic vocabulary, mood + color + light system, beat-synced editing grammar, and a pipeline chaining yus's video skills from b-roll generation to distribution. Use when a video must feel intentional rather than merely functional — music videos, fancams, moodboard-driven reels, or giving AI-generated b-roll a coherent visual direction.
+origin: yus
 ---
 
 # Taste
@@ -119,9 +119,9 @@ From the reference edits, the techniques that recur and define the style:
 shot held past its musical phrase; readable on-screen UI chrome (crop it out); mixed aspect
 ratios in one timeline.
 
-## The Pipeline — mixing the ECC video skills
+## The Pipeline — mixing the yus video skills
 
-This skill is the conductor. Each ECC skill is an instrument. Do not skip layers.
+This skill is the conductor. Each yus skill is an instrument. Do not skip layers.
 
 ```
 0. TASTE (this skill)        decide genre + mood + grammar BEFORE anything renders
@@ -135,7 +135,7 @@ This skill is the conductor. Each ECC skill is an instrument. Do not skip layers
 8. DISTRIBUTE (content-engine) platform-native versions + caption/cover
 ```
 
-| Step | ECC skill to load | What it does here |
+| Step | yus skill to load | What it does here |
 |------|-------------------|-------------------|
 | Structure & cut | `video-editing` | FFmpeg cut/concat/reframe, EDL, scene/silence detection |
 | Generate b-roll | `fal-ai-media` | image/video models per genre preset |

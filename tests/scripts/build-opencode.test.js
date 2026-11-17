@@ -40,10 +40,10 @@ function checkRuntime(runtimeRoot, extension, loader, installedHome = false) {
       // Home installs are auto-discovered. Their barrel must stay inert so
       // the hooks module is initialized exactly once; published package entry
       // imports continue to expose the actual plugin.
-      const active = installedHome === "true" ? await load("plugins/ecc-hooks") : entry
+      const active = installedHome === "true" ? await load("plugins/yus-hooks") : entry
       // The inert stub is a V2 definition object (id + setup), not a factory.
       if (installedHome === "true") {
-        assert.equal(entry.default.id, "ecc-hooks")
+        assert.equal(entry.default.id, "yus-hooks")
         assert.equal(typeof entry.default.setup, "function")
       }
       const plugin = await active.default({
@@ -62,7 +62,7 @@ function checkRuntime(runtimeRoot, extension, loader, installedHome = false) {
     main().catch((error) => { console.error(error); process.exit(1) })
   `
   const args = loader ? ["--loader", pathToFileURL(loader).href] : []
-  const fixture = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "ecc-opencode-runtime-"))
+  const fixture = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "yus-opencode-runtime-"))
   try {
     const home = path.join(fixture, "home")
     const project = path.join(fixture, "project")
@@ -73,7 +73,7 @@ function checkRuntime(runtimeRoot, extension, loader, installedHome = false) {
       encoding: "utf8",
       timeout: 30000,
       env: { ...process.env, HOME: home, USERPROFILE: home,
-        CLAUDE_CONFIG_DIR: path.join(home, ".claude"), ECC_AGENT_DATA_HOME: path.join(home, ".claude"),
+        CLAUDE_CONFIG_DIR: path.join(home, ".claude"), YUS_AGENT_DATA_HOME: path.join(home, ".claude"),
         XDG_CONFIG_HOME: path.join(home, ".config"), XDG_DATA_HOME: path.join(home, ".local", "share"),
         OPENCODE_CONFIG_DIR: installedHome ? runtimeRoot : path.join(home, ".config", "opencode") },
     })
@@ -161,20 +161,20 @@ function main() {
       })
     }],
     ["installed package resolves and imports its root module by name", () => {
-      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "ecc-opencode-entry-"))
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "yus-opencode-entry-"))
       try {
         fs.mkdirSync(path.join(tempDir, "node_modules"), { recursive: true })
         fs.symlinkSync(
           repoRoot,
-          path.join(tempDir, "node_modules", "ecc-universal"),
+          path.join(tempDir, "node_modules", "yus-universal"),
           process.platform === "win32" ? "junction" : "dir"
         )
         const probe = `
-          const resolved = import.meta.resolve("ecc-universal")
+          const resolved = import.meta.resolve("yus-universal")
           if (!resolved.endsWith("/.opencode/dist/index.js")) {
             throw new Error("unexpected entry resolution: " + resolved)
           }
-          const mod = await import("ecc-universal")
+          const mod = await import("yus-universal")
           if (Object.keys(mod).join(",") !== "default" || typeof mod.default !== "function") {
             throw new Error("root module must export exactly the plugin function")
           }

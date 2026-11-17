@@ -1,9 +1,9 @@
 ---
 name: module-governance
 description: >-
-  Establish or maintain a business module's local agent instructions, domain-context links, and interface ownership when implementing a new module or changing its responsibilities. Reuse project-level rules and existing ECC workflows; ordinary bug fixes, styling, and read-only design discussions do not start module documentation setup.
+  Establish or maintain a business module's local agent instructions, domain-context links, and interface ownership when implementing a new module or changing its responsibilities. Reuse project-level rules and existing yus workflows; ordinary bug fixes, styling, and read-only design discussions do not start module documentation setup.
 metadata:
-  origin: ECC
+  origin: yus
 ---
 
 # Module Governance
@@ -52,7 +52,7 @@ Do not claim that a harness automatically loads every nested instruction file.
 
 ### 3. Reuse the existing knowledge owners
 
-| Information | Existing ECC owner |
+| Information | Existing yus owner |
 |---|---|
 | Stable terminology and concept relationships | `context-and-decisions`, using the existing glossary or context role |
 | Hard-to-reverse decisions and rationale | `architecture-decision-records`, through the existing context handoff |

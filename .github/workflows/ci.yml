@@ -66,7 +66,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y ripgrep
           rg --version
-          printf 'ecc-pcre2-probe\n' | rg --pcre2 -- '^ecc-pcre2-probe$'
+          printf 'yus-pcre2-probe\n' | rg --pcre2 -- '^yus-pcre2-probe$'
 
       - name: Install and verify ripgrep (macOS)
         if: runner.os == 'macOS'
@@ -74,7 +74,7 @@ jobs:
         run: |
           if ! command -v rg >/dev/null 2>&1; then brew install ripgrep; fi
           rg --version
-          printf 'ecc-pcre2-probe\n' | rg --pcre2 -- '^ecc-pcre2-probe$'
+          printf 'yus-pcre2-probe\n' | rg --pcre2 -- '^yus-pcre2-probe$'
 
       - name: Install and verify ripgrep (Windows)
         if: runner.os == 'Windows'
@@ -88,7 +88,7 @@ jobs:
             # Official BurntSushi/ripgrep release archive and published SHA256.
             $archiveName = "ripgrep-$ripgrepVersion-x86_64-pc-windows-msvc.zip"
             $expectedHash = '71b2fef860abe467217a538ff31de02f5258807c0129f771846f87bd029aafc5'
-            $downloadRoot = Join-Path $env:RUNNER_TEMP ("ecc-ripgrep-" + [Guid]::NewGuid().ToString('N'))
+            $downloadRoot = Join-Path $env:RUNNER_TEMP ("yus-ripgrep-" + [Guid]::NewGuid().ToString('N'))
             New-Item -ItemType Directory -Path $downloadRoot | Out-Null
             $archivePath = Join-Path $downloadRoot $archiveName
             $archiveUrl = "https://github.com/BurntSushi/ripgrep/releases/download/$ripgrepVersion/$archiveName"
@@ -107,7 +107,7 @@ jobs:
           rg --version
           if ($LASTEXITCODE -ne 0) { throw 'ripgrep executable is unavailable' }
           # PowerShell writes CRLF to native stdin; retain anchored matching.
-          'ecc-pcre2-probe' | rg --pcre2 --crlf -- '^ecc-pcre2-probe$'
+          'yus-pcre2-probe' | rg --pcre2 --crlf -- '^yus-pcre2-probe$'
           if ($LASTEXITCODE -ne 0) { throw 'ripgrep PCRE2 support is required' }
 
       # Package manager setup
@@ -167,21 +167,21 @@ jobs:
         shell: bash
         run: |
           if [ "${{ matrix.scope }}" = "pm" ]; then
-            ECC_TEST_ONLY=$(grep -rlE --include='*.test.js' 'CLAUDE(_CODE)?_PACKAGE_MANAGER' tests | sed 's#^tests/##' | sort | paste -sd, -)
-            export ECC_TEST_ONLY
-            echo "pm lane files: $ECC_TEST_ONLY"
+            YUS_TEST_ONLY=$(grep -rlE --include='*.test.js' 'CLAUDE(_CODE)?_PACKAGE_MANAGER' tests | sed 's#^tests/##' | sort | paste -sd, -)
+            export YUS_TEST_ONLY
+            echo "pm lane files: $YUS_TEST_ONLY"
           fi
           # Suites that run scripts/build-opencode.js, or rename a checkout path
           # to a .backup-<pid> copy and restore it, mutate the shared checkout;
           # suites that assert a wall-clock budget cannot share cores with the
           # pool. Both groups run last, one at a time.
-          ECC_TEST_SERIAL=$(grep -rlE --include='*.test.js' 'build-opencode|\.backup-|dist\.backup|time budget' tests | sed 's#^tests/##' | sort | paste -sd, -)
-          export ECC_TEST_SERIAL
-          echo "serial after the pool: $ECC_TEST_SERIAL"
+          YUS_TEST_SERIAL=$(grep -rlE --include='*.test.js' 'build-opencode|\.backup-|dist\.backup|time budget' tests | sed 's#^tests/##' | sort | paste -sd, -)
+          export YUS_TEST_SERIAL
+          echo "serial after the pool: $YUS_TEST_SERIAL"
           node tests/run-all.js
         env:
           CLAUDE_CODE_PACKAGE_MANAGER: ${{ matrix.pm }}
-          ECC_TEST_JOBS: ${{ runner.os == 'Windows' && '1' || '4' }}
+          YUS_TEST_JOBS: ${{ runner.os == 'Windows' && '1' || '4' }}
 
       # Upload test artifacts on failure
       - name: Upload test artifacts
@@ -219,12 +219,12 @@ jobs:
         id: pack
         run: |
           npm pack --json > npm-pack.json
-          node -e "const crypto = require('crypto'); const fs = require('fs'); const data = JSON.parse(fs.readFileSync('npm-pack.json', 'utf8')); const file = data[0]?.filename; if (!/^ecc-universal-[0-9A-Za-z.+-]+\.tgz$/.test(file || '')) throw new Error('Unexpected packed filename'); const archives = fs.readdirSync('.').filter(name => name.endsWith('.tgz')); if (archives.length !== 1 || archives[0] !== file) throw new Error('Expected exactly one packed archive'); const digest = crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'); fs.appendFileSync(process.env.GITHUB_OUTPUT, 'package_file=' + file + '\npackage_sha256=' + digest + '\n')"
+          node -e "const crypto = require('crypto'); const fs = require('fs'); const data = JSON.parse(fs.readFileSync('npm-pack.json', 'utf8')); const file = data[0]?.filename; if (!/^yus-universal-[0-9A-Za-z.+-]+\.tgz$/.test(file || '')) throw new Error('Unexpected packed filename'); const archives = fs.readdirSync('.').filter(name => name.endsWith('.tgz')); if (archives.length !== 1 || archives[0] !== file) throw new Error('Expected exactly one packed archive'); const digest = crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'); fs.appendFileSync(process.env.GITHUB_OUTPUT, 'package_file=' + file + '\npackage_sha256=' + digest + '\n')"
 
       - name: Upload exact installer artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ecc-ci-installer-artifact
+          name: yus-ci-installer-artifact
           path: ${{ steps.pack.outputs.package_file }}
           if-no-files-found: error
 
@@ -252,13 +252,13 @@ jobs:
       - name: Download exact installer artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: ecc-ci-installer-artifact
+          name: yus-ci-installer-artifact
           path: release-artifacts
 
       - name: Verify packed install lifecycle
         env:
-          ECC_RELEASE_PACKAGE: release-artifacts/${{ needs.pack-installer.outputs.package_file }}
-          ECC_RELEASE_SHA256: ${{ needs.pack-installer.outputs.package_sha256 }}
+          YUS_RELEASE_PACKAGE: release-artifacts/${{ needs.pack-installer.outputs.package_file }}
+          YUS_RELEASE_SHA256: ${{ needs.pack-installer.outputs.package_sha256 }}
         run: node tests/ci/packed-artifact-lifecycle.js
 
   validate:
@@ -415,12 +415,12 @@ jobs:
           uv run --no-sync pytest tests/test_provider_tools.py tests/test_atlas_provider.py tests/test_astraflow_provider.py tests/test_resolver.py
 
   rust:
-    name: Rust (ecc2) fmt, clippy & test
+    name: Rust (yus2) fmt, clippy & test
     runs-on: ubuntu-latest
     timeout-minutes: 25
     defaults:
       run:
-        working-directory: ecc2
+        working-directory: yus2
 
     steps:
       - name: Checkout
@@ -428,7 +428,7 @@ jobs:
         with:
           persist-credentials: false
 
-      # rustup on the runner reads ecc2/rust-toolchain.toml and installs the
+      # rustup on the runner reads yus2/rust-toolchain.toml and installs the
       # pinned toolchain with rustfmt and clippy on first use.
       - name: Install pinned toolchain
         run: |
@@ -497,7 +497,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y ripgrep
           rg --version
-          printf 'ecc-pcre2-probe\n' | rg --pcre2 -- '^ecc-pcre2-probe$'
+          printf 'yus-pcre2-probe\n' | rg --pcre2 -- '^yus-pcre2-probe$'
 
       - name: Run coverage
         run: npm run coverage

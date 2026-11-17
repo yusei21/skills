@@ -626,7 +626,7 @@ function inspectionResult(status, operation, destinationPath, extra = {}) {
 function copyFileContentMatches(operation, inspectedPath, copySourcePath, linkIndex) {
   // A deactivation transform changes the desired bytes. A historical
   // active-file digest proves ownership, not completion of that transition.
-  const deactivatesOpenCode = operation.contentTransform === 'opencode-disable-ecc-hooks'
+  const deactivatesOpenCode = operation.contentTransform === 'opencode-disable-yus-hooks'
     || operation.contentTransform === 'opencode-disable-plugin-entrypoint';
   if (hasRecordedContentDigest(operation) && !deactivatesOpenCode) {
     return fileMatchesRecordedContent(inspectedPath, operation);
@@ -745,7 +745,7 @@ function inspectManagedOperation(repoRoot, trustedRoot, operation, linkIndex = n
     );
   } catch (error) {
     return inspectionResult('unsafe-destination', operation, destinationPath, {
-      reason: error && error.code === 'ECC_FINAL_DESTINATION_SYMLINK'
+      reason: error && error.code === 'YUS_FINAL_DESTINATION_SYMLINK'
         ? 'final-symlink'
         : 'outside-root'
     });
@@ -1052,7 +1052,7 @@ const LEGACY_LAYOUT_ISSUES = Object.freeze({
   },
   opencode: {
     code: 'legacy-opencode-layout',
-    message: 'Legacy OpenCode install-state remains under ~/.opencode. Rerun the OpenCode install or repair command to migrate unchanged ECC-managed files to ~/.config/opencode; modified files are preserved for review.'
+    message: 'Legacy OpenCode install-state remains under ~/.opencode. Rerun the OpenCode install or repair command to migrate unchanged yus-managed files to ~/.config/opencode; modified files are preserved for review.'
   }
 });
 

@@ -393,7 +393,7 @@ function gitignoreIgnoresEnvFiles(text) {
   let tempRoot;
 
   try {
-    tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-gitignore-'));
+    tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-gitignore-'));
     const repoRoot = path.join(tempRoot, 'repo');
     const templateRoot = path.join(tempRoot, 'template');
     const globalExcludesPath = path.join(tempRoot, 'global-excludes');

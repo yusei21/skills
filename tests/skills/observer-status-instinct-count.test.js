@@ -16,7 +16,7 @@ const repoRoot = path.resolve(__dirname, '..', '..');
 const skillRoot = path.join(repoRoot, 'skills', 'admin', 'continuous-learning-v2');
 const observerScript = path.join(skillRoot, 'agents', 'start-observer.sh');
 const instinctCli = path.join(skillRoot, 'scripts', 'instinct-cli.py');
-const bashBinary = process.env.ECC_TEST_BASH || (process.platform === 'win32' ? null : '/bin/bash');
+const bashBinary = process.env.YUS_TEST_BASH || (process.platform === 'win32' ? null : '/bin/bash');
 const childTimeoutMs = 3000;
 const childMaxBuffer = 64 * 1024;
 
@@ -65,7 +65,7 @@ function fixtureAt(root) {
 }
 
 function withFixture(callback, remove = fs.rmSync) {
-  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-observer-')));
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-observer-')));
   let failed = false; let primary; let result;
   try {
     result = callback(fixtureAt(root));
@@ -123,7 +123,7 @@ function fileLink(target, link, type = 'file') {
 
 function shellTest(fn) {
   return () => {
-    if (!bashBinary) throw new SkipTest('requires bash; set ECC_TEST_BASH on Windows');
+    if (!bashBinary) throw new SkipTest('requires bash; set YUS_TEST_BASH on Windows');
     return fn();
   };
 }

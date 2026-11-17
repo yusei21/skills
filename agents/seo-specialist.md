@@ -68,4 +68,4 @@ Fix: Exact change to make
 
 ## Reference
 
-Use `skills/business/seo` for the canonical ECC SEO workflow and implementation guidance.
+Use `skills/business/seo` for the canonical yus SEO workflow and implementation guidance.

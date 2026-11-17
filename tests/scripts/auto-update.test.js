@@ -43,8 +43,8 @@ function makeRecord({ repoRoot, homeDir, projectRoot, adapter, request, resoluti
     ? path.join(projectRoot, `.${adapter.target}`)
     : path.join(homeDir, '.claude');
   const installStatePath = adapter.kind === 'project'
-    ? path.join(targetRoot, 'ecc-install-state.json')
-    : path.join(targetRoot, 'ecc', 'install-state.json');
+    ? path.join(targetRoot, 'yus-install-state.json')
+    : path.join(targetRoot, 'yus', 'install-state.json');
 
   const state = createInstallState({
     adapter,
@@ -93,13 +93,13 @@ function runTests() {
       '--target',
       'cursor',
       '--repo-root',
-      '/tmp/ecc',
+      '/tmp/yus',
       '--dry-run',
       '--json',
     ]);
 
     assert.deepStrictEqual(parsed.targets, ['cursor']);
-    assert.strictEqual(parsed.repoRoot, '/tmp/ecc');
+    assert.strictEqual(parsed.repoRoot, '/tmp/yus');
     assert.strictEqual(parsed.dryRun, true);
     assert.strictEqual(parsed.json, true);
   })) passed += 1; else failed += 1;
@@ -115,7 +115,7 @@ function runTests() {
     const state = {
       operations: [
         {
-          sourcePath: path.join('/tmp', 'ecc', 'scripts', 'setup-package-manager.js'),
+          sourcePath: path.join('/tmp', 'yus', 'scripts', 'setup-package-manager.js'),
           sourceRelativePath: path.join('scripts', 'setup-package-manager.js'),
         },
       ],
@@ -123,14 +123,14 @@ function runTests() {
 
     assert.strictEqual(
       deriveRepoRootFromState(state),
-      path.resolve(path.join('/tmp', 'ecc'))
+      path.resolve(path.join('/tmp', 'yus'))
     );
   })) passed += 1; else failed += 1;
 
   if (test('deriveRepoRootFromState fails when source metadata is unavailable', () => {
     assert.throws(
       () => deriveRepoRootFromState({ operations: [{ destinationPath: '/tmp/file' }] }),
-      /Unable to infer ECC repo root/
+      /Unable to infer yus repo root/
     );
   })) passed += 1; else failed += 1;
 
@@ -229,7 +229,7 @@ function runTests() {
       },
     };
 
-    assert.strictEqual(determineInstallCwd(record, '/tmp/ecc'), path.join('/tmp', 'project'));
+    assert.strictEqual(determineInstallCwd(record, '/tmp/yus'), path.join('/tmp', 'project'));
   })) passed += 1; else failed += 1;
 
   if (test('runAutoUpdate reports when no install-state files are present', () => {
@@ -327,7 +327,7 @@ function runTests() {
             discoverInstalledStates: () => records,
           }
         ),
-        /Multiple ECC repo roots detected/
+        /Multiple yus repo roots detected/
       );
     } finally {
       cleanup(homeDir);
@@ -391,7 +391,7 @@ function runTests() {
                 stdout: JSON.stringify({
                   dryRun: false,
                   result: {
-                    installStatePath: path.join(projectRoot, '.cursor', 'ecc-install-state.json'),
+                    installStatePath: path.join(projectRoot, '.cursor', 'yus-install-state.json'),
                   },
                 }),
                 stderr: '',
@@ -450,7 +450,7 @@ function runTests() {
       });
       const legacy = {
         ...canonical,
-        installStatePath: path.join(projectRoot, '.agent', 'ecc-install-state.json'),
+        installStatePath: path.join(projectRoot, '.agent', 'yus-install-state.json'),
         legacy: true,
       };
       const commands = [];
@@ -509,7 +509,7 @@ function runTests() {
           resolution: { selectedModules: ['legacy-antigravity-install'], skippedModules: [] },
           operations: [],
         }),
-        installStatePath: path.join(projectRoot, '.agent', 'ecc-install-state.json'),
+        installStatePath: path.join(projectRoot, '.agent', 'yus-install-state.json'),
         legacy: true,
       };
       const commands = [];
@@ -563,7 +563,7 @@ function runTests() {
           resolution: { selectedModules: ['workflow-quality'], skippedModules: [] },
           operations: [],
         }),
-        installStatePath: path.join(homeDir, '.opencode', 'ecc-install-state.json'),
+        installStatePath: path.join(homeDir, '.opencode', 'yus-install-state.json'),
         legacy: true,
         legacyLayout: 'opencode',
       };

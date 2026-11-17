@@ -10,7 +10,7 @@
  *   an effect or setup function. (cause: SchemaError(Expected object at ["default"]))
  *
  * so a declined-hooks install still printed the same error as the V1 plugin did
- * (issue #3537). These tests pin the contract on the payload ECC generates itself.
+ * (issue #3537). These tests pin the contract on the payload yus generates itself.
  *
  * Run with: node tests/opencode-plugin-loader-contract.test.js
  */
@@ -25,7 +25,7 @@ const { getDisabledOpenCodePluginContent } = require('../scripts/lib/install/hoo
 
 /** Loads generated plugin source the way the OpenCode loader does: import it. */
 async function loadPluginModule(source) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-plugin-contract-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-plugin-contract-'));
   try {
     fs.writeFileSync(path.join(dir, 'plugin.mjs'), source);
     return await import(pathToFileURL(path.join(dir, 'plugin.mjs')).href);

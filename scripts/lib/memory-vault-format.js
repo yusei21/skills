@@ -2,7 +2,7 @@
 
 const { TextDecoder } = require('util');
 
-const MEMORY_SCHEMA_VERSION = 'ecc.memory.v1';
+const MEMORY_SCHEMA_VERSION = 'yus.memory.v1';
 const MEMORY_KINDS = Object.freeze([
   'context',
   'decision',

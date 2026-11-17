@@ -14,8 +14,8 @@ const fs = require('fs');
 const { getSessionsDir, getDateString, getTimeString, getSessionIdShort, sanitizeSessionId, getProjectName, getRepoIdentity, ensureDir, readFile, writeFile, runCommand, stripAnsi, log } = require('../lib/utils');
 const { generateSessionSummary, getContextRemainingPct, getContextThreshold } = require('../lib/llm-summary');
 
-const SUMMARY_START_MARKER = '<!-- ECC:SUMMARY:START -->';
-const SUMMARY_END_MARKER = '<!-- ECC:SUMMARY:END -->';
+const SUMMARY_START_MARKER = '<!-- yus:SUMMARY:START -->';
+const SUMMARY_END_MARKER = '<!-- yus:SUMMARY:END -->';
 const SESSION_SEPARATOR = '\n---\n';
 
 // Harness noise: local command echoes, caveats, system reminders.
@@ -226,7 +226,7 @@ function sessionShortId(transcriptPath) {
 function maybeGenerateLlmSummary(transcriptPath, summary) {
   const contextPct = getContextRemainingPct(transcriptPath);
   const isContextLow = contextPct !== null && contextPct < getContextThreshold();
-  const interval = parseInt(process.env.ECC_LLM_SUMMARY_INTERVAL || '50', 10);
+  const interval = parseInt(process.env.YUS_LLM_SUMMARY_INTERVAL || '50', 10);
   const safeInterval = Number.isFinite(interval) && interval > 0 ? interval : 50;
   const isPeriodicTurn = summary.totalMessages > 0 && summary.totalMessages % safeInterval === 0;
   if (!isContextLow && !isPeriodicTurn) return null;
@@ -307,12 +307,12 @@ function createSessionFile(sessionFile, { today, currentTime, metadata, summary,
 async function main() {
   const transcriptPath = resolveTranscriptPath();
 
-  // ECC's LLM summary helper launches a one-shot Claude subprocess whose Stop
+  // yus's LLM summary helper launches a one-shot Claude subprocess whose Stop
   // hooks inherit this dedicated marker. Skip that known internal session
   // before touching session state. Transcript cardinality is not a safe proxy:
   // an ordinary user session may legitimately contain one prompt and no tools.
-  if (process.env.ECC_LLM_SUMMARY_SUBPROCESS === '1') {
-    log('[SessionEnd] Skipped ECC LLM summary subprocess');
+  if (process.env.YUS_LLM_SUMMARY_SUBPROCESS === '1') {
+    log('[SessionEnd] Skipped yus LLM summary subprocess');
     return;
   }
 

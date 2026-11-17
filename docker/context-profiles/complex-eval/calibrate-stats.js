@@ -11,7 +11,7 @@ const fixture = path.join(root, 'cases2', 'event-stats-api', 'files');
 const overlay = path.join(root, 'reference2', 'event-stats-api');
 
 function stage(withOverlay) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-calib-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-calib-'));
   const copy = (from, to) => {
     for (const entry of fs.readdirSync(from, { withFileTypes: true })) {
       const target = path.join(to, entry.name);

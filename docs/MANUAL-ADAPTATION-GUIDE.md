@@ -1,6 +1,6 @@
 # Manual Adaptation Guide for Non-Native Harnesses
 
-Use this guide when you want ECC behavior inside a harness that does not natively load `.claude/`, `.codex/`, `.opencode/`, `.cursor/`, or `.agent/` layouts.
+Use this guide when you want yus behavior inside a harness that does not natively load `.claude/`, `.codex/`, `.opencode/`, `.cursor/`, or `.agent/` layouts.
 
 This is the fallback path for tools like Grok and other chat-style interfaces that can accept system prompts, uploaded files, or pasted instructions, but cannot execute the repo's native install surfaces directly.
 
@@ -14,7 +14,7 @@ Use manual adaptation when the target harness:
 - does not support repo-local skill activation
 - has partial or no filesystem/tool access
 
-Prefer a first-class ECC target whenever one exists:
+Prefer a first-class yus target whenever one exists:
 
 - Claude Code
 - Codex
@@ -23,11 +23,11 @@ Prefer a first-class ECC target whenever one exists:
 - CodeBuddy
 - Antigravity
 
-Use this guide only when you need ECC behavior in a non-native harness.
+Use this guide only when you need yus behavior in a non-native harness.
 
 ## What You Are Reproducing
 
-When you adapt ECC manually, you are trying to preserve four things:
+When you adapt yus manually, you are trying to preserve four things:
 
 1. Focused context instead of dumping the whole repo.
 2. Skill activation cues instead of hoping the model guesses the workflow.
@@ -36,7 +36,7 @@ When you adapt ECC manually, you are trying to preserve four things:
 
 You are not trying to mirror every file in the repo. You are trying to recreate the useful behavior with the smallest possible context bundle.
 
-## The ECC-Native Fallback
+## The yus-Native Fallback
 
 Default to manual selection from the repo itself.
 
@@ -73,13 +73,13 @@ You do not need extra tooling to do this.
 Use the repo directly:
 
 ```bash
-cd /path/to/ECC
+cd /path/to/yus
 
-sed -n '1,220p' skills/core/tdd-workflow/SKILL.md > /tmp/ecc-context.md
-printf '\n\n---\n\n' >> /tmp/ecc-context.md
-sed -n '1,220p' skills/backend/backend-patterns/SKILL.md >> /tmp/ecc-context.md
-printf '\n\n---\n\n' >> /tmp/ecc-context.md
-sed -n '1,220p' skills/security/security-review/SKILL.md >> /tmp/ecc-context.md
+sed -n '1,220p' skills/core/tdd-workflow/SKILL.md > /tmp/yus-context.md
+printf '\n\n---\n\n' >> /tmp/yus-context.md
+sed -n '1,220p' skills/backend/backend-patterns/SKILL.md >> /tmp/yus-context.md
+printf '\n\n---\n\n' >> /tmp/yus-context.md
+sed -n '1,220p' skills/security/security-review/SKILL.md >> /tmp/yus-context.md
 ```
 
 You can also use `rg` to identify the right skills before packing:
@@ -88,11 +88,11 @@ You can also use `rg` to identify the right skills before packing:
 rg -n "When to use|Use when|Trigger" skills -g 'SKILL.md'
 ```
 
-Optional: if you already use a repo packer like `repomix`, it can help compress selected files into one handoff document. It is a convenience tool, not the canonical ECC path.
+Optional: if you already use a repo packer like `repomix`, it can help compress selected files into one handoff document. It is a convenience tool, not the canonical yus path.
 
 ## Compression Rules
 
-When manually packing ECC for another harness:
+When manually packing yus for another harness:
 
 - keep the task framing
 - keep the activation conditions
@@ -129,7 +129,7 @@ Command registry:
 - /verify -> run a verification loop before claiming completion
 ```
 
-You are not implementing real commands. You are giving the harness explicit invocation handles that map to ECC behavior.
+You are not implementing real commands. You are giving the harness explicit invocation handles that map to yus behavior.
 
 ## Reproducing Hooks
 
@@ -149,11 +149,11 @@ Before finalizing:
 3. State what was actually validated and what was not.
 ```
 
-That does not recreate true automation, but it captures the operational discipline of ECC.
+That does not recreate true automation, but it captures the operational discipline of yus.
 
 ## Harness Capability Matrix
 
-| Capability | First-Class ECC Targets | Manual-Adaptation Targets |
+| Capability | First-Class yus Targets | Manual-Adaptation Targets |
 | --- | --- | --- |
 | Folder-based install | Native | No |
 | Slash commands | Native | Simulated in prompt |
@@ -165,7 +165,7 @@ That does not recreate true automation, but it captures the operational discipli
 ## Practical Grok-Style Setup
 
 1. Pick the smallest useful bundle.
-2. Pack the selected ECC skill files into one upload or paste block.
+2. Pack the selected yus skill files into one upload or paste block.
 3. Add a short command registry.
 4. Add standing “hook intent” instructions.
 5. Start with one task and verify the harness follows the workflow before scaling up.
@@ -173,7 +173,7 @@ That does not recreate true automation, but it captures the operational discipli
 Example starter preamble:
 
 ```text
-You are operating with a manually adapted ECC bundle.
+You are operating with a manually adapted yus bundle.
 
 Active skills:
 - backend-patterns
@@ -203,12 +203,12 @@ You lose:
 
 So the rule is simple:
 
-- use manual adaptation to carry ECC behavior into non-native harnesses
-- use native ECC targets whenever you want the full system
+- use manual adaptation to carry yus behavior into non-native harnesses
+- use native yus targets whenever you want the full system
 
 ## Related Work
 
-- [Issue #1186](https://github.com/affaan-m/ECC/issues/1186)
-- [Discussion #1077](https://github.com/affaan-m/ECC/discussions/1077)
+- [Issue #1186](https://github.com/yusei21/yus/issues/1186)
+- [Discussion #1077](https://github.com/yusei21/yus/discussions/1077)
 - [Antigravity Guide](./ANTIGRAVITY-GUIDE.md)
 - [Troubleshooting](./TROUBLESHOOTING.md)

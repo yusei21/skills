@@ -69,7 +69,7 @@ const PLATFORM_SOURCE_PATH_OWNERS = Object.freeze({
   '.joycode': 'joycode',
   '.opencode': 'opencode',
   '.openclaw': 'openclaw',
-  // Pi loads ECC through `pi install`, not install-apply, so `.pi` is
+  // Pi loads yus through `pi install`, not install-apply, so `.pi` is
   // foreign to every install target.
   '.pi': 'pi',
   '.codebuddy': 'codebuddy',
@@ -79,7 +79,7 @@ const PLATFORM_SOURCE_PATH_OWNERS = Object.freeze({
 });
 
 // Source paths that home installs must never copy into a harness home
-// directory. `.agents` is ECC's repo-local skills/plugins staging area:
+// directory. `.agents` is yus's repo-local skills/plugins staging area:
 // project targets such as kimi and antigravity consume it, but neither
 // Claude Code nor Codex reads a `.agents` directory under ~/.claude or
 // ~/.codex, so copying it there produces unread files that doctor flags as

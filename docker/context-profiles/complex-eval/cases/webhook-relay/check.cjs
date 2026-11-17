@@ -1,6 +1,6 @@
 'use strict';
 // Hidden grader for webhook-relay: drives the agent's relay in-process against
-// local target servers and prints ECC_EVAL_SCORE. Always exits 0; the score line
+// local target servers and prints YUS_EVAL_SCORE. Always exits 0; the score line
 // carries the result. Runs under Node's read-only permission model, so it only
 // reads the workspace and talks to 127.0.0.1.
 const http = require('node:http');
@@ -16,7 +16,7 @@ function finish() {
   finished = true;
   const ok = checks.filter(c => c.ok).length;
   for (const c of checks) console.log(`${c.ok ? 'ok' : 'not ok'} - ${c.name}`);
-  console.log(`ECC_EVAL_SCORE ${JSON.stringify({ score: checks.length ? ok / checks.length : 0, passed: ok, total: checks.length })}`);
+  console.log(`YUS_EVAL_SCORE ${JSON.stringify({ score: checks.length ? ok / checks.length : 0, passed: ok, total: checks.length })}`);
   process.exit(0);
 }
 setTimeout(finish, 45000).unref();

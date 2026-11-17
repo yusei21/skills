@@ -21,7 +21,7 @@ const {
 } = require('../../scripts/ci/catalog');
 
 function createTestDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-ci-catalog-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'yus-ci-catalog-'));
 }
 
 function cleanupTestDir(testDir) {
@@ -79,12 +79,12 @@ function writePluginMetadata(root, counts) {
   fs.mkdirSync(pluginDir, { recursive: true });
 
   fs.writeFileSync(path.join(pluginDir, 'plugin.json'), JSON.stringify({
-    name: 'ecc',
+    name: 'yus',
     description: `Fixture plugin — ${counts.agents} agents, ${counts.skills} skills, ${counts.commands} legacy command shims`,
   }, null, 2));
   fs.writeFileSync(path.join(pluginDir, 'marketplace.json'), JSON.stringify({
     plugins: [{
-      name: 'ecc',
+      name: 'yus',
       description: `Fixture marketplace plugin — ${counts.agents} agents, ${counts.skills} skills, ${counts.commands} legacy command shims`,
     }],
   }, null, 2));
@@ -106,14 +106,14 @@ commands/ - ${counts.commands} slash commands
 function writeCrossHarnessIdentityDocs(root, counts) {
   fs.writeFileSync(
     path.join(root, 'SOUL.md'),
-    `ECC is a production-ready AI coding plugin with ${counts.agents} specialized agents, ${counts.skills} skills, ${counts.commands} commands, and automated hook workflows.\n`
+    `yus is a production-ready AI coding plugin with ${counts.agents} specialized agents, ${counts.skills} skills, ${counts.commands} commands, and automated hook workflows.\n`
   );
 
   const geminiDir = path.join(root, '.gemini');
   fs.mkdirSync(geminiDir, { recursive: true });
   fs.writeFileSync(
     path.join(geminiDir, 'GEMINI.md'),
-    `ECC is a cross-harness coding system with ${counts.agents} specialized agents, ${counts.skills} skills, and ${counts.commands} commands.\n`
+    `yus is a cross-harness coding system with ${counts.agents} specialized agents, ${counts.skills} skills, and ${counts.commands} commands.\n`
   );
 }
 

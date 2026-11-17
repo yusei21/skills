@@ -4,7 +4,7 @@ Candidate id: `preserved-outcome-and-chain`
 
 This is a synthetic, read-only comparison, with expected rubric decisions rather
 than a historical reproduction or measured model result. It responds to
-[reported feedback](https://github.com/affaan-m/ECC/issues/3695).
+[reported feedback](https://github.com/yusei21/yus/issues/3695).
 
 ## Compare Meaning Before Shortening
 
@@ -37,7 +37,7 @@ original or claim those checks passed.
 The source reports a corrected public comment, but its earlier revision was not
 independently recovered. For the HTML follow-up, original HTML and the earlier
 response remain unavailable; revised output was reported provided, with quality
-unverified. Exact ECC activation, version and causal contribution are unknown.
+unverified. Exact yus activation, version and causal contribution are unknown.
 
 ## Repository Validation
 

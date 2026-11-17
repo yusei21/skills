@@ -21,10 +21,10 @@ let passed = 0;
 let failed = 0;
 
 function test(name, run) {
-  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-alias-reader-')));
-  const keys = ['HOME', 'USERPROFILE', 'ECC_AGENT_DATA_HOME'];
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-alias-reader-')));
+  const keys = ['HOME', 'USERPROFILE', 'YUS_AGENT_DATA_HOME'];
   const saved = Object.fromEntries(keys.map(key => [key, process.env[key]]));
-  Object.assign(process.env, { HOME: root, USERPROFILE: root, ECC_AGENT_DATA_HOME: path.join(root, '.claude') });
+  Object.assign(process.env, { HOME: root, USERPROFILE: root, YUS_AGENT_DATA_HOME: path.join(root, '.claude') });
   try { run(); passed++; console.log(`PASS ${name}`); }
   catch (error) { failed++; console.error(`FAIL ${name}: ${error.stack}`); }
   finally {

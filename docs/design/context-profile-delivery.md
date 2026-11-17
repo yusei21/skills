@@ -1,6 +1,6 @@
 # Lean, Full, and task selection delivery
 
-ECC-029 advances M1: a canonical `lean@1` / `full@1` context contract. This development branch adds managed generations, experimental task selection, an opt-in isolated Codex session, and a preregistered outcome-evaluation pilot. Public release defaults remain governed by the M1 release gate.
+yus-029 advances M1: a canonical `lean@1` / `full@1` context contract. This development branch adds managed generations, experimental task selection, an opt-in isolated Codex session, and a preregistered outcome-evaluation pilot. Public release defaults remain governed by the M1 release gate.
 
 ## Development sequence and acceptance
 
@@ -19,24 +19,24 @@ The first five stages are the local development target. Release promotion requir
 ## User interface
 
 ```text
-ecc profile preview lean --target codex --json
-ecc profile set lean --state-root /absolute/dedicated/profile-store --selection auto --dry-run --json
-ecc profile set lean --state-root /absolute/dedicated/profile-store --selection auto --json
-ecc profile status --state-root /absolute/dedicated/profile-store --json
-ecc profile mode suggest --state-root /absolute/dedicated/profile-store --json
-ecc profile rollback --state-root /absolute/dedicated/profile-store --expected-revision 2 --json
-ecc profile recover --state-root /absolute/dedicated/profile-store --json
-ecc profile resolve lean --task-input task.json|- --json
-ecc profile resolve lean --task-input task.json|- --load --json
-ecc profile resolve --state-root /absolute/dedicated/profile-store --task-input task.json --load --json
-ecc profile run --state-root /absolute/dedicated/profile-store --task-input task.json --dry-run --json
-ecc profile prepare-native --state-root /absolute/dedicated/profile-store --native-root /absolute/dedicated/native-store --json
-ecc profile native-status --state-root /absolute/dedicated/profile-store --native-root /absolute/dedicated/native-store --json
-ecc profile run --state-root /absolute/dedicated/profile-store --native-root /absolute/dedicated/native-store --task-input task.json --dry-run --json
-ecc profile start --state-root /absolute/dedicated/profile-store --native-root /absolute/dedicated/native-store
+yus profile preview lean --target codex --json
+yus profile set lean --state-root /absolute/dedicated/profile-store --selection auto --dry-run --json
+yus profile set lean --state-root /absolute/dedicated/profile-store --selection auto --json
+yus profile status --state-root /absolute/dedicated/profile-store --json
+yus profile mode suggest --state-root /absolute/dedicated/profile-store --json
+yus profile rollback --state-root /absolute/dedicated/profile-store --expected-revision 2 --json
+yus profile recover --state-root /absolute/dedicated/profile-store --json
+yus profile resolve lean --task-input task.json|- --json
+yus profile resolve lean --task-input task.json|- --load --json
+yus profile resolve --state-root /absolute/dedicated/profile-store --task-input task.json --load --json
+yus profile run --state-root /absolute/dedicated/profile-store --task-input task.json --dry-run --json
+yus profile prepare-native --state-root /absolute/dedicated/profile-store --native-root /absolute/dedicated/native-store --json
+yus profile native-status --state-root /absolute/dedicated/profile-store --native-root /absolute/dedicated/native-store --json
+yus profile run --state-root /absolute/dedicated/profile-store --native-root /absolute/dedicated/native-store --task-input task.json --dry-run --json
+yus profile start --state-root /absolute/dedicated/profile-store --native-root /absolute/dedicated/native-store
 ```
 
-`set` materializes a verified generation and records the configured choice. `generationRoot` identifies the provider-shaped payload. A configured generation does not claim a running provider loaded it. Provider-owned skills can remain visible alongside ECC skills.
+`set` materializes a verified generation and records the configured choice. `generationRoot` identifies the provider-shaped payload. A configured generation does not claim a running provider loaded it. Provider-owned skills can remain visible alongside yus skills.
 
 `resolve --state-root` uses the saved base, mode and exclusions. It rejects overrides and stale source generations. `mode` preserves the configured profile and explicit selections while recording the new mode transactionally.
 
@@ -66,27 +66,27 @@ The task call sends the query and selected reference content on standard input t
 
 Ordinary interactive turns can receive advisory skill suggestions from a UserPromptSubmit hook. The hook prints up to three skill IDs with one-line descriptions and the `resolve` command to load one. Like implicit admission, a suggestion needs a matched term in the skill name or curated triggers, or an exact name; it never returns a skill body, changes the saved mode or selection, or grants authority. Loading still goes through `resolve`, which re-verifies canonical sources.
 
-`ecc profile routing-index --state-root <store>` writes a metadata index for the current managed generation: the entries the resolver could suggest (not excluded, admissible without explicit selection), their curated triggers and precomputed retrieval vectors in a compact little-endian encoding. Building refuses a store whose generation no longer matches the canonical sources. A small pointer named by the generation binds the index to the state receipt; the entries file is named by the SHA-256 of its bytes. A `set`, `mode` or `rollback` retires the index until it is rebuilt, and the hook then stays silent with a stderr diagnostic; returning to an earlier generation reports its old index as missing, so the SessionStart builder rebuilds it. Reads validate every entry's fields and are bounded at 4 MiB and 2,048 entries. A build fails if skill sources change while it runs, and a non-UTF-8 skill source fails it instead of disappearing. `--dry-run` reports whether the current index exists.
+`yus profile routing-index --state-root <store>` writes a metadata index for the current managed generation: the entries the resolver could suggest (not excluded, admissible without explicit selection), their curated triggers and precomputed retrieval vectors in a compact little-endian encoding. Building refuses a store whose generation no longer matches the canonical sources. A small pointer named by the generation binds the index to the state receipt; the entries file is named by the SHA-256 of its bytes. A `set`, `mode` or `rollback` retires the index until it is rebuilt, and the hook then stays silent with a stderr diagnostic; returning to an earlier generation reports its old index as missing, so the SessionStart builder rebuilds it. Reads validate every entry's fields and are bounded at 4 MiB and 2,048 entries. A build fails if skill sources change while it runs, and a non-UTF-8 skill source fails it instead of disappearing. `--dry-run` reports whether the current index exists.
 
-The hook is inert unless `ECC_CONTEXT_STATE_ROOT` names the store, and it is not registered by default. It is also silent in manual mode (checked before the index is read), for slash commands, prompts under 12 characters and malformed input, and suppresses output once its 150 ms budget (`ECC_CONTEXT_SUGGEST_BUDGET_MS`) is spent. The budget is checked between steps and cannot interrupt a stalled read, so the snippet sets Claude Code's own `timeout` as the hard bound. In suggest mode the hook names the `ecc profile mode auto` command instead of `resolve --load`, because suggest mode never returns bodies. An optional async SessionStart hook builds a missing index. To opt in, add to Claude settings, with `<ecc-root>` the ECC installation:
+The hook is inert unless `YUS_CONTEXT_STATE_ROOT` names the store, and it is not registered by default. It is also silent in manual mode (checked before the index is read), for slash commands, prompts under 12 characters and malformed input, and suppresses output once its 150 ms budget (`YUS_CONTEXT_SUGGEST_BUDGET_MS`) is spent. The budget is checked between steps and cannot interrupt a stalled read, so the snippet sets Claude Code's own `timeout` as the hard bound. In suggest mode the hook names the `yus profile mode auto` command instead of `resolve --load`, because suggest mode never returns bodies. An optional async SessionStart hook builds a missing index. To opt in, add to Claude settings, with `<yus-root>` the yus installation:
 
 ```json
 {
-  "env": { "ECC_CONTEXT_STATE_ROOT": "/absolute/dedicated/profile-store" },
+  "env": { "YUS_CONTEXT_STATE_ROOT": "/absolute/dedicated/profile-store" },
   "hooks": {
     "UserPromptSubmit": [{ "hooks": [{ "type": "command", "timeout": 2,
-      "command": "node \"<ecc-root>/scripts/hooks/run-with-flags.js\" user-prompt:context-suggestions scripts/hooks/context-prompt-suggestions.js" }] }],
+      "command": "node \"<yus-root>/scripts/hooks/run-with-flags.js\" user-prompt:context-suggestions scripts/hooks/context-prompt-suggestions.js" }] }],
     "SessionStart": [{ "hooks": [{ "type": "command", "async": true, "timeout": 30,
-      "command": "node \"<ecc-root>/scripts/hooks/run-with-flags.js\" session:context-routing-index scripts/hooks/context-routing-index.js" }] }]
+      "command": "node \"<yus-root>/scripts/hooks/run-with-flags.js\" session:context-routing-index scripts/hooks/context-routing-index.js" }] }]
   }
 }
 ```
 
-Both hooks honor `ECC_HOOKS_ENABLED`, `ECC_HOOK_PROFILE` and `ECC_DISABLED_HOOKS` through `run-with-flags`.
+Both hooks honor `YUS_HOOKS_ENABLED`, `YUS_HOOK_PROFILE` and `YUS_DISABLED_HOOKS` through `run-with-flags`.
 
 ## Isolated native Codex generations
 
-`prepare-native` registers the managed carrier in a fresh ECC-owned home, verifies exact discovery through the allowlisted Codex 0.154.0 or 0.155.1 binary, and only then selects that native generation. It writes a bounded `AGENTS.md` bootstrap bound to the installed CLI source, managed roots, carrier, executable and receipt. It copies no credentials or user configuration and never rewrites the user's provider home. `native-status` checks the recorded generation, executable fingerprint, bootstrap source identity and managed-store binding. A launch pins that verified binary instead of resolving a different executable from PATH. Explicit preparation can refresh a changed executable or installed-source binding while preserving the prior generation and receipts.
+`prepare-native` registers the managed carrier in a fresh yus-owned home, verifies exact discovery through the allowlisted Codex 0.154.0 or 0.155.1 binary, and only then selects that native generation. It writes a bounded `AGENTS.md` bootstrap bound to the installed CLI source, managed roots, carrier, executable and receipt. It copies no credentials or user configuration and never rewrites the user's provider home. `native-status` checks the recorded generation, executable fingerprint, bootstrap source identity and managed-store binding. A launch pins that verified binary instead of resolving a different executable from PATH. Explicit preparation can refresh a changed executable or installed-source binding while preserving the prior generation and receipts.
 
 `profile start` is an explicit terminal-only boundary. It revalidates the store and native generation, then launches the pinned Codex binary with inherited terminal capabilities and the isolated home. The bootstrap tells the active agent to resolve context at material task boundaries through bounded structured stdin. It remains prompt-advisory, grants no tools or permissions, and persists no task prose or selected skill bodies. Authentication must be completed separately inside the isolated home; the start path does not inherit or copy provider credentials.
 
@@ -94,7 +94,7 @@ Both hooks honor `ECC_HOOKS_ENABLED`, `ECC_HOOK_PROFILE` and `ECC_DISABLED_HOOKS
 
 A managed store with `--target claude` uses the same `prepare-native`, `native-status`, `native-rollback`, `native-recover`, `run` and `start` commands. Claude Code loads the carrier for each session with `--plugin-dir`; nothing is installed, no marketplace is registered and no settings are written. The generation holds a private `home/.claude` used as `CLAUDE_CONFIG_DIR`, an empty project and a verified copy of the carrier in `plugin/`. Every Claude call sets `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` and `CLAUDE_CODE_DISABLE_OFFICIAL_MARKETPLACE_AUTOINSTALL`, so the isolated home gains no other plugins.
 
-Preparation admits Claude Code 2.1.292 and later 2.1 patches; the receipt records the exact version, and a changed binary needs a new preparation. It requires a clean `claude plugin validate --json` report, exactly one session plugin (`ecc-context-carrier@inline`, enabled, at the generation's `plugin/` path) from `claude --plugin-dir … plugin list --json`, and a `claude --plugin-dir … plugin details` inventory whose skills equal the carrier selection with zero agents, hooks, MCP servers and LSP servers. `details` has no JSON form; an unparseable or changed report fails closed, which is why the admitted range is bounded to the 2.1 series. The copied files must match the carrier digests after the provider calls.
+Preparation admits Claude Code 2.1.292 and later 2.1 patches; the receipt records the exact version, and a changed binary needs a new preparation. It requires a clean `claude plugin validate --json` report, exactly one session plugin (`yus-context-carrier@inline`, enabled, at the generation's `plugin/` path) from `claude --plugin-dir … plugin list --json`, and a `claude --plugin-dir … plugin details` inventory whose skills equal the carrier selection with zero agents, hooks, MCP servers and LSP servers. `details` has no JSON form; an unparseable or changed report fails closed, which is why the admitted range is bounded to the 2.1 series. The copied files must match the carrier digests after the provider calls.
 
 The receipt records the host's always-on projection as `nativeObservation` (`surface: plugin-always-on-listing`, `method: claude-plugin-details@<version>`, `approximate: true`). It is Claude Code's own estimate of the listing cost of this one plugin, not whole-context usage. `native-status` checks file integrity of the plugin copy, `CLAUDE.md`, user settings, skills, agents and commands in the isolated home; provider runtime state such as `.claude.json` and plugin bookkeeping is outside those controls, and plugin registration is verified again at each preparation.
 
@@ -110,7 +110,7 @@ Real execution requires an explicit flag and provider authentication. Codex uses
 
 ## Community integration
 
-Jeffrey Montoya's [#2788](https://github.com/affaan-m/ECC/pull/2788) informed whole-tree staging, ownership receipts and reversible generations. LovePlayCode's [#2844](https://github.com/affaan-m/ECC/pull/2844) informed deterministic grouping and explicit exclusion. Jeffrey's [#2945](https://github.com/affaan-m/ECC/pull/2945) informed bounded ID/description ranking, deterministic ties and the suggest-only prompt hook. Canonical source digests replace independent routing-cache authority. [#2740](https://github.com/affaan-m/ECC/pull/2740) remains aligned with native context meters and truthful measurement labels.
+Jeffrey Montoya's [#2788](https://github.com/yusei21/yus/pull/2788) informed whole-tree staging, ownership receipts and reversible generations. LovePlayCode's [#2844](https://github.com/yusei21/yus/pull/2844) informed deterministic grouping and explicit exclusion. Jeffrey's [#2945](https://github.com/yusei21/yus/pull/2945) informed bounded ID/description ranking, deterministic ties and the suggest-only prompt hook. Canonical source digests replace independent routing-cache authority. [#2740](https://github.com/yusei21/yus/pull/2740) remains aligned with native context meters and truthful measurement labels.
 
 These are attributed adaptations of concepts; contributor commits have not been silently relabeled as our implementation. Source PR disposition remains separate.
 

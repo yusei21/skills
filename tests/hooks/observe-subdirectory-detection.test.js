@@ -42,7 +42,7 @@ function test(name, fn) {
 }
 
 function createTempDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-observe-subdir-test-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'yus-observe-subdir-test-'));
 }
 
 function cleanupDir(dir) {
@@ -68,7 +68,7 @@ function gitInit(dir) {
 
   const remoteResult = spawnSync(
     'git',
-    ['remote', 'add', 'origin', 'https://github.com/example/ecc-test.git'],
+    ['remote', 'add', 'origin', 'https://github.com/example/yus-test.git'],
     { cwd: dir, encoding: 'utf8' }
   );
   assert.strictEqual(remoteResult.status, 0, remoteResult.stderr);
@@ -106,15 +106,15 @@ function runObserve({ homeDir, cwd, args = ['post'], extraEnv = {} }) {
       USERPROFILE: homeDir,
       CLAUDE_PROJECT_DIR: '',
       CLAUDE_CODE_ENTRYPOINT: 'cli',
-      ECC_HOOK_PROFILE: 'standard',
-      ECC_SKIP_OBSERVE: '0',
+      YUS_HOOK_PROFILE: 'standard',
+      YUS_SKIP_OBSERVE: '0',
       ...extraEnv,
     },
   });
 }
 
 function readSingleProjectMetadata(homeDir) {
-  const projectsDir = path.join(homeDir, '.local', 'share', 'ecc-homunculus', 'projects');
+  const projectsDir = path.join(homeDir, '.local', 'share', 'yus-homunculus', 'projects');
   const projectIds = fs.readdirSync(projectsDir);
   assert.strictEqual(projectIds.length, 1, 'Expected exactly one project directory');
   const projectDir = path.join(projectsDir, projectIds[0]);
@@ -263,7 +263,7 @@ test('observe.sh records non-git cwd payloads globally without project registry 
     const result = runObserve({ homeDir, cwd: nonGitDir });
     assert.strictEqual(result.status, 0, result.stderr);
 
-    const homunculusDir = path.join(homeDir, '.local', 'share', 'ecc-homunculus');
+    const homunculusDir = path.join(homeDir, '.local', 'share', 'yus-homunculus');
     const projectsDir = path.join(homunculusDir, 'projects');
     const registryPath = path.join(homunculusDir, 'projects.json');
     const observationsPath = path.join(homunculusDir, 'observations.jsonl');

@@ -117,7 +117,7 @@ def esearch(query: str, retmax: int = 20) -> list[str]:
         "term": query,
         "retmode": "json",
         "retmax": retmax,
-        "tool": "ecc-pubmed-search",
+        "tool": "yus-pubmed-search",
         "email": os.environ.get("NCBI_EMAIL", ""),
     }
     api_key = os.environ.get("NCBI_API_KEY")

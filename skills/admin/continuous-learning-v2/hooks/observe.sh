@@ -146,34 +146,34 @@ if [ -n "${CLV2_CONFIG:-}" ] && [ -f "$(dirname "$CLV2_CONFIG")/disabled" ]; the
 fi
 
 # Prevent observe.sh from firing on non-human sessions to avoid:
-#   - ECC observing its own Haiku observer sessions (self-loop)
-#   - ECC observing other tools' automated sessions
+#   - yus observing its own Haiku observer sessions (self-loop)
+#   - yus observing other tools' automated sessions
 #   - automated sessions creating project-scoped homunculus metadata
 
 # Layer 1: entrypoint. Only interactive terminal sessions should continue.
 # sdk-ts: Agent SDK sessions can be human-interactive (e.g. via Happy).
 # Non-interactive SDK automation is still filtered by Layers 2-5 below
-# (ECC_HOOK_PROFILE=minimal, ECC_SKIP_OBSERVE=1, agent_id, path exclusions).
+# (YUS_HOOK_PROFILE=minimal, YUS_SKIP_OBSERVE=1, agent_id, path exclusions).
 case "${CLAUDE_CODE_ENTRYPOINT:-cli}" in
   cli|sdk-ts|sdk-cli|claude-desktop|claude-vscode) ;;
   *) exit 0 ;;
 esac
 
 # Layer 2: minimal hook profile suppresses non-essential hooks.
-[ "${ECC_HOOK_PROFILE:-standard}" = "minimal" ] && exit 0
+[ "${YUS_HOOK_PROFILE:-standard}" = "minimal" ] && exit 0
 
 # Layer 3: cooperative skip env var for automated sessions.
-[ "${ECC_SKIP_OBSERVE:-0}" = "1" ] && exit 0
+[ "${YUS_SKIP_OBSERVE:-0}" = "1" ] && exit 0
 
 # Layer 4: subagent sessions are automated by definition.
-_ECC_AGENT_ID=$(echo "$INPUT_JSON" | "$PYTHON_CMD" -c "import json,sys; print(json.load(sys.stdin).get('agent_id',''))" 2>/dev/null || true)
-[ -n "$_ECC_AGENT_ID" ] && exit 0
+_YUS_AGENT_ID=$(echo "$INPUT_JSON" | "$PYTHON_CMD" -c "import json,sys; print(json.load(sys.stdin).get('agent_id',''))" 2>/dev/null || true)
+[ -n "$_YUS_AGENT_ID" ] && exit 0
 
 # Layer 5: known observer-session path exclusions.
-_ECC_SKIP_PATHS="${ECC_OBSERVE_SKIP_PATHS:-observer-sessions,.claude-mem}"
+_YUS_SKIP_PATHS="${YUS_OBSERVE_SKIP_PATHS:-observer-sessions,.claude-mem}"
 if [ -n "$STDIN_CWD" ]; then
-  IFS=',' read -ra _ECC_SKIP_ARRAY <<< "$_ECC_SKIP_PATHS"
-  for _pattern in "${_ECC_SKIP_ARRAY[@]}"; do
+  IFS=',' read -ra _YUS_SKIP_ARRAY <<< "$_YUS_SKIP_PATHS"
+  for _pattern in "${_YUS_SKIP_ARRAY[@]}"; do
     _pattern="${_pattern#"${_pattern%%[![:space:]]*}"}"
     _pattern="${_pattern%"${_pattern##*[![:space:]]}"}"
     [ -z "$_pattern" ] && continue
@@ -450,7 +450,7 @@ _CHECK_OBSERVER_RUNNING() {
 _NOTE_OBSERVER_NOSURVIVE() {
   local streak_file="${PROJECT_DIR}/.observer-nosurvive-count"
   local log_file="${PROJECT_DIR}/observer-start.log"
-  local warn_after="${ECC_OBSERVER_NOSURVIVE_WARN_AFTER:-3}"
+  local warn_after="${YUS_OBSERVER_NOSURVIVE_WARN_AFTER:-3}"
   local streak
   streak=$(cat "$streak_file" 2>/dev/null || echo 0)
   # Force base 10 after the digit check: a stray leading zero would otherwise
@@ -492,7 +492,7 @@ _NOTE_OBSERVER_NOSURVIVE() {
       "[observe] Observer did not survive to the next hook invocation ${streak} times in a row." \
       "[observe] Startup reports success, but the process is gone by the following tool call, so no analysis ever runs." \
       "$platform_hint" \
-      "[observe] Set ECC_OBSERVER_NOSURVIVE_WARN_AFTER to change this threshold (currently ${warn_after})."
+      "[observe] Set YUS_OBSERVER_NOSURVIVE_WARN_AFTER to change this threshold (currently ${warn_after})."
     # An unwritable log must not silently swallow the diagnostic, so fall back
     # to stderr. Safe from spam: this block runs once per streak, not per call.
     if ! printf '%s\n' "$message" >> "$log_file" 2>/dev/null; then
@@ -596,7 +596,7 @@ fi
 # Throttle SIGUSR1: only signal observer every N observations (#521)
 # This prevents rapid signaling when tool calls fire every second,
 # which caused runaway parallel Claude analysis processes.
-SIGNAL_EVERY_N="${ECC_OBSERVER_SIGNAL_EVERY_N:-20}"
+SIGNAL_EVERY_N="${YUS_OBSERVER_SIGNAL_EVERY_N:-20}"
 SIGNAL_COUNTER_FILE="${PROJECT_DIR}/.observer-signal-counter"
 # Use a regular-file OS lock. Keep legacy mkdir locks untouched: a killed
 # Windows process cannot run shell traps, and reclaiming those directories can

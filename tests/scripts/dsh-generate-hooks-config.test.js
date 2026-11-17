@@ -42,13 +42,13 @@ function runTests() {
 
   if (test('mapCommand prefixes plugin-root env vars and keeps the resolver intact', () => {
     const cmd = 'node -e "resolver" pretooluse:bash:check-console-log scripts/hooks/check-console-log.js standard';
-    const out = gen.mapCommand(cmd, '/ecc');
-    assert.strictEqual(out, 'CLAUDE_PLUGIN_ROOT=\'/ecc\' ECC_PLUGIN_ROOT=\'/ecc\' ' + cmd);
+    const out = gen.mapCommand(cmd, '/yus');
+    assert.strictEqual(out, 'CLAUDE_PLUGIN_ROOT=\'/yus\' YUS_PLUGIN_ROOT=\'/yus\' ' + cmd);
   })) passed++; else failed++;
 
   if (test('mapCommand passes through non-resolver commands with prefix only', () => {
-    const out = gen.mapCommand('echo hi', '/ecc');
-    assert.strictEqual(out, 'CLAUDE_PLUGIN_ROOT=\'/ecc\' ECC_PLUGIN_ROOT=\'/ecc\' echo hi');
+    const out = gen.mapCommand('echo hi', '/yus');
+    assert.strictEqual(out, 'CLAUDE_PLUGIN_ROOT=\'/yus\' YUS_PLUGIN_ROOT=\'/yus\' echo hi');
   })) passed++; else failed++;
 
   if (test('generateConfig skips unsupported events and reports them', () => {
@@ -57,7 +57,7 @@ function runTests() {
       PreCompact: [{ matcher: '.*', hooks: [{ type: 'command', command: 'echo hi' }] }],
       SessionEnd: [{ matcher: '.*', hooks: [{ type: 'command', command: 'echo hi' }] }],
     } };
-    const { config, report } = gen.generateConfig('/ecc', doc);
+    const { config, report } = gen.generateConfig('/yus', doc);
     assert.deepStrictEqual(Object.keys(config.hooks), ['PreToolUse']);
     assert.ok(report.some(r => r.includes('PreCompact')));
     assert.ok(report.some(r => r.includes('SessionEnd')));
@@ -69,7 +69,7 @@ function runTests() {
         { type: 'command', command: 'node -e "x" node scripts/hooks/b.js', timeout: 30 },
       ] }],
     } };
-    const { config } = gen.generateConfig('/ecc', doc);
+    const { config } = gen.generateConfig('/yus', doc);
     const g = config.hooks.PostToolUse[0];
     assert.strictEqual(g.matcher, 'edit|write');
     assert.strictEqual(g.hooks[0].timeout, 30);
@@ -96,19 +96,19 @@ function runTests() {
     const repoRoot = path.resolve(__dirname, '..', '..');
     const res = spawnSync('node', [
       path.join(repoRoot, 'scripts', 'dsh', 'generate-hooks-config.js'),
-      '--ecc-root',
+      '--yus-root',
     ], { encoding: 'utf8' });
     assert.strictEqual(res.status, 2, 'exit 2 on missing value, stderr: ' + res.stderr);
-    assert.ok(res.stderr.includes('Missing value for --ecc-root'));
+    assert.ok(res.stderr.includes('Missing value for --yus-root'));
   })) passed++; else failed++;
 
   if (test('CLI end-to-end writes valid JSON to --out', () => {
-    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-dsh-'));
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-dsh-'));
     const outPath = path.join(tmp, 'hooks.dsh.json');
     const repoRoot = path.resolve(__dirname, '..', '..');
     const res = spawnSync('node', [
       path.join(repoRoot, 'scripts', 'dsh', 'generate-hooks-config.js'),
-      '--ecc-root', repoRoot, '--out', outPath,
+      '--yus-root', repoRoot, '--out', outPath,
     ], { encoding: 'utf8' });
     assert.strictEqual(res.status, 0, 'CLI exit 0, stderr: ' + res.stderr);
     const doc = JSON.parse(fs.readFileSync(outPath, 'utf8'));

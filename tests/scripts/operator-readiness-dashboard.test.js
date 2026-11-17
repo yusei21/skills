@@ -28,7 +28,7 @@ function writeFile(rootDir, relativePath, content) {
 function seedRepo(rootDir, overrides = {}) {
   const files = {
     'package.json': JSON.stringify({
-      name: 'ecc-universal',
+      name: 'yus-universal',
       files: [
         'scripts/observability-readiness.js',
         'scripts/operator-readiness-dashboard.js',
@@ -49,18 +49,18 @@ function seedRepo(rootDir, overrides = {}) {
     }, null, 2),
     'scripts/operator-readiness-dashboard.js': 'operator dashboard generator',
     'scripts/preview-pack-smoke.js': [
-      'ecc.preview-pack-smoke.v1',
+      'yus.preview-pack-smoke.v1',
       'preview-pack-artifacts-present',
       'hermes-boundary-sanitized',
       'publication-blockers-preserved'
     ].join('\n'),
     'scripts/release-video-suite.js': [
-      'ecc.release-video-suite.v1',
+      'yus.release-video-suite.v1',
       'video-source-assets-present',
       'video-release-artifacts-present'
     ].join('\n'),
-    'docs/ECC-2.0-GA-ROADMAP.md': [
-      'https://linear.app/itomarkets/project/ecc-platform-roadmap-52b328ee03e1',
+    'docs/yus-2.0-GA-ROADMAP.md': [
+      'https://linear.app/itomarkets/project/yus-platform-roadmap-52b328ee03e1',
       'Linear ITO-44 ITO-59',
       'AgentShield PR #92 #78-#92 checksum-backed policy export policy promote checksum-verified policy promotion',
       'AgentShield Enterprise Iteration',
@@ -104,9 +104,9 @@ function seedRepo(rootDir, overrides = {}) {
     'docs/releases/2.0.0-rc.1/publication-readiness.md': 'Claude plugin Codex plugin release-name-plugin-publication-checklist-2026-05-18.md',
     'docs/releases/2.0.0-rc.1/naming-and-publication-matrix.md': 'Claude plugin Codex plugin npm package Publication Paths',
     'docs/releases/2.0.0-rc.1/release-name-plugin-publication-checklist-2026-05-18.md': [
-      'Ship `v2.0.0-rc.1` as **ECC**',
-      'affaan-m/ECC',
-      'ecc-universal',
+      'Ship `v2.0.0-rc.1` as **yus**',
+      'yusei21/yus',
+      'yus-universal',
       'claude plugin tag .claude-plugin --dry-run',
       'codex plugin marketplace add',
       'Do not rename the npm package until rc.1 is published'
@@ -221,7 +221,7 @@ function seedRepo(rootDir, overrides = {}) {
       '$1,728/mo',
       '$8,272/mo'
     ].join('\n'),
-    'docs/releases/2.0.0/ecc-2-hypergrowth-release-command-center.md': [
+    'docs/releases/2.0.0/yus-2-hypergrowth-release-command-center.md': [
       'harness-native operator system',
       '| MRR | `$1,728/mo` | `$10,000/mo` | `$8,272/mo` |',
       'Video Suite',
@@ -229,7 +229,7 @@ function seedRepo(rootDir, overrides = {}) {
       'Owner Approvals'
     ].join('\n'),
     'docs/releases/2.0.0-rc.1/video-suite-production.md': [
-      'ECC 2.0 Video Suite Production Manifest',
+      'yus 2.0 Video Suite Production Manifest',
       'Primary launch video',
       'Self-Eval Gate',
       'timeline'
@@ -318,7 +318,7 @@ function runTests() {
         '--allow-untracked',
         'docs/drafts/',
         '--repo',
-        'affaan-m/ECC',
+        'yusei21/yus',
         '--generated-at',
         '2026-05-15T00:00:00.000Z'
       ]);
@@ -327,7 +327,7 @@ function runTests() {
       assert.strictEqual(parsed.root, path.resolve(rootDir));
       assert.strictEqual(parsed.skipGithub, true);
       assert.deepStrictEqual(parsed.allowUntracked, ['docs/drafts/']);
-      assert.deepStrictEqual(parsed.repos, ['affaan-m/ECC']);
+      assert.deepStrictEqual(parsed.repos, ['yusei21/yus']);
       assert.strictEqual(parsed.generatedAt, '2026-05-15T00:00:00.000Z');
 
       assert.throws(() => parseArgs(['node', 'script', '--format', 'xml']), /Invalid format/);
@@ -346,14 +346,14 @@ function runTests() {
       seedRepo(rootDir);
       const report = buildSeededReport(rootDir);
 
-      assert.strictEqual(report.schema_version, 'ecc.operator-readiness-dashboard.v1');
+      assert.strictEqual(report.schema_version, 'yus.operator-readiness-dashboard.v1');
       assert.strictEqual(report.generatedAt, '2026-05-15T00:00:00.000Z');
       assert.strictEqual(report.dashboardReady, true);
       assert.strictEqual(report.ready, false);
       assert.strictEqual(report.publicationReady, false);
       assert.ok(report.requirements.some(item => item.id === 'completion-dashboard' && item.status === 'complete'));
       assert.ok(report.requirements.some(item => (
-        item.id === 'ecc-preview-pack'
+        item.id === 'yus-preview-pack'
           && item.status === 'current'
           && item.evidence.includes('deterministic smoke gate')
           && item.gap === 'repeat clean-checkout preview-pack smoke before publication'
@@ -452,7 +452,7 @@ function runTests() {
       assert.ok(report.top_actions.some(item => item.id === 'release-video-suite'));
       assert.ok(report.top_actions.some(item => item.id === 'partner-sponsor-talks-pack'));
       assert.ok(!report.top_actions.some(item => item.id === 'owner-approval-packet'));
-      assert.ok(!report.top_actions.some(item => item.id === 'ecc-preview-pack'));
+      assert.ok(!report.top_actions.some(item => item.id === 'yus-preview-pack'));
       assert.ok(!report.top_actions.some(item => item.id === 'hermes-specialized-skills'));
       assert.ok(!report.top_actions.some(item => item.id === 'hypergrowth-command-center'));
       assert.ok(!report.top_actions.some(item => item.id === 'legacy-salvage'));
@@ -505,8 +505,8 @@ function runTests() {
 
     try {
       seedRepo(rootDir, {
-        'docs/ECC-2.0-GA-ROADMAP.md': [
-          'https://linear.app/itomarkets/project/ecc-platform-roadmap-52b328ee03e1',
+        'docs/yus-2.0-GA-ROADMAP.md': [
+          'https://linear.app/itomarkets/project/yus-platform-roadmap-52b328ee03e1',
           'Linear ITO-44 ITO-59',
           'AgentShield Enterprise Iteration',
           'ECC-Tools PR #78',
@@ -552,14 +552,14 @@ function runTests() {
       });
 
       const report = buildSeededReport(rootDir);
-      const previewPack = report.requirements.find(item => item.id === 'ecc-preview-pack');
+      const previewPack = report.requirements.find(item => item.id === 'yus-preview-pack');
       const hermes = report.requirements.find(item => item.id === 'hermes-specialized-skills');
 
       assert.strictEqual(previewPack.status, 'in_progress');
       assert.strictEqual(previewPack.gap, 'final clean-checkout release approval and publish evidence still pending');
       assert.strictEqual(hermes.status, 'in_progress');
       assert.strictEqual(hermes.gap, 'final preview-pack smoke and release review pending');
-      assert.ok(report.top_actions.some(item => item.id === 'ecc-preview-pack'));
+      assert.ok(report.top_actions.some(item => item.id === 'yus-preview-pack'));
       assert.ok(report.top_actions.some(item => item.id === 'hermes-specialized-skills'));
     } finally {
       cleanup(rootDir);
@@ -641,8 +641,8 @@ function runTests() {
 
       try {
         seedRepo(rootDir, {
-          'docs/ECC-2.0-GA-ROADMAP.md': [
-            'https://linear.app/itomarkets/project/ecc-platform-roadmap-52b328ee03e1',
+          'docs/yus-2.0-GA-ROADMAP.md': [
+            'https://linear.app/itomarkets/project/yus-platform-roadmap-52b328ee03e1',
             'Linear ITO-44 ITO-59',
             'AgentShield Enterprise Iteration',
             marker,
@@ -668,8 +668,8 @@ function runTests() {
 
     try {
       seedRepo(rootDir, {
-        'docs/ECC-2.0-GA-ROADMAP.md': [
-          'https://linear.app/itomarkets/project/ecc-platform-roadmap-52b328ee03e1',
+        'docs/yus-2.0-GA-ROADMAP.md': [
+          'https://linear.app/itomarkets/project/yus-platform-roadmap-52b328ee03e1',
           'Linear ITO-44 ITO-59',
           'AgentShield PR #92 #78-#92 checksum-backed policy export policy promote checksum-verified policy promotion',
           'AgentShield Enterprise Iteration',
@@ -713,7 +713,7 @@ function runTests() {
       const written = fs.readFileSync(outputPath, 'utf8');
 
       assert.strictEqual(stdout, written);
-      assert.ok(written.includes('# ECC Operator Readiness Dashboard'));
+      assert.ok(written.includes('# yus Operator Readiness Dashboard'));
       assert.ok(written.includes('Generated: 2026-05-15T00:00:00.000Z'));
       assert.ok(written.includes('## Growth Baseline'));
       assert.ok(written.includes('| MRR | $1,728/mo | $10,000/mo | $8,272/mo |'));
@@ -737,7 +737,7 @@ function runTests() {
         '--generated-at=2026-05-15T00:00:00.000Z'
       ], { cwd: rootDir });
 
-      assert.ok(stdout.includes('ECC Operator Readiness Dashboard'));
+      assert.ok(stdout.includes('yus Operator Readiness Dashboard'));
       assert.ok(stdout.includes('work remaining'));
       assert.ok(stdout.includes('Dashboard ready: true'));
       assert.ok(stdout.includes('Publication ready: false'));

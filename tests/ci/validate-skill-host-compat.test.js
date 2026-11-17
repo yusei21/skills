@@ -125,7 +125,7 @@ check('happy: Codex copy whose frontmatter is the allowlist only, exits 0', () =
   const root = createRoot();
   try {
     writeSkill(root, 'portable', checklistBody('Portable'), {
-      frontmatter: { origin: 'ECC' },
+      frontmatter: { origin: 'yus' },
     });
     writeSkill(root, 'portable', checklistBody('Portable'), {
       tree: '.agents/skills',
@@ -406,10 +406,10 @@ check('missing skills directory skips with exit 0', () => {
 check('origin on canonical copy is allowed; origin on Codex copy fails', () => {
   const root = createRoot();
   try {
-    writeSkill(root, 'foo', checklistBody('Foo'), { frontmatter: { origin: 'ECC' } });
+    writeSkill(root, 'foo', checklistBody('Foo'), { frontmatter: { origin: 'yus' } });
     writeSkill(root, 'foo', checklistBody('Foo'), {
       tree: '.agents/skills',
-      frontmatter: { origin: 'ECC' },
+      frontmatter: { origin: 'yus' },
     });
     const result = runValidator(root);
     assert.strictEqual(result.status, 1);

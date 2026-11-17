@@ -7,7 +7,7 @@
  * against the planned file set of the carrier it would ship in.
  *
  * The static require-graph extraction technique is adapted from community
- * PR #2788 (affaan-m/ECC). The staged load smoke from that work -- actually
+ * PR #2788 (yusei21/yus). The staged load smoke from that work -- actually
  * loading entry scripts from inside a materialized carrier -- is deliberately
  * not ported here, and neither is command pruning.
  */
@@ -181,7 +181,7 @@ function validate(repoRoot = DEFAULT_REPO_ROOT) {
   }
 
   return {
-    schemaVersion: 'ecc.carrier-closure.v1',
+    schemaVersion: 'yus.carrier-closure.v1',
     status: report.failures.length ? 'failure' : 'success',
     profiles: [...PROFILES], layouts, unsupportedTargets,
     projectionCount: layouts.length * PROFILES.length,

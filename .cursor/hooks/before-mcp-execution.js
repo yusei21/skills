@@ -9,7 +9,7 @@ readStdin().then(raw => {
     const input = JSON.parse(raw);
     const server = input.server || input.mcp_server || 'unknown';
     const tool = input.tool || input.mcp_tool || 'unknown';
-    console.error(`[ECC] MCP invocation: ${server}/${tool}`);
+    console.error(`[yus] MCP invocation: ${server}/${tool}`);
   } catch {
     // Audit-only hook: malformed payloads must not interrupt the agent loop.
   }

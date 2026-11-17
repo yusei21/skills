@@ -4,7 +4,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const KERNEL = ['configure-ecc', 'context-budget', 'ecc-guide'];
+const KERNEL = ['configure-yus', 'context-budget', 'yus-guide'];
 
 function write(root, relativePath, content) {
   const destination = path.join(root, relativePath);
@@ -18,7 +18,7 @@ function update(root, relativePath, transform) {
 }
 
 function fixture() {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-context-contract-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-context-contract-'));
   const ids = [...KERNEL, 'feature', 'shared'];
   // Mirror the repository layout: kernel skills nest under their department,
   // `feature` and `shared` stay flat so both layouts stay covered.

@@ -1,6 +1,6 @@
 # Qwen CLI Adapter Guide
 
-ECC can install its managed command, agent, skill, rule, and MCP surfaces into the Qwen CLI home directory.
+yus can install its managed command, agent, skill, rule, and MCP surfaces into the Qwen CLI home directory.
 
 ## Native extension installation and common rules
 
@@ -8,22 +8,22 @@ Qwen Code also supports installing the Claude marketplace package through its
 own extension manager:
 
 ```bash
-qwen extensions install https://github.com/affaan-m/ECC:ecc
+qwen extensions install https://github.com/yusei21/yus:yus
 ```
 
 This is a different installation path from the managed adapter below. On Qwen
-Code 0.26.1 with the ECC v2.2.3 release, the extension loads skills and commands,
+Code 0.26.1 with the yus v2.2.3 release, the extension loads skills and commands,
 but reports eleven rule warnings: ten files in `rules/common/` and
 `rules/README.md` have no `paths:` frontmatter.
 
 This is intentional Qwen behavior: **extension rules must be conditional**.
 User rules under `~/.qwen/rules/` (or `$QWEN_HOME/rules/` when set) may instead
 be baseline instructions, loaded from the first request. See the [Qwen rules documentation](https://qwenlm.github.io/qwen-code-docs/en/users/features/rules/).
-Do not add artificial `paths: ["**/*"]` to shared ECC rules just to silence the
+Do not add artificial `paths: ["**/*"]` to shared yus rules just to silence the
 warnings; that changes when they apply and does not preserve baseline semantics.
 `rules/README.md` is installation documentation and should not become a rule.
 
-If you explicitly want ECC's common policies in every normal Qwen session
+If you explicitly want yus's common policies in every normal Qwen session
 (outside safe mode), you can
 supplement the extension with a user-owned copy of **only** its common rules:
 
@@ -31,19 +31,19 @@ supplement the extension with a user-owned copy of **only** its common rules:
 # If QWEN_HOME is set, export it as an absolute path (not a quoted ~/ path).
 # Inspect these policies first: they include TDD, coverage and delegation rules.
 # Stop if the destination exists; review/merge existing files instead of overwriting.
-test -d "${QWEN_HOME:-$HOME/.qwen}/extensions/ecc/rules/common" && \
-  test ! -e "${QWEN_HOME:-$HOME/.qwen}/rules/ecc/common" && \
-  test ! -L "${QWEN_HOME:-$HOME/.qwen}/rules/ecc/common" && \
-  mkdir -p "${QWEN_HOME:-$HOME/.qwen}/rules/ecc" && \
-  cp -R "${QWEN_HOME:-$HOME/.qwen}/extensions/ecc/rules/common" "${QWEN_HOME:-$HOME/.qwen}/rules/ecc/"
+test -d "${QWEN_HOME:-$HOME/.qwen}/extensions/yus/rules/common" && \
+  test ! -e "${QWEN_HOME:-$HOME/.qwen}/rules/yus/common" && \
+  test ! -L "${QWEN_HOME:-$HOME/.qwen}/rules/yus/common" && \
+  mkdir -p "${QWEN_HOME:-$HOME/.qwen}/rules/yus" && \
+  cp -R "${QWEN_HOME:-$HOME/.qwen}/extensions/yus/rules/common" "${QWEN_HOME:-$HOME/.qwen}/rules/yus/"
 ```
 
-For project-only scope, use `<project>/.qwen/rules/ecc/` as the destination;
+For project-only scope, use `<project>/.qwen/rules/yus/` as the destination;
 project rules load only in trusted workspaces. Choose one scope to avoid
 duplicating the same baseline policies. Keep the `common/` subdirectory.
 
 These copies are not owned or updated by the extension manager. After
-`qwen extensions update ecc`, compare them with the extension's common rules
+`qwen extensions update yus`, compare them with the extension's common rules
 and refresh deliberately, preserving any local edits. To undo this supplement,
 remove only the copied `common/` directory after checking for local changes.
 The original extension warnings remain: verify that the user/project copies
@@ -57,7 +57,7 @@ hook-runtime compatibility.
 
 ## Install
 
-From the ECC repository root:
+From the yus repository root:
 
 ```bash
 ./install.sh --target qwen --profile minimal
@@ -69,7 +69,7 @@ Preview a larger install before copying files:
 ./install.sh --target qwen --profile full --dry-run
 ```
 
-The Qwen adapter writes into `~/.qwen/` and records managed file ownership in `~/.qwen/ecc-install-state.json`.
+The Qwen adapter writes into `~/.qwen/` and records managed file ownership in `~/.qwen/yus-install-state.json`.
 
 ## Installed Layout
 
@@ -83,14 +83,14 @@ The managed install can populate:
   mcp-configs/
   rules/
   skills/
-  ecc-install-state.json
+  yus-install-state.json
 ```
 
 The installer preserves the source layout for rules, so language rule sets stay under paths such as `~/.qwen/rules/common/` and `~/.qwen/rules/typescript/`.
 
 ## Updating
 
-Rerun the same install command after pulling ECC updates. The installer uses the install-state file to update ECC-managed files without claiming unrelated user files in `~/.qwen/`.
+Rerun the same install command after pulling yus updates. The installer uses the install-state file to update yus-managed files without claiming unrelated user files in `~/.qwen/`.
 
 ## Uninstalling
 
@@ -100,7 +100,7 @@ Use the managed uninstall path rather than deleting the whole Qwen directory:
 node scripts/uninstall.js --target qwen
 ```
 
-That removes files recorded in `~/.qwen/ecc-install-state.json` and leaves unrelated Qwen configuration alone.
+That removes files recorded in `~/.qwen/yus-install-state.json` and leaves unrelated Qwen configuration alone.
 
 ## Scope
 
@@ -111,7 +111,7 @@ This target is intentionally narrower than stale PR #1352. It ports the maintain
 Managed Qwen installs adapt canonical agent tools and colors before recording ownership.
 Claude model tiers become `model: inherit`, so the configured Qwen session selects its provider.
 Canonical agent files stay unchanged. The standalone `scripts/qwen-adapt-agents.js` utility
-can adapt an explicitly selected, user-owned copy; use the managed installer for ECC-owned files
+can adapt an explicitly selected, user-owned copy; use the managed installer for yus-owned files
 to keep repair and uninstall receipts consistent. Native subagent dispatch still requires
 verification in the user's configured Qwen runtime.
 
@@ -120,7 +120,7 @@ files as inheriting the parent tool registry. An empty definition list differs
 from the internal runtime `ToolConfig` and `fork_tools` deny-all contracts.
 See the [official named-agent conversion](https://github.com/QwenLM/qwen-code/blob/v0.25.0/packages/core/src/subagents/subagent-manager.ts#L1661-L1685)
 and [empty-list validation](https://github.com/QwenLM/qwen-code/blob/v0.25.0/packages/core/src/subagents/validation.ts#L216-L226).
-ECC rejects an explicitly empty or null source tools field before managed
+yus rejects an explicitly empty or null source tools field before managed
 installation writes or standalone batch rewrites, because this adapter cannot
 represent a deny-all agent through that native field. Use a nonempty explicit
 allowlist, or omit the field only when parent-tool inheritance is intended.

@@ -7,9 +7,9 @@ const {
 
 function showHelp() {
   process.stdout.write(`
-Usage: ecc feedback [--json] [--help|-h]
+Usage: yus feedback [--json] [--help|-h]
 
-Print ECC's low-friction public feedback routes. This command never uploads
+Print yus's low-friction public feedback routes. This command never uploads
 diagnostics or reads project files.
 `);
 }
@@ -30,7 +30,7 @@ function parseArgs(argv) {
 
 function printHuman() {
   process.stdout.write([
-    'ECC feedback',
+    'yus feedback',
     '',
     `Install or runtime problem:\n${FEEDBACK_ROUTES.problem}`,
     '',
@@ -38,7 +38,7 @@ function printHuman() {
     '',
     `Feature idea:\n${FEEDBACK_ROUTES.feature}`,
     '',
-    'ECC does not upload diagnostics or read project files. Redact sensitive information before posting publicly.',
+    'yus does not upload diagnostics or read project files. Redact sensitive information before posting publicly.',
     '',
   ].join('\n'));
 }

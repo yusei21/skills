@@ -29,12 +29,12 @@ function withIsolatedHome(fn) {
   const isolatedHome = fs.mkdtempSync(path.join(os.tmpdir(), 'pm-home-'));
   const originalHome = process.env.HOME;
   const originalUserProfile = process.env.USERPROFILE;
-  const originalAgentDataHome = process.env.ECC_AGENT_DATA_HOME;
+  const originalAgentDataHome = process.env.YUS_AGENT_DATA_HOME;
 
   process.env.HOME = isolatedHome;
   process.env.USERPROFILE = isolatedHome;
   // An explicit override outranks inherited config roots and project settings.
-  process.env.ECC_AGENT_DATA_HOME = path.join(isolatedHome, ".claude");
+  process.env.YUS_AGENT_DATA_HOME = path.join(isolatedHome, ".claude");
 
   try {
     return fn(isolatedHome);
@@ -52,9 +52,9 @@ function withIsolatedHome(fn) {
     }
 
     if (originalAgentDataHome !== undefined) {
-      process.env.ECC_AGENT_DATA_HOME = originalAgentDataHome;
+      process.env.YUS_AGENT_DATA_HOME = originalAgentDataHome;
     } else {
-      delete process.env.ECC_AGENT_DATA_HOME;
+      delete process.env.YUS_AGENT_DATA_HOME;
     }
 
     fs.rmSync(isolatedHome, { recursive: true, force: true });
@@ -735,7 +735,7 @@ describe(sectionTitle('\nsetPreferredPackageManager (success):'), () => {
 
   test('isolated home preserves inherited data roots and restores their environment', () => {
     const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'pm-inherited-roots-'));
-    const names = ['HOME', 'USERPROFILE', 'ECC_AGENT_DATA_HOME', 'CLAUDE_CONFIG_DIR'];
+    const names = ['HOME', 'USERPROFILE', 'YUS_AGENT_DATA_HOME', 'CLAUDE_CONFIG_DIR'];
     const originalEnv = new Map(names.map(name => [name, process.env[name]]));
     const agentRoot = path.join(fixture, 'agent-data-home');
     const claudeRoot = path.join(fixture, 'claude-config');
@@ -747,7 +747,7 @@ describe(sectionTitle('\nsetPreferredPackageManager (success):'), () => {
       fs.mkdirSync(path.dirname(file), { recursive: true });
       fs.writeFileSync(file, content, 'utf8');
     }
-    process.env.ECC_AGENT_DATA_HOME = agentRoot;
+    process.env.YUS_AGENT_DATA_HOME = agentRoot;
     process.env.CLAUDE_CONFIG_DIR = claudeRoot;
     const inheritedEnv = new Map(names.map(name => [name, process.env[name]]));
     const assertRestored = () => {
@@ -1343,7 +1343,7 @@ describe(sectionTitle('\nRound 71: setPreferredPackageManager (save failure):'),
       console.log(' (skipped — chmod ineffective on Windows/root)');
       return;
     }
-    const isoHome = path.join(os.tmpdir(), `ecc-pm-r71-${Date.now()}`);
+    const isoHome = path.join(os.tmpdir(), `yus-pm-r71-${Date.now()}`);
     const claudeDir = path.join(isoHome, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
     const savedHome = process.env.HOME;
@@ -1381,7 +1381,7 @@ describe(sectionTitle('\nRound 72: setProjectPackageManager (save failure):'), (
       console.log(' (skipped — chmod ineffective on Windows/root)');
       return;
     }
-    const isoProject = path.join(os.tmpdir(), `ecc-pm-proj-r72-${Date.now()}`);
+    const isoProject = path.join(os.tmpdir(), `yus-pm-proj-r72-${Date.now()}`);
     const claudeDir = path.join(isoProject, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
     // Make .claude directory read-only — can't create new files

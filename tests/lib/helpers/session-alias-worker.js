@@ -10,7 +10,7 @@ const linkSync = fs.linkSync;
 let paused = false;
 // Announce a lock attempt OR a captured read; the parent needs no scheduling guess.
 fs.linkSync = function (source, target) {
-  if (target === aliasesPath + '.ecc.lock') mark(role + '.attempt');
+  if (target === aliasesPath + '.yus.lock') mark(role + '.attempt');
   return linkSync.apply(this, arguments);
 };
 fs.readFileSync = function (file) {

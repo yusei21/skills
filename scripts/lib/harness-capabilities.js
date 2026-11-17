@@ -19,10 +19,10 @@ function scope(id, targetId, root) {
   return { id, targetId, root };
 }
 
-function hooks(mode, eccConfigured, note) {
+function hooks(mode, yusConfigured, note) {
   return {
     mode,
-    eccConfigured,
+    yusConfigured,
     note,
     summary: note,
   };
@@ -46,7 +46,7 @@ const HARNESS_CAPABILITIES = deepFreeze([
     hooks: hooks(
       'profile-selection',
       true,
-      'ECC hooks are configured through the selected off, minimal, standard, or strict profile.'
+      'yus hooks are configured through the selected off, minimal, standard, or strict profile.'
     ),
     aliases: ['claude-code'],
   },
@@ -63,7 +63,7 @@ const HARNESS_CAPABILITIES = deepFreeze([
     hooks: hooks(
       'native-trust',
       true,
-      'ECC hooks use Codex native plugin discovery and remain subject to Codex review and trust.'
+      'yus hooks use Codex native plugin discovery and remain subject to Codex review and trust.'
     ),
     aliases: ['openai-codex'],
   },
@@ -80,7 +80,7 @@ const HARNESS_CAPABILITIES = deepFreeze([
     hooks: hooks(
       'not-configured',
       false,
-      'ECC hooks are not configured for the Kimi managed-project install.'
+      'yus hooks are not configured for the Kimi managed-project install.'
     ),
     aliases: ['kimi-code'],
   },
@@ -97,7 +97,7 @@ const HARNESS_CAPABILITIES = deepFreeze([
     hooks: hooks(
       'adapter-configured',
       true,
-      'ECC hooks use the Cursor project adapter and Cursor event configuration.'
+      'yus hooks use the Cursor project adapter and Cursor event configuration.'
     ),
     aliases: [],
   },
@@ -111,7 +111,7 @@ const HARNESS_CAPABILITIES = deepFreeze([
     availability: 'advanced',
     destination: './.agents',
     scopes: [scope('project', 'antigravity', './.agents')],
-    hooks: hooks('not-configured', false, 'ECC hooks are not configured by this adapter.'),
+    hooks: hooks('not-configured', false, 'yus hooks are not configured by this adapter.'),
     aliases: ['google-antigravity'],
   },
   {
@@ -127,7 +127,7 @@ const HARNESS_CAPABILITIES = deepFreeze([
     hooks: hooks(
       'not-configured',
       false,
-      'ECC hooks target Claude Code events and are not installed for Copilot.'
+      'yus hooks target Claude Code events and are not installed for Copilot.'
     ),
     aliases: ['github-copilot', 'copilot-cli'],
   },
@@ -141,7 +141,7 @@ const HARNESS_CAPABILITIES = deepFreeze([
     availability: 'advanced',
     destination: './.gemini',
     scopes: [scope('project', 'gemini', './.gemini')],
-    hooks: hooks('not-configured', false, 'ECC hooks are not configured by this adapter.'),
+    hooks: hooks('not-configured', false, 'yus hooks are not configured by this adapter.'),
     aliases: ['gemini-cli'],
   },
   {
@@ -158,7 +158,7 @@ const HARNESS_CAPABILITIES = deepFreeze([
     hooks: hooks(
       'adapter-opt-in',
       false,
-      'ECC hook runtime support is available through the OpenCode adapter but is not installed by default.'
+      'yus hook runtime support is available through the OpenCode adapter but is not installed by default.'
     ),
     aliases: ['open-code'],
   },
@@ -175,7 +175,7 @@ const HARNESS_CAPABILITIES = deepFreeze([
     hooks: hooks(
       'managed-files',
       true,
-      'ECC hook runtime files are installed through the CodeBuddy project adapter.'
+      'yus hook runtime files are installed through the CodeBuddy project adapter.'
     ),
     aliases: ['code-buddy'],
   },
@@ -189,7 +189,7 @@ const HARNESS_CAPABILITIES = deepFreeze([
     availability: 'advanced',
     destination: './.joycode',
     scopes: [scope('project', 'joycode', './.joycode')],
-    hooks: hooks('not-configured', false, 'ECC hooks are not configured by this adapter.'),
+    hooks: hooks('not-configured', false, 'yus hooks are not configured by this adapter.'),
     aliases: ['joy-code'],
   },
   {
@@ -202,7 +202,7 @@ const HARNESS_CAPABILITIES = deepFreeze([
     availability: 'advanced',
     destination: '~/.qwen',
     scopes: [scope('home', 'qwen', '~/.qwen')],
-    hooks: hooks('not-configured', false, 'ECC hooks are not configured by this adapter.'),
+    hooks: hooks('not-configured', false, 'yus hooks are not configured by this adapter.'),
     aliases: ['qwen-code'],
   },
   {
@@ -215,7 +215,7 @@ const HARNESS_CAPABILITIES = deepFreeze([
     availability: 'advanced',
     destination: './.zed',
     scopes: [scope('project', 'zed', './.zed')],
-    hooks: hooks('not-configured', false, 'ECC hooks are not configured by this adapter.'),
+    hooks: hooks('not-configured', false, 'yus hooks are not configured by this adapter.'),
     aliases: [],
   },
   {
@@ -228,7 +228,7 @@ const HARNESS_CAPABILITIES = deepFreeze([
     availability: 'advanced',
     destination: './.adal',
     scopes: [scope('project', 'adal', './.adal')],
-    hooks: hooks('not-configured', false, 'ECC hooks are not configured by this adapter.'),
+    hooks: hooks('not-configured', false, 'yus hooks are not configured by this adapter.'),
     aliases: ['adal-cli'],
   },
   {
@@ -241,7 +241,7 @@ const HARNESS_CAPABILITIES = deepFreeze([
     availability: 'advanced',
     destination: '~/.hermes',
     scopes: [scope('home', 'hermes', '~/.hermes')],
-    hooks: hooks('not-configured', false, 'ECC hooks are not configured by this adapter.'),
+    hooks: hooks('not-configured', false, 'yus hooks are not configured by this adapter.'),
     aliases: ['hermes-agent'],
   },
   {
@@ -254,7 +254,7 @@ const HARNESS_CAPABILITIES = deepFreeze([
     availability: 'advanced',
     destination: '~/.openclaw',
     scopes: [scope('home', 'openclaw', '~/.openclaw')],
-    hooks: hooks('not-configured', false, 'ECC hooks are not configured by this adapter.'),
+    hooks: hooks('not-configured', false, 'yus hooks are not configured by this adapter.'),
     aliases: ['open-claw'],
   },
 ]);
@@ -278,8 +278,8 @@ for (const harness of HARNESS_CAPABILITIES) {
 }
 
 function expectedRootForAdapter(adapter) {
-  const homeDir = path.resolve('/__ecc_catalog_home__');
-  const projectRoot = path.resolve('/__ecc_catalog_project__');
+  const homeDir = path.resolve('/__yus_catalog_home__');
+  const projectRoot = path.resolve('/__yus_catalog_project__');
   const absoluteRoot = adapter.resolveRoot({ homeDir, projectRoot, env: {} });
   const baseRoot = adapter.kind === 'home' ? homeDir : projectRoot;
   const prefix = adapter.kind === 'home' ? '~/' : './';

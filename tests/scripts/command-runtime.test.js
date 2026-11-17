@@ -21,7 +21,7 @@ function snapshot(root) {
       return [path.relative(root, file), value]; }).sort());
 }
 function test(name, fn, target = 'claude-project') {
-  const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-command-runtime-')));
+  const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-command-runtime-')));
   const home = path.join(dir, 'home');
   const project = path.join(dir, 'project');
   fs.mkdirSync(home); fs.mkdirSync(project);
@@ -36,7 +36,7 @@ function test(name, fn, target = 'claude-project') {
   const uninstall = () => run(path.join(repo, 'scripts/uninstall.js'), ['--target', target, '--json']);
   const plan = () => withHookConsent(createManifestInstallPlan({ sourceRoot: repo, homeDir: home,
     projectRoot: project, env: {}, target, moduleIds: ['commands-core'] }), 'declined');
-  const statePath = path.join(root, 'ecc/install-state.json');
+  const statePath = path.join(root, 'yus/install-state.json');
   const state = () => JSON.parse(fs.readFileSync(statePath, 'utf8'));
   const ok = result => assert.strictEqual(result.status, 0, result.stderr || result.stdout);
   const health = () => {

@@ -1,7 +1,7 @@
 'use strict';
 // Hidden grader for forge-cli: drives run(argv, state) through the twelve
 // contractual behaviors plus never-throw fuzzing and static hygiene. Prints
-// ECC_EVAL_SCORE and always exits 0.
+// YUS_EVAL_SCORE and always exits 0.
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -128,5 +128,5 @@ try {
 
 const okCount = checks.filter(c => c.ok).length;
 for (const c of checks) console.log(`${c.ok ? 'ok' : 'not ok'} - ${c.name}`);
-console.log(`ECC_EVAL_SCORE ${JSON.stringify({ score: okCount / checks.length, passed: okCount, total: checks.length })}`);
+console.log(`YUS_EVAL_SCORE ${JSON.stringify({ score: okCount / checks.length, passed: okCount, total: checks.length })}`);
 process.exit(0);

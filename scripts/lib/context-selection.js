@@ -249,14 +249,14 @@ function selectedClosure(ids, explicit, byId, excluded, reader) {
   const selected = new Set();
   function visit(id) {
     if (!byId.has(id)) throw new Error(`Unknown context ID: ${id}`);
-    if (excluded.has(id)) throw denied(`Context ID is excluded: ${id}`, 'ECC_CONTEXT_EXCLUDED');
+    if (excluded.has(id)) throw denied(`Context ID is excluded: ${id}`, 'YUS_CONTEXT_EXCLUDED');
     if (selected.has(id)) return;
     const entry = byId.get(id);
     const policy = policyFor(entry, reader);
-    if (policy.manualOnly && !explicit.has(id)) throw denied(`Context ID is manual-only: ${id}`, 'ECC_CONTEXT_MANUAL_ONLY');
-    if (policy.authority || policy.dynamic) throw denied(`Context requires native authority or dynamic-content review: ${id}`, 'ECC_CONTEXT_AUTHORITY');
+    if (policy.manualOnly && !explicit.has(id)) throw denied(`Context ID is manual-only: ${id}`, 'YUS_CONTEXT_MANUAL_ONLY');
+    if (policy.authority || policy.dynamic) throw denied(`Context requires native authority or dynamic-content review: ${id}`, 'YUS_CONTEXT_AUTHORITY');
     selected.add(id);
-    if (selected.size > MAX_SELECTED) throw denied('Task selection exceeds the skill limit', 'ECC_CONTEXT_SKILL_LIMIT');
+    if (selected.size > MAX_SELECTED) throw denied('Task selection exceeds the skill limit', 'YUS_CONTEXT_SKILL_LIMIT');
     entry.dependencies.forEach(visit);
   }
   ids.forEach(visit);
@@ -270,7 +270,7 @@ function readSelected(ids, byId, reader) {
     return [...new Set([entry.sourcePath, ...entry.requiredResources])].map(sourcePath => {
       const actual = verifiedResource(entry, sourcePath, reader);
       total += actual.bytes;
-      if (total > MAX_CONTEXT_BYTES) throw denied('Task context exceeds the 32000-byte budget; choose a narrower immediate step', 'ECC_CONTEXT_BYTE_BUDGET');
+      if (total > MAX_CONTEXT_BYTES) throw denied('Task context exceeds the 32000-byte budget; choose a narrower immediate step', 'YUS_CONTEXT_BYTE_BUDGET');
       const content = actual.content.toString('utf8');
       if (!Buffer.from(content, 'utf8').equals(actual.content) || content.includes('\0')) throw new Error('Required context resource is not UTF-8 text');
       return { id, path: sourcePath, digest: actual.digest, bytes: actual.bytes, content };
@@ -281,15 +281,15 @@ function readSelected(ids, byId, reader) {
 function validatePrevious(previous) {
   if (!previous) return;
   const { receiptDigest, ...value } = previous;
-  if (previous.schemaVersion !== 'ecc.task-context-receipt.v1' || digestObject(value) !== receiptDigest
+  if (previous.schemaVersion !== 'yus.task-context-receipt.v1' || digestObject(value) !== receiptDigest
     || !Array.isArray(previous.selectedIds) || !Array.isArray(previous.explicitIds)
     || (previous.decision !== undefined && !['pending', 'selected', 'none'].includes(previous.decision))) {
     throw new Error('Invalid task context receipt');
   }
 }
 
-const ADMISSION_DENIALS = new Set(['ECC_CONTEXT_EXCLUDED', 'ECC_CONTEXT_MANUAL_ONLY', 'ECC_CONTEXT_AUTHORITY',
-  'ECC_CONTEXT_SKILL_LIMIT', 'ECC_CONTEXT_BYTE_BUDGET']);
+const ADMISSION_DENIALS = new Set(['YUS_CONTEXT_EXCLUDED', 'YUS_CONTEXT_MANUAL_ONLY', 'YUS_CONTEXT_AUTHORITY',
+  'YUS_CONTEXT_SKILL_LIMIT', 'YUS_CONTEXT_BYTE_BUDGET']);
 
 function admissibility(byId, excluded, reader) {
   return id => {
@@ -345,7 +345,7 @@ function resolveTaskContext({ repoRoot = DEFAULT_REPO_ROOT, task, profileId = 'l
   const proposedIds = [...(task.proposedIds || [])].sort();
   [...explicitIds, ...proposedIds].forEach(id => {
     if (!byId.has(id)) throw new Error(`Unknown context ID: ${id}`);
-    if (excluded.has(id)) throw denied(`Context ID is excluded: ${id}`, 'ECC_CONTEXT_EXCLUDED');
+    if (excluded.has(id)) throw denied(`Context ID is excluded: ${id}`, 'YUS_CONTEXT_EXCLUDED');
   });
   const taskBinding = { sessionId: task.sessionId, taskId: task.taskId, revision: task.revision, phase: task.phase };
   const bindingDigest = digestObject({ ...taskBinding, planDigest: plan.planDigest,
@@ -407,12 +407,12 @@ function resolveTaskContext({ repoRoot = DEFAULT_REPO_ROOT, task, profileId = 'l
       : proposedIds.length && selectedIds.length ? 'bounded-local-selection'
         : candidates.length ? 'agent-selection-required' : 'no-selection';
   const decision = selectedIds.length ? 'selected' : reason === 'agent-selection-required' ? 'pending' : 'none';
-  const receiptValue = { schemaVersion: 'ecc.task-context-receipt.v1', ...taskBinding, bindingDigest,
+  const receiptValue = { schemaVersion: 'yus.task-context-receipt.v1', ...taskBinding, bindingDigest,
     selectionDigest, profileId: plan.profileId, selectionMode, target, registryDigest: registry.registryDigest,
     decision, selectedIds, explicitIds: effectiveExplicit, loadedIds,
     resources: resources.map(({ content: _content, ...resource }) => resource) };
   if (autoSelection) receiptValue.autoSelection = autoSelection;
-  return { schemaVersion: 'ecc.task-context.v1', profileId: plan.profileId, selectionMode, target,
+  return { schemaVersion: 'yus.task-context.v1', profileId: plan.profileId, selectionMode, target,
     reason, reused, selectedIds, loadedIds, candidates, resources, fallback,
     activation: loadedIds.length ? 'context-returned' : 'proposed', nativeInvocation: 'unobserved',
     enforcement: 'prompt-advisory', maxContextBytes: MAX_CONTEXT_BYTES,

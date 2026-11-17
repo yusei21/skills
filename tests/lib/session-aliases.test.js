@@ -14,12 +14,12 @@ const os = require('os');
 
 // We need to mock getClaudeDir to point to a temp dir.
 // The simplest approach: set HOME to a temp dir before requiring the module.
-const tmpHome = path.join(os.tmpdir(), `ecc-alias-test-${Date.now()}`);
+const tmpHome = path.join(os.tmpdir(), `yus-alias-test-${Date.now()}`);
 fs.mkdirSync(path.join(tmpHome, '.claude'), { recursive: true });
 const origHome = process.env.HOME;
 const origUserProfile = process.env.USERPROFILE;
-const origAgentDataHome = process.env.ECC_AGENT_DATA_HOME;
-delete process.env.ECC_AGENT_DATA_HOME;
+const origAgentDataHome = process.env.YUS_AGENT_DATA_HOME;
+delete process.env.YUS_AGENT_DATA_HOME;
 process.env.HOME = tmpHome;
 process.env.USERPROFILE = tmpHome; // Windows: os.homedir() uses USERPROFILE
 
@@ -1000,7 +1000,7 @@ function runTests() {
     // Use a fresh isolated HOME to avoid .tmp/.bak leftovers from other tests.
     // On macOS, overwriting an EXISTING file in a read-only dir succeeds,
     // so we must start clean with ONLY the .json file present.
-    const isoHome = path.join(os.tmpdir(), `ecc-alias-r70-${Date.now()}`);
+    const isoHome = path.join(os.tmpdir(), `yus-alias-r70-${Date.now()}`);
     const isoClaudeDir = path.join(isoHome, '.claude');
     fs.mkdirSync(isoClaudeDir, { recursive: true });
     const savedHome = process.env.HOME;
@@ -1044,7 +1044,7 @@ function runTests() {
       console.log('    (skipped — chmod ineffective on Windows/root)');
       return;
     }
-    const isoHome = path.join(os.tmpdir(), `ecc-alias-r72-${Date.now()}`);
+    const isoHome = path.join(os.tmpdir(), `yus-alias-r72-${Date.now()}`);
     const isoClaudeDir = path.join(isoHome, '.claude');
     fs.mkdirSync(isoClaudeDir, { recursive: true });
     const savedHome = process.env.HOME;
@@ -1086,7 +1086,7 @@ function runTests() {
       console.log('    (skipped — chmod ineffective on Windows/root)');
       return;
     }
-    const isoHome = path.join(os.tmpdir(), `ecc-alias-r73-cleanup-${Date.now()}`);
+    const isoHome = path.join(os.tmpdir(), `yus-alias-r73-cleanup-${Date.now()}`);
     const isoClaudeDir = path.join(isoHome, '.claude');
     fs.mkdirSync(isoClaudeDir, { recursive: true });
     const savedHome = process.env.HOME;
@@ -1132,7 +1132,7 @@ function runTests() {
       console.log('    (skipped — chmod ineffective on Windows/root)');
       return;
     }
-    const isoHome = path.join(os.tmpdir(), `ecc-alias-r73-set-${Date.now()}`);
+    const isoHome = path.join(os.tmpdir(), `yus-alias-r73-set-${Date.now()}`);
     const isoClaudeDir = path.join(isoHome, '.claude');
     fs.mkdirSync(isoClaudeDir, { recursive: true });
     const savedHome = process.env.HOME;
@@ -1820,14 +1820,14 @@ function runTests() {
     const primary = new Error('session lookup failed');
     assert.throws(() => aliases.cleanupAliases(() => { throw primary; }), error => error === primary);
     assert.ok(aliases.resolveAlias('existing'));
-    assert.ok(!fs.existsSync(aliases.getAliasesPath() + '.ecc.lock'));
+    assert.ok(!fs.existsSync(aliases.getAliasesPath() + '.yus.lock'));
     assert.strictEqual(aliases.setAlias('after-error', '/next').success, true);
   })) passed++; else failed++;
 
   if (test('cleanup propagates arbitrary thrown values even if lock release also fails', () => {
     resetAliases();
     aliases.setAlias('existing', '/existing');
-    const lockPath = aliases.getAliasesPath() + '.ecc.lock';
+    const lockPath = aliases.getAliasesPath() + '.yus.lock';
     const originalRename = fs.renameSync;
     const errors = [null, undefined, false, 0, Object.freeze(new Error('frozen')),
       new Proxy(new Error('proxy'), { set() { throw new Error('Cannot annotate error'); } })];
@@ -1890,7 +1890,7 @@ function runTests() {
     for (const entry of cases) {
       resetAliases();
       aliases.setAlias('existing', '/existing');
-      const lockPath = aliases.getAliasesPath() + '.ecc.lock';
+      const lockPath = aliases.getAliasesPath() + '.yus.lock';
       const originalRename = fs.renameSync;
       const originalError = console.error;
       const warnings = [];
@@ -1917,7 +1917,7 @@ function runTests() {
   if (test('a release failure preserves the original operation failure result', () => {
     resetAliases();
     aliases.setAlias('existing', '/existing');
-    const lockPath = aliases.getAliasesPath() + '.ecc.lock';
+    const lockPath = aliases.getAliasesPath() + '.yus.lock';
     const originalRename = fs.renameSync;
     try {
       fs.renameSync = function (source) {
@@ -1943,8 +1943,8 @@ function runTests() {
     assert.deepStrictEqual(Object.keys(aliases.loadAliases().aliases), ['replacement']);
   })) passed++; else failed++;
 
-  if (origAgentDataHome === undefined) delete process.env.ECC_AGENT_DATA_HOME;
-  else process.env.ECC_AGENT_DATA_HOME = origAgentDataHome;
+  if (origAgentDataHome === undefined) delete process.env.YUS_AGENT_DATA_HOME;
+  else process.env.YUS_AGENT_DATA_HOME = origAgentDataHome;
 
   // Cleanup — restore both HOME and USERPROFILE (Windows)
   process.env.HOME = origHome;

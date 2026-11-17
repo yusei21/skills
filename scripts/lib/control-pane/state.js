@@ -6,15 +6,15 @@ const path = require('path');
 
 const { buildControlPaneActions } = require('./actions');
 
-const SNAPSHOT_SCHEMA_VERSION = 'ecc.control-pane.snapshot.v1';
-const DEFAULT_STATE_STORE_RELATIVE_PATH = path.join('.claude', 'ecc', 'state.db');
+const SNAPSHOT_SCHEMA_VERSION = 'yus.control-pane.snapshot.v1';
+const DEFAULT_STATE_STORE_RELATIVE_PATH = path.join('.claude', 'yus', 'state.db');
 
 function homeDir(env = process.env) {
   return env.HOME || env.USERPROFILE || os.homedir() || '.';
 }
 
 function defaultDbPath(env = process.env) {
-  return path.join(homeDir(env), '.claude', 'ecc2.db');
+  return path.join(homeDir(env), '.claude', 'yus2.db');
 }
 
 function defaultStateDbPath(env = process.env) {
@@ -23,12 +23,12 @@ function defaultStateDbPath(env = process.env) {
 
 function defaultConfigPaths(cwd = process.cwd(), env = process.env) {
   const home = homeDir(env);
-  const paths = [path.join(home, 'Library', 'Application Support', 'ecc2', 'config.toml'), path.join(home, '.config', 'ecc2', 'config.toml'), path.join(home, '.claude', 'ecc2.toml')];
+  const paths = [path.join(home, 'Library', 'Application Support', 'yus2', 'config.toml'), path.join(home, '.config', 'yus2', 'config.toml'), path.join(home, '.claude', 'yus2.toml')];
 
   let current = path.resolve(cwd);
   while (current && current !== path.dirname(current)) {
-    paths.push(path.join(current, '.claude', 'ecc2.toml'));
-    paths.push(path.join(current, 'ecc2.toml'));
+    paths.push(path.join(current, '.claude', 'yus2.toml'));
+    paths.push(path.join(current, 'yus2.toml'));
     current = path.dirname(current);
   }
 
@@ -83,7 +83,7 @@ function normalizeConfig(rawConfig = {}, options = {}) {
 
 function readTomlConfig(configPath) {
   // @iarna/toml is required lazily so commands that never resolve a config
-  // file (e.g. `--help`, or a first run before any ecc2.toml exists) don't
+  // file (e.g. `--help`, or a first run before any yus2.toml exists) don't
   // need it on the require path.
   const toml = require('@iarna/toml');
   const raw = fs.readFileSync(configPath, 'utf8');
@@ -105,8 +105,8 @@ function resolveControlPaneConfig(options = {}) {
   return {
     ...normalizeConfig(merged, {
       env,
-      dbPath: options.dbPath || env.ECC2_DB_PATH || null,
-      stateDbPath: options.stateDbPath || env.ECC_STATE_DB_PATH || null
+      dbPath: options.dbPath || env.YUS2_DB_PATH || null,
+      stateDbPath: options.stateDbPath || env.YUS_STATE_DB_PATH || null
     }),
     configPaths: configPaths.filter(configPath => fs.existsSync(configPath))
   };
@@ -115,7 +115,7 @@ function resolveControlPaneConfig(options = {}) {
 async function openSqlDatabase(dbPath) {
   if (!dbPath || !fs.existsSync(dbPath)) return null;
   // sql.js is required lazily so commands that never open an existing
-  // ecc2.db (e.g. `--help`, or a first run before any db exists) don't need
+  // yus2.db (e.g. `--help`, or a first run before any db exists) don't need
   // it on the require path.
   const initSqlJs = require('sql.js');
   const SQL = await initSqlJs();

@@ -48,7 +48,7 @@ function test(name, fn) {
 }
 
 function createTempDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-instinct-cli-projects-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'yus-instinct-cli-projects-'));
 }
 
 function cleanupDir(dir) {
@@ -315,8 +315,8 @@ test('status migrates legacy no-remote linked worktree project dirs to main work
     const linkedWorktree = path.join(repoParent, 'linked');
     fs.mkdirSync(mainWorktree, { recursive: true });
     runGit(mainWorktree, ['init']);
-    runGit(mainWorktree, ['config', 'user.email', 'ecc@example.test']);
-    runGit(mainWorktree, ['config', 'user.name', 'ECC Test']);
+    runGit(mainWorktree, ['config', 'user.email', 'yus@example.test']);
+    runGit(mainWorktree, ['config', 'user.name', 'yus Test']);
     fs.writeFileSync(path.join(mainWorktree, 'README.md'), 'test\n');
     runGit(mainWorktree, ['add', 'README.md']);
     runGit(mainWorktree, ['commit', '-m', 'init']);

@@ -1,15 +1,15 @@
-# ECC and the Ito desk
+# yus and the Ito desk
 
-ECC is the public agentic-engineering toolkit; the Ito desk is Affaan's
+yus is the public agentic-engineering toolkit; the Ito desk is Affaan's
 private ops system. The connection surface in this repo is the set of
 public `ito-*` skills (`skills/verticals/ito-baskets`, `skills/verticals/ito-compute`,
 `skills/verticals/ito-inference`, `skills/verticals/ito-training`). Each of them is a thin
 pointer: it names the supported boundary and hands real work to the
-separately installed canonical CLI or MCP server. ECC itself implements no
+separately installed canonical CLI or MCP server. yus itself implements no
 compute booking, inference serving, training stack or basket trading, and
 nothing here may claim those capabilities exist inside this repo.
 
-Desk-side work that touches ECC runs as bounded lane tasks. The lane-worker
+Desk-side work that touches yus runs as bounded lane tasks. The lane-worker
 doctrine (see `docs/LANE-RULES.md`) is: one worker, one task, one branch,
 one PR or one receipt; real work only, meaning code edits, tests, commits
 and a PR, with the final message as the receipt; no self-review loops, no

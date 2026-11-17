@@ -1,4 +1,4 @@
-# ECC v2.0.0-rc.1 Partner, Sponsor, and Talks Pack
+# yus v2.0.0-rc.1 Partner, Sponsor, and Talks Pack
 
 This pack turns the rc.1 release surface into outbound-ready copy for sponsors,
 partners, consulting conversations, conference talks, podcast bookings, and
@@ -17,12 +17,12 @@ and publication gates are current.
 
 ## Positioning Line
 
-ECC 2.0 is the harness-native operator system for agentic work.
+yus 2.0 is the harness-native operator system for agentic work.
 
 Use this short version in partner and sponsor messages:
 
 ```text
-ECC gives teams one reusable layer for skills, hooks, rules, MCP conventions,
+yus gives teams one reusable layer for skills, hooks, rules, MCP conventions,
 release gates, and operator workflows across Claude Code, Codex, OpenCode,
 Cursor, Gemini, Zed, GitHub Copilot, and terminal-only workflows.
 ```
@@ -54,7 +54,7 @@ layer:
 Subject:
 
 ```text
-ECC 2.0 sponsor slot for cross-harness agent workflows
+yus 2.0 sponsor slot for cross-harness agent workflows
 ```
 
 Body:
@@ -62,13 +62,13 @@ Body:
 ```text
 Hey [name],
 
-I am getting ECC v2.0.0-rc.1 ready for release review.
+I am getting yus v2.0.0-rc.1 ready for release review.
 
 The project is now positioned around one reusable operator layer for agentic
 work across Claude Code, Codex, OpenCode, Cursor, Gemini, Zed, GitHub Copilot,
 and terminal workflows.
 
-The sponsor fit is pretty direct: ECC reaches the exact builders who are
+The sponsor fit is pretty direct: yus reaches the exact builders who are
 standardizing their AI coding stack, security posture, and workflow automation.
 
 The current public sponsor ladder is:
@@ -80,9 +80,9 @@ The current public sponsor ladder is:
 Business sponsors get logo placement and release visibility. Strategic partners
 can turn it into a deeper integration or launch motion.
 
-Repo: https://github.com/affaan-m/ECC
+Repo: https://github.com/yusei21/yus
 Sponsor: https://github.com/sponsors/affaan-m
-Release notes: https://github.com/affaan-m/ECC/blob/main/docs/releases/2.0.0-rc.1/release-notes.md
+Release notes: https://github.com/yusei21/yus/blob/main/docs/releases/2.0.0-rc.1/release-notes.md
 
 If useful, I can send the short sponsor packet and a proposed first 30-day plan.
 
@@ -92,7 +92,7 @@ Affaan
 ## Platform Partner DM
 
 ```text
-ECC 2.0 is getting close to rc.1.
+yus 2.0 is getting close to rc.1.
 
 The release is centered on cross-harness agent workflows: reusable skills,
 hooks, rules, MCP conventions, release gates, and an optional Hermes operator
@@ -104,19 +104,19 @@ for teams using more than one AI coding harness.
 I think there is a real integration or co-launch angle here if your team wants
 better setup, policy, security, or workflow portability for agent users.
 
-Repo: https://github.com/affaan-m/ECC
+Repo: https://github.com/yusei21/yus
 ```
 
 ## Consulting Intro
 
 ```text
-I am open to a small number of ECC 2.0 implementation sprints for teams that
+I am open to a small number of yus 2.0 implementation sprints for teams that
 are standardizing AI coding workflows.
 
 The useful scope is usually:
 
 1. audit the current harness setup;
-2. turn repeated workflows into ECC skills, hooks, and rules;
+2. turn repeated workflows into yus skills, hooks, and rules;
 3. add release, security, and CI gates;
 4. create a team operating loop that works across Claude Code, Codex, OpenCode,
    Cursor, Gemini, Zed, GitHub Copilot, and terminal workflows.
@@ -137,14 +137,14 @@ Title options:
 Short pitch:
 
 ```text
-ECC started as an open-source workflow layer for Claude Code and is now moving
+yus started as an open-source workflow layer for Claude Code and is now moving
 toward a cross-harness operating system for agentic work.
 
 The talk is about the practical problems teams hit after the first AI coding
 honeymoon: scattered prompts, duplicated setup, weak release gates, fragile
 security posture, and no clear operating loop across tools.
 
-I can show how ECC uses reusable skills, hooks, MCP conventions, release gates,
+I can show how yus uses reusable skills, hooks, MCP conventions, release gates,
 AgentShield-style security checks, and an optional Hermes operator shell to make
 agentic work more measurable and portable.
 ```
@@ -152,9 +152,9 @@ agentic work more measurable and portable.
 ## GitHub Discussion Announcement
 
 ```text
-ECC v2.0.0-rc.1 preview pack is ready for final release review.
+yus v2.0.0-rc.1 preview pack is ready for final release review.
 
-The main point: ECC 2.0 is a meta-harness for agentic work.
+The main point: yus 2.0 is a meta-harness for agentic work.
 
 It is the portable layer that keeps skills, hooks, MCP conventions, release
 gates, security checks, and team workflows reusable across the AI coding tools
@@ -186,7 +186,7 @@ Use these with the release video suite:
 
 - "If your AI coding setup only works in one harness, it is not an operating
   system yet."
-- "ECC 2.0 is the shared layer: skills, hooks, MCPs, release gates, and team
+- "yus 2.0 is the shared layer: skills, hooks, MCPs, release gates, and team
   workflows across the tools people actually use."
 - "OSS stays free. Sponsors, Pro, and implementation work fund the public
   layer."
@@ -209,9 +209,9 @@ Use these with the release video suite:
 
 ## Routing Links
 
-- Repo: <https://github.com/affaan-m/ECC>
-- Release notes: <https://github.com/affaan-m/ECC/blob/main/docs/releases/2.0.0-rc.1/release-notes.md>
-- Quickstart: <https://github.com/affaan-m/ECC/blob/main/docs/releases/2.0.0-rc.1/quickstart.md>
+- Repo: <https://github.com/yusei21/yus>
+- Release notes: <https://github.com/yusei21/yus/blob/main/docs/releases/2.0.0-rc.1/release-notes.md>
+- Quickstart: <https://github.com/yusei21/yus/blob/main/docs/releases/2.0.0-rc.1/quickstart.md>
 - Sponsor: <https://github.com/sponsors/affaan-m>
-- Sponsor tiers: <https://github.com/affaan-m/ECC/blob/main/SPONSORS.md>
-- Sponsoring guide: <https://github.com/affaan-m/ECC/blob/main/SPONSORING.md>
+- Sponsor tiers: <https://github.com/yusei21/yus/blob/main/SPONSORS.md>
+- Sponsoring guide: <https://github.com/yusei21/yus/blob/main/SPONSORING.md>

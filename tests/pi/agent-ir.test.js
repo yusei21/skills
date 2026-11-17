@@ -1,9 +1,9 @@
 const AGENT_COUNT = require('fs').readdirSync(require('path').join(__dirname,'../../agents')).filter(f => f.endsWith('.md')).length;
 /**
- * Tests for the ECC Agent IR parser (scripts/lib/agent-ir.js).
+ * Tests for the yus Agent IR parser (scripts/lib/agent-ir.js).
  *
  * Verifies the canonical-agent parse path: every Claude-format agent under
- * agents/ must parse into a valid ecc.agent-ir.v1 object, deterministically,
+ * agents/ must parse into a valid yus.agent-ir.v1 object, deterministically,
  * with lossless frontmatter retention.
  */
 

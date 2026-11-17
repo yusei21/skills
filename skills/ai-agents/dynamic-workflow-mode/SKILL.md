@@ -2,7 +2,7 @@
 name: dynamic-workflow-mode
 description: "Design task-local harnesses, eval gates, and reusable skill extraction for Claude dynamic workflow mode and other adaptive agent harnesses. Use when building a task-local harness, adding eval gates, or extracting a reusable skill from ad-hoc work."
 metadata:
-  origin: ECC
+  origin: yus
 ---
 
 # Dynamic Workflow Mode
@@ -132,7 +132,7 @@ Dynamic workflow mode becomes team-usable when it exposes state. Record these ch
 - **Gate**: test results, browser screenshots, security review, and merge readiness.
 - **Handoff**: what is done, what failed, what needs a human decision.
 
-If the repo has ECC2 state enabled, prefer adding or reading checkpoints through the ECC control pane or state-store-backed scripts instead of scattering untracked notes.
+If the repo has yus2 state enabled, prefer adding or reading checkpoints through the yus control pane or state-store-backed scripts instead of scattering untracked notes.
 
 ## Eval Gates
 

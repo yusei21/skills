@@ -308,7 +308,7 @@ Artifacts:
 
 Why third:
 
-- It aligns AgentShield with ECC's harness-agnostic positioning.
+- It aligns AgentShield with yus's harness-agnostic positioning.
 - It creates a stable surface for future Zed, Orca, Superset, and Hermes
   integration without pretending all harnesses share Claude's config model.
 

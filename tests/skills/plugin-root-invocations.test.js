@@ -1,16 +1,16 @@
 /**
- * Skill script invocations must resolve the ECC root instead of assuming the
- * user's project directory contains ECC's scripts (#3530).
+ * Skill script invocations must resolve the yus root instead of assuming the
+ * user's project directory contains yus's scripts (#3530).
  *
  * The documented commands have to work in every install mode:
  *   - plugin install (CLAUDE_PLUGIN_ROOT set; the path may contain spaces)
  *   - standalone install (~/.claude or $CLAUDE_CONFIG_DIR)
- *   - explicitly authorized ECC checkout (CLAUDE_PLUGIN_ROOT set)
+ *   - explicitly authorized yus checkout (CLAUDE_PLUGIN_ROOT set)
  * and when none of those resolves, the command must stop with an explicit
  * error instead of a misleading `Cannot find module` from a guessed path.
  *
  * The executed cases run the exact bash block published in tdd-workflow from an
- * unrelated project directory against a real copy of the ECC scripts.
+ * unrelated project directory against a real copy of the yus scripts.
  *
  * Run with: node tests/skills/plugin-root-invocations.test.js
  */
@@ -69,26 +69,26 @@ function escapeRegExp(value) {
 }
 
 const RESOLVER_SNIPPET =
-  'ECC_ROOT="${CLAUDE_PLUGIN_ROOT:-${CLAUDE_CONFIG_DIR:-$HOME/.claude}}"';
+  'YUS_ROOT="${CLAUDE_PLUGIN_ROOT:-${CLAUDE_CONFIG_DIR:-$HOME/.claude}}"';
 
 function assertResolvesScript(skillName, script) {
   const skill = readSkill(skillName);
   assert.ok(skill.includes(RESOLVER_SNIPPET),
     `${skillName} must use the configured plugin/checkout root or standalone install`);
-  assert.ok(skill.includes(`[ -f "$ECC_ROOT/scripts/${script}" ] ||`),
+  assert.ok(skill.includes(`[ -f "$YUS_ROOT/scripts/${script}" ] ||`),
     `${skillName} must refuse a missing helper in the selected trusted root`);
-  assert.doesNotMatch(skill, /ECC_ROOT=["']?\$PWD/,
+  assert.doesNotMatch(skill, /YUS_ROOT=["']?\$PWD/,
     `${skillName} must not derive executable trust from the working directory`);
   assert.doesNotMatch(skill, /\$PWD\/\.claude-plugin\/plugin\.json/,
     `${skillName} must not use forgeable project markers as executable authority`);
-  assert.ok(skill.includes('export CLAUDE_PLUGIN_ROOT="/absolute/path/to/reviewed/ECC"'),
+  assert.ok(skill.includes('export CLAUDE_PLUGIN_ROOT="/absolute/path/to/reviewed/yus"'),
     `${skillName} must explain explicit checkout authorization`);
-  assert.match(skill, new RegExp(`node "\\$ECC_ROOT/scripts/${escapeRegExp(script)}"`),
-    `${skillName} must run the script from the resolved ECC root`);
+  assert.match(skill, new RegExp(`node "\\$YUS_ROOT/scripts/${escapeRegExp(script)}"`),
+    `${skillName} must run the script from the resolved yus root`);
   assert.doesNotMatch(skill, /\$\{CLAUDE_PLUGIN_ROOT:-\$PWD\}/,
     `${skillName} must not fall back to the user's project directory`);
   assert.doesNotMatch(skill, new RegExp(`^\\s*node scripts/${escapeRegExp(script)}`, 'm'),
-    `${skillName} must not assume ECC scripts live in the current directory`);
+    `${skillName} must not assume yus scripts live in the current directory`);
 }
 
 // ---------------------------------------------------------------------------
@@ -97,18 +97,18 @@ function assertResolvesScript(skillName, script) {
 
 process.stdout.write('\nSkill plugin-root script invocation tests:\n\n');
 
-test('tdd-workflow resolves the package-manager detector through the ECC root', () => {
+test('tdd-workflow resolves the package-manager detector through the yus root', () => {
   assertResolvesScript('tdd-workflow', 'setup-package-manager.js');
 });
 
-test('autonomous-loops resolves claw.js through the ECC root', () => {
+test('autonomous-loops resolves claw.js through the yus root', () => {
   assertResolvesScript('autonomous-loops', 'claw.js');
   const skill = readSkill('autonomous-loops');
   assert.match(skill,
-    /CLAW_SESSION=my-project CLAW_SKILLS=tdd-workflow,security-review node "\$ECC_ROOT\/scripts\/claw\.js"/);
+    /CLAW_SESSION=my-project CLAW_SKILLS=tdd-workflow,security-review node "\$YUS_ROOT\/scripts\/claw\.js"/);
 });
 
-test('dmux-workflows resolves orchestrate-worktrees.js through the ECC root', () => {
+test('dmux-workflows resolves orchestrate-worktrees.js through the yus root', () => {
   assertResolvesScript('dmux-workflows', 'orchestrate-worktrees.js');
 });
 
@@ -122,7 +122,7 @@ test('seedPaths examples stay relative to the user repository', () => {
 // ---------------------------------------------------------------------------
 
 function createFixture() {
-  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-plugin-root-invocations-'));
+  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-plugin-root-invocations-'));
   const pluginRoot = path.join(base, 'plugin root with spaces');
   const standaloneHome = path.join(base, 'home dir with spaces');
   const emptyHome = path.join(base, 'empty home');
@@ -142,7 +142,7 @@ function createFixture() {
   fs.writeFileSync(path.join(userProject, 'pnpm-lock.yaml'), 'lockfileVersion: "9.0"\n');
 
   assert.ok(!fs.existsSync(path.join(userProject, 'scripts')),
-    'fixture precondition: the user project must not contain ECC scripts');
+    'fixture precondition: the user project must not contain yus scripts');
   return { base, pluginRoot, standaloneHome, emptyHome, userProject };
 }
 
@@ -151,7 +151,7 @@ const fixture = createFixture();
 function runDetector({ pluginRoot, home, cwd, configRoot = '' }) {
   const block = blockContaining(
     readSkill('tdd-workflow'),
-    'node "$ECC_ROOT/scripts/setup-package-manager.js" --detect');
+    'node "$YUS_ROOT/scripts/setup-package-manager.js" --detect');
   const env = { ...process.env, HOME: home, CLAUDE_CONFIG_DIR: configRoot };
   if (pluginRoot) {
     env.CLAUDE_PLUGIN_ROOT = pluginRoot;
@@ -168,7 +168,7 @@ function assertDetectorRanInProject(result) {
     `detector exited ${result.status}: ${result.stderr || result.stdout}`);
   assert.match(result.stdout, /Package Manager Detection/);
   // The detection output must come from the unrelated project directory (its
-  // pnpm lockfile), proving the helper ran there rather than in an ECC checkout.
+  // pnpm lockfile), proving the helper ran there rather than in an yus checkout.
   assert.match(result.stdout, /From lock file: pnpm/);
   assert.doesNotMatch(result.stderr, /Cannot find module/);
 }
@@ -193,7 +193,7 @@ test('documented detector command falls back to the standalone install when CLAU
   assertDetectorRanInProject(result);
 });
 
-test('documented detector command uses an explicitly authorized ECC checkout from the project directory', () => {
+test('documented detector command uses an explicitly authorized yus checkout from the project directory', () => {
   if (process.platform === 'win32') skip('executed fixture requires a POSIX shell');
   const result = runDetector({
     pluginRoot: repoRoot,
@@ -213,7 +213,7 @@ test('documented detector honors the configured standalone root with spaces', ()
   }));
 });
 
-test('documented detector command fails loudly when no ECC root resolves', () => {
+test('documented detector command fails loudly when no yus root resolves', () => {
   if (process.platform === 'win32') skip('executed fixture requires a POSIX shell');
   const result = runDetector({
     pluginRoot: null,
@@ -222,11 +222,11 @@ test('documented detector command fails loudly when no ECC root resolves', () =>
   });
   assert.strictEqual(result.status, 1,
     `expected an explicit failure, got exit ${result.status}: ${result.stdout}`);
-  assert.match(result.stderr, /ECC scripts not found/);
+  assert.match(result.stderr, /yus scripts not found/);
   assert.doesNotMatch(result.stderr, /Cannot find module/);
 });
 
-test('documented detector refuses a user-project lookalike script without an ECC checkout marker', () => {
+test('documented detector refuses a user-project lookalike script without an yus checkout marker', () => {
   if (process.platform === 'win32') skip('executed fixture requires a POSIX shell');
   const marker = path.join(fixture.userProject, 'lookalike-ran');
   const script = path.join(fixture.userProject, 'scripts', 'setup-package-manager.js');
@@ -234,7 +234,7 @@ test('documented detector refuses a user-project lookalike script without an ECC
   fs.writeFileSync(script, `require('fs').writeFileSync(${JSON.stringify(marker)}, 'executed');\n`);
   const result = runDetector({ pluginRoot: null, home: fixture.emptyHome, cwd: fixture.userProject });
   assert.strictEqual(result.status, 1, result.stderr || result.stdout);
-  assert.match(result.stderr, /ECC scripts not found/);
+  assert.match(result.stderr, /yus scripts not found/);
   assert.ok(!fs.existsSync(marker), 'the project lookalike helper must not execute');
 });
 
@@ -250,19 +250,19 @@ for (const [skillName, script] of [
       const ran = path.join(cwd, 'untrusted-helper-ran');
       fs.mkdirSync(path.join(cwd, '.claude-plugin'));
       fs.mkdirSync(path.join(cwd, 'scripts'));
-      fs.writeFileSync(path.join(cwd, '.claude-plugin', 'plugin.json'), '{"name":"ecc"}');
-      fs.writeFileSync(path.join(cwd, 'package.json'), '{"name":"ecc-lookalike"}');
+      fs.writeFileSync(path.join(cwd, '.claude-plugin', 'plugin.json'), '{"name":"yus"}');
+      fs.writeFileSync(path.join(cwd, 'package.json'), '{"name":"yus-lookalike"}');
       fs.writeFileSync(path.join(cwd, 'scripts', script),
         `require('fs').writeFileSync(${JSON.stringify(ran)}, 'untrusted helper executed');\n`);
-      const block = blockContaining(readSkill(skillName), `node "$ECC_ROOT/scripts/${script}"`);
+      const block = blockContaining(readSkill(skillName), `node "$YUS_ROOT/scripts/${script}"`);
       const env = { ...process.env, HOME: fixture.emptyHome, CLAUDE_CONFIG_DIR: '' };
       delete env.CLAUDE_PLUGIN_ROOT;
-      if (explicitMissingRoot) env.CLAUDE_PLUGIN_ROOT = path.join(fixture.base, 'explicit missing ECC');
+      if (explicitMissingRoot) env.CLAUDE_PLUGIN_ROOT = path.join(fixture.base, 'explicit missing yus');
       const result = spawnSync('bash', ['-c', block], { cwd, env, encoding: 'utf8', timeout: 60000 });
       assert.strictEqual(result.error, undefined);
       assert.ok(!fs.existsSync(ran), 'both marker files caused untrusted project helper execution');
       assert.strictEqual(result.status, 1, result.stderr || result.stdout);
-      assert.match(result.stderr, /ECC scripts not found/);
+      assert.match(result.stderr, /yus scripts not found/);
     });
   }
 }

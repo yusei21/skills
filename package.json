@@ -1,5 +1,5 @@
 {
-  "name": "ecc-universal",
+  "name": "yus-universal",
   "version": "2.2.3",
   "description": "Harness-native agent operating system for Codex, OpenCode, Cursor, Gemini, Claude Code, and terminal workflows - skills, hooks, rules, MCP conventions, and operator control-plane patterns",
   "main": ".opencode/dist/index.js",
@@ -44,11 +44,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/affaan-m/ECC.git"
+    "url": "git+https://github.com/yusei21/yus.git"
   },
-  "homepage": "https://github.com/affaan-m/ECC#readme",
+  "homepage": "https://github.com/yusei21/yus#readme",
   "bugs": {
-    "url": "https://github.com/affaan-m/ECC/issues"
+    "url": "https://github.com/yusei21/yus/issues"
   },
   "files": [
     ".adal/",
@@ -77,7 +77,7 @@
     "NOTICE.pt-BR.md",
     "NOTICE.zh-CN.md",
     "agent.yaml",
-    "assets/ecc-icon.svg",
+    "assets/yus-icon.svg",
     "assets/hero.png",
     "assets/images/community/",
     "agents/",
@@ -86,7 +86,7 @@
     "docs/COMMAND-AGENT-MAP.md",
     "docs/HERMES-HOOKS.md",
     "docs/ROADMAP.md",
-    "docs/design/ecc-memory-vault.md",
+    "docs/design/yus-memory-vault.md",
     "docs/design/context-profiles.md",
     "docs/design/context-carriers.md",
     "docs/design/context-profile-delivery.md",
@@ -96,7 +96,7 @@
     "install.sh",
     "manifests/",
     "mcp-configs/",
-    "plugins/ecc/",
+    "plugins/yus/",
     "rules/",
     "schemas/",
     "scripts/agent-convert.js",
@@ -117,7 +117,7 @@
     "scripts/codex/merge-mcp-config.js",
     "scripts/discussion-audit.js",
     "scripts/doctor.js",
-    "scripts/ecc.js",
+    "scripts/yus.js",
     "scripts/feedback.js",
     "scripts/memory.js",
     "scripts/memory-mcp.mjs",
@@ -157,7 +157,7 @@
     "scripts/setup-package-manager.js",
     "scripts/skill-create-output.js",
     "scripts/status.js",
-    "scripts/sync-ecc-to-codex.sh",
+    "scripts/sync-yus-to-codex.sh",
     "scripts/codex/legacy-sync-state.js",
     "scripts/codex/install-global-git-hooks.sh",
     "scripts/codex/check-codex-global-state.sh",
@@ -172,7 +172,7 @@
     "skills/admin/cost-tracking/",
     "skills/admin/deepseek-harness-setup/",
     "skills/admin/delivery-gate/",
-    "skills/admin/ecc-recipes/",
+    "skills/admin/yus-recipes/",
     "skills/admin/ecc-tools-cost-audit/",
     "skills/admin/growth-log/",
     "skills/admin/hermes-imports/",
@@ -278,10 +278,10 @@
     "skills/core/code-tour/",
     "skills/core/codebase-onboarding/",
     "skills/core/coding-standards/",
-    "skills/core/configure-ecc/",
+    "skills/core/configure-yus/",
     "skills/core/context-budget/",
     "skills/core/conventional-commit-review/",
-    "skills/core/ecc-guide/",
+    "skills/core/yus-guide/",
     "skills/core/error-handling/",
     "skills/core/gateguard/",
     "skills/core/git-workflow/",
@@ -498,15 +498,15 @@
     "!**/.pytest_cache/**"
   ],
   "bin": {
-    "ecc": "scripts/ecc.js",
-    "ecc-control-pane": "scripts/control-pane.js",
-    "ecc-install": "scripts/install-apply.js",
-    "ecc-memory-mcp": "scripts/memory-mcp.mjs",
-    "ecc-plan-canvas": "scripts/plan-canvas.js",
-    "ecc-universal": "scripts/ecc.js"
+    "yus": "scripts/yus.js",
+    "yus-control-pane": "scripts/control-pane.js",
+    "yus-install": "scripts/install-apply.js",
+    "yus-memory-mcp": "scripts/memory-mcp.mjs",
+    "yus-plan-canvas": "scripts/plan-canvas.js",
+    "yus-universal": "scripts/yus.js"
   },
   "scripts": {
-    "welcome": "echo '\\n  ecc-universal installed!\\n  Run: ecc typescript\\n  Compat: ecc-install typescript\\n  Docs: https://github.com/affaan-m/ECC\\n'",
+    "welcome": "echo '\\n  yus-universal installed!\\n  Run: yus typescript\\n  Compat: yus-install typescript\\n  Docs: https://github.com/yusei21/yus\\n'",
     "catalog:check": "node scripts/ci/catalog.js --text",
     "context-profiles:check": "node scripts/ci/validate-context-profiles.js",
     "carrier-closure:check": "node scripts/ci/validate-carrier-closure.js",
@@ -545,7 +545,7 @@
     "coverage": "c8 --all --include=\"scripts/**/*.js\" --include=\"scripts/**/*.mjs\" --check-coverage --lines 80 --functions 80 --branches 80 --statements 80 --reporter=text --reporter=lcov node tests/run-all.js",
     "build:opencode": "node scripts/build-opencode.js",
     "prepack": "npm run build:opencode",
-    "dashboard": "python3 ./ecc_dashboard.py",
+    "dashboard": "python3 ./yus_dashboard.py",
     "dashboard:web": "node scripts/dashboard-web.js"
   },
   "dependencies": {

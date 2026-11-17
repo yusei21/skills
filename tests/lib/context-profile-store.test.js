@@ -17,7 +17,7 @@ test('managed path decomposition preserves Windows drive and UNC roots', () => {
 });
 function fixture(run) {
   return withFixture(repoRoot => {
-    const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'ecc-store-'));
+    const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'yus-store-'));
     try { return run({ repoRoot, stateRoot: path.join(parent, 'managed') }, parent); }
     finally { fs.rmSync(parent, { recursive: true, force: true }); }
   });
@@ -55,15 +55,15 @@ test('same selection is a verified no-op and stale revision or preview digest fa
 
 test('source changes after preview fail before any managed write', () => fixture(options => {
   const preview = store().previewStore(options);
-  write(options.repoRoot, 'skills/core/ecc-guide/extra.txt', 'new source');
+  write(options.repoRoot, 'skills/core/yus-guide/extra.txt', 'new source');
   assert.throws(() => store().applyStore({ ...options, expectedCarrierDigest: preview.carrierDigest }), /digest/i);
   assert.equal(fs.existsSync(options.stateRoot), false);
 }));
 
 test('state survives source removal and bundled bytes are preserved', () => fixture(options => {
-  fs.writeFileSync(path.join(options.repoRoot, 'skills/core/ecc-guide/binary.bin'), Buffer.from([0, 255, 13, 10]));
+  fs.writeFileSync(path.join(options.repoRoot, 'skills/core/yus-guide/binary.bin'), Buffer.from([0, 255, 13, 10]));
   const applied = store().applyStore(options);
-  assert.deepEqual(fs.readFileSync(path.join(applied.generationRoot, 'skills/ecc-guide/binary.bin')), Buffer.from([0, 255, 13, 10]));
+  assert.deepEqual(fs.readFileSync(path.join(applied.generationRoot, 'skills/yus-guide/binary.bin')), Buffer.from([0, 255, 13, 10]));
   fs.renameSync(path.join(options.repoRoot, 'skills'), path.join(options.repoRoot, 'skills-away'));
   assert.equal(store().getStoreStatus({ stateRoot: options.stateRoot }).revision, 1);
 }));
@@ -81,7 +81,7 @@ for (const corruption of ['modified', 'extra', 'symlink', 'hardlink']) {
   test(`managed ${corruption} files block status, apply, and rollback`, context => fixture((options, parent) => {
     store().applyStore({ ...options, profileId: 'full@1' });
     const active = store().applyStore(options);
-    const leaf = path.join(active.generationRoot, 'skills/ecc-guide/SKILL.md');
+    const leaf = path.join(active.generationRoot, 'skills/yus-guide/SKILL.md');
     if (corruption === 'modified') fs.appendFileSync(leaf, '\nuser edit');
     if (corruption === 'extra') fs.writeFileSync(path.join(active.generationRoot, 'extra'), 'user');
     if (corruption === 'symlink') {
@@ -110,7 +110,7 @@ test('symlink state roots and ancestors fail without touching their targets', ()
 
 test('file symlink rejection is mandatory even without native symlink privileges', context => fixture(options => {
   const status = store().applyStore(options);
-  const leaf = path.join(status.generationRoot, 'skills/ecc-guide/SKILL.md');
+  const leaf = path.join(status.generationRoot, 'skills/yus-guide/SKILL.md');
   const original = fs.lstatSync;
   context.mock.method(fs, 'lstatSync', (filename, ...args) => {
     const stat = original(filename, ...args);

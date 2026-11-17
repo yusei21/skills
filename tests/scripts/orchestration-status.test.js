@@ -30,7 +30,7 @@ function run(args = [], options = {}) {
 }
 
   test('emits canonical dmux snapshots for plan files', () => {
-    const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-orch-status-repo-'));
+    const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-orch-status-repo-'));
 
     try {
       const planPath = path.join(repoRoot, 'workflow.json');

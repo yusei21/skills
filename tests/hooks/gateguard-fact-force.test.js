@@ -67,7 +67,7 @@ function runHook(input, env = {}) {
     env: {
       ...process.env,
       GATEGUARD_EXTERNAL_CONTRACT_QUESTION: '',
-      ECC_HOOK_PROFILE: 'standard',
+      YUS_HOOK_PROFILE: 'standard',
       GATEGUARD_STATE_DIR: stateDir,
       CLAUDE_SESSION_ID: TEST_SESSION_ID,
       ...env
@@ -91,7 +91,7 @@ function runBashHook(input, env = {}) {
     env: {
       ...process.env,
       GATEGUARD_EXTERNAL_CONTRACT_QUESTION: '',
-      ECC_HOOK_PROFILE: 'standard',
+      YUS_HOOK_PROFILE: 'standard',
       GATEGUARD_STATE_DIR: stateDir,
       CLAUDE_SESSION_ID: TEST_SESSION_ID,
       ...env
@@ -123,7 +123,7 @@ function runPowerShellHook(input, env = {}) {
       env: {
         ...process.env,
         GATEGUARD_EXTERNAL_CONTRACT_QUESTION: '',
-        ECC_HOOK_PROFILE: 'standard',
+        YUS_HOOK_PROFILE: 'standard',
         GATEGUARD_STATE_DIR: stateDir,
         CLAUDE_SESSION_ID: TEST_SESSION_ID,
         ...env
@@ -171,17 +171,17 @@ function runDdRegressionTests() {
     GATEGUARD_STATE_DIR: stateDir,
     CLAUDE_SESSION_ID: TEST_SESSION_ID,
     GATEGUARD_DISABLED: '',
-    ECC_GATEGUARD: 'on',
+    YUS_GATEGUARD: 'on',
     GATEGUARD_BASH_EXTRA_DESTRUCTIVE: '',
     GATEGUARD_BASH_ROUTINE_DISABLED: '1',
     GATEGUARD_EXEMPT_GLOBS: '',
-    ECC_HOOKS_ENABLED: 'true',
-    ECC_HOOK_PROFILE: 'standard',
-    ECC_DISABLED_HOOKS: '',
-    ECC_DRY_RUN: '0',
-    ECC_HOOK_CONFIG: path.join(stateDir, 'no-managed-config.json'),
+    YUS_HOOKS_ENABLED: 'true',
+    YUS_HOOK_PROFILE: 'standard',
+    YUS_DISABLED_HOOKS: '',
+    YUS_DRY_RUN: '0',
+    YUS_HOOK_CONFIG: path.join(stateDir, 'no-managed-config.json'),
     CLAUDE_PLUGIN_ROOT: path.resolve(__dirname, '../..'),
-    ECC_PLUGIN_ROOT: path.resolve(__dirname, '../..')
+    YUS_PLUGIN_ROOT: path.resolve(__dirname, '../..')
   };
   const original = Object.fromEntries(Object.keys(environment).map(key => [key, process.env[key]]));
   Object.assign(process.env, environment);
@@ -773,7 +773,7 @@ function runDdRegressionTests() {
         'scripts/hooks/gateguard-fact-force.js', 'standard,strict'], {
         input: JSON.stringify({ tool_name: 'Bash', tool_input: { command: 'dd if=input' } }),
         encoding: 'utf8', timeout: 15000,
-        env: { ...process.env, ...environment, ECC_DISABLED_HOOKS: 'pre:bash:gateguard-fact-force' },
+        env: { ...process.env, ...environment, YUS_DISABLED_HOOKS: 'pre:bash:gateguard-fact-force' },
         stdio: ['pipe', 'pipe', 'pipe']
       });
       assert.ifError(result.error);
@@ -1189,16 +1189,16 @@ function runTests() {
     passed++;
   else failed++;
 
-  // --- Test 9: respects ECC_DISABLED_HOOKS ---
+  // --- Test 9: respects YUS_DISABLED_HOOKS ---
   clearState();
   if (
-    test('respects ECC_DISABLED_HOOKS (skips when disabled)', () => {
+    test('respects YUS_DISABLED_HOOKS (skips when disabled)', () => {
       const input = {
         tool_name: 'Edit',
         tool_input: { file_path: '/src/disabled.js', old_string: 'a', new_string: 'b' }
       };
       const result = runHook(input, {
-        ECC_DISABLED_HOOKS: 'pre:edit-write:gateguard-fact-force'
+        YUS_DISABLED_HOOKS: 'pre:edit-write:gateguard-fact-force'
       });
 
       assert.strictEqual(result.code, 0, 'exit code should be 0');
@@ -1211,12 +1211,12 @@ function runTests() {
   // --- Test 10: respects direct GateGuard env disable for recovery sessions ---
   clearState();
   if (
-    test('respects ECC_GATEGUARD=off without writing gate state', () => {
+    test('respects YUS_GATEGUARD=off without writing gate state', () => {
       const input = {
         tool_name: 'Write',
         tool_input: { file_path: '/src/env-disabled.js', content: 'export const ok = true;' }
       };
-      const result = runHook(input, { ECC_GATEGUARD: 'off' });
+      const result = runHook(input, { YUS_GATEGUARD: 'off' });
       const output = parseOutput(result.stdout);
 
       assert.ok(output, 'should produce valid JSON output');
@@ -1278,8 +1278,8 @@ function runTests() {
       const output = parseOutput(result.stdout);
 
       assert.strictEqual(output.hookSpecificOutput.permissionDecision, 'deny');
-      assert.ok(output.hookSpecificOutput.permissionDecisionReason.includes('ECC_GATEGUARD=off'), 'denial reason should show the direct recovery env toggle');
-      assert.ok(output.hookSpecificOutput.permissionDecisionReason.includes('ECC_DISABLED_HOOKS'), 'denial reason should mention the existing hook-id disable control');
+      assert.ok(output.hookSpecificOutput.permissionDecisionReason.includes('YUS_GATEGUARD=off'), 'denial reason should show the direct recovery env toggle');
+      assert.ok(output.hookSpecificOutput.permissionDecisionReason.includes('YUS_DISABLED_HOOKS'), 'denial reason should mention the existing hook-id disable control');
       assert.ok(output.hookSpecificOutput.permissionDecisionReason.includes('GATEGUARD_EXEMPT_GLOBS'), 'Edit/Write denial should show the path-scoped exemption control');
       assert.ok(!output.hookSpecificOutput.permissionDecisionReason.includes('GATEGUARD_BASH_ROUTINE_DISABLED'), 'Edit/Write denial should not suggest the routine Bash control');
     })
@@ -1323,8 +1323,8 @@ function runTests() {
 
       assert.strictEqual(output.hookSpecificOutput.permissionDecision, 'deny');
       assert.ok(output.hookSpecificOutput.permissionDecisionReason.includes('Destructive command detected'));
-      assert.ok(!output.hookSpecificOutput.permissionDecisionReason.includes('ECC_GATEGUARD=off'), 'destructive gate should not advertise disabling GateGuard');
-      assert.ok(!output.hookSpecificOutput.permissionDecisionReason.includes('ECC_DISABLED_HOOKS'), 'destructive gate should not advertise disabling its hook');
+      assert.ok(!output.hookSpecificOutput.permissionDecisionReason.includes('YUS_GATEGUARD=off'), 'destructive gate should not advertise disabling GateGuard');
+      assert.ok(!output.hookSpecificOutput.permissionDecisionReason.includes('YUS_DISABLED_HOOKS'), 'destructive gate should not advertise disabling its hook');
       assert.ok(!output.hookSpecificOutput.permissionDecisionReason.includes('GATEGUARD_BASH_ROUTINE_DISABLED'), 'destructive gate should not advertise the routine-only bypass');
       assert.ok(!output.hookSpecificOutput.permissionDecisionReason.includes('GATEGUARD_EXEMPT_GLOBS'), 'destructive gate should not advertise the Edit/Write path exemption');
     })
@@ -1493,14 +1493,14 @@ function runTests() {
 
       const first = runBashHook(input, {
         CLAUDE_SESSION_ID: '',
-        ECC_SESSION_ID: ''
+        YUS_SESSION_ID: ''
       });
       const firstOutput = parseOutput(first.stdout);
       assert.strictEqual(firstOutput.hookSpecificOutput.permissionDecision, 'deny');
 
       const second = runBashHook(input, {
         CLAUDE_SESSION_ID: '',
-        ECC_SESSION_ID: ''
+        YUS_SESSION_ID: ''
       });
       const secondOutput = parseOutput(second.stdout);
       if (secondOutput.hookSpecificOutput) {
@@ -1586,7 +1586,7 @@ function runTests() {
 
       const first = runBashHook(input, {
         CLAUDE_SESSION_ID: '',
-        ECC_SESSION_ID: ''
+        YUS_SESSION_ID: ''
       });
       const firstOutput = parseOutput(first.stdout);
       assert.strictEqual(firstOutput.hookSpecificOutput.permissionDecision, 'deny');
@@ -1597,7 +1597,7 @@ function runTests() {
 
       const second = runBashHook(input, {
         CLAUDE_SESSION_ID: '',
-        ECC_SESSION_ID: ''
+        YUS_SESSION_ID: ''
       });
       const secondOutput = parseOutput(second.stdout);
       if (secondOutput.hookSpecificOutput) {
@@ -1736,7 +1736,7 @@ function runTests() {
 
       const first = runBashHook(input, {
         CLAUDE_SESSION_ID: '',
-        ECC_SESSION_ID: '',
+        YUS_SESSION_ID: '',
         CLAUDE_TRANSCRIPT_PATH: ''
       });
       const firstOutput = parseOutput(first.stdout);
@@ -1748,7 +1748,7 @@ function runTests() {
 
       const second = runBashHook(input, {
         CLAUDE_SESSION_ID: '',
-        ECC_SESSION_ID: '',
+        YUS_SESSION_ID: '',
         CLAUDE_TRANSCRIPT_PATH: ''
       });
       const secondOutput = parseOutput(second.stdout);
@@ -1772,7 +1772,7 @@ function runTests() {
       };
       const fallbackEnv = {
         CLAUDE_SESSION_ID: '',
-        ECC_SESSION_ID: '',
+        YUS_SESSION_ID: '',
         CLAUDE_TRANSCRIPT_PATH: '',
         CLAUDE_PROJECT_DIR: path.join(stateDir, 'project-root')
       };
@@ -1917,7 +1917,7 @@ function runTests() {
         session_id: 'subagent-fresh-session',
         ...extra
       },
-      { CLAUDE_SESSION_ID: '', ECC_SESSION_ID: '' }
+      { CLAUDE_SESSION_ID: '', YUS_SESSION_ID: '' }
     );
   }
 
@@ -1929,7 +1929,7 @@ function runTests() {
         session_id: 'subagent-fresh-session',
         ...extra
       },
-      { CLAUDE_SESSION_ID: '', ECC_SESSION_ID: '' }
+      { CLAUDE_SESSION_ID: '', YUS_SESSION_ID: '' }
     );
   }
 
@@ -1962,7 +1962,7 @@ function runTests() {
           tool_input: { file_path: '/src/subagent-write.js', content: 'module.exports = {};' },
           session_id: 'subagent-fresh-session'
         },
-        { CLAUDE_SESSION_ID: '', ECC_SESSION_ID: '' }
+        { CLAUDE_SESSION_ID: '', YUS_SESSION_ID: '' }
       );
       const topOut = parseOutput(topLevel.stdout);
       assert.ok(topOut, 'top-level write should produce JSON output');
@@ -1976,7 +1976,7 @@ function runTests() {
           session_id: 'subagent-fresh-session',
           agent_id: 'agent-abc-123'
         },
-        { CLAUDE_SESSION_ID: '', ECC_SESSION_ID: '' }
+        { CLAUDE_SESSION_ID: '', YUS_SESSION_ID: '' }
       );
       const subOut = parseOutput(subagent.stdout);
       assert.ok(subOut, 'subagent write should produce JSON output');
@@ -2001,7 +2001,7 @@ function runTests() {
           tool_input: { edits },
           session_id: 'subagent-fresh-session'
         },
-        { CLAUDE_SESSION_ID: '', ECC_SESSION_ID: '' }
+        { CLAUDE_SESSION_ID: '', YUS_SESSION_ID: '' }
       );
       const topOut = parseOutput(topLevel.stdout);
       assert.ok(topOut, 'top-level MultiEdit should produce JSON output');
@@ -2015,7 +2015,7 @@ function runTests() {
           session_id: 'subagent-fresh-session',
           agent_id: 'agent-abc-123'
         },
-        { CLAUDE_SESSION_ID: '', ECC_SESSION_ID: '' }
+        { CLAUDE_SESSION_ID: '', YUS_SESSION_ID: '' }
       );
       const subOut = parseOutput(subagent.stdout);
       assert.ok(subOut, 'subagent MultiEdit should produce JSON output');
@@ -3545,7 +3545,7 @@ function runTests() {
       assert.ok(reason.includes('/src/damp-two.js'), 'condensed message names the target');
       assert.ok(!reason.includes('present these facts'), 'no repeated four-fact block');
       assert.ok(!reason.includes('\n'), 'condensed message is a single line');
-      assert.ok(reason.includes('ECC_GATEGUARD=off'), 'condensed message keeps a recovery hint');
+      assert.ok(reason.includes('YUS_GATEGUARD=off'), 'condensed message keeps a recovery hint');
       assert.ok(reason.includes('GATEGUARD_EXEMPT_GLOBS'), 'condensed Edit denial keeps the path-scoped recovery hint');
     })
   )
@@ -4820,7 +4820,7 @@ function runTests() {
       assert.ok(!local.includes('data schemas'), 'no data hint for a change without data');
       const created = profileDenialReason('Write', { file_path: 'src/c3.js', content: 'export const a = 1;\n' }, env);
       assert.ok(created.includes('that no existing file serves the same purpose'), created);
-      assert.ok(created.includes('(denial #') && created.includes('parallel batch') && created.includes('ECC_GATEGUARD=off'), 'keeps ordinal and hints');
+      assert.ok(created.includes('(denial #') && created.includes('parallel batch') && created.includes('YUS_GATEGUARD=off'), 'keeps ordinal and hints');
       const data = profileDenialReason('Edit', { file_path: 'src/c4.js', old_string: '  return 1;', new_string: '  return JSON.parse(raw);' }, env);
       assert.ok(data.includes('the data schemas it reads or writes'), data);
       const full = profileDenialReason('Edit', { file_path: 'src/c2.rb', old_string: 'a', new_string: 'b' }, env);
@@ -5163,7 +5163,7 @@ function runTests() {
       assert.ok(writeReason.includes('briefly state what this supersedes, where it is linked from'), 'prose Write hint');
       assert.ok(!writeReason.includes('importers/callers'), 'no code hint');
       assert.ok(writeReason.includes('parallel batch'), 'keeps batch-sibling warning');
-      assert.ok(writeReason.includes('GATEGUARD_EXEMPT_GLOBS') && writeReason.includes('ECC_GATEGUARD=off'), 'keeps exemption hint');
+      assert.ok(writeReason.includes('GATEGUARD_EXEMPT_GLOBS') && writeReason.includes('YUS_GATEGUARD=off'), 'keeps exemption hint');
       const editReason = classDenialReason('Edit', 'docs/late-edit.md', env);
       assert.ok(editReason.includes('(denial #2 this session) First edit of docs/late-edit.md: '), 'ordinal advances');
       assert.ok(editReason.includes('what references the changed section'), 'prose Edit hint');
@@ -7294,7 +7294,7 @@ function runTests() {
   });
 
   // --- Idle window follows the session key ---
-  const idleEnvNoIds = { CLAUDE_SESSION_ID: '', ECC_SESSION_ID: '', CLAUDE_TRANSCRIPT_PATH: '' };
+  const idleEnvNoIds = { CLAUDE_SESSION_ID: '', YUS_SESSION_ID: '', CLAUDE_TRANSCRIPT_PATH: '' };
   const idleStateFiles = () => fs.readdirSync(stateDir).filter(f => f.startsWith('state-') && f.endsWith('.json'));
   const idleSeed = (fileName, ageMs) => {
     fs.mkdirSync(stateDir, { recursive: true });
@@ -7356,7 +7356,7 @@ function runTests() {
 
   // --- Sensitive targets in subagents ---
   const subRun = (tool, toolInput, extra = {}) =>
-    runHook({ tool_name: tool, tool_input: toolInput, session_id: 'subagent-sensitive-session', ...extra }, { CLAUDE_SESSION_ID: '', ECC_SESSION_ID: '' });
+    runHook({ tool_name: tool, tool_input: toolInput, session_id: 'subagent-sensitive-session', ...extra }, { CLAUDE_SESSION_ID: '', YUS_SESSION_ID: '' });
   const subEdit = (file_path, extra) => subRun('Edit', { file_path, old_string: 'a', new_string: 'b' }, extra);
   const subAgent = { agent_id: 'agent-sens' };
 
@@ -7401,7 +7401,7 @@ function runTests() {
     clearState();
     const capped = runHook(
       { tool_name: 'Edit', tool_input: { file_path: '/src/.env.local', old_string: 'a', new_string: 'b' }, session_id: 'subagent-sensitive-session', ...subAgent },
-      { CLAUDE_SESSION_ID: '', ECC_SESSION_ID: '', GATEGUARD_FACT_FORCE_MAX_DENIALS: '0' }
+      { CLAUDE_SESSION_ID: '', YUS_SESSION_ID: '', GATEGUARD_FACT_FORCE_MAX_DENIALS: '0' }
     );
     assert.strictEqual(roDecision(capped), 'deny');
   });

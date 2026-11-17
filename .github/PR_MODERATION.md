@@ -55,13 +55,13 @@ blocks cannot stop someone from using a different GitHub account.
 2. To enable automatic account blocking, `affaan-m` creates a dedicated
    fine-grained token with the account permission **Block another user: write**.
    Store it as repository Actions secret `PR_MODERATION_BLOCK_TOKEN`. Use GitHub's
-   secret UI or `gh secret set PR_MODERATION_BLOCK_TOKEN --repo affaan-m/ECC`
+   secret UI or `gh secret set PR_MODERATION_BLOCK_TOKEN --repo yusei21/yus`
    with its hidden prompt. Do not paste credentials into chat or source files.
 3. Verify a genuine subsequent guard run and its job summary. Without the secret,
    closure and alerting still run. A severe burst records blocking as unavailable
    in the alert and fails the job so maintainers see the missing protection.
 
-ECC currently belongs to the personal account `affaan-m`. GitHub account blocking
+yus currently belongs to the personal account `affaan-m`. GitHub account blocking
 applies across **all repositories owned by that account**. The script checks the
 token's authenticated identity before calling the personal blocking API. A
 collaborator's personal block cannot protect this repository. The normal
@@ -87,7 +87,7 @@ For a live read-only replay, supply `GITHUB_TOKEN` through your secure shell
 environment, then run:
 
 ```sh
-GITHUB_REPOSITORY=affaan-m/ECC node scripts/ci/pr-burst-guard.js --dry-run --pr 3580
+GITHUB_REPOSITORY=yusei21/yus node scripts/ci/pr-burst-guard.js --dry-run --pr 3580
 ```
 
 Expected for the October 14 snapshot: author `jwcastillo`, count `14`, `block:

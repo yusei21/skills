@@ -9,9 +9,9 @@ const { applyStore, rollbackStore } = require('../../scripts/lib/context-profile
 const { prepareNativeProfile, rollbackNativeProfile, getNativeProfileStatus, recoverNativeProfile } = require('../../scripts/lib/context-profile-native');
 
 const repoRoot = path.resolve(__dirname, '../..');
-const temp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-native-switch-')));
+const temp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-native-switch-')));
 const options = { stateRoot: path.join(temp, 'managed'), nativeRoot: path.join(temp, 'native'),
-  codexPath: process.env.ECC_NATIVE_CODEX || 'codex' };
+  codexPath: process.env.YUS_NATIVE_CODEX || 'codex' };
 try {
   const cases = []; let full;
   for (const [index, profileId] of ['full@1', 'lean@1', 'full@1'].entries()) {

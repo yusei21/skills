@@ -112,8 +112,8 @@ const ROUTINE_BASH_NARROW_RECOVERY_HINT =
   'Narrow recovery: set `GATEGUARD_BASH_ROUTINE_DISABLED=1`; destructive Bash checks remain active.';
 const ROUTINE_POWERSHELL_NARROW_RECOVERY_HINT =
   'Narrow recovery: set `GATEGUARD_BASH_ROUTINE_DISABLED=1`; destructive Bash and PowerShell checks remain active.';
-const ECC_DISABLE_VALUES = new Set(['0', 'false', 'off', 'disabled', 'disable']);
-const ECC_ENABLE_VALUES = new Set(['1', 'true', 'on', 'enabled', 'enable', 'yes']);
+const YUS_DISABLE_VALUES = new Set(['0', 'false', 'off', 'disabled', 'disable']);
+const YUS_ENABLE_VALUES = new Set(['1', 'true', 'on', 'enabled', 'enable', 'yes']);
 
 // SQL keywords remain a phrase check. Quoted strings are stripped before
 // this regex runs so a commit message mentioning "drop table" stays passive.
@@ -265,7 +265,7 @@ function isExemptPath(filePath, data) {
 }
 
 function isRoutineBashGateDisabled() {
-  return ECC_ENABLE_VALUES.has(normalizeEnvValue(process.env.GATEGUARD_BASH_ROUTINE_DISABLED));
+  return YUS_ENABLE_VALUES.has(normalizeEnvValue(process.env.GATEGUARD_BASH_ROUTINE_DISABLED));
 }
 
 /**
@@ -1565,7 +1565,7 @@ function isGateGuardDisabled() {
     return true;
   }
 
-  return ECC_DISABLE_VALUES.has(normalizeEnvValue(process.env.ECC_GATEGUARD));
+  return YUS_DISABLE_VALUES.has(normalizeEnvValue(process.env.YUS_GATEGUARD));
 }
 
 function sanitizeSessionKey(value) {
@@ -1587,7 +1587,7 @@ function hashSessionKey(prefix, value) {
 }
 
 function resolveSessionKey(data) {
-  const directCandidates = [data && data.session_id, data && data.sessionId, data && data.session && data.session.id, process.env.CLAUDE_SESSION_ID, process.env.ECC_SESSION_ID];
+  const directCandidates = [data && data.session_id, data && data.sessionId, data && data.session && data.session.id, process.env.CLAUDE_SESSION_ID, process.env.YUS_SESSION_ID];
 
   for (const candidate of directCandidates) {
     const sanitized = sanitizeSessionKey(candidate);
@@ -2075,7 +2075,7 @@ function batchSiblingWarning(safePath) {
 
 // see docs/gateguard/change-profile.md#external-contract-question
 function questionOptions() {
-  return { externalContract: ECC_ENABLE_VALUES.has(normalizeEnvValue(process.env.GATEGUARD_EXTERNAL_CONTRACT_QUESTION)) };
+  return { externalContract: YUS_ENABLE_VALUES.has(normalizeEnvValue(process.env.GATEGUARD_EXTERNAL_CONTRACT_QUESTION)) };
 }
 
 function firstTouchGateMsg(filePath, isWrite, cls, profile) {
@@ -2108,7 +2108,7 @@ function condensedGateMsg(action, filePath, ordinal, { cls = 'code', targetNote 
     `${batchSiblingWarning(safe)} ` +
     (missNote ? `${missNote} ` : '') +
     (targetNote ? `${targetNote} ` : '') +
-    '(Use GATEGUARD_EXEMPT_GLOBS for path-scoped exemptions; GATEGUARD_FACT_FORCE_MAX_DENIALS caps denials per session; ECC_GATEGUARD=off disables this gate.)'
+    '(Use GATEGUARD_EXEMPT_GLOBS for path-scoped exemptions; GATEGUARD_FACT_FORCE_MAX_DENIALS caps denials per session; YUS_GATEGUARD=off disables this gate.)'
   );
 }
 
@@ -2189,7 +2189,7 @@ function withRecoveryHint(message, hookIds = [EDIT_WRITE_HOOK_ID], narrowRecover
     message,
     '',
     ...recoveryLines,
-    `Recovery: if GateGuard is blocking setup or repair work, run this session with \`ECC_GATEGUARD=off\` or add ${disableTargets} to \`ECC_DISABLED_HOOKS\`.`
+    `Recovery: if GateGuard is blocking setup or repair work, run this session with \`YUS_GATEGUARD=off\` or add ${disableTargets} to \`YUS_DISABLED_HOOKS\`.`
   ].join('\n');
 }
 
@@ -2392,7 +2392,7 @@ function entriesFor(edits, fileKey, data) {
 let pendingMetrics = null;
 
 function isMetricsEnabled() {
-  return ECC_ENABLE_VALUES.has(normalizeEnvValue(process.env.GATEGUARD_METRICS));
+  return YUS_ENABLE_VALUES.has(normalizeEnvValue(process.env.GATEGUARD_METRICS));
 }
 
 function recordDecision(decision, reason, fields = {}) {

@@ -11,18 +11,18 @@ function getHomunculusDir() {
     if (path.isAbsolute(override)) {
       return override;
     }
-    process.stderr.write(`[ecc] CLV2_HOMUNCULUS_DIR=${override} is not absolute; ignoring\n`);
+    process.stderr.write(`[yus] CLV2_HOMUNCULUS_DIR=${override} is not absolute; ignoring\n`);
   }
 
   const xdgDataHome = process.env.XDG_DATA_HOME;
   if (xdgDataHome) {
     if (path.isAbsolute(xdgDataHome)) {
-      return path.join(xdgDataHome, 'ecc-homunculus');
+      return path.join(xdgDataHome, 'yus-homunculus');
     }
-    process.stderr.write(`[ecc] XDG_DATA_HOME=${xdgDataHome} is not absolute; ignoring\n`);
+    process.stderr.write(`[yus] XDG_DATA_HOME=${xdgDataHome} is not absolute; ignoring\n`);
   }
 
-  return path.join(os.homedir(), '.local', 'share', 'ecc-homunculus');
+  return path.join(os.homedir(), '.local', 'share', 'yus-homunculus');
 }
 
 function getProjectsDir() {
@@ -139,7 +139,7 @@ function pickRootProjectId(entries, projectRoot) {
   const others = ids.filter(id => id !== chosenId);
   if (others.length > 0) {
     process.stderr.write(
-      `[ecc] ${projectRoot} has project ids ${[chosenId, ...others].join(', ')}; using ${chosenId}. `
+      `[yus] ${projectRoot} has project ids ${[chosenId, ...others].join(', ')}; using ${chosenId}. `
       + 'Inspect with instinct-cli.py projects; do not merge live project storage. '
       + 'The merge command removes the source directory.\n'
     );

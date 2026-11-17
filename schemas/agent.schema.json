@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "ecc.agent-ir.v1",
-  "title": "ECC Agent IR",
-  "description": "Canonical harness-neutral representation of an ECC agent, produced from a source harness definition (e.g. agents/*.md Claude frontmatter). Emitters consume this IR and produce native agent/subagent definitions per harness. The `tools` array holds source tool names verbatim (lossless); each emitter maps them through its own tool table.",
+  "$id": "yus.agent-ir.v1",
+  "title": "yus Agent IR",
+  "description": "Canonical harness-neutral representation of an yus agent, produced from a source harness definition (e.g. agents/*.md Claude frontmatter). Emitters consume this IR and produce native agent/subagent definitions per harness. The `tools` array holds source tool names verbatim (lossless); each emitter maps them through its own tool table.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -15,7 +15,7 @@
   ],
   "properties": {
     "schema": {
-      "const": "ecc.agent-ir.v1"
+      "const": "yus.agent-ir.v1"
     },
     "id": {
       "type": "string",

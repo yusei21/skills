@@ -13,7 +13,7 @@ const { renderControlPlaneViewHtml } = require('./control-plane-view-ui');
 const { createControlPlaneViewSource } = require('./control-plane-view');
 const { runWorkItemMutation } = require('./work-item-runner');
 
-// Host/Origin gating lives in scripts/lib/loopback-guard.js so every ECC
+// Host/Origin gating lives in scripts/lib/loopback-guard.js so every yus
 // loopback server shares one hardened implementation; re-exported below to
 // keep this module's public API stable.
 const {
@@ -25,10 +25,10 @@ const {
 function usage() {
   return [
     'Usage:',
-    '  node scripts/control-pane.js [--host 127.0.0.1] [--port 8765] [--db <ecc2.db>] [--state-db <state.db>] [--config <ecc2.toml>] [--query <text>]',
+    '  node scripts/control-pane.js [--host 127.0.0.1] [--port 8765] [--db <yus2.db>] [--state-db <state.db>] [--config <yus2.toml>] [--query <text>]',
     '',
     'Options:',
-    '  --state-db <path>  Read agent work items from an ECC state-store database',
+    '  --state-db <path>  Read agent work items from an yus state-store database',
     '  --read-only        Disable action execution endpoints',
     '  --no-open          Do not open a browser after the server starts',
     '  --help             Show this help'
@@ -210,8 +210,8 @@ function createControlPaneServer(options = {}) {
         return;
       }
 
-      if (req.method === 'GET' && requestUrl.pathname === '/assets/ecc-icon.svg') {
-        const iconPath = path.join(repoRoot, 'assets', 'ecc-icon.svg');
+      if (req.method === 'GET' && requestUrl.pathname === '/assets/yus-icon.svg') {
+        const iconPath = path.join(repoRoot, 'assets', 'yus-icon.svg');
         if (!fs.existsSync(iconPath)) {
           sendText(res, 404, 'not found');
           return;

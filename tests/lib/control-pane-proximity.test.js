@@ -59,7 +59,7 @@ test('real worktrees expose committed, staged, unstaged and untracked work befor
   const os = require('os');
   const path = require('path');
   const { execFileSync } = require('child_process');
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-proximity-worktree-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-proximity-worktree-'));
   const repo = path.join(dir, 'repo');
   const git = (cwd, ...args) => execFileSync('git', ['-C', cwd, ...args], { stdio: 'pipe' });
   try {
@@ -108,7 +108,7 @@ test('real Git working sets retain tracked deletions and binary changes', () => 
   const os = require('os');
   const path = require('path');
   const { execFileSync } = require('child_process');
-  const repo = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-proximity-delete-'));
+  const repo = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-proximity-delete-'));
   const git = (...args) => execFileSync('git', ['-C', repo, ...args], { stdio: 'pipe' });
   try {
     git('init', '-q', '-b', 'main');
@@ -135,7 +135,7 @@ test('quoted staged paths and untracked paths share identity, and untracked fail
   const path = require('path');
   const childProcess = require('child_process');
   const originalExec = childProcess.execFileSync;
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-proximity-quoted-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-proximity-quoted-'));
   const repo = path.join(dir, 'repo');
   const git = (cwd, ...args) => originalExec('git', ['-C', cwd, ...args], { stdio: 'pipe' });
   const modulePath = require.resolve('../../scripts/lib/control-pane/proximity');
@@ -258,7 +258,7 @@ test('real quoted filenames retain disjoint hunk ranges rather than whole-file c
   const os = require('os');
   const path = require('path');
   const { execFileSync } = require('child_process');
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-proximity-quoted-lines-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-proximity-quoted-lines-'));
   const repo = path.join(dir, 'repo');
   const git = (cwd, ...args) => execFileSync('git', ['-C', cwd, ...args], { stdio: 'pipe' });
   const file = process.platform === 'win32' ? 'café-résumé.js' : 'café"résumé\tname.js';

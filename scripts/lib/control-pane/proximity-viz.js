@@ -19,7 +19,7 @@ function renderProximityVizHtml() {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ECC Agent Airspace</title>
+<title>yus Agent Airspace</title>
 <style>
   :root { color-scheme: dark; }
   * { box-sizing: border-box; }
@@ -51,7 +51,7 @@ function renderProximityVizHtml() {
 </head>
 <body>
   <header>
-    <h1>ECC - Agent Airspace</h1>
+    <h1>yus - Agent Airspace</h1>
     <span class="sub" id="status">connecting...</span>
     <a class="sub" href="/control-plane" style="margin-left:auto;text-decoration:none">2D control plane</a>
   </header>

@@ -2,7 +2,7 @@
 
 // GitHub Copilot loads path-specific instructions from
 // `.github/instructions/**/*.instructions.md`, where the `applyTo` frontmatter
-// key carries a comma-separated glob list. ECC rules express the same scoping
+// key carries a comma-separated glob list. yus rules express the same scoping
 // with the Claude Code convention, a YAML `paths:` list, and rules without
 // frontmatter apply to every prompt. The transform maps one model onto the
 // other: `paths:` becomes `applyTo:`, and a rule without `paths` becomes
@@ -13,7 +13,7 @@
 // external URLs) are kept as-is.
 //
 // The transform is an allowlist: only `paths` is read, so frontmatter keys
-// added to ECC rules later cannot silently leak into the Copilot copy.
+// added to yus rules later cannot silently leak into the Copilot copy.
 
 const path = require('path');
 

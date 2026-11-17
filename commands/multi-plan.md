@@ -1,12 +1,12 @@
 ---
-description: Create a multi-model (Codex + Antigravity) implementation plan without modifying production code. Requires the external ccg-workflow runtime, not part of the base ECC install (see Prerequisite below). Use when the user explicitly wants dual-model plan drafts; for a single-model plan with no extra runtime use /plan.
+description: Create a multi-model (Codex + Antigravity) implementation plan without modifying production code. Requires the external ccg-workflow runtime, not part of the base yus install (see Prerequisite below). Use when the user explicitly wants dual-model plan drafts; for a single-model plan with no extra runtime use /plan.
 ---
 
 # Plan - Multi-Model Collaborative Planning
 
 Multi-model collaborative planning - Context retrieval + Dual-model analysis → Generate step-by-step implementation plan.
 
-> **Prerequisite:** Requires the external `ccg-workflow` runtime, which is **not** part of the base ECC install. Initialize it with `npx ccg-workflow` to provision `~/.claude/bin/codeagent-wrapper` and the `~/.claude/.ccg/prompts/*` role files this command depends on. Without that runtime, this command will not run correctly.
+> **Prerequisite:** Requires the external `ccg-workflow` runtime, which is **not** part of the base yus install. Initialize it with `npx ccg-workflow` to provision `~/.claude/bin/codeagent-wrapper` and the `~/.claude/.ccg/prompts/*` role files this command depends on. Without that runtime, this command will not run correctly.
 
 $ARGUMENTS
 

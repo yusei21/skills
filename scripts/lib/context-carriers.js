@@ -96,7 +96,7 @@ function copyDescriptors(entries, layout) {
 // package scripts, or Pi extensions. OpenCode/Cursor use native project directories.
 function generatedManifest(target, layout) {
   if (!layout.manifestPath) return [];
-  const name = 'ecc-context-carrier';
+  const name = 'yus-context-carrier';
   const manifests = {
     claude: { name, skills: ['./skills/'] },
     codex: { name, skills: './skills/' },
@@ -146,7 +146,7 @@ function planContextCarrier(options = {}) {
   const files = layout ? [...copyDescriptors(selected, layout), ...generatedManifest(context.target, layout)] : [];
   validateDestinations(files);
   const value = {
-    schemaVersion: 'ecc.context-carrier.v1', status: layout ? 'planned' : 'unsupported',
+    schemaVersion: 'yus.context-carrier.v1', status: layout ? 'planned' : 'unsupported',
     active: false, disposition: 'proposed', nativeSupport: 'unobserved',
     target: context.target, profileId: context.profileId, selectionMode: context.selectionMode,
     registryDigest: context.registryDigest, profileDigest: context.profileDigest,

@@ -30,7 +30,7 @@ const {
   compactSession
 } = require(path.join(__dirname, '..', '..', 'scripts', 'claw.js'));
 
-// Test helper — matches ECC's custom test pattern
+// Test helper — matches yus's custom test pattern
 
 function makeTmpDir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'claw-test-'));
@@ -145,7 +145,7 @@ describe(sectionTitle('\nContext:'), () => {
   });
 
   test('loadECCContext() concatenates multiple skill files', () => {
-    // Use real skills from the ECC repo if they exist
+    // Use real skills from the yus repo if they exist
     const skillsDir = path.join(process.cwd(), 'skills');
     if (!fs.existsSync(skillsDir)) {
       console.log('    (skipped — no skills/ directory in CWD)');

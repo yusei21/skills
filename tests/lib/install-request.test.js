@@ -19,14 +19,14 @@ const {
       '--modules', 'platform-configs, workflow-quality ,platform-configs',
       '--with', 'lang:typescript',
       '--without', 'capability:media',
-      '--config', 'ecc-install.json',
+      '--config', 'yus-install.json',
       '--dry-run',
       '--json'
     ]);
 
     assert.strictEqual(parsed.target, 'cursor');
     assert.strictEqual(parsed.profileId, 'developer');
-    assert.strictEqual(parsed.configPath, 'ecc-install.json');
+    assert.strictEqual(parsed.configPath, 'yus-install.json');
     assert.deepStrictEqual(parsed.moduleIds, ['platform-configs', 'workflow-quality']);
     assert.deepStrictEqual(parsed.includeComponentIds, ['lang:typescript']);
     assert.deepStrictEqual(parsed.excludeComponentIds, ['capability:media']);
@@ -199,9 +199,9 @@ const {
       includeComponentIds: ['framework:nextjs'],
       excludeComponentIds: ['capability:media'],
       languages: [],
-      configPath: '/workspace/app/ecc-install.json',
+      configPath: '/workspace/app/yus-install.json',
       config: {
-        path: '/workspace/app/ecc-install.json',
+        path: '/workspace/app/yus-install.json',
         target: 'claude',
         profileId: 'developer',
         moduleIds: ['workflow-quality'],
@@ -216,7 +216,7 @@ const {
     assert.deepStrictEqual(request.moduleIds, ['workflow-quality', 'platform-configs']);
     assert.deepStrictEqual(request.includeComponentIds, ['lang:typescript', 'framework:nextjs']);
     assert.deepStrictEqual(request.excludeComponentIds, ['capability:orchestration', 'capability:media']);
-    assert.strictEqual(request.configPath, '/workspace/app/ecc-install.json');
+    assert.strictEqual(request.configPath, '/workspace/app/yus-install.json');
   });
 
   test('validates explicit module IDs against the manifest catalog', () => {

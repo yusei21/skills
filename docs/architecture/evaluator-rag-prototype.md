@@ -1,6 +1,6 @@
 # Evaluator RAG Prototype
 
-ECC 2.0 needs an evidence-driven harness evaluation loop that can compare
+yus 2.0 needs an evidence-driven harness evaluation loop that can compare
 operator-supplied candidates from real work without implying model learning or
 blindly mutating a user's Claude, Codex, OpenCode, dmux, Zed, or terminal
 setup. This prototype defines the smallest read-only artifact set for that

@@ -136,18 +136,18 @@
 
 ## 跨环境记忆 CLI
 
-以下是 `ecc` CLI 命令，不是斜杠命令。它们在 Claude、Codex、Hermes、OpenClaw、Kimi 等
+以下是 `yus` CLI 命令，不是斜杠命令。它们在 Claude、Codex、Hermes、OpenClaw、Kimi 等
 环境之间共用一个可检查的 Markdown 记忆库。
 
 | 命令 | 作用 |
 |------|------|
-| `ecc memory init` | 创建项目、团队或用户的记忆库目录 |
-| `ecc memory save` | 新建一条未经评审的上下文、决策、事实、经验、笔记、偏好或运行手册 |
-| `ecc memory handoff` | 把一段有界的工作状态从一个环境移交给另一个环境 |
-| `ecc memory search` | 按文本、范围、类型或目标环境搜索记忆 |
-| `ecc memory read` | 按稳定 ID 读取一条记忆及其反向链接 |
-| `ecc memory doctor` | 报告格式错误的文件、重复的 ID、失效的链接和被跳过的符号链接 |
-| `ecc-memory-mcp` | 启动可选的本地 stdio MCP 服务器 |
+| `yus memory init` | 创建项目、团队或用户的记忆库目录 |
+| `yus memory save` | 新建一条未经评审的上下文、决策、事实、经验、笔记、偏好或运行手册 |
+| `yus memory handoff` | 把一段有界的工作状态从一个环境移交给另一个环境 |
+| `yus memory search` | 按文本、范围、类型或目标环境搜索记忆 |
+| `yus memory read` | 按稳定 ID 读取一条记忆及其反向链接 |
+| `yus memory doctor` | 报告格式错误的文件、重复的 ID、失效的链接和被跳过的符号链接 |
+| `yus-memory-mcp` | 启动可选的本地 stdio MCP 服务器 |
 
 用 `--stdin` 或 `--body-file` 传入记忆内容；为安全起见，它不接受命令行参数形式的内容。
 召回的记忆是不受信任的上下文，不是可执行的指令或策略。
@@ -156,15 +156,15 @@
 
 ## 安装健康与反馈 CLI
 
-这些生命周期命令也可以通过 `ecc` CLI 使用。
+这些生命周期命令也可以通过 `yus` CLI 使用。
 
 | 命令 | 作用 |
 |------|------|
-| `ecc list-installed` | 显示 ECC 托管状态中记录的安装 |
-| `ecc doctor` | 诊断缺失或被改动的托管文件，并把失败指向简短的问题反馈表单 |
-| `ecc repair` | 恢复缺失或被改动的托管文件 |
-| `ecc uninstall` | 只删除由安装状态管理的文件，并可选显示 20 秒的退出反馈入口 |
-| `ecc feedback` | 显示公开的问题、快速反馈和功能建议入口，不读取文件也不上传诊断信息 |
+| `yus list-installed` | 显示 yus 托管状态中记录的安装 |
+| `yus doctor` | 诊断缺失或被改动的托管文件，并把失败指向简短的问题反馈表单 |
+| `yus repair` | 恢复缺失或被改动的托管文件 |
+| `yus uninstall` | 只删除由安装状态管理的文件，并可选显示 20 秒的退出反馈入口 |
+| `yus feedback` | 显示公开的问题、快速反馈和功能建议入口，不读取文件也不上传诊断信息 |
 
 ---
 
@@ -202,7 +202,7 @@
 
 | 命令 | 作用 |
 |------|------|
-| `/ecc-guide` | 基于当前仓库内容浏览 ECC 的代理、技能、命令、钩子、安装配置档和文档 |
+| `/yus-guide` | 基于当前仓库内容浏览 yus 的代理、技能、命令、钩子、安装配置档和文档 |
 | `/update-docs` | 从脚本、schema、路由、导出等事实来源同步文档 |
 | `/update-codemaps` | 重新生成代码库的代码地图 |
 
@@ -224,12 +224,12 @@
 | 命令 | 作用 |
 |------|------|
 | `/projects` | 列出已知项目及其本能统计 |
-| `/project-init` | 检测项目的技术栈，生成一份试运行（dry-run）的 ECC 接入计划 |
+| `/project-init` | 检测项目的技术栈，生成一份试运行（dry-run）的 yus 接入计划 |
 | `/harness-audit` | 审计智能体环境配置的可靠性和成本 |
 | `/model-route` | 把任务路由到合适的模型（Haiku / Sonnet / Opus） |
 | `/pm2` | 初始化 PM2 进程管理器 |
 | `/setup-pm` | 配置包管理器（npm / pnpm / yarn / bun） |
-| `/auto-update` | 拉取 ECC 仓库的最新改动并重新安装当前托管的目标 |
+| `/auto-update` | 拉取 yus 仓库的最新改动并重新安装当前托管的目标 |
 | `/cost-report` | 从 cost-tracker 的 SQLite 数据库生成本地 Claude Code 成本报告 |
 | `/token-card` | 从本地会话日志生成 token 用量统计卡片，并提交到仓库 |
 | `/security-scan` | 对代理、钩子、MCP、权限和密钥运行 AgentShield |

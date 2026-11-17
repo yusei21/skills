@@ -24,7 +24,7 @@ function startOwnedChild(script, args = [], dependencies = {}) {
   const forkChild = dependencies.fork || fork;
   const platform = dependencies.platform || process.platform;
   const kill = dependencies.kill || process.kill.bind(process);
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-state-child-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-state-child-'));
   const home = path.join(root, 'home');
   const tmp = path.join(root, 'tmp');
   let child;

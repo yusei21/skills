@@ -66,7 +66,7 @@ test('child and retired preload reject before loading an escaping canary payload
   for (const args of [[path.join(library, 'gate-child.js')], ['--require', path.join(library, 'effect-fence.js'), external]]) {
     const result = spawnSync(process.execPath, args, {
       cwd: c.variant, input: JSON.stringify({ entry: external, tasks: [] }), encoding: 'utf8', timeout: 2000,
-      env: { ECC_EFFECT_FENCE_ROOT: c.variant, ECC_EFFECT_FENCE_LOG: path.join(c.root, 'log') },
+      env: { YUS_EFFECT_FENCE_ROOT: c.variant, YUS_EFFECT_FENCE_LOG: path.join(c.root, 'log') },
     });
     assert.notStrictEqual(result.status, 0);
     assert.match(result.stderr, /gate.isolation_required/);

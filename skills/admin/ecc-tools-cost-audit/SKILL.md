@@ -2,7 +2,7 @@
 name: ecc-tools-cost-audit
 description: Evidence-first ECC Tools burn and billing audit workflow. Use when investigating runaway PR creation, quota bypass, premium-model leakage, duplicate jobs, or GitHub App cost spikes in the ECC Tools repo.
 metadata:
-  origin: ECC
+  origin: yus
 ---
 
 # ECC Tools Cost Audit
@@ -13,7 +13,7 @@ This is a focused operator workflow for the sibling [ECC-Tools](../../../ECC-Too
 
 ## Skill Stack
 
-Pull these ECC-native skills into the workflow when relevant:
+Pull these yus-native skills into the workflow when relevant:
 
 - `autonomous-loops` for bounded multi-step audits that cross webhooks, queues, billing, and retries
 - `agentic-engineering` for tracing the request path into discrete, provable units
@@ -31,7 +31,7 @@ Pull these ECC-native skills into the workflow when relevant:
 
 ## Scope Guardrails
 
-- work in the sibling `ECC-Tools` repo, not in `ECC`
+- work in the sibling `ECC-Tools` repo, not in `yus`
 - start read-only unless the user clearly asked for a fix
 - do not mutate unrelated billing, checkout, or UI flows while tracing analysis burn
 - treat app-generated branches and app-generated PRs as red-flag recursion paths until proved otherwise

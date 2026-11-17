@@ -21,8 +21,8 @@ PENDING_ANALYSIS=0
 ANALYZING=0
 LAST_ANALYSIS_EPOCH=0
 # Minimum seconds between analyses (prevents rapid re-triggering)
-ANALYSIS_COOLDOWN="${ECC_OBSERVER_ANALYSIS_COOLDOWN:-60}"
-IDLE_TIMEOUT_SECONDS="${ECC_OBSERVER_IDLE_TIMEOUT_SECONDS:-1800}"
+ANALYSIS_COOLDOWN="${YUS_OBSERVER_ANALYSIS_COOLDOWN:-60}"
+IDLE_TIMEOUT_SECONDS="${YUS_OBSERVER_IDLE_TIMEOUT_SECONDS:-1800}"
 SESSION_LEASE_DIR="${PROJECT_DIR}/.observer-sessions"
 ACTIVITY_FILE="${PROJECT_DIR}/.observer-last-activity"
 
@@ -207,8 +207,8 @@ analyze_observations() {
 
   echo "[$(date)] Analyzing $obs_count observations for project ${PROJECT_NAME}..." >> "$LOG_FILE"
 
-  if [ "${CLV2_IS_WINDOWS:-false}" = "true" ] && [ "${ECC_OBSERVER_ALLOW_WINDOWS:-false}" != "true" ]; then
-    echo "[$(date)] Skipping claude analysis on Windows due to known non-interactive hang issue (#295). Set ECC_OBSERVER_ALLOW_WINDOWS=true to override." >> "$LOG_FILE"
+  if [ "${CLV2_IS_WINDOWS:-false}" = "true" ] && [ "${YUS_OBSERVER_ALLOW_WINDOWS:-false}" != "true" ]; then
+    echo "[$(date)] Skipping claude analysis on Windows due to known non-interactive hang issue (#295). Set YUS_OBSERVER_ALLOW_WINDOWS=true to override." >> "$LOG_FILE"
     return
   fi
 
@@ -225,13 +225,13 @@ analyze_observations() {
 
   # Sample recent observations instead of loading the entire file (#521).
   # This prevents multi-MB payloads from being passed to the LLM.
-  MAX_ANALYSIS_LINES="${ECC_OBSERVER_MAX_ANALYSIS_LINES:-500}"
+  MAX_ANALYSIS_LINES="${YUS_OBSERVER_MAX_ANALYSIS_LINES:-500}"
   observer_tmp_dir="${PROJECT_DIR}/.observer-tmp"
   mkdir -p "$observer_tmp_dir"
   # Keep the XXXXXX run at the very end of the template: BSD/macOS mktemp only
   # substitutes a trailing X run, so a suffix after it (e.g. `.jsonl`) produces a
   # literal, non-random name that wedges every later cycle with "File exists" (#2417).
-  analysis_file="$(mktemp "${observer_tmp_dir}/ecc-observer-analysis.jsonl.XXXXXX")"
+  analysis_file="$(mktemp "${observer_tmp_dir}/yus-observer-analysis.jsonl.XXXXXX")"
   if [ -z "$analysis_file" ] || [ ! -f "$analysis_file" ]; then
     echo "[$(date)] Failed to create observer analysis file; retaining observations for retry" >> "$LOG_FILE"
     return
@@ -258,7 +258,7 @@ analyze_observations() {
     analysis_relpath="$analysis_file"
   fi
 
-  prompt_file="$(mktemp "${observer_tmp_dir}/ecc-observer-prompt.XXXXXX")"
+  prompt_file="$(mktemp "${observer_tmp_dir}/yus-observer-prompt.XXXXXX")"
   if [ -z "$prompt_file" ] || [ ! -f "$prompt_file" ]; then
     echo "[$(date)] Failed to create observer prompt file; retaining observations for retry" >> "$LOG_FILE"
     cleanup_analysis_resources
@@ -327,13 +327,13 @@ PROMPT
     return
   fi
 
-  timeout_seconds="${ECC_OBSERVER_TIMEOUT_SECONDS:-120}"
+  timeout_seconds="${YUS_OBSERVER_TIMEOUT_SECONDS:-120}"
   # Auto-scale max_turns proportional to analysis batch size when not explicitly set.
   # The old hardcoded default of 20 is insufficient for the 500-line MAX_ANALYSIS_LINES
   # default: Claude hits --max-turns before it can write all discovered instinct files.
   # Formula: 1 turn per 10 analysis lines, floor 20, cap 100. (#2035)
-  if [ -n "${ECC_OBSERVER_MAX_TURNS:-}" ]; then
-    max_turns="${ECC_OBSERVER_MAX_TURNS}"
+  if [ -n "${YUS_OBSERVER_MAX_TURNS:-}" ]; then
+    max_turns="${YUS_OBSERVER_MAX_TURNS}"
   else
     max_turns=$(( analysis_count / 10 ))
     if [ "$max_turns" -lt 20 ]; then max_turns=20; fi
@@ -342,7 +342,7 @@ PROMPT
   exit_code=0
 
   # Sanitize max_turns. The auto-scaled path above always yields a valid value >=20,
-  # but an explicit ECC_OBSERVER_MAX_TURNS override may be non-numeric, empty, or too
+  # but an explicit YUS_OBSERVER_MAX_TURNS override may be non-numeric, empty, or too
   # small, so guard here and fall back to the safe default of 20.
   case "$max_turns" in
     ''|*[!0-9]*)
@@ -358,7 +358,7 @@ PROMPT
   # on all platforms, not just when the observer happens to be launched from the project root.
   cd "$PROJECT_DIR" || { echo "[$(date)] Failed to cd to PROJECT_DIR ($PROJECT_DIR), skipping analysis" >> "$LOG_FILE"; cleanup_analysis_resources; return; }
 
-  analysis_result_file="$(mktemp "${observer_tmp_dir}/ecc-observer-result.XXXXXX")"
+  analysis_result_file="$(mktemp "${observer_tmp_dir}/yus-observer-result.XXXXXX")"
   if [ -z "$analysis_result_file" ] || [ ! -f "$analysis_result_file" ]; then
     echo "[$(date)] Failed to create observer result file, skipping analysis" >> "$LOG_FILE"
     cleanup_analysis_resources
@@ -388,15 +388,15 @@ PROMPT
   # stdin is explicitly closed with </dev/null: on Git Bash/MSYS2 the backgrounded
   # child otherwise inherits an open stdin, and claude waits on it, warns
   # "no stdin data received", and exits 1 before reading the analysis file (#2452).
-  # Model is configurable via ECC_OBSERVER_MODEL (defaults to haiku for cost efficiency);
-  # e.g. ECC_OBSERVER_MODEL=opus for higher-quality instinct extraction. Heavier models are
-  # slower — consider raising ECC_OBSERVER_TIMEOUT_SECONDS (default 120s) so the watchdog
+  # Model is configurable via YUS_OBSERVER_MODEL (defaults to haiku for cost efficiency);
+  # e.g. YUS_OBSERVER_MODEL=opus for higher-quality instinct extraction. Heavier models are
+  # slower — consider raising YUS_OBSERVER_TIMEOUT_SECONDS (default 120s) so the watchdog
   # doesn't kill the analysis mid-run.
   # Job control gives the background Claude command its own process group on
   # Bash, including macOS's Bash 3.2 and Git Bash. That lets timeout/signal
   # cleanup terminate tool subprocesses as well as the direct CLI process.
   set -m
-  ECC_SKIP_OBSERVE=1 ECC_HOOK_PROFILE=minimal claude --model "${ECC_OBSERVER_MODEL:-haiku}" --max-turns "$max_turns" --print \
+  YUS_SKIP_OBSERVE=1 YUS_HOOK_PROFILE=minimal claude --model "${YUS_OBSERVER_MODEL:-haiku}" --max-turns "$max_turns" --print \
     --allowedTools "Read,Write" \
     -p "$prompt_content" < /dev/null >&8 2>> "$LOG_FILE" &
   CLAUDE_PID=$!

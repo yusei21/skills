@@ -1,14 +1,14 @@
 {
-  "name": "ecc",
-  "displayName": "ECC",
+  "name": "yus",
+  "displayName": "yus",
   "version": "2.2.3",
   "description": "Harness-native engineering workflows for Qoder: canonical skills and agents, legacy command shims, a reviewed SessionStart hook, and optional MCP tooling.",
   "author": {
     "name": "Affaan Mustafa",
     "url": "https://x.com/affaanmustafa"
   },
-  "homepage": "https://ecc.tools",
-  "repository": "https://github.com/affaan-m/ECC",
+  "homepage": "https://github.com/yusei21/yus",
+  "repository": "https://github.com/yusei21/yus",
   "license": "MIT",
   "keywords": [
     "qoder",

@@ -67,7 +67,7 @@ function run(args = [], options = {}) {
     try {
       const result = run([], { cwd: projectRoot, homeDir });
       assert.strictEqual(result.code, 0);
-      assert.ok(result.stdout.includes('No ECC install-state files found'));
+      assert.ok(result.stdout.includes('No yus install-state files found'));
     } finally {
       cleanup(homeDir);
       cleanup(projectRoot);
@@ -79,7 +79,7 @@ function run(args = [], options = {}) {
     const projectRoot = createTempDir('list-installed-project-');
 
     try {
-      const statePath = path.join(projectRoot, '.cursor', 'ecc-install-state.json');
+      const statePath = path.join(projectRoot, '.cursor', 'yus-install-state.json');
       writeState(statePath, {
         adapter: { id: 'cursor-project', target: 'cursor', kind: 'project' },
         targetRoot: path.join(projectRoot, '.cursor'),

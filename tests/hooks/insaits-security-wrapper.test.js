@@ -84,7 +84,7 @@ function run(options = {}) {
   test('passes stdin through when InsAIts is disabled', () => {
     const result = run({
       input: '{"tool_name":"Bash"}',
-      env: { ECC_ENABLE_INSAITS: '' },
+      env: { YUS_ENABLE_INSAITS: '' },
     });
 
     assert.strictEqual(result.status, 0);
@@ -100,7 +100,7 @@ function run(options = {}) {
       const result = run({
         input: '{"tool_name":"Bash","tool_input":{"command":"npm install"}}',
         env: {
-          ECC_ENABLE_INSAITS: '1',
+          YUS_ENABLE_INSAITS: '1',
           FAKE_INSAITS_MODE: 'clean',
           PATH: path.join(tempDir, 'bin'),
         },
@@ -121,7 +121,7 @@ function run(options = {}) {
       const result = run({
         input: '{"tool_name":"Bash","tool_input":{"command":"rm -rf /tmp/demo"}}',
         env: {
-          ECC_ENABLE_INSAITS: '1',
+          YUS_ENABLE_INSAITS: '1',
           FAKE_INSAITS_MODE: 'block',
           PATH: path.join(tempDir, 'bin'),
         },
@@ -143,7 +143,7 @@ function run(options = {}) {
       const result = run({
         input: 'raw-input',
         env: {
-          ECC_ENABLE_INSAITS: '1',
+          YUS_ENABLE_INSAITS: '1',
           FAKE_INSAITS_MODE: 'error',
           PATH: path.join(tempDir, 'bin'),
         },
@@ -168,7 +168,7 @@ function run(options = {}) {
     const result = run({
       input: 'raw-input',
       env: {
-        ECC_ENABLE_INSAITS: 'true',
+        YUS_ENABLE_INSAITS: 'true',
         PATH: '',
       },
     });

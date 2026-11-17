@@ -5,7 +5,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const test = require('node:test');
-const CLI = path.resolve(__dirname, '../../scripts/ecc.js');
+const CLI = path.resolve(__dirname, '../../scripts/yus.js');
 const task = { sessionId: 'stdin-session', taskId: 'stdin-task', revision: 1,
   phase: 'implement', explicitIds: ['skill:python-patterns'] };
 function invoke(args, input) {
@@ -37,7 +37,7 @@ test('malformed task JSON never echoes private input through the CLI envelope', 
 });
 
 test('start requires both roots, rejects authority flags, and dry-run never prepares a native home', () => {
-  const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'ecc-start-cli-'));
+  const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'yus-start-cli-'));
   try {
     const stateRoot = path.join(parent, 'state');
     const nativeRoot = path.join(parent, 'native');

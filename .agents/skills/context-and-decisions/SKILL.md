@@ -1,7 +1,7 @@
 ---
 name: context-and-decisions
 description: >-
-  Govern stable domain context with a narrowly scoped CONTEXT.md when needed, and route hard-to-reverse decisions to ECC's existing architecture-decision-records skill. Use when domain terms require repeated explanation, one term has multiple meanings, unclear language causes module-boundary mistakes, or domain semantics must remain separate from architecture decisions.
+  Govern stable domain context with a narrowly scoped CONTEXT.md when needed, and route hard-to-reverse decisions to yus's existing architecture-decision-records skill. Use when domain terms require repeated explanation, one term has multiple meanings, unclear language causes module-boundary mistakes, or domain semantics must remain separate from architecture decisions.
 ---
 
 # Domain Context and Decision Handoff
@@ -89,4 +89,4 @@ Keep tasks, status, blockers, and schedules in the project's existing tracker, s
 
 ## Attribution
 
-The active terminology-refinement workflow adapts Matt Pocock's MIT-licensed `domain-modeling` skill. See [source and adaptation boundaries](references/source.md). ECC's existing ADR workflow remains the sole decision-record owner.
+The active terminology-refinement workflow adapts Matt Pocock's MIT-licensed `domain-modeling` skill. See [source and adaptation boundaries](references/source.md). yus's existing ADR workflow remains the sole decision-record owner.

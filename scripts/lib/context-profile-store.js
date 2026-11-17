@@ -3,7 +3,7 @@
 // An explicit, private materialization store. It never registers a provider or
 // changes a user's install receipts, settings, hooks, or permission grants.
 // Receipt, immutable-generation, lock, and recovery concepts are adapted from
-// the ECC-029 activation prototype and Jeffrey Montoya's #2788 carrier work.
+// the yus-029 activation prototype and Jeffrey Montoya's #2788 carrier work.
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
@@ -32,7 +32,7 @@ function rootFor(options) {
 }
 
 function ownership(root, create = false) {
-  const marker = { schemaVersion: 'ecc.context-store.v1', destinationDigest: digestObject({ root }) };
+  const marker = { schemaVersion: 'yus.context-store.v1', destinationDigest: digestObject({ root }) };
   if (!exists(root)) {
     if (!create) return false;
     io.mkdir(root);
@@ -41,7 +41,7 @@ function ownership(root, create = false) {
   const stat = io.inspect(root).stat;
   if (!stat.isDirectory() || (process.platform !== 'win32' && ((stat.mode & 0o077) !== 0
     || (process.getuid && stat.uid !== process.getuid())))) throw new Error('Managed store must be a private owned directory');
-  if (!exists(path.join(root, 'store.json')) || !equal(io.readJson(path.join(root, 'store.json')), marker)) throw new Error('Directory is not an owned ECC managed store');
+  if (!exists(path.join(root, 'store.json')) || !equal(io.readJson(path.join(root, 'store.json')), marker)) throw new Error('Directory is not an owned yus managed store');
   return true;
 }
 
@@ -87,7 +87,7 @@ function loadGeneration(root, digest) {
 function readState(root) {
   if (!exists(path.join(root, 'state.json'))) return null;
   const state = io.readJson(path.join(root, 'state.json'));
-  if (state.schemaVersion !== 'ecc.context-store-state.v1' || !Number.isSafeInteger(state.revision)
+  if (state.schemaVersion !== 'yus.context-store-state.v1' || !Number.isSafeInteger(state.revision)
     || state.revision < 1 || !DIGEST.test(state.receiptDigest)) throw new Error('Invalid managed state');
   const receipt = io.readJson(path.join(root, 'receipts', `${state.receiptDigest}.json`));
   if (digestObject(receipt) !== state.receiptDigest || receipt.destinationDigest !== digestObject({ root })
@@ -109,7 +109,7 @@ function checkSelection(selection, carrier) {
 }
 
 function stateFor(receipt) {
-  return { schemaVersion: 'ecc.context-store-state.v1', revision: receipt.revision,
+  return { schemaVersion: 'yus.context-store-state.v1', revision: receipt.revision,
     generationDigest: receipt.generationDigest, previousGenerationDigest: receipt.previousGenerationDigest,
     selection: receipt.selection,
     receiptDigest: digestObject(receipt) };
@@ -117,7 +117,7 @@ function stateFor(receipt) {
 
 function result(root, state, pending = false) {
   const carrier = state ? loadGeneration(root, state.generationDigest) : null;
-  return { schemaVersion: 'ecc.context-store-status.v1', status: pending ? 'recovery-required' : state ? 'configured' : 'unconfigured',
+  return { schemaVersion: 'yus.context-store-status.v1', status: pending ? 'recovery-required' : state ? 'configured' : 'unconfigured',
     stateRoot: root, revision: state?.revision || 0, configured: Boolean(state), active: false,
     activation: 'unobserved', recoveryRequired: pending,
     profileId: carrier?.profileId || null, target: carrier?.target || null, selectionMode: carrier?.selectionMode || null,
@@ -206,11 +206,11 @@ function publishReceipt(root, receipt) {
 }
 
 function transaction(root, before, carrier, operation, options, carrierOptions) {
-  const receipt = { schemaVersion: 'ecc.context-store-receipt.v1', destinationDigest: digestObject({ root }),
+  const receipt = { schemaVersion: 'yus.context-store-receipt.v1', destinationDigest: digestObject({ root }),
     operation, revision: (before?.revision || 0) + 1, generationDigest: carrier.carrierDigest,
     previousGenerationDigest: before?.generationDigest || null, previousReceiptDigest: before?.receiptDigest || null,
     selection: selectionFor(carrier, carrierOptions) };
-  const body = { schemaVersion: 'ecc.context-store-transaction.v1', before, after: stateFor(receipt), receipt, carrier };
+  const body = { schemaVersion: 'yus.context-store-transaction.v1', before, after: stateFor(receipt), receipt, carrier };
   const pending = { ...body, transactionDigest: digestObject(body) };
   io.atomicJson(path.join(root, 'pending.json'), pending); checkpoint(options, 'prepared');
   publishGeneration(root, pending, options, carrierOptions); checkpoint(options, 'generation-published');
@@ -259,7 +259,7 @@ function readPending(root) {
   const pending = io.readJson(path.join(root, 'pending.json'));
   const { transactionDigest, ...body } = pending;
   if (!DIGEST.test(transactionDigest) || digestObject(body) !== transactionDigest
-    || pending.schemaVersion !== 'ecc.context-store-transaction.v1'
+    || pending.schemaVersion !== 'yus.context-store-transaction.v1'
     || pending.receipt.destinationDigest !== digestObject({ root })
     || !equal(pending.after, stateFor(pending.receipt))
     || pending.after.revision !== (pending.before?.revision || 0) + 1

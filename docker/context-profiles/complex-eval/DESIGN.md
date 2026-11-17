@@ -1,6 +1,6 @@
-# ECC Complex-Task Evaluation (complex-tasks@1)
+# yus Complex-Task Evaluation (complex-tasks@1)
 
-A reproducible, public benchmark of what ECC's context scoping does for **realistic
+A reproducible, public benchmark of what yus's context scoping does for **realistic
 agent work** — as opposed to the 30-task repair corpus (`ai-corpus.json`), which
 measures small, single-file fixes. This document is the preregistered methodology:
 it was written before the first provider call against this corpus, and it is the
@@ -8,8 +8,8 @@ reference for anyone who wants to audit or rerun the evaluation.
 
 ## Research question
 
-Does ECC's context engineering — the full skill library, manually picked skills
-(manual-lean), automatic skill matching (auto-lean), and the ECC-029 changes
+Does yus's context engineering — the full skill library, manually picked skills
+(manual-lean), automatic skill matching (auto-lean), and the yus-029 changes
 themselves — change what a frontier coding agent delivers on multi-step
 engineering tasks, and at what cost in tokens, time, and dollars?
 
@@ -20,21 +20,21 @@ isolated config homes, paired per task and repeat:
 
 | Arm | What the agent gets | What it represents |
 |---|---|---|
-| `full` | Branch skill library installed + ECC context block (catalog/resources) | ECC with scoping machinery present but everything loaded |
-| `manual-lean` | lean profile + the maintainer-chosen canonical skill(s) injected | A user who knows exactly which ECC skill applies |
-| `auto-lean` | lean profile; ECC's trigger/proposal machinery picks and injects skills | The "auto" experience: no ECC knowledge required |
-| `ecc-legacy` | The full skill library **from the pinned pre-ECC-029 commit** (`legacy-source.json`, currently `e482e579` = `origin/main`), bare prompt, no context block | The typical current ECC user experience before the scoping work |
-| `baseline` | No ECC install, bare prompt | The provider with no ECC at all (overhead subtraction) |
+| `full` | Branch skill library installed + yus context block (catalog/resources) | yus with scoping machinery present but everything loaded |
+| `manual-lean` | lean profile + the maintainer-chosen canonical skill(s) injected | A user who knows exactly which yus skill applies |
+| `auto-lean` | lean profile; yus's trigger/proposal machinery picks and injects skills | The "auto" experience: no yus knowledge required |
+| `yus-legacy` | The full skill library **from the pinned pre-yus-029 commit** (`legacy-source.json`, currently `e482e579` = `origin/main`), bare prompt, no context block | The typical current yus user experience before the scoping work |
+| `baseline` | No yus install, bare prompt | The provider with no yus at all (overhead subtraction) |
 
-`ecc-legacy` doubles as a replication control: where its install content matches
-`full`, score differences between them isolate the ECC-029 deltas (rewritten
+`yus-legacy` doubles as a replication control: where its install content matches
+`full`, score differences between them isolate the yus-029 deltas (rewritten
 skill descriptions, scoping layer) rather than provider noise.
 
 ## The three tasks
 
-Chosen to be the kind of work ECC exists for — multi-step, judgment-heavy,
-checkpointable — while deliberately **not** shaped around ECC's current skill
-list. Queries are written as a real user would phrase them, with no ECC
+Chosen to be the kind of work yus exists for — multi-step, judgment-heavy,
+checkpointable — while deliberately **not** shaped around yus's current skill
+list. Queries are written as a real user would phrase them, with no yus
 vocabulary, no hints about which skill applies, and no instruction to use any
 particular methodology. Each task has one clear correct outcome and a
 deterministic, dependency-free grader.
@@ -75,12 +75,12 @@ deterministic, dependency-free grader.
 
 - **Realism over benchmark gaming.** Each task is a small production-shaped
   repo with docs, tests, logs, and changelogs — the inputs a real engineer (or
-  a real user of an agent harness) actually has. Nothing references ECC.
+  a real user of an agent harness) actually has. Nothing references yus.
 - **Correctness is decidable.** Every grader assertion is deterministic:
   behavioral probes against the agent's own running service, exact numeric
   answers on boundary cases, static source checks, exploit probes. No LLM
   judges, no rubrics, no human scoring.
-- **Partial credit.** Graders emit `ECC_EVAL_SCORE {"score": 0..1}`, so "found
+- **Partial credit.** Graders emit `YUS_EVAL_SCORE {"score": 0..1}`, so "found
   4 of 5 vulnerabilities" registers as 0.9-of-task progress instead of a binary
   failure. Pass/fail (score = 1.0) is reported alongside the mean score.
 - **Hard to luck into.** Red herrings (incident-triage), timing windows
@@ -152,7 +152,7 @@ remain tool-free. This development evaluator does not provide a credential isola
 The registration digest binds the exact corpus, evaluator source, model, and
 executable; the run refuses to start if any of them drift, and aborts if the
 tree changes mid-run. `--artifact-dir` retains per-trial session transcripts
-for independent inspection (they never enter the report). The `ecc-legacy` arm
+for independent inspection (they never enter the report). The `yus-legacy` arm
 is pinned by commit in `legacy-source.json` and exported from git objects at
 run time. The Codex provider is unsupported for this corpus (the legacy arm has
 no Codex install path); `--provider claude` is required.
@@ -253,16 +253,16 @@ zero (`graderDied` guard in `runScoredCheck`). Stepped graders may write to
 the workspace (persistence probes); single-step graders stay read-only.
 
 First @3 run: arms `auto-lean` and `baseline` only, repeats=1,
-`claude-opus-4-8` — the direct test of "ECC auto-routing vs no harness" on
+`claude-opus-4-8` — the direct test of "yus auto-routing vs no harness" on
 quality, time, and tokens. Full-arm and Opus 5.5 replications follow if the
 spread shows up.
 
 ## complex-tasks@4 (learning loops; adds recurring-incident)
 
 @4 (`cases4/`, built to `complex-corpus-v4.json`) keeps the three @3 cases
-unchanged and adds a fourth targeting a different ECC value prop: converting
+unchanged and adds a fourth targeting a different yus value prop: converting
 a fix into durable, reusable prevention — and *reusing your own artifacts*
-later in the session. Baseline agents can hold this in context; ECC's claim
+later in the session. Baseline agents can hold this in context; yus's claim
 is that skills/workflows make it systematic.
 
 4. **`recurring-incident`** (learning loop / institutional memory). Three

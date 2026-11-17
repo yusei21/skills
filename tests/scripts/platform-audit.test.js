@@ -31,7 +31,7 @@ function writeFile(rootDir, relativePath, content) {
 function seedRepo(rootDir, overrides = {}) {
   const files = {
     'package.json': JSON.stringify({
-      name: 'ecc-universal',
+      name: 'yus-universal',
       scripts: {
         'platform:audit': 'node scripts/platform-audit.js',
         'discussion:audit': 'node scripts/discussion-audit.js',
@@ -42,9 +42,9 @@ function seedRepo(rootDir, overrides = {}) {
         'harness:audit': 'node scripts/harness-audit.js'
       }
     }, null, 2),
-    'docs/ECC-2.0-GA-ROADMAP.md': [
-      'ECC Platform Roadmap',
-      'https://linear.app/itomarkets/project/ecc-platform-roadmap-52b328ee03e1',
+    'docs/yus-2.0-GA-ROADMAP.md': [
+      'yus Platform Roadmap',
+      'https://linear.app/itomarkets/project/yus-platform-roadmap-52b328ee03e1',
       'ITO-44',
       'ITO-59'
     ].join('\n'),
@@ -180,7 +180,7 @@ function runTests() {
         `--root=${rootDir}`,
         '--json',
         '--repo',
-        'affaan-m/ECC',
+        'yusei21/yus',
         '--max-open-prs',
         '5',
         '--max-open-issues',
@@ -191,7 +191,7 @@ function runTests() {
 
       assert.strictEqual(parsed.format, 'json');
       assert.strictEqual(parsed.root, path.resolve(rootDir));
-      assert.deepStrictEqual(parsed.repos, ['affaan-m/ECC']);
+      assert.deepStrictEqual(parsed.repos, ['yusei21/yus']);
       assert.strictEqual(parsed.thresholds.maxOpenPrs, 5);
       assert.strictEqual(parsed.thresholds.maxOpenIssues, 6);
       assert.deepStrictEqual(parsed.allowUntracked, ['docs/drafts/']);
@@ -213,7 +213,7 @@ function runTests() {
       seedRepo(projectRoot);
       const parsed = JSON.parse(run(['--format=json', `--root=${projectRoot}`, '--skip-github'], { cwd: projectRoot }));
 
-      assert.strictEqual(parsed.schema_version, 'ecc.platform-audit.v1');
+      assert.strictEqual(parsed.schema_version, 'yus.platform-audit.v1');
       assert.strictEqual(parsed.ready, true);
       assert.strictEqual(parsed.github.skipped, true);
       assert.ok(parsed.checks.some(check => check.id === 'roadmap-linear-mirror' && check.status === 'pass'));
@@ -268,7 +268,7 @@ function runTests() {
       const written = fs.readFileSync(outputPath, 'utf8');
 
       assert.strictEqual(stdout, written);
-      assert.ok(written.includes('# ECC Platform Audit'));
+      assert.ok(written.includes('# yus Platform Audit'));
       assert.ok(written.includes('## Queue Summary'));
       assert.ok(written.includes('| Open PRs | 0 | 20 | PASS |'));
       assert.ok(written.includes('`roadmap-linear-mirror`'));
@@ -285,12 +285,12 @@ function runTests() {
     try {
       seedRepo(projectRoot);
       const shimPath = writeGhShim(projectRoot, {
-        'pr list --repo affaan-m/ECC --state open --json number,title,isDraft,mergeStateStatus,updatedAt,url,author': [],
-        'issue list --repo affaan-m/ECC --state open --json number,title,updatedAt,url,author,labels': [],
-        [discussionEnabledGhKey('affaan-m', 'ECC')]: {
+        'pr list --repo yusei21/yus --state open --json number,title,isDraft,mergeStateStatus,updatedAt,url,author': [],
+        'issue list --repo yusei21/yus --state open --json number,title,updatedAt,url,author,labels': [],
+        [discussionEnabledGhKey('yusei21', 'yus')]: {
           data: { repository: { hasDiscussionsEnabled: true } }
         },
-        [discussionGhKey('affaan-m', 'ECC')]: {
+        [discussionGhKey('yusei21', 'yus')]: {
           data: {
             repository: {
               hasDiscussionsEnabled: true,
@@ -318,11 +318,11 @@ function runTests() {
         '--format=json',
         `--root=${projectRoot}`,
         '--repo',
-        'affaan-m/ECC'
+        'yusei21/yus'
       ], {
         cwd: projectRoot,
         env: {
-          ECC_GH_SHIM: shimPath,
+          YUS_GH_SHIM: shimPath,
           GITHUB_TOKEN: 'must-be-removed'
         }
       }));
@@ -354,12 +354,12 @@ function runTests() {
         author: { login: 'contributor' }
       }));
       const shimPath = writeGhShim(projectRoot, {
-        'pr list --repo affaan-m/ECC --state open --json number,title,isDraft,mergeStateStatus,updatedAt,url,author': prs,
-        'issue list --repo affaan-m/ECC --state open --json number,title,updatedAt,url,author,labels': [],
-        [discussionEnabledGhKey('affaan-m', 'ECC')]: {
+        'pr list --repo yusei21/yus --state open --json number,title,isDraft,mergeStateStatus,updatedAt,url,author': prs,
+        'issue list --repo yusei21/yus --state open --json number,title,updatedAt,url,author,labels': [],
+        [discussionEnabledGhKey('yusei21', 'yus')]: {
           data: { repository: { hasDiscussionsEnabled: true } }
         },
-        [discussionGhKey('affaan-m', 'ECC')]: {
+        [discussionGhKey('yusei21', 'yus')]: {
           data: {
             repository: {
               hasDiscussionsEnabled: true,
@@ -387,12 +387,12 @@ function runTests() {
         '--format=json',
         `--root=${projectRoot}`,
         '--repo',
-        'affaan-m/ECC',
+        'yusei21/yus',
         '--max-open-prs',
         '2'
       ], {
         cwd: projectRoot,
-        env: { ECC_GH_SHIM: shimPath }
+        env: { YUS_GH_SHIM: shimPath }
       }));
 
       assert.strictEqual(parsed.ready, false);
@@ -412,9 +412,9 @@ function runTests() {
     try {
       seedRepo(projectRoot);
       const shimPath = writeGhShim(projectRoot, {
-        'pr list --repo ECC-Tools/ECC-website --state open --json number,title,isDraft,mergeStateStatus,updatedAt,url,author': [],
-        'issue list --repo ECC-Tools/ECC-website --state open --json number,title,updatedAt,url,author,labels': [],
-        [discussionEnabledGhKey('ECC-Tools', 'ECC-website')]: {
+        'pr list --repo ECC-Tools/yus-website --state open --json number,title,isDraft,mergeStateStatus,updatedAt,url,author': [],
+        'issue list --repo ECC-Tools/yus-website --state open --json number,title,updatedAt,url,author,labels': [],
+        [discussionEnabledGhKey('ECC-Tools', 'yus-website')]: {
           data: { repository: { hasDiscussionsEnabled: false } }
         }
       });
@@ -423,10 +423,10 @@ function runTests() {
         '--format=json',
         `--root=${projectRoot}`,
         '--repo',
-        'ECC-Tools/ECC-website'
+        'ECC-Tools/yus-website'
       ], {
         cwd: projectRoot,
-        env: { ECC_GH_SHIM: shimPath }
+        env: { YUS_GH_SHIM: shimPath }
       }));
 
       assert.strictEqual(parsed.ready, true);

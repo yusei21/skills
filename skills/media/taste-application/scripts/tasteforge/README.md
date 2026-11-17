@@ -1,6 +1,6 @@
-# ECC reusable TasteForge engine
+# yus reusable TasteForge engine
 
-Install with `python3 -m pip install ./skills/media/taste-application/scripts` from an ECC checkout or extracted npm package. The Python distribution is `ecc-tasteforge`; the CLI remains `python3 -m tasteforge`. Ito-video consumes this package as an example project.
+Install with `python3 -m pip install ./skills/media/taste-application/scripts` from an yus checkout or extracted npm package. The Python distribution is `yus-tasteforge`; the CLI remains `python3 -m tasteforge`. Ito-video consumes this package as an example project.
 
 ## Repeatable taste-driven video workflow
 
@@ -12,8 +12,8 @@ the skill's `SOURCE.md` for recovered-source lineage.
 
 ## Install
 
-Requires Python 3.9 or newer. Install the `ecc-tasteforge` distribution from
-ECC as shown above, then run the CLI from any directory. Core commands have
+Requires Python 3.9 or newer. Install the `yus-tasteforge` distribution from
+yus as shown above, then run the CLI from any directory. Core commands have
 no third-party runtime dependencies. Optional media helpers use FFmpeg and
 the libraries listed in the skill instructions.
 

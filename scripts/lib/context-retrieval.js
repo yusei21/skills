@@ -1,6 +1,6 @@
 'use strict';
 
-// Hybrid skill retrieval for ECC-029 auto selection.
+// Hybrid skill retrieval for yus-029 auto selection.
 //
 // Two deterministic, dependency-free legs fused by reciprocal rank fusion:
 //   1. BM25F-style weighted fields (name, description, owning module) over the

@@ -2,7 +2,7 @@
 'use strict';
 
 /**
- * ECC eval-harness CLI.
+ * yus eval-harness CLI.
  *
  *   node scripts/eval-harness.js capsule verify <dir>
  *   node scripts/eval-harness.js capsule project <dir>

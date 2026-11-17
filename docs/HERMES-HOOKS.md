@@ -3,18 +3,18 @@
 Hermes ships its own shell-hook system: a `hooks:` block in `~/.hermes/config.yaml`,
 Claude-Code-compatible JSON payloads on stdin, per-tool regex matchers, a
 first-use consent allowlist, and `hermes hooks list | test | doctor` for
-inspection. ECC's `hooks/hooks.json` is Claude Code format, and the Hermes
+inspection. yus's `hooks/hooks.json` is Claude Code format, and the Hermes
 install target (`--target hermes`) deliberately does not install the hook
-runtime — so Hermes operators get ECC's rules, skills, and commands with no
+runtime — so Hermes operators get yus's rules, skills, and commands with no
 hooks at all.
 
-This directory ports the two ECC hooks that matter outside Claude Code as
-self-contained Hermes-native hooks. No ECC runtime, no `run-with-flags.js`, no
+This directory ports the two yus hooks that matter outside Claude Code as
+self-contained Hermes-native hooks. No yus runtime, no `run-with-flags.js`, no
 `.pi` extension — just two Python scripts and a config block.
 
 ## Why only these two
 
-ECC's hook graph is 24 commands. Most of it is Claude Code-specific
+yus's hook graph is 24 commands. Most of it is Claude Code-specific
 (plugin bootstrap, plan canvas, Claude session transcripts, cost tracking
 against Claude's usage API) or duplicates the target harness's own gates.
 These two are harness-independent policy:
@@ -30,7 +30,7 @@ These two are harness-independent policy:
 
 ## Install
 
-Preferred — through the ECC installer (module `hermes-hooks`):
+Preferred — through the yus installer (module `hermes-hooks`):
 
 ```bash
 ./install.sh --target hermes --modules hermes-hooks --enable-hooks

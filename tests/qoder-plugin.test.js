@@ -49,7 +49,7 @@ if (fs.existsSync(manifestPath) && fs.existsSync(hooksPath)) {
   const hooks = JSON.parse(fs.readFileSync(hooksPath, 'utf8'));
 
   test('manifest stays versioned with the npm package', () => {
-    assert.strictEqual(manifest.name, 'ecc');
+    assert.strictEqual(manifest.name, 'yus');
     assert.strictEqual(manifest.version, packageJson.version);
   });
 
@@ -108,7 +108,7 @@ if (fs.existsSync(manifestPath) && fs.existsSync(hooksPath)) {
   test('declared Qoder SessionStart launcher executes from QODER_PLUGIN_ROOT', () => {
     const hook = hooks.hooks.SessionStart[0].hooks[0];
     const args = hook.args.map(value => value.replace('${QODER_PLUGIN_ROOT}', repoRoot));
-    const isolatedRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-qoder-hook-'));
+    const isolatedRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-qoder-hook-'));
     const isolatedHome = path.join(isolatedRoot, 'home');
     const isolatedCwd = path.join(isolatedRoot, 'project');
     const agentDataHome = path.join(isolatedRoot, 'agent-data');
@@ -126,7 +126,7 @@ if (fs.existsSync(manifestPath) && fs.existsSync(hooksPath)) {
       CLAUDE_PLUGIN_ROOT: _claudePluginRoot,
       CLAUDE_CONFIG_DIR: _claudeConfigDir,
       CLAUDE_SESSION_ID: _claudeSessionId,
-      ECC_PLUGIN_ROOT: _eccPluginRoot,
+      YUS_PLUGIN_ROOT: _yusPluginRoot,
       CODEX_PLUGIN_ROOT: _codexPluginRoot,
       PLUGIN_ROOT: _pluginRoot,
       ...baseEnv
@@ -139,17 +139,17 @@ if (fs.existsSync(manifestPath) && fs.existsSync(hooksPath)) {
           ...baseEnv,
           HOME: isolatedHome,
           USERPROFILE: isolatedHome,
-          ECC_AGENT_DATA_HOME: agentDataHome,
+          YUS_AGENT_DATA_HOME: agentDataHome,
           XDG_DATA_HOME: path.join(isolatedRoot, 'xdg-data'),
           QODER_PLUGIN_ROOT: repoRoot,
           CLAUDE_PROJECT_DIR: isolatedCwd,
-          ECC_HOOKS_ENABLED: 'true',
-          ECC_HOOK_PROFILE: 'standard',
-          ECC_DISABLED_HOOKS: '',
-          ECC_DRY_RUN: '0',
-          ECC_SESSION_START_CONTEXT: 'on',
-          ECC_SESSION_START_MAX_CHARS: '8000',
-          ECC_SESSION_RETENTION_DAYS: '0',
+          YUS_HOOKS_ENABLED: 'true',
+          YUS_HOOK_PROFILE: 'standard',
+          YUS_DISABLED_HOOKS: '',
+          YUS_DRY_RUN: '0',
+          YUS_SESSION_START_CONTEXT: 'on',
+          YUS_SESSION_START_MAX_CHARS: '8000',
+          YUS_SESSION_RETENTION_DAYS: '0',
         },
         input: JSON.stringify({
           hook_event_name: 'SessionStart',

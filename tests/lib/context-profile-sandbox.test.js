@@ -21,7 +21,7 @@ test('independent packed oracle separates canonical IDs from native metadata nam
 });
 
 test('packed oracle preserves a native name that differs from its canonical directory', () => {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-packed-names-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-packed-names-'));
   try {
     const skillRoot = path.join(root, 'skills', 'canonical-fixture');
     fs.mkdirSync(skillRoot, { recursive: true });
@@ -74,7 +74,7 @@ test('artifact server serves only named immutable inputs and closes its listener
 
 test('acceptance report validates the real backend, tier-specific diff and final smoke payload', () => {
   const manifest = manifestFor({ ...input, tier: 1 });
-  const smoke = { schemaVersion: 'ecc.context-sandbox-smoke.v1', passed: true,
+  const smoke = { schemaVersion: 'yus.context-sandbox-smoke.v1', passed: true,
     os: 'linux', arch: 'arm64', matrix: ['claude', 'codex', 'pi', 'opencode', 'cursor']
       .flatMap(target => ['lean', 'full'].map(profile => ({ target, profile }))),
     authenticated: false, taskOutcomes: 'unobserved' };
@@ -122,11 +122,11 @@ test('sandbox command hard-kills a process that ignores SIGTERM', async () => {
 });
 
 test('sandbox executable is resolved and fingerprint drift fails closed', () => {
-  const root = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'ecc-sandbox-cli-'));
+  const root = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'yus-sandbox-cli-'));
   try {
     const implementation = path.join(root, 'sandbox');
     fs.mkdirSync(implementation);
-    const executable = path.join(implementation, 'ecc-sandbox');
+    const executable = path.join(implementation, 'yus-sandbox');
     const backend = path.join(implementation, 'backend.js');
     fs.writeFileSync(executable, '#!/usr/bin/env node\n', { mode: 0o700 });
     fs.writeFileSync(backend, 'module.exports = {};\n');

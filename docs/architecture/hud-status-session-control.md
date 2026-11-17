@@ -1,6 +1,6 @@
 # HUD Status And Session Control Contract
 
-This contract defines the portable status payload ECC uses for local operator
+This contract defines the portable status payload yus uses for local operator
 surfaces, handoffs, and future HUDs. It is intentionally harness-neutral: a
 Claude Code statusline, Codex pane, dmux session, OpenCode run, or terminal-only
 workflow can emit partial data without changing field names.
@@ -10,7 +10,7 @@ The canonical example lives at
 
 ## Payload Shape
 
-Every status payload uses `schema_version: "ecc.hud-status.v1"` and keeps these
+Every status payload uses `schema_version: "yus.hud-status.v1"` and keeps these
 top-level sections stable:
 
 | Field | Purpose | Primary Source |
@@ -23,7 +23,7 @@ top-level sections stable:
 | `cost` | Session spend, token counts, budget, and trend | cost tracker, metrics bridge |
 | `risk` | Attention state, conflict pressure, stale calls, dirty worktree, and manual-review flags | readiness gates, git, queue state |
 | `queueState` | GitHub PR/issue/discussion counts, conflict queue, merge queue, and stale-salvage queue | GitHub sync, work items |
-| `sessionControls` | Supported operator actions for the current target | ECC CLI, dmux, git/GitHub |
+| `sessionControls` | Supported operator actions for the current target | yus CLI, dmux, git/GitHub |
 | `sync` | Linear, GitHub, and handoff publication state | status updates, work items, handoff writer |
 
 Fields can be `null`, empty arrays, or `"unknown"` when a harness cannot expose
@@ -67,22 +67,22 @@ handoffs.
 
 ## Current Implementations
 
-- `ecc status --json` exposes readiness, active sessions, skill runs, install
+- `yus status --json` exposes readiness, active sessions, skill runs, install
   health, governance, and linked work items from the SQLite state store.
-- `ecc loop-status --json --write-dir <dir>` writes live transcript snapshots
+- `yus loop-status --json --write-dir <dir>` writes live transcript snapshots
   and attention signals for long-running loops.
-- `ecc session-inspect <target> --write <path>` emits canonical session
+- `yus session-inspect <target> --write <path>` emits canonical session
   snapshots from dmux and Claude-history adapters.
-- `scripts/hooks/ecc-statusline.js` renders compact model, task, cost, tool,
+- `scripts/hooks/yus-statusline.js` renders compact model, task, cost, tool,
   file, duration, directory, and context pressure signals inside Claude Code.
 
-The `ecc.hud-status.v1` payload is the common outer contract these surfaces can
-project into before ECC grows a dedicated full-screen HUD.
+The `yus.hud-status.v1` payload is the common outer contract these surfaces can
+project into before yus grows a dedicated full-screen HUD.
 
 ## State Store Concurrency And Recovery
 
-ECC's file-backed state store serializes each synchronous query or transaction
-with a sibling `<database>.ecc-state.lock` file. It checks the current database
+yus's file-backed state store serializes each synchronous query or transaction
+with a sibling `<database>.yus-state.lock` file. It checks the current database
 under that lock and publishes successful writes before releasing it. A handle
 can reuse its last successful read snapshot when the file identity, size, and
 modification/change timestamps match. Fixed SELECTs in the query API avoid
@@ -90,14 +90,14 @@ reloading or exporting an unchanged database; query results are still computed
 afresh. Generic SQL, transactions, exports, and failed operations invalidate
 reuse. Changes from another writer trigger a reload on the next operation.
 Queries use one snapshot; closing a handle never writes an older snapshot back.
-All concurrent writers must use this adapter; older ECC versions and external
+All concurrent writers must use this adapter; older yus versions and external
 SQLite writers do not participate in this locking protocol.
 
 An operation waits up to five seconds before reporting `STATE_STORE_BUSY`.
 Retry when the other operation finishes. Locks are never stolen based on age:
-a paused process may still be writing. After an abnormal exit, stop all ECC
+a paused process may still be writing. After an abnormal exit, stop all yus
 processes using that database, inspect the PID and hostname in the lock file,
-and remove only the leftover `.ecc-state.lock` file before retrying. Do not
+and remove only the leftover `.yus-state.lock` file before retrying. Do not
 remove the database itself. In-memory stores do not create lock files.
 
 The control-pane HTTP server runs board claims and moves in one-shot workers,

@@ -21,4 +21,4 @@ try {
 } catch (_) {
   score = 0;
 }
-console.log(`ECC_EVAL_SCORE ${JSON.stringify({ score })}`);
+console.log(`YUS_EVAL_SCORE ${JSON.stringify({ score })}`);

@@ -173,7 +173,7 @@ const tests = [
     assert.ok(result.logs.includes('Error: local failure'));
   }],
   ...[0, 1].map(fixtureFailures => [`piped runner flushes the full tail and summary with exit ${fixtureFailures}`, () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-runner-pipe-'));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-runner-pipe-'));
     try {
       const testsDir = path.join(root, 'tests');
       fs.mkdirSync(testsDir);
@@ -189,8 +189,8 @@ const tests = [
         `process.exitCode = ${fixtureFailures};`,
       ].join('\n'));
       const env = { ...process.env, PATH: `${path.dirname(process.execPath)}${path.delimiter}${process.env.PATH || ''}` };
-      delete env.ECC_TEST_SKIP;
-      delete env.ECC_TEST_ALLOW_FAILURES;
+      delete env.YUS_TEST_SKIP;
+      delete env.YUS_TEST_ALLOW_FAILURES;
       const result = spawnSync(process.execPath, [runner], {
         encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'], env,
         maxBuffer: 512 * 1024, timeout: 15000,
@@ -207,7 +207,7 @@ const tests = [
     }
   }]),
   ['worker pool runs every file, keeps per-file output grouped, and keeps the summary last', () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-runner-pool-'));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-runner-pool-'));
     try {
       const testsDir = path.join(root, 'tests');
       fs.mkdirSync(testsDir);
@@ -219,9 +219,9 @@ const tests = [
           `console.log('END ${name}');`,
         ].join('\n'));
       }
-      const env = { ...process.env, ECC_TEST_JOBS: '3', PATH: `${path.dirname(process.execPath)}${path.delimiter}${process.env.PATH || ''}` };
-      delete env.ECC_TEST_SKIP;
-      delete env.ECC_TEST_ONLY;
+      const env = { ...process.env, YUS_TEST_JOBS: '3', PATH: `${path.dirname(process.execPath)}${path.delimiter}${process.env.PATH || ''}` };
+      delete env.YUS_TEST_SKIP;
+      delete env.YUS_TEST_ONLY;
       const result = spawnSync(process.execPath, [path.join(testsDir, 'run-all.js')], { encoding: 'utf8', env, timeout: 15000 });
       assert.ifError(result.error);
       assert.strictEqual(result.status, 1, result.stderr);
@@ -236,8 +236,8 @@ const tests = [
       fs.rmSync(root, { recursive: true, force: true });
     }
   }],
-  ['ECC_TEST_SERIAL files run one at a time after the pool drains', () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-runner-serial-'));
+  ['YUS_TEST_SERIAL files run one at a time after the pool drains', () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-runner-serial-'));
     try {
       const testsDir = path.join(root, 'tests');
       fs.mkdirSync(testsDir);
@@ -260,9 +260,9 @@ const tests = [
         "console.log(done === 2 ? 'Passed: 1, Failed: 0' : 'Passed: 0, Failed: 1');",
         'process.exitCode = done === 2 ? 0 : 1;',
       ].join('\n'));
-      const env = { ...process.env, ECC_TEST_JOBS: '3', ECC_TEST_SERIAL: 'opencode-dist', PATH: `${path.dirname(process.execPath)}${path.delimiter}${process.env.PATH || ''}` };
-      delete env.ECC_TEST_SKIP;
-      delete env.ECC_TEST_ONLY;
+      const env = { ...process.env, YUS_TEST_JOBS: '3', YUS_TEST_SERIAL: 'opencode-dist', PATH: `${path.dirname(process.execPath)}${path.delimiter}${process.env.PATH || ''}` };
+      delete env.YUS_TEST_SKIP;
+      delete env.YUS_TEST_ONLY;
       const result = spawnSync(process.execPath, [path.join(testsDir, 'run-all.js')], { encoding: 'utf8', env, timeout: 15000 });
       assert.ifError(result.error);
       assert.strictEqual(result.status, 0, result.stdout);
@@ -274,8 +274,8 @@ const tests = [
       fs.rmSync(root, { recursive: true, force: true });
     }
   }],
-  ['ECC_TEST_ONLY keeps just the files whose path contains a pattern', () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-runner-only-'));
+  ['YUS_TEST_ONLY keeps just the files whose path contains a pattern', () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-runner-only-'));
     try {
       const testsDir = path.join(root, 'tests');
       fs.mkdirSync(path.join(testsDir, 'lib'), { recursive: true });
@@ -284,9 +284,9 @@ const tests = [
       fs.writeFileSync(path.join(testsDir, 'lib', 'package-manager.test.js'), "console.log('Passed: 1, Failed: 0');");
       fs.writeFileSync(path.join(testsDir, 'hooks', 'hooks.test.js'), "console.log('Passed: 1, Failed: 0');");
       fs.writeFileSync(path.join(testsDir, 'lib', 'other.test.js'), "console.log('Passed: 0, Failed: 1'); process.exitCode = 1;");
-      const env = { ...process.env, ECC_TEST_ONLY: 'package-manager, hooks/hooks.test', PATH: `${path.dirname(process.execPath)}${path.delimiter}${process.env.PATH || ''}` };
-      delete env.ECC_TEST_SKIP;
-      delete env.ECC_TEST_JOBS;
+      const env = { ...process.env, YUS_TEST_ONLY: 'package-manager, hooks/hooks.test', PATH: `${path.dirname(process.execPath)}${path.delimiter}${process.env.PATH || ''}` };
+      delete env.YUS_TEST_SKIP;
+      delete env.YUS_TEST_JOBS;
       const result = spawnSync(process.execPath, [path.join(testsDir, 'run-all.js')], { encoding: 'utf8', env, timeout: 15000 });
       assert.ifError(result.error);
       assert.strictEqual(result.status, 0, result.stdout);

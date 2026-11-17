@@ -1,4 +1,4 @@
-# ECC
+# yus
 
 **English** | [Português](README.pt-BR.md) | [中文](README.zh-CN.md)
 
@@ -20,23 +20,23 @@ Add this repository as a marketplace, then install the core plugin. Anyone
 who wants the plugins runs this in their own Claude Code:
 
 ```text
-/plugin marketplace add yusei21/skills
-/plugin install ecc@ecc
+/plugin marketplace add yusei21/yus
+/plugin install yus@yus
 ```
 
-`ecc` carries the runtime (agents, commands, hooks, MCP settings) and the
+`yus` carries the runtime (agents, commands, hooks, MCP settings) and the
 **core** department only. Add the departments you work in:
 
 ```text
-/plugin install ecc-frontend@ecc
-/plugin install ecc-backend@ecc
+/plugin install yus-frontend@yus
+/plugin install yus-backend@yus
 ```
 
-Or install every department at once with `ecc-all-departments@ecc`. Use either
-the individual departments or `ecc-all-departments`, not both: they list the
+Or install every department at once with `yus-all-departments@yus`. Use either
+the individual departments or `yus-all-departments`, not both: they list the
 same skills.
 
-Plugin commands are namespaced by the plugin name, for example `/ecc:plan`.
+Plugin commands are namespaced by the plugin name, for example `/yus:plan`.
 The plugin path and the installer below are alternatives: after
 `/plugin install`, do not run the full installer (`--profile full`) on top of
 it, or every skill and hook is installed twice.
@@ -48,33 +48,33 @@ session. Measured with `claude plugin details`:
 
 | Setup | Always-on context |
 |-------|-------------------|
-| Upstream ECC (all skills in one plugin) | ~33,800 tokens |
-| `ecc` (runtime + core) | ~9,500 tokens |
-| `ecc` + `ecc-frontend` | ~11,400 tokens |
-| `ecc` + `ecc-all-departments` | ~36,700 tokens |
+| Upstream yus (all skills in one plugin) | ~33,800 tokens |
+| `yus` (runtime + core) | ~9,500 tokens |
+| `yus` + `yus-frontend` | ~11,400 tokens |
+| `yus` + `yus-all-departments` | ~36,700 tokens |
 
 ### Departments
 
 | Plugin | Department | Skills | Scope |
 |--------|------------|--------|-------|
-| `ecc` | Core engineering | 18 | TDD, verification, git, code standards, context management |
-| `ecc-frontend` | Frontend and design | 23 | Web UI, design systems, accessibility, motion, UI frameworks |
-| `ecc-backend` | Backend and APIs | 29 | Service architecture, API contracts, server frameworks |
-| `ecc-languages` | Languages | 18 | Per-language idioms and testing |
-| `ecc-mobile` | Mobile and Apple | 12 | Android, iOS/Swift, Flutter, React Native |
-| `ecc-data` | Data and databases | 9 | SQL, ORMs, caching, analytics, data movement |
-| `ecc-ai-agents` | AI and agents | 41 | Agent architecture, orchestration, prompts, LLM cost, computer use |
-| `ecc-ml` | Machine learning | 5 | Training, evaluation and adoption of models |
-| `ecc-quality` | Quality, testing and performance | 24 | E2E, evals, benchmarks, audits, minimal-code review |
-| `ecc-security` | Security | 10 | Security review, scanning, agent hardening |
-| `ecc-devops` | DevOps and infrastructure | 18 | Containers, deployment, environments, networking |
-| `ecc-docs-product` | Docs, product and knowledge | 12 | Documentation governance, decisions, product planning, code graphs |
-| `ecc-research` | Research | 10 | Deep research, search, OSINT, scientific databases |
-| `ecc-business` | Business, content and marketing | 17 | Writing, brand, SEO, market research, social |
-| `ecc-media` | Media and video | 11 | Video generation and editing |
-| `ecc-operations` | Operations and integrations | 20 | Email, billing, GitHub, Jira, Google Workspace |
-| `ecc-verticals` | Industry verticals | 25 | Healthcare, supply chain, web3, prediction markets |
-| `ecc-admin` | ECC administration | 24 | Setup, continuous learning, memory, cost, skill maintenance |
+| `yus` | Core engineering | 18 | TDD, verification, git, code standards, context management |
+| `yus-frontend` | Frontend and design | 23 | Web UI, design systems, accessibility, motion, UI frameworks |
+| `yus-backend` | Backend and APIs | 29 | Service architecture, API contracts, server frameworks |
+| `yus-languages` | Languages | 18 | Per-language idioms and testing |
+| `yus-mobile` | Mobile and Apple | 12 | Android, iOS/Swift, Flutter, React Native |
+| `yus-data` | Data and databases | 9 | SQL, ORMs, caching, analytics, data movement |
+| `yus-ai-agents` | AI and agents | 41 | Agent architecture, orchestration, prompts, LLM cost, computer use |
+| `yus-ml` | Machine learning | 5 | Training, evaluation and adoption of models |
+| `yus-quality` | Quality, testing and performance | 24 | E2E, evals, benchmarks, audits, minimal-code review |
+| `yus-security` | Security | 10 | Security review, scanning, agent hardening |
+| `yus-devops` | DevOps and infrastructure | 18 | Containers, deployment, environments, networking |
+| `yus-docs-product` | Docs, product and knowledge | 12 | Documentation governance, decisions, product planning, code graphs |
+| `yus-research` | Research | 10 | Deep research, search, OSINT, scientific databases |
+| `yus-business` | Business, content and marketing | 17 | Writing, brand, SEO, market research, social |
+| `yus-media` | Media and video | 11 | Video generation and editing |
+| `yus-operations` | Operations and integrations | 20 | Email, billing, GitHub, Jira, Google Workspace |
+| `yus-verticals` | Industry verticals | 25 | Healthcare, supply chain, web3, prediction markets |
+| `yus-admin` | yus administration | 24 | Setup, continuous learning, memory, cost, skill maintenance |
 
 The taxonomy lives in [`manifests/skill-departments.json`](manifests/skill-departments.json).
 
@@ -85,10 +85,10 @@ directories (`~/.claude`, `~/.codex`, `.cursor`, and others). Installed skills
 are always flat (`skills/<skill>/`), whatever the source layout.
 
 ```bash
-node scripts/ecc.js setup                      # guided Claude Code setup
-node scripts/ecc.js install --profile developer
-node scripts/ecc.js catalog                    # list profiles and components
-node scripts/ecc.js doctor                     # check an existing install
+node scripts/yus.js setup                      # guided Claude Code setup
+node scripts/yus.js install --profile developer
+node scripts/yus.js catalog                    # list profiles and components
+node scripts/yus.js doctor                     # check an existing install
 ```
 
 To copy a single skill by hand, copy its folder directly under
@@ -109,7 +109,7 @@ inside nested folders there.
 |-- rules/       always-on guidelines
 |-- manifests/   install modules, profiles, components, departments
 |-- scripts/     Node.js runtime: hooks, installer, CI validators
-|-- ecc2/        Rust TUI and control plane
+|-- yus2/        Rust TUI and control plane
 |-- src/llm/     Python provider-abstraction package
 `-- tests/       Node.js and Python test suites
 ```
@@ -117,7 +117,7 @@ inside nested folders there.
 ## Development
 
 Requirements: Node.js 22.12 or newer (Node 26 LTS recommended), Git. Rust
-and Python are only needed for `ecc2/` and `src/llm/`.
+and Python are only needed for `yus2/` and `src/llm/`.
 
 ```bash
 npm ci

@@ -14,11 +14,11 @@ const { getCostSnapshotPath } = require('../../scripts/lib/session-cost-snapshot
 const script = path.join(__dirname, '..', '..', 'scripts', 'hooks', 'cost-tracker.js');
 
 // Harness caches belong to a real private root shared by parent and hook child.
-const cacheRoot = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-cost-cache-')));
+const cacheRoot = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-cost-cache-')));
 // cost-tracker.js appends to ~/.claude/metrics/costs.jsonl and writes cost
 // snapshots there, so runs get an empty home instead of the developer's real
 // one unless a test passes withTempHome().
-const ISOLATED_HOME = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-cost-home-'));
+const ISOLATED_HOME = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-cost-home-'));
 const ISOLATED_HOME_ENV = { HOME: ISOLATED_HOME, USERPROFILE: ISOLATED_HOME };
 process.on('exit', () => fs.rmSync(ISOLATED_HOME, { recursive: true, force: true }));
 const savedTempEnvironment = Object.fromEntries(['TMPDIR', 'TMP', 'TEMP']
@@ -219,7 +219,7 @@ function runTests() {
     const snapshotFile = getCostSnapshotPath(metricsDir, 'session-from-hook');
     assert.ok(fs.existsSync(snapshotFile), 'Expected an O(1) per-session cost snapshot');
     const snapshot = JSON.parse(fs.readFileSync(snapshotFile, 'utf8'));
-    assert.strictEqual(snapshot.schema_version, 'ecc.cost-snapshot.v1');
+    assert.strictEqual(snapshot.schema_version, 'yus.cost-snapshot.v1');
     assert.deepStrictEqual(snapshot.row, row, 'Snapshot must mirror the appended cumulative row');
 
     fs.rmSync(tmpHome, { recursive: true, force: true });
@@ -355,8 +355,8 @@ function runTests() {
     fs.rmSync(tmpHome, { recursive: true, force: true });
   }) ? passed++ : failed++);
 
-  // 6. Prefers ECC_SESSION_ID for ECC2 session correlation
-  (test('prefers ECC_SESSION_ID over CLAUDE_SESSION_ID when both are present', () => {
+  // 6. Prefers YUS_SESSION_ID for yus2 session correlation
+  (test('prefers YUS_SESSION_ID over CLAUDE_SESSION_ID when both are present', () => {
     const tmpHome = makeTempDir();
     const input = {
       model: 'claude-sonnet-4-20250514',
@@ -364,14 +364,14 @@ function runTests() {
     };
     const result = runScript(input, {
       ...withTempHome(tmpHome),
-      ECC_SESSION_ID: 'ecc-session-1234',
+      YUS_SESSION_ID: 'yus-session-1234',
       CLAUDE_SESSION_ID: 'claude-session-9999',
     });
     assert.strictEqual(result.code, 0, `Expected exit code 0, got ${result.code}`);
 
     const metricsFile = path.join(tmpHome, '.claude', 'metrics', 'costs.jsonl');
     const row = JSON.parse(fs.readFileSync(metricsFile, 'utf8').trim());
-    assert.strictEqual(row.session_id, 'ecc-session-1234', 'Expected ECC_SESSION_ID to win');
+    assert.strictEqual(row.session_id, 'yus-session-1234', 'Expected YUS_SESSION_ID to win');
 
     fs.rmSync(tmpHome, { recursive: true, force: true });
   }) ? passed++ : failed++);
@@ -386,7 +386,7 @@ function runTests() {
     };
     const result = runScript(input, {
       ...withTempHome(tmpHome),
-      ECC_SESSION_ID: '',
+      YUS_SESSION_ID: '',
       CLAUDE_SESSION_ID: '',
     });
     assert.strictEqual(result.code, 0, `Expected exit code 0, got ${result.code}`);

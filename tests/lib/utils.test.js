@@ -119,11 +119,11 @@ function runTests() {
     assert.ok(sessionsDir.endsWith('session-data'), 'Should use canonical session-data directory');
   })) passed++; else failed++;
 
-  if (test('getAgentDataHome honors ECC_AGENT_DATA_HOME', () => {
-    const original = process.env.ECC_AGENT_DATA_HOME;
-    const overrideRoot = path.join(utils.getTempDir(), `ecc-agent-data-${Date.now()}`);
+  if (test('getAgentDataHome honors YUS_AGENT_DATA_HOME', () => {
+    const original = process.env.YUS_AGENT_DATA_HOME;
+    const overrideRoot = path.join(utils.getTempDir(), `yus-agent-data-${Date.now()}`);
     try {
-      process.env.ECC_AGENT_DATA_HOME = overrideRoot;
+      process.env.YUS_AGENT_DATA_HOME = overrideRoot;
       delete require.cache[require.resolve('../../scripts/lib/utils')];
       const reloaded = require('../../scripts/lib/utils');
       assert.strictEqual(reloaded.getAgentDataHome(), path.resolve(overrideRoot));
@@ -139,23 +139,23 @@ function runTests() {
     } finally {
       delete require.cache[require.resolve('../../scripts/lib/utils')];
       if (original === undefined) {
-        delete process.env.ECC_AGENT_DATA_HOME;
+        delete process.env.YUS_AGENT_DATA_HOME;
       } else {
-        process.env.ECC_AGENT_DATA_HOME = original;
+        process.env.YUS_AGENT_DATA_HOME = original;
       }
     }
   })) passed++; else failed++;
 
-  if (test('getAgentDataHome defaults to ~/.cursor/ecc when CURSOR_VERSION is set', () => {
+  if (test('getAgentDataHome defaults to ~/.cursor/yus when CURSOR_VERSION is set', () => {
     const originalVersion = process.env.CURSOR_VERSION;
-    const originalHome = process.env.ECC_AGENT_DATA_HOME;
+    const originalHome = process.env.YUS_AGENT_DATA_HOME;
     try {
-      delete process.env.ECC_AGENT_DATA_HOME;
+      delete process.env.YUS_AGENT_DATA_HOME;
       process.env.CURSOR_VERSION = 'test-cursor';
       delete require.cache[require.resolve('../../scripts/lib/utils')];
       delete require.cache[require.resolve('../../scripts/lib/agent-data-home')];
       const reloaded = require('../../scripts/lib/utils');
-      const expected = path.join(reloaded.getHomeDir(), '.cursor', 'ecc');
+      const expected = path.join(reloaded.getHomeDir(), '.cursor', 'yus');
       assert.strictEqual(reloaded.getAgentDataHome(), expected);
     } finally {
       delete require.cache[require.resolve('../../scripts/lib/utils')];
@@ -166,27 +166,27 @@ function runTests() {
         process.env.CURSOR_VERSION = originalVersion;
       }
       if (originalHome === undefined) {
-        delete process.env.ECC_AGENT_DATA_HOME;
+        delete process.env.YUS_AGENT_DATA_HOME;
       } else {
-        process.env.ECC_AGENT_DATA_HOME = originalHome;
+        process.env.YUS_AGENT_DATA_HOME = originalHome;
       }
     }
   })) passed++; else failed++;
 
-  if (test('getAgentDataHome expands tilde in ECC_AGENT_DATA_HOME', () => {
-    const original = process.env.ECC_AGENT_DATA_HOME;
+  if (test('getAgentDataHome expands tilde in YUS_AGENT_DATA_HOME', () => {
+    const original = process.env.YUS_AGENT_DATA_HOME;
     try {
-      process.env.ECC_AGENT_DATA_HOME = path.join('~', '.cursor', 'ecc-test');
+      process.env.YUS_AGENT_DATA_HOME = path.join('~', '.cursor', 'yus-test');
       delete require.cache[require.resolve('../../scripts/lib/utils')];
       const reloaded = require('../../scripts/lib/utils');
-      const expected = path.join(reloaded.getHomeDir(), '.cursor', 'ecc-test');
+      const expected = path.join(reloaded.getHomeDir(), '.cursor', 'yus-test');
       assert.strictEqual(reloaded.getAgentDataHome(), expected);
     } finally {
       delete require.cache[require.resolve('../../scripts/lib/utils')];
       if (original === undefined) {
-        delete process.env.ECC_AGENT_DATA_HOME;
+        delete process.env.YUS_AGENT_DATA_HOME;
       } else {
-        process.env.ECC_AGENT_DATA_HOME = original;
+        process.env.YUS_AGENT_DATA_HOME = original;
       }
     }
   })) passed++; else failed++;
@@ -280,7 +280,7 @@ function runTests() {
   if (test('sameRepoIdentity matches a hard link by filesystem identity', () => {
     // dev+ino fallback: different path strings, same file. This is what
     // rescues 8.3 short-name versus long-name mismatches on Windows.
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-repoid-'));
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-repoid-'));
     try {
       const orig = path.join(dir, 'a');
       const link = path.join(dir, 'b');
@@ -293,7 +293,7 @@ function runTests() {
   })) passed++; else failed++;
 
   if (test('sameRepoIdentity rejects different files and missing paths', () => {
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-repoid-'));
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-repoid-'));
     try {
       const a = path.join(dir, 'a');
       const b = path.join(dir, 'b');
@@ -765,7 +765,7 @@ function runTests() {
   console.log('\nisGitRepo():');
 
   if (test('isGitRepo returns true in a git repo', () => {
-    // We're running from within the ECC repo, so this should be true
+    // We're running from within the yus repo, so this should be true
     assert.strictEqual(utils.isGitRepo(), true);
   })) passed++; else failed++;
 
@@ -1557,7 +1557,7 @@ function runTests() {
       console.log('    (skipped — chmod ineffective on Windows/root)');
       return;
     }
-    const tmpDir = path.join(utils.getTempDir(), `ecc-findfiles-r71-${Date.now()}`);
+    const tmpDir = path.join(utils.getTempDir(), `yus-findfiles-r71-${Date.now()}`);
     const readableSubdir = path.join(tmpDir, 'readable');
     const unreadableSubdir = path.join(tmpDir, 'unreadable');
     fs.mkdirSync(readableSubdir, { recursive: true });
@@ -1631,7 +1631,7 @@ function runTests() {
     // To reliably trigger the statSync catch: create a real file, list it, then
     // simulate the race. Since we can't truly race, we use a broken symlink which
     // will at minimum verify the function doesn't crash on unusual dir entries.
-    const tmpDir = path.join(utils.getTempDir(), `ecc-r84-findfiles-toctou-${Date.now()}`);
+    const tmpDir = path.join(utils.getTempDir(), `yus-r84-findfiles-toctou-${Date.now()}`);
     fs.mkdirSync(tmpDir, { recursive: true });
 
     // Create a real file and a broken symlink, both matching *.txt
@@ -1696,7 +1696,7 @@ function runTests() {
   // ── Round 88: replaceInFile with empty replacement (deletion) ──
   console.log('\nRound 88: replaceInFile with empty replacement string (deletion):');
   if (test('replaceInFile with empty string replacement deletes matched text', () => {
-    const tmpDir = path.join(utils.getTempDir(), `ecc-r88-replace-empty-${Date.now()}`);
+    const tmpDir = path.join(utils.getTempDir(), `yus-r88-replace-empty-${Date.now()}`);
     fs.mkdirSync(tmpDir, { recursive: true });
     const tmpFile = path.join(tmpDir, 'delete-test.txt');
     try {
@@ -1714,7 +1714,7 @@ function runTests() {
   // ── Round 88: countInFile with valid file but zero matches ──
   console.log('\nRound 88: countInFile with existing file but non-matching pattern:');
   if (test('countInFile returns 0 for valid file with no pattern matches', () => {
-    const tmpDir = path.join(utils.getTempDir(), `ecc-r88-count-zero-${Date.now()}`);
+    const tmpDir = path.join(utils.getTempDir(), `yus-r88-count-zero-${Date.now()}`);
     fs.mkdirSync(tmpDir, { recursive: true });
     const tmpFile = path.join(tmpDir, 'no-match.txt');
     try {
@@ -1785,7 +1785,7 @@ function runTests() {
   console.log('\nRound 95: countInFile (regex alternation without g flag):');
 
   if (test('countInFile with /apple|banana/ (alternation, no g) counts all matches', () => {
-    const tmpDir = path.join(utils.getTempDir(), `ecc-r95-alternation-${Date.now()}`);
+    const tmpDir = path.join(utils.getTempDir(), `yus-r95-alternation-${Date.now()}`);
     fs.mkdirSync(tmpDir, { recursive: true });
     const testFile = path.join(tmpDir, 'alternation.txt');
     try {

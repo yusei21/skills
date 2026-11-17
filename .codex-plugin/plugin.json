@@ -1,14 +1,14 @@
 {
-  "name": "ecc",
+  "name": "yus",
   "version": "2.2.3",
-  "description": "Harness-native ECC workflows for Codex: shared skills, production-ready MCP configs, and selective-install-aligned conventions for TDD, security scanning, code review, and autonomous development.",
+  "description": "Harness-native yus workflows for Codex: shared skills, production-ready MCP configs, and selective-install-aligned conventions for TDD, security scanning, code review, and autonomous development.",
   "author": {
     "name": "Affaan Mustafa",
     "email": "me@affaanmustafa.com",
     "url": "https://x.com/affaanmustafa"
   },
-  "homepage": "https://ecc.tools",
-  "repository": "https://github.com/affaan-m/ECC",
+  "homepage": "https://github.com/yusei21/yus",
+  "repository": "https://github.com/yusei21/yus",
   "license": "MIT",
   "keywords": [
     "codex",
@@ -24,9 +24,9 @@
   "mcpServers": "./.mcp.json",
   "hooks": "./hooks/codex-hooks.json",
   "interface": {
-    "displayName": "ECC",
-    "shortDescription": "281 ECC skills plus MCP configs for TDD, security, code review, and autonomous development.",
-    "longDescription": "ECC is a harness-native operator system for Codex and adjacent agent harnesses. It packages reusable skills, MCP configs, TDD workflows, security scanning, code review, architecture decisions, operator workflows, and release gates in one installable plugin.",
+    "displayName": "yus",
+    "shortDescription": "281 yus skills plus MCP configs for TDD, security, code review, and autonomous development.",
+    "longDescription": "yus is a harness-native operator system for Codex and adjacent agent harnesses. It packages reusable skills, MCP configs, TDD workflows, security scanning, code review, architecture decisions, operator workflows, and release gates in one installable plugin.",
     "developerName": "Affaan Mustafa",
     "category": "Coding",
     "capabilities": [
@@ -38,7 +38,7 @@
     "privacyPolicyURL": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement",
     "termsOfServiceURL": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
     "brandColor": "#E07856",
-    "composerIcon": "./assets/ecc-icon.svg",
+    "composerIcon": "./assets/yus-icon.svg",
     "logo": "./assets/hero.png",
     "screenshots": [],
     "defaultPrompt": [

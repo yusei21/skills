@@ -1,7 +1,7 @@
 {
   "$schema": "../schemas/skill-departments.schema.json",
   "version": 1,
-  "description": "Canonical department taxonomy for curated skills. Every directory under skills/ belongs to exactly one department group. Drives department plugins and `ecc2 skills suggest`.",
+  "description": "Canonical department taxonomy for curated skills. Every directory under skills/ belongs to exactly one department group. Drives department plugins and `yus2 skills suggest`.",
   "departments": [
     {
       "id": "core",
@@ -9,11 +9,11 @@
       "description": "Daily workflow for any project: TDD, verification, git, code standards and context management.",
       "groups": [
         {
-          "id": "ecc-kernel",
-          "title": "ECC discovery",
+          "id": "yus-kernel",
+          "title": "yus discovery",
           "skills": [
-            "configure-ecc",
-            "ecc-guide"
+            "configure-yus",
+            "yus-guide"
           ]
         },
         {
@@ -804,14 +804,14 @@
     },
     {
       "id": "admin",
-      "title": "ECC administration",
-      "description": "Skills about ECC itself: setup, continuous learning, memory, cost and skill maintenance.",
+      "title": "yus administration",
+      "description": "Skills about yus itself: setup, continuous learning, memory, cost and skill maintenance.",
       "groups": [
         {
           "id": "setup",
           "title": "Setup and guides",
           "skills": [
-            "ecc-recipes",
+            "yus-recipes",
             "agent-sort",
             "workspace-surface-audit",
             "deepseek-harness-setup",

@@ -25,17 +25,17 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
-console.log('\n=== Testing ECC platform value loop docs ===\n');
+console.log('\n=== Testing yus platform value loop docs ===\n');
 
-test('platform value loop doc defines the three-layer ECC 2.0 direction', () => {
+test('platform value loop doc defines the three-layer yus 2.0 direction', () => {
   const source = read('docs/architecture/platform-value-loop.md');
 
   for (const marker of [
     'Meta-harness',
-    'Dedicated ECC agent',
+    'Dedicated yus agent',
     'Control pane / agentic IDE',
     'reproducible demo',
-    'ECC can be used full-stack as a meta-harness + agent + control pane',
+    'yus can be used full-stack as a meta-harness + agent + control pane',
   ]) {
     assert.ok(source.includes(marker), `platform value loop doc missing ${marker}`);
   }
@@ -93,7 +93,7 @@ test('release docs link the platform value loop into the rc surface', () => {
   const crossHarness = read('docs/architecture/cross-harness.md');
   const previewManifest = read('docs/releases/2.0.0-rc.1/preview-pack-manifest.md');
   const itoPack = read('docs/releases/2.0.0-rc.1/ito-prediction-market-skill-pack.md');
-  const hypergrowth = read('docs/releases/2.0.0/ecc-2-hypergrowth-release-command-center.md');
+  const hypergrowth = read('docs/releases/2.0.0/yus-2-hypergrowth-release-command-center.md');
 
   for (const source of [crossHarness, previewManifest, itoPack, hypergrowth]) {
     assert.ok(
@@ -113,7 +113,7 @@ test('platform value loop does not overclaim release status or trading ability',
     'control pane is GA',
     'native-payments readiness is live',
     'official plugin-directory listing is live',
-    'public ECC skills place trades',
+    'public yus skills place trades',
   ];
 
   for (const phrase of forbidden) {

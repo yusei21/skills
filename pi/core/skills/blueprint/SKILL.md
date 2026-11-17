@@ -64,20 +64,20 @@ Produces a plan with parallel steps where possible (e.g., "implement Anthropic p
 
 ## Installation
 
-This skill ships with ECC. No separate installation is needed when ECC is installed.
+This skill ships with yus. No separate installation is needed when yus is installed.
 
-### Full ECC install
+### Full yus install
 
-If you are working from the ECC repository checkout, verify the skill is present with:
+If you are working from the yus repository checkout, verify the skill is present with:
 
 ```bash
 test -f skills/ai-agents/blueprint/SKILL.md
 ```
 
-To update later, review the ECC diff before updating:
+To update later, review the yus diff before updating:
 
 ```bash
-cd /path/to/ECC
+cd /path/to/yus
 git fetch origin main
 git log --oneline HEAD..origin/main       # review new commits before updating
 git checkout <reviewed-full-sha>          # pin to a specific reviewed commit
@@ -85,7 +85,7 @@ git checkout <reviewed-full-sha>          # pin to a specific reviewed commit
 
 ### Vendored standalone install
 
-If you are vendoring only this skill outside the full ECC install, copy the reviewed file from the ECC repository into `~/.claude/skills/blueprint/SKILL.md`. Vendored copies do not have a git remote, so update them by re-copying the file from a reviewed ECC commit rather than running `git pull`.
+If you are vendoring only this skill outside the full yus install, copy the reviewed file from the yus repository into `~/.claude/skills/blueprint/SKILL.md`. Vendored copies do not have a git remote, so update them by re-copying the file from a reviewed yus commit rather than running `git pull`.
 
 ## Requirements
 

@@ -32,7 +32,7 @@ function test(name, fn) {
 }
 
 function createFixture(initialState = {}) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc plugin setup '));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus plugin setup '));
   const homeDir = path.join(root, 'home with spaces');
   const configDir = path.join(root, 'claude config with spaces');
   const projectRoot = path.join(root, 'project with spaces');
@@ -81,8 +81,8 @@ function withFixture(initialState, fn) {
     USERPROFILE: process.env.USERPROFILE,
     PATH: process.env.PATH,
     CLAUDE_CONFIG_DIR: process.env.CLAUDE_CONFIG_DIR,
-    ECC_TEST_CLAUDE_STATE: process.env.ECC_TEST_CLAUDE_STATE,
-    ECC_TEST_CLAUDE_CALLS: process.env.ECC_TEST_CLAUDE_CALLS,
+    YUS_TEST_CLAUDE_STATE: process.env.YUS_TEST_CLAUDE_STATE,
+    YUS_TEST_CLAUDE_CALLS: process.env.YUS_TEST_CLAUDE_CALLS,
   };
   try {
     process.chdir(fixture.projectRoot);
@@ -90,8 +90,8 @@ function withFixture(initialState, fn) {
     process.env.USERPROFILE = fixture.homeDir;
     process.env.PATH = `${fixture.binDir}${path.delimiter}${withoutShadowingClaude(previous.PATH)}`;
     process.env.CLAUDE_CONFIG_DIR = fixture.configDir;
-    process.env.ECC_TEST_CLAUDE_STATE = fixture.statePath;
-    process.env.ECC_TEST_CLAUDE_CALLS = fixture.callsPath;
+    process.env.YUS_TEST_CLAUDE_STATE = fixture.statePath;
+    process.env.YUS_TEST_CLAUDE_CALLS = fixture.callsPath;
     return fn(fixture);
   } finally {
     process.chdir(previous.cwd);
@@ -138,16 +138,16 @@ function assertThrowsContaining(fn, fragments) {
 
 function officialMarketplace(scope = 'user') {
   return {
-    name: 'ecc',
+    name: 'yus',
     source: 'github',
-    repo: 'affaan-m/ECC',
+    repo: 'yusei21/yus',
     scope,
   };
 }
 
 function installedPlugin(scope = 'user', overrides = {}) {
   return {
-    id: 'ecc@ecc',
+    id: 'yus@yus',
     scope,
     enabled: true,
     version: '1.9.0',
@@ -156,10 +156,10 @@ function installedPlugin(scope = 'user', overrides = {}) {
 }
 
 function writeManagedState(fixture, selectedModules, operations = []) {
-  const statePath = path.join(fixture.configDir, 'ecc', 'install-state.json');
+  const statePath = path.join(fixture.configDir, 'yus', 'install-state.json');
   fs.mkdirSync(path.dirname(statePath), { recursive: true });
   fs.writeFileSync(statePath, `${JSON.stringify({
-    schemaVersion: 'ecc.install.v1',
+    schemaVersion: 'yus.install.v1',
     target: { target: 'claude' },
     resolution: { selectedModules, skippedModules: [] },
     operations,
@@ -172,9 +172,9 @@ test('Windows command-line fallback preserves spaced paths and JSON arguments', 
   assert.strictEqual(
     buildWindowsCommandLine(
       'C:\\Program Files\\Claude\\claude.cmd',
-      ['plugin', 'install', 'ecc@ecc', '--config', '{"hooks_enabled":false}']
+      ['plugin', 'install', 'yus@yus', '--config', '{"hooks_enabled":false}']
     ),
-    '"C:\\Program Files\\Claude\\claude.cmd" plugin install ecc@ecc --config "{""hooks_enabled"":false}"'
+    '"C:\\Program Files\\Claude\\claude.cmd" plugin install yus@yus --config "{""hooks_enabled"":false}"'
   );
   assert.throws(
     () => buildWindowsCommandLine('claude.cmd', ['plugin', 'install', 'bad&unsafe']),
@@ -190,14 +190,14 @@ test('provider runner times out a hung Claude command with structured context', 
   });
   const spawn = (command, args, options) => {
     assert.strictEqual(command, process.execPath);
-    assert.deepStrictEqual(args, ['plugin', 'marketplace', 'update', 'ecc']);
+    assert.deepStrictEqual(args, ['plugin', 'marketplace', 'update', 'yus']);
     assert.strictEqual(options.timeout, 25);
     assert.strictEqual(options.killSignal, 'SIGKILL');
     return { error: timeoutError, signal: 'SIGKILL', status: null };
   };
   assert.throws(
     () => runClaude(
-      ['plugin', 'marketplace', 'update', 'ecc'],
+      ['plugin', 'marketplace', 'update', 'yus'],
       {
         command: process.execPath,
         phase: 'marketplace',
@@ -217,16 +217,16 @@ test('provider runner times out a hung Claude command with structured context', 
 test('marketplace provenance is validated according to its source type', () => {
   assert.strictEqual(isOfficialMarketplace(officialMarketplace()), true);
   assert.strictEqual(isOfficialMarketplace({
-    name: 'ecc',
+    name: 'yus',
     source: 'git',
-    url: 'https://github.com/affaan-m/ECC.git',
+    url: 'https://github.com/yusei21/yus.git',
   }), true);
   for (const url of [
-    'affaan-m/ECC',
-    'http://github.com/affaan-m/ECC.git',
+    'yusei21/yus',
+    'http://github.com/yusei21/yus.git',
   ]) {
     assert.strictEqual(isOfficialMarketplace({
-      name: 'ecc',
+      name: 'yus',
       source: 'git',
       url,
     }), false);
@@ -255,14 +255,14 @@ test('an existing single-scope install defaults to its detected scope', () => {
     assert.deepStrictEqual(readCalls(fixture), [
       ['plugin', 'list', '--json'],
       ['plugin', 'marketplace', 'list', '--json'],
-      ['plugin', 'marketplace', 'update', 'ecc'],
+      ['plugin', 'marketplace', 'update', 'yus'],
       ['plugin', 'marketplace', 'list', '--json'],
-      ['plugin', 'update', 'ecc@ecc', '--scope', 'project'],
+      ['plugin', 'update', 'yus@yus', '--scope', 'project'],
       ['plugin', 'list', '--json'],
     ]);
     const settings = JSON.parse(fs.readFileSync(fixture.settingsPath, 'utf8'));
     assert.strictEqual(settings.includeCoAuthoredBy, false);
-    assert.strictEqual(settings.pluginConfigs['ecc@ecc'].options.hook_profile, 'minimal');
+    assert.strictEqual(settings.pluginConfigs['yus@yus'].options.hook_profile, 'minimal');
   });
 });
 
@@ -293,7 +293,7 @@ test('fresh install uses supported Claude arguments and follows the verification
       ['plugin', 'marketplace', 'add', OFFICIAL_MARKETPLACE_URL, '--scope', 'project'],
       ['plugin', 'marketplace', 'list', '--json'],
       [
-        'plugin', 'install', 'ecc@ecc',
+        'plugin', 'install', 'yus@yus',
         '--scope', 'project',
       ],
       ['plugin', 'list', '--json'],
@@ -325,7 +325,7 @@ test('fresh installs support all Claude scopes while hook preferences stay user-
   }
 });
 
-test('same-scope repeat setup updates ECC and changes durable user hook preferences', () => {
+test('same-scope repeat setup updates yus and changes durable user hook preferences', () => {
   withFixture({
     plugins: [installedPlugin('local')],
     marketplaces: [officialMarketplace('local')],
@@ -334,7 +334,7 @@ test('same-scope repeat setup updates ECC and changes durable user hook preferen
       theme: 'dark',
       pluginConfigs: {
         'another@market': { enabled: false },
-        'ecc@ecc': {
+        'yus@yus': {
           enabled: true,
           futureKey: { keep: true },
           options: { hooks_enabled: true, hook_profile: 'minimal', unknown: 'keep' },
@@ -347,10 +347,10 @@ test('same-scope repeat setup updates ECC and changes durable user hook preferen
     assert.strictEqual(settings.theme, 'dark');
     assert.strictEqual(settings.includeCoAuthoredBy, false);
     assert.deepStrictEqual(settings.pluginConfigs['another@market'], { enabled: false });
-    assert.deepStrictEqual(settings.pluginConfigs['ecc@ecc'].futureKey, { keep: true });
-    assert.strictEqual(settings.pluginConfigs['ecc@ecc'].options.unknown, 'keep');
-    assert.strictEqual(settings.pluginConfigs['ecc@ecc'].options.hooks_enabled, false);
-    assert.strictEqual(settings.pluginConfigs['ecc@ecc'].options.hook_profile, 'standard');
+    assert.deepStrictEqual(settings.pluginConfigs['yus@yus'].futureKey, { keep: true });
+    assert.strictEqual(settings.pluginConfigs['yus@yus'].options.unknown, 'keep');
+    assert.strictEqual(settings.pluginConfigs['yus@yus'].options.hooks_enabled, false);
+    assert.strictEqual(settings.pluginConfigs['yus@yus'].options.hook_profile, 'standard');
     assert.ok(!fs.readdirSync(fixture.configDir).some(name => name.includes('.tmp')));
   });
 });
@@ -362,7 +362,7 @@ test('repeat setup preserves the current hook preference when --hooks is omitted
   }, fixture => {
     fs.writeFileSync(fixture.settingsPath, `${JSON.stringify({
       pluginConfigs: {
-        'ecc@ecc': {
+        'yus@yus': {
           options: {
             hooks_enabled: false,
             hook_profile: 'strict',
@@ -375,8 +375,8 @@ test('repeat setup preserves the current hook preference when --hooks is omitted
     const settings = JSON.parse(fs.readFileSync(fixture.settingsPath, 'utf8'));
     assert.strictEqual(result.hooks, 'off');
     assert.strictEqual(settings.includeCoAuthoredBy, false);
-    assert.strictEqual(settings.pluginConfigs['ecc@ecc'].options.hooks_enabled, false);
-    assert.strictEqual(settings.pluginConfigs['ecc@ecc'].options.hook_profile, 'strict');
+    assert.strictEqual(settings.pluginConfigs['yus@yus'].options.hooks_enabled, false);
+    assert.strictEqual(settings.pluginConfigs['yus@yus'].options.hook_profile, 'strict');
   });
 });
 
@@ -388,7 +388,7 @@ test('setup preserves an explicit includeCoAuthoredBy opt-in', () => {
     fs.writeFileSync(fixture.settingsPath, `${JSON.stringify({
       includeCoAuthoredBy: true,
       pluginConfigs: {
-        'ecc@ecc': {
+        'yus@yus': {
           options: {
             hooks_enabled: true,
             hook_profile: 'minimal',
@@ -400,7 +400,7 @@ test('setup preserves an explicit includeCoAuthoredBy opt-in', () => {
     setupClaudePlugin(setupOptions(fixture, { hooks: 'strict' }));
     const settings = JSON.parse(fs.readFileSync(fixture.settingsPath, 'utf8'));
     assert.strictEqual(settings.includeCoAuthoredBy, true);
-    assert.strictEqual(settings.pluginConfigs['ecc@ecc'].options.hook_profile, 'strict');
+    assert.strictEqual(settings.pluginConfigs['yus@yus'].options.hook_profile, 'strict');
   });
 });
 
@@ -409,12 +409,12 @@ test('setup preserves an explicit attribution opt-in', () => {
     plugins: [installedPlugin('user')],
     marketplaces: [officialMarketplace('user')],
   }, fixture => {
-    // `attribution` wins over `includeCoAuthoredBy` in Claude Code, so ECC must not
+    // `attribution` wins over `includeCoAuthoredBy` in Claude Code, so yus must not
     // add a deprecated key that would silently lose to the user's own setting.
     fs.writeFileSync(fixture.settingsPath, `${JSON.stringify({
       attribution: { commit: 'Signed-off-by: Someone <someone@example.com>' },
       pluginConfigs: {
-        'ecc@ecc': {
+        'yus@yus': {
           options: {
             hooks_enabled: true,
             hook_profile: 'minimal',
@@ -427,7 +427,7 @@ test('setup preserves an explicit attribution opt-in', () => {
     const settings = JSON.parse(fs.readFileSync(fixture.settingsPath, 'utf8'));
     assert.strictEqual(settings.includeCoAuthoredBy, undefined);
     assert.deepStrictEqual(settings.attribution, { commit: 'Signed-off-by: Someone <someone@example.com>' });
-    assert.strictEqual(settings.pluginConfigs['ecc@ecc'].options.hook_profile, 'strict');
+    assert.strictEqual(settings.pluginConfigs['yus@yus'].options.hook_profile, 'strict');
   });
 });
 
@@ -460,17 +460,17 @@ test('legacy plugin inventory fails closed before marketplace or plugin mutation
   });
 });
 
-test('skills-directory ECC plugins fail closed before marketplace or plugin mutation', () => {
+test('skills-directory yus plugins fail closed before marketplace or plugin mutation', () => {
   withFixture({
     plugins: [{
-      id: 'ecc@skills-dir',
+      id: 'yus@skills-dir',
       scope: 'user',
       enabled: true,
     }],
   }, fixture => {
     assertThrowsContaining(
       () => setupClaudePlugin(setupOptions(fixture, { scope: 'user' })),
-      ['ecc@skills-dir', 'duplicate', 'uninstall']
+      ['yus@skills-dir', 'duplicate', 'uninstall']
     );
     assert.deepStrictEqual(mutationCalls(readCalls(fixture)), []);
   });
@@ -481,21 +481,21 @@ test('manual plugin layouts fail closed before provider mutation', () => {
     const manualManifest = path.join(
       fixture.configDir,
       'plugins',
-      'ecc',
+      'yus',
       '.claude-plugin',
       'plugin.json'
     );
     fs.mkdirSync(path.dirname(manualManifest), { recursive: true });
-    fs.writeFileSync(manualManifest, JSON.stringify({ name: 'ecc' }));
+    fs.writeFileSync(manualManifest, JSON.stringify({ name: 'yus' }));
     assertThrowsContaining(
       () => setupClaudePlugin(setupOptions(fixture, { scope: 'user' })),
-      ['manual', 'ecc']
+      ['manual', 'yus']
     );
     assert.deepStrictEqual(mutationCalls(readCalls(fixture)), []);
   });
 });
 
-test('duplicate ECC plugin scopes fail closed before mutation', () => {
+test('duplicate yus plugin scopes fail closed before mutation', () => {
   withFixture({
     plugins: [installedPlugin('user'), installedPlugin('project')],
   }, fixture => {
@@ -508,7 +508,7 @@ test('duplicate ECC plugin scopes fail closed before mutation', () => {
 });
 
 test('malformed plugin JSON and malformed plugin entries fail closed', () => {
-  for (const pluginListResponses of [['{not-json'], [[{ id: 'ecc@ecc', enabled: true }]]]) {
+  for (const pluginListResponses of [['{not-json'], [[{ id: 'yus@yus', enabled: true }]]]) {
     withFixture({ pluginListResponses }, fixture => {
       assertThrowsContaining(
         () => setupClaudePlugin(setupOptions(fixture, { scope: 'user' })),
@@ -528,16 +528,16 @@ test('malformed marketplace JSON and marketplace name collisions fail closed', (
     {
       initial: {
         marketplaces: [{
-          name: 'ecc',
+          name: 'yus',
           source: 'git',
-          url: 'https://github.com/example/not-ecc.git',
+          url: 'https://github.com/example/not-yus.git',
           scope: 'user',
         }],
       },
       fragments: ['marketplace', 'collision'],
     },
     {
-      initial: { marketplaces: [{ name: 'ecc' }] },
+      initial: { marketplaces: [{ name: 'yus' }] },
       fragments: ['marketplace', 'invalid'],
     },
   ];
@@ -611,19 +611,19 @@ test('dry-run snapshots local-scope inventory into isolated Claude and project r
     const marketplacesPath = path.join(pluginsDir, 'known_marketplaces.json');
     fs.mkdirSync(projectConfigDir, { recursive: true });
     fs.mkdirSync(pluginsDir, { recursive: true });
-    fs.writeFileSync(projectSettingsPath, '{"enabledPlugins":{"ecc@ecc":true}}\n');
+    fs.writeFileSync(projectSettingsPath, '{"enabledPlugins":{"yus@yus":true}}\n');
     fs.writeFileSync(providerStatePath, '{"projects":{}}\n');
     fs.writeFileSync(installedPluginsPath, `${JSON.stringify({
       version: 2,
       plugins: {
-        'ecc@ecc': [{
+        'yus@yus': [{
           scope: 'local',
           enabled: true,
           installPath: path.join(
             fs.realpathSync(fixture.configDir),
             'plugins',
             'cache',
-            'ecc'
+            'yus'
           ),
           projectPath: fs.realpathSync(fixture.projectRoot),
           version: '2.2.0',
@@ -631,8 +631,8 @@ test('dry-run snapshots local-scope inventory into isolated Claude and project r
       },
     }, null, 2)}\n`);
     fs.writeFileSync(marketplacesPath, `${JSON.stringify({
-      ecc: {
-        source: { source: 'github', repo: 'affaan-m/ECC' },
+      yus: {
+        source: { source: 'github', repo: 'yusei21/yus' },
       },
     }, null, 2)}\n`);
 
@@ -659,11 +659,11 @@ test('dry-run snapshots local-scope inventory into isolated Claude and project r
           'utf8'
         ));
         assert.strictEqual(
-          shadowInstalled.plugins['ecc@ecc'][0].projectPath,
+          shadowInstalled.plugins['yus@yus'][0].projectPath,
           runOptions.cwd
         );
         assert.ok(
-          shadowInstalled.plugins['ecc@ecc'][0].installPath
+          shadowInstalled.plugins['yus@yus'][0].installPath
             .startsWith(runOptions.env.CLAUDE_CONFIG_DIR)
         );
         fs.ftruncateSync(shadowSettingsFd, 0);
@@ -693,7 +693,7 @@ test('dry-run snapshots local-scope inventory into isolated Claude and project r
     assert.strictEqual(result.scope, 'local');
     assert.strictEqual(
       fs.readFileSync(projectSettingsPath, 'utf8'),
-      '{"enabledPlugins":{"ecc@ecc":true}}\n'
+      '{"enabledPlugins":{"yus@yus":true}}\n'
     );
     assert.strictEqual(fs.readFileSync(providerStatePath, 'utf8'), '{"projects":{}}\n');
   });
@@ -730,7 +730,7 @@ test('provider failures stop later operations and leave settings untouched', () 
     '--scope', 'user',
   ];
   const installArgv = [
-    'plugin', 'install', 'ecc@ecc',
+    'plugin', 'install', 'yus@yus',
     '--scope', 'user',
   ];
   withFixture({
@@ -782,7 +782,7 @@ test('post-install verification rejects absent, wrong-scope, disabled, and dupli
     }, fixture => {
       assertThrowsContaining(
         () => setupClaudePlugin(setupOptions(fixture, { scope: 'user' })),
-        ['verify', 'ecc@ecc']
+        ['verify', 'yus@yus']
       );
       assert.ok(!fs.existsSync(fixture.settingsPath));
     });

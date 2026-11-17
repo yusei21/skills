@@ -12,8 +12,8 @@ const { spawnSync } = require('child_process');
 const { getDateString, sanitizeSessionId } = require('../../scripts/lib/utils');
 
 const script = path.join(__dirname, '..', '..', 'scripts', 'hooks', 'session-end.js');
-const START = '<!-- ECC:SUMMARY:START -->';
-const END = '<!-- ECC:SUMMARY:END -->';
+const START = '<!-- yus:SUMMARY:START -->';
+const END = '<!-- yus:SUMMARY:END -->';
 
 function test(name, fn) {
   try {
@@ -40,7 +40,7 @@ function countOccurrences(haystack, needle) {
 function isolatedHomeEnv(home) {
   return {
     ...process.env, HOME: home, USERPROFILE: home,
-    ECC_AGENT_DATA_HOME: path.join(home, '.claude'),
+    YUS_AGENT_DATA_HOME: path.join(home, '.claude'),
     CLAUDE_CONFIG_DIR: path.join(home, '.claude')
   };
 }
@@ -72,7 +72,7 @@ function runTests() {
   // (e.g. $& injects the entire matched old block, duplicating the markers).
   (test('preserves $-sequences in user messages when rewriting the summary block', () => {
     // Isolate HOME so getSessionsDir() resolves under a temp dir.
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-end-'));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-session-end-'));
     try {
       const sessionsDir = path.join(home, '.claude', 'session-data');
       fs.mkdirSync(sessionsDir, { recursive: true });
@@ -121,7 +121,7 @@ function runTests() {
   }) ? passed++ : failed++);
 
   (test('writes a session for a multi-message transcript', () => {
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-end-'));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-session-end-'));
     try {
       const uuid = '11111111-2222-4333-8444-555555555555';
       const transcript = path.join(home, `${uuid}.jsonl`);
@@ -148,7 +148,7 @@ function runTests() {
   }) ? passed++ : failed++);
 
   (test('writes a session for one user message with tool activity', () => {
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-end-'));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-session-end-'));
     try {
       const uuid = 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee';
       const transcript = path.join(home, `${uuid}.jsonl`);
@@ -169,7 +169,7 @@ function runTests() {
   }) ? passed++ : failed++);
 
   (test('writes a session for a normal one-message prompt without tool activity', () => {
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-end-'));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-session-end-'));
     try {
       const uuid = '12345678-1234-4234-8234-123456789abc';
       const transcript = path.join(home, `${uuid}.jsonl`);
@@ -184,7 +184,7 @@ function runTests() {
   }) ? passed++ : failed++);
 
   (test('skips a one-message summarizer-style transcript without prompt matching', () => {
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-end-'));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-session-end-'));
     try {
       const uuid = 'fedcba98-7654-4321-8765-fedcba987654';
       const transcript = path.join(home, `${uuid}.jsonl`);
@@ -196,7 +196,7 @@ function runTests() {
         ].join('\n') + '\n'
       );
 
-      const res = runHook(home, transcript, { ECC_LLM_SUMMARY_SUBPROCESS: '1' });
+      const res = runHook(home, transcript, { YUS_LLM_SUMMARY_SUBPROCESS: '1' });
       assert.strictEqual(res.status || 0, 0, `hook exited ${res.status}: ${res.stderr}`);
       assert.ok(!fs.existsSync(sessionFileFor(home, uuid)), 'Summarizer subprocess should not create a session file');
     } finally {
@@ -205,7 +205,7 @@ function runTests() {
   }) ? passed++ : failed++);
 
   (test('does not rewrite an existing session for a rejected transcript', () => {
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-end-'));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-session-end-'));
     try {
       const uuid = '99999999-8888-4777-8666-555555555555';
       const transcript = path.join(home, `${uuid}.jsonl`);
@@ -218,7 +218,7 @@ function runTests() {
       fs.utimesSync(sessionFile, originalTime, originalTime);
       fs.writeFileSync(transcript, JSON.stringify({ type: 'user', content: 'Internal summary request' }) + '\n');
 
-      const res = runHook(home, transcript, { ECC_LLM_SUMMARY_SUBPROCESS: '1' });
+      const res = runHook(home, transcript, { YUS_LLM_SUMMARY_SUBPROCESS: '1' });
       assert.strictEqual(res.status || 0, 0, `hook exited ${res.status}: ${res.stderr}`);
       assert.strictEqual(fs.readFileSync(sessionFile, 'utf8'), original, 'Internal summarizer should not change existing content');
       assert.strictEqual(fs.statSync(sessionFile).mtimeMs, originalTime.getTime(), 'Internal summarizer should not advance mtime');
@@ -228,7 +228,7 @@ function runTests() {
   }) ? passed++ : failed++);
 
   (test('keeps fallback behavior when transcript metadata is malformed', () => {
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-end-'));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-session-end-'));
     try {
       const res = spawnSync('node', [script], {
         encoding: 'utf8',
@@ -246,7 +246,7 @@ function runTests() {
   }) ? passed++ : failed++);
 
   (test('persists mechanical resume state when the LLM budget is exhausted', () => {
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-budget-'));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-session-budget-'));
     try {
       const uuid = '12345678-1234-4234-8234-123456789abc';
       const transcript = path.join(home, `${uuid}.jsonl`);
@@ -254,8 +254,8 @@ function runTests() {
       const bin = path.join(home, 'empty-bin');
       fs.mkdirSync(bin);
       const res = runHook(home, transcript, {
-        ECC_LLM_SUMMARY_INTERVAL: '1', ECC_HOOK_DEADLINE_MS: '1',
-        ECC_SKIP_LLM_SUMMARY: '', ECC_LLM_SUMMARY_SUBPROCESS: '', PATH: bin
+        YUS_LLM_SUMMARY_INTERVAL: '1', YUS_HOOK_DEADLINE_MS: '1',
+        YUS_SKIP_LLM_SUMMARY: '', YUS_LLM_SUMMARY_SUBPROCESS: '', PATH: bin
       });
       assert.strictEqual(res.status, 0, res.stderr);
       assert.match(res.stderr, /LLM summary skipped.*insufficient lifecycle time budget/);
@@ -268,7 +268,7 @@ function runTests() {
 
   for (const model of ['unknown-model', 'claude-opus-4-5[1m]']) {
   (test(`native compact budget triggers a timely summary for ${model}`, () => {
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-context-budget-'));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-session-context-budget-'));
     try {
       const uuid = '12345678-1234-4234-8234-123456789abc';
       const transcript = path.join(home, `${uuid}.jsonl`);
@@ -277,9 +277,9 @@ function runTests() {
         JSON.stringify({ type: 'assistant', message: { model, content: [], usage: { input_tokens: 330000 } } })
       ].join('\n') + '\n');
       const res = runHook(home, transcript, {
-        ECC_CONTEXT_WINDOW_TOKENS: '', CLAUDE_CODE_AUTO_COMPACT_WINDOW: '400000',
-        ECC_LLM_SUMMARY_INTERVAL: '50', ECC_LLM_SUMMARY_CONTEXT_THRESHOLD: '20',
-        ECC_HOOK_DEADLINE_MS: '1', ECC_SKIP_LLM_SUMMARY: '', ECC_LLM_SUMMARY_SUBPROCESS: ''
+        YUS_CONTEXT_WINDOW_TOKENS: '', CLAUDE_CODE_AUTO_COMPACT_WINDOW: '400000',
+        YUS_LLM_SUMMARY_INTERVAL: '50', YUS_LLM_SUMMARY_CONTEXT_THRESHOLD: '20',
+        YUS_HOOK_DEADLINE_MS: '1', YUS_SKIP_LLM_SUMMARY: '', YUS_LLM_SUMMARY_SUBPROCESS: ''
       });
       assert.strictEqual(res.status, 0, res.stderr);
       assert.match(res.stderr, /LLM summary triggered.*summary budget: 18%/);
@@ -293,7 +293,7 @@ function runTests() {
 
   for (const nativeBudget of ['200000tokens', '200000.5', '9007199254740992']) {
     (test(`invalid native budget ${nativeBudget} does not trigger a summary from inferred capacity`, () => {
-      const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-invalid-budget-'));
+      const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-session-invalid-budget-'));
       try {
         const uuid = '12345678-1234-4234-8234-123456789abc';
         const transcript = path.join(home, `${uuid}.jsonl`);
@@ -302,9 +302,9 @@ function runTests() {
           JSON.stringify({ type: 'assistant', message: { model: 'unknown-model', content: [], usage: { input_tokens: 180000 } } }),
         ].join('\n') + '\n');
         const res = runHook(home, transcript, {
-          ECC_CONTEXT_WINDOW_TOKENS: '', CLAUDE_CODE_AUTO_COMPACT_WINDOW: nativeBudget,
-          ECC_LLM_SUMMARY_INTERVAL: '50', ECC_LLM_SUMMARY_CONTEXT_THRESHOLD: '20',
-          ECC_HOOK_DEADLINE_MS: '1', ECC_SKIP_LLM_SUMMARY: '', ECC_LLM_SUMMARY_SUBPROCESS: '',
+          YUS_CONTEXT_WINDOW_TOKENS: '', CLAUDE_CODE_AUTO_COMPACT_WINDOW: nativeBudget,
+          YUS_LLM_SUMMARY_INTERVAL: '50', YUS_LLM_SUMMARY_CONTEXT_THRESHOLD: '20',
+          YUS_HOOK_DEADLINE_MS: '1', YUS_SKIP_LLM_SUMMARY: '', YUS_LLM_SUMMARY_SUBPROCESS: '',
         });
         assert.strictEqual(res.status, 0, res.stderr);
         assert.doesNotMatch(res.stderr, /LLM summary triggered/);
@@ -316,7 +316,7 @@ function runTests() {
   }
 
   (test('logs an explicit LLM disable as skipped and persists mechanical resume state', () => {
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-skip-'));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-session-skip-'));
     try {
       const uuid = '12345678-1234-4234-8234-123456789abc';
       const transcript = path.join(home, `${uuid}.jsonl`);
@@ -324,11 +324,11 @@ function runTests() {
       fs.mkdirSync(bin);
       fs.writeFileSync(transcript, JSON.stringify({ type: 'user', content: 'Save context with LLM disabled' }) + '\n');
       const res = runHook(home, transcript, {
-        ECC_LLM_SUMMARY_INTERVAL: '1', ECC_SKIP_LLM_SUMMARY: '1',
-        ECC_LLM_SUMMARY_SUBPROCESS: '', PATH: bin
+        YUS_LLM_SUMMARY_INTERVAL: '1', YUS_SKIP_LLM_SUMMARY: '1',
+        YUS_LLM_SUMMARY_SUBPROCESS: '', PATH: bin
       });
       assert.strictEqual(res.status, 0, res.stderr);
-      assert.match(res.stderr, /LLM summary skipped.*ECC_SKIP_LLM_SUMMARY/);
+      assert.match(res.stderr, /LLM summary skipped.*YUS_SKIP_LLM_SUMMARY/);
       assert.doesNotMatch(res.stderr, /LLM summary failed/);
       assert.match(fs.readFileSync(sessionFileFor(home, uuid), 'utf8'), /Save context with LLM disabled/);
     } finally {
@@ -338,17 +338,17 @@ function runTests() {
 
   for (const inherited of ['', String(Date.now() + 300000), '1']) {
     (test(`direct legacy runner bounds the deadline ${inherited || '(unset)'}`, () => {
-      const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-runner-budget-'));
+      const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-runner-budget-'));
       try {
         const relative = 'legacy.js';
-        fs.writeFileSync(path.join(home, relative), "process.stdout.write(JSON.stringify({deadline:Number(process.env.ECC_HOOK_DEADLINE_MS),now:Date.now()}));\n");
+        fs.writeFileSync(path.join(home, relative), "process.stdout.write(JSON.stringify({deadline:Number(process.env.YUS_HOOK_DEADLINE_MS),now:Date.now()}));\n");
         const runner = path.resolve(__dirname, '../../scripts/hooks/run-with-flags.js');
         const res = spawnSync(process.execPath, [runner, 'session:stop:session-end', relative, 'standard'], {
           input: '{}', encoding: 'utf8', timeout: 5000,
           env: {
             ...isolatedHomeEnv(home), CLAUDE_PLUGIN_ROOT: home,
-            ECC_HOOK_PROFILE: 'standard', ECC_DISABLED_HOOKS: '', ECC_DRY_RUN: '0', ECC_HOOKS_ENABLED: 'true',
-            ECC_HOOK_DEADLINE_MS: inherited
+            YUS_HOOK_PROFILE: 'standard', YUS_DISABLED_HOOKS: '', YUS_DRY_RUN: '0', YUS_HOOKS_ENABLED: 'true',
+            YUS_HOOK_DEADLINE_MS: inherited
           }
         });
         assert.strictEqual(res.status, 0, res.stderr);
@@ -370,7 +370,7 @@ function runTests() {
   // child timeout chain without invoking Claude or using authentication.
   if (process.platform !== 'win32') {
     (test('times out a slow summarizer across a calendar-day rollover and saves fallback', () => {
-      const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-budget-'));
+      const home = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-session-budget-'));
       try {
         const uuid = '12345678-1234-4234-8234-123456789abc';
         const transcript = path.join(home, `${uuid}.jsonl`);
@@ -387,21 +387,21 @@ function runTests() {
         // deadline stay real while the summarizer crosses into the next day.
         fs.writeFileSync(calendarPreload, [
           "const fs = require('node:fs');",
-          'require(process.env.ECC_SESSION_TEST_UTILS).getDateString = () =>',
-          '  fs.existsSync(process.env.ECC_SESSION_TEST_STARTED)',
-          '    ? process.env.ECC_SESSION_TEST_NEXT_DATE : process.env.ECC_SESSION_TEST_DATE;',
+          'require(process.env.YUS_SESSION_TEST_UTILS).getDateString = () =>',
+          '  fs.existsSync(process.env.YUS_SESSION_TEST_STARTED)',
+          '    ? process.env.YUS_SESSION_TEST_NEXT_DATE : process.env.YUS_SESSION_TEST_DATE;',
           ''
         ].join('\n'));
         fs.writeFileSync(transcript, JSON.stringify({ type: 'user', content: 'Persist after a slow summary' }) + '\n');
         fs.writeFileSync(summarizer, [
           "const fs = require('node:fs');",
-          "fs.writeFileSync(process.env.ECC_SESSION_TEST_STARTED, 'started');",
-          'fs.writeFileSync(process.env.ECC_SESSION_TEST_CALENDAR_AFTER,',
-          '  require(process.env.ECC_SESSION_TEST_UTILS).getDateString());',
+          "fs.writeFileSync(process.env.YUS_SESSION_TEST_STARTED, 'started');",
+          'fs.writeFileSync(process.env.YUS_SESSION_TEST_CALENDAR_AFTER,',
+          '  require(process.env.YUS_SESSION_TEST_UTILS).getDateString());',
           "setTimeout(() => console.log('late summary'), 5000);",
           ''
         ].join('\n'));
-        fs.writeFileSync(path.join(bin, 'claude'), '#!/bin/sh\nexec "$ECC_SESSION_TEST_NODE" "$ECC_SESSION_TEST_SUMMARIZER"\n', { mode: 0o755 });
+        fs.writeFileSync(path.join(bin, 'claude'), '#!/bin/sh\nexec "$YUS_SESSION_TEST_NODE" "$YUS_SESSION_TEST_SUMMARIZER"\n', { mode: 0o755 });
         const root = path.resolve(__dirname, '../..');
         const bootstrap = path.join(root, 'scripts/hooks/lifecycle-hook-bootstrap.js');
         const res = spawnSync(process.execPath, [bootstrap, 'session:stop:session-end', 'scripts/hooks/session-end.js', 'minimal,standard,strict', '2500'], {
@@ -409,17 +409,17 @@ function runTests() {
           env: {
             ...isolatedHomeEnv(home), PATH: bin,
             NODE_OPTIONS: `--require ${JSON.stringify(calendarPreload)}`,
-            ECC_SESSION_TEST_NODE: process.execPath,
-            ECC_SESSION_TEST_SUMMARIZER: summarizer,
-            ECC_SESSION_TEST_UTILS: utils,
-            ECC_SESSION_TEST_STARTED: started,
-            ECC_SESSION_TEST_CALENDAR_AFTER: calendarAfter,
-            ECC_SESSION_TEST_DATE: sessionDate,
-            ECC_SESSION_TEST_NEXT_DATE: nextDate,
-            CLAUDE_PLUGIN_ROOT: root, ECC_HOOK_PROFILE: 'standard',
-            ECC_LLM_SUMMARY_INTERVAL: '1', ECC_SKIP_LLM_SUMMARY: '',
-            ECC_LLM_SUMMARY_SUBPROCESS: '', ECC_HOOK_DEADLINE_MS: '1',
-            ECC_DISABLED_HOOKS: '', ECC_DRY_RUN: '0', ECC_HOOKS_ENABLED: 'true'
+            YUS_SESSION_TEST_NODE: process.execPath,
+            YUS_SESSION_TEST_SUMMARIZER: summarizer,
+            YUS_SESSION_TEST_UTILS: utils,
+            YUS_SESSION_TEST_STARTED: started,
+            YUS_SESSION_TEST_CALENDAR_AFTER: calendarAfter,
+            YUS_SESSION_TEST_DATE: sessionDate,
+            YUS_SESSION_TEST_NEXT_DATE: nextDate,
+            CLAUDE_PLUGIN_ROOT: root, YUS_HOOK_PROFILE: 'standard',
+            YUS_LLM_SUMMARY_INTERVAL: '1', YUS_SKIP_LLM_SUMMARY: '',
+            YUS_LLM_SUMMARY_SUBPROCESS: '', YUS_HOOK_DEADLINE_MS: '1',
+            YUS_DISABLED_HOOKS: '', YUS_DRY_RUN: '0', YUS_HOOKS_ENABLED: 'true'
           },
           timeout: 7000
         });

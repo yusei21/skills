@@ -144,7 +144,7 @@ function resolveContextWindow(tokens, model) {
 
   // Explicit window override wins: 400k models (e.g. Opus 4.x) match neither the
   // 200k default nor the 1M marker and would otherwise report ~double usage (#2290).
-  const explicitWindow = Number(env.ECC_CONTEXT_WINDOW_TOKENS || '');
+  const explicitWindow = Number(env.YUS_CONTEXT_WINDOW_TOKENS || '');
   if (Number.isSafeInteger(explicitWindow) && explicitWindow > 0) {
     return { windowTokens: explicitWindow, inferred: false };
   }

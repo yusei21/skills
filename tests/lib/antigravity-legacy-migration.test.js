@@ -71,7 +71,7 @@ function createAntigravityState(targetRoot, installStatePath, operations = []) {
 
 function seedLegacyState(projectRoot, entries = []) {
   const targetRoot = path.join(projectRoot, '.agent');
-  const installStatePath = path.join(targetRoot, 'ecc-install-state.json');
+  const installStatePath = path.join(targetRoot, 'yus-install-state.json');
   const operations = entries.map(entry => {
     const destinationPath = path.join(targetRoot, entry.relativePath);
     fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
@@ -87,7 +87,7 @@ function seedLegacyState(projectRoot, entries = []) {
 
 function createCanonicalPlan(projectRoot, sourcePath) {
   const targetRoot = path.join(projectRoot, '.agents');
-  const installStatePath = path.join(targetRoot, 'ecc-install-state.json');
+  const installStatePath = path.join(targetRoot, 'yus-install-state.json');
   const operation = {
     kind: 'copy-file',
     moduleId: 'rules-core',
@@ -175,13 +175,13 @@ function createCanonicalPlan(projectRoot, sourcePath) {
     }
   });
 
-  test('preserves recorded legacy content when the current ECC source has changed', () => {
+  test('preserves recorded legacy content when the current yus source has changed', () => {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-source-drift-'));
     try {
       const legacy = seedLegacyState(projectRoot, [{
         relativePath: 'rules/common-coding-style.md',
         sourceRelativePath: 'rules/common/coding-style.md',
-        recordedContent: 'historical ECC content\n',
+        recordedContent: 'historical yus content\n',
       }]);
       const sourcePath = path.join(projectRoot, 'source.md');
       fs.writeFileSync(sourcePath, 'canonical managed\n', 'utf8');
@@ -191,7 +191,7 @@ function createCanonicalPlan(projectRoot, sourcePath) {
       assert.ok(fs.existsSync(legacy.operations[0].destinationPath));
       assert.ok(fs.existsSync(legacy.installStatePath));
       assert.ok(result.warnings.some(warning => warning.includes(
-        'current ECC source differs from the recorded installed content'
+        'current yus source differs from the recorded installed content'
       )));
     } finally {
       fs.rmSync(projectRoot, { recursive: true, force: true });
@@ -367,7 +367,7 @@ function createCanonicalPlan(projectRoot, sourcePath) {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-discover-'));
     try {
       const canonicalRoot = path.join(projectRoot, '.agents');
-      const canonicalStatePath = path.join(canonicalRoot, 'ecc-install-state.json');
+      const canonicalStatePath = path.join(canonicalRoot, 'yus-install-state.json');
       writeInstallState(
         canonicalStatePath,
         createAntigravityState(canonicalRoot, canonicalStatePath)
@@ -419,7 +419,7 @@ function createCanonicalPlan(projectRoot, sourcePath) {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-uninstall-'));
     try {
       const canonicalRoot = path.join(projectRoot, '.agents');
-      const canonicalStatePath = path.join(canonicalRoot, 'ecc-install-state.json');
+      const canonicalStatePath = path.join(canonicalRoot, 'yus-install-state.json');
       writeInstallState(
         canonicalStatePath,
         createAntigravityState(canonicalRoot, canonicalStatePath)
@@ -455,7 +455,7 @@ function createCanonicalPlan(projectRoot, sourcePath) {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-repair-'));
     try {
       const canonicalRoot = path.join(projectRoot, '.agents');
-      const canonicalStatePath = path.join(canonicalRoot, 'ecc-install-state.json');
+      const canonicalStatePath = path.join(canonicalRoot, 'yus-install-state.json');
       writeInstallState(
         canonicalStatePath,
         createAntigravityState(canonicalRoot, canonicalStatePath)
@@ -495,7 +495,7 @@ function createCanonicalPlan(projectRoot, sourcePath) {
     const externalRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-external-'));
     try {
       const mismatchedRoot = path.join(mismatchedProject, '.agent');
-      const mismatchedStatePath = path.join(mismatchedRoot, 'ecc-install-state.json');
+      const mismatchedStatePath = path.join(mismatchedRoot, 'yus-install-state.json');
       writeInstallState(mismatchedStatePath, createInstallState({
         adapter: { id: 'cursor-project', target: 'cursor', kind: 'project' },
         targetRoot: mismatchedRoot,
@@ -525,12 +525,12 @@ function createCanonicalPlan(projectRoot, sourcePath) {
       assert.strictEqual(mismatchedRecords.length, 0);
 
       if (process.platform !== 'win32') {
-        const symlinkStatePath = path.join(externalRoot, 'ecc-install-state.json');
+        const symlinkStatePath = path.join(externalRoot, 'yus-install-state.json');
         const linkedRoot = path.join(symlinkProject, '.agent');
         fs.symlinkSync(externalRoot, linkedRoot, 'dir');
         writeInstallState(
           symlinkStatePath,
-          createAntigravityState(linkedRoot, path.join(linkedRoot, 'ecc-install-state.json'))
+          createAntigravityState(linkedRoot, path.join(linkedRoot, 'yus-install-state.json'))
         );
 
         const symlinkRecords = discoverInstalledStates({
@@ -553,7 +553,7 @@ function createCanonicalPlan(projectRoot, sourcePath) {
     const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'antigravity-corrupt-'));
     try {
       const legacyRoot = path.join(projectRoot, '.agent');
-      const legacyStatePath = path.join(legacyRoot, 'ecc-install-state.json');
+      const legacyStatePath = path.join(legacyRoot, 'yus-install-state.json');
       fs.mkdirSync(legacyRoot, { recursive: true });
       fs.writeFileSync(legacyStatePath, '{not valid json\n', 'utf8');
 
@@ -585,7 +585,7 @@ function createCanonicalPlan(projectRoot, sourcePath) {
     try {
       const sourcePath = path.join(REPO_ROOT, 'agents', 'architect.md');
       const targetRoot = path.join(projectRoot, '.agents');
-      const installStatePath = path.join(targetRoot, 'ecc-install-state.json');
+      const installStatePath = path.join(targetRoot, 'yus-install-state.json');
       const operation = {
         kind: 'copy-file',
         moduleId: 'agents-core',
@@ -640,7 +640,7 @@ function createCanonicalPlan(projectRoot, sourcePath) {
     try {
       const sourcePath = path.join(REPO_ROOT, 'agents', 'architect.md');
       const targetRoot = path.join(projectRoot, '.agents');
-      const installStatePath = path.join(targetRoot, 'ecc-install-state.json');
+      const installStatePath = path.join(targetRoot, 'yus-install-state.json');
       const operation = {
         kind: 'copy-file',
         moduleId: 'agents-core',

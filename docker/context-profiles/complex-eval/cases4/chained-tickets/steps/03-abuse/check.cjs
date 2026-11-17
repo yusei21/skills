@@ -13,14 +13,14 @@ function finish() {
   for (let i = checks.length; i < 8; i++) record(`unreached-${i + 1}`, false);
   const ok = checks.filter(c => c.ok).length;
   for (const c of checks) process.stdout.write(`${c.ok ? 'ok' : 'not ok'} - ${c.name}\n`);
-  process.stdout.write(`ECC_EVAL_SCORE ${JSON.stringify({ score: ok / 8, passed: ok, total: 8 })}\n`);
+  process.stdout.write(`YUS_EVAL_SCORE ${JSON.stringify({ score: ok / 8, passed: ok, total: 8 })}\n`);
   process.exit(0);
 }
 // A crashing agent server must not kill the grader: score what completed.
 process.on('uncaughtException', finish);
 process.on('unhandledRejection', finish);
 const root = process.cwd();
-const DATA_FILE = path.join(root, '.ecc-data', 'links-step3.json');
+const DATA_FILE = path.join(root, '.yus-data', 'links-step3.json');
 const hasEnvelope = body => body && body.error && typeof body.error.code === 'string'
   && /^[A-Z][A-Z0-9_]+$/.test(body.error.code) && typeof body.error.message === 'string';
 

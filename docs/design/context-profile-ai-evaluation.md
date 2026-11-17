@@ -9,14 +9,14 @@ the explicit `--allow-real-provider` flag. Reports never approve a release on th
 
 `docker/context-profiles/ai-corpus.json` fixes 30 small coding tasks and at least 30
 selection probes before execution. Each task is a tiny CommonJS workspace with a bug or
-missing behavior; about two thirds benefit from a specific ECC skill and the rest need
+missing behavior; about two thirds benefit from a specific yus skill and the rest need
 none, including tasks with misleading workflow vocabulary. Each task carries a hidden
 grader that the agent never sees.
 
 Every task runs in all three arms, in separate fresh workspaces with identical files.
 Arm order rotates by task and repeat to reduce fixed ordering effects.
 
-| Arm | Codex install | ECC task context |
+| Arm | Codex install | yus task context |
 | --- | --- | --- |
 | Full | Real Full install: every skill natively discoverable | None; the host chooses from its own catalog |
 | manual Lean | Real Lean install: three-entry core | The task's preregistered skill, loaded by the launcher |
@@ -47,17 +47,17 @@ The Codex adapter supports exactly Codex 0.154.0 and 0.155.1. Install a pinned c
 next to, not over, your everyday Codex:
 
 ```sh
-npm install --prefix ~/.ecc-eval/codex @openai/codex@0.155.1
+npm install --prefix ~/.yus-eval/codex @openai/codex@0.155.1
 ```
 
 Create a dedicated login home and sign in once. The file credential store keeps the
 login in `auth.json`, which the evaluator can lease:
 
 ```sh
-mkdir -m 700 -p ~/.ecc-eval/auth
-CODEX_HOME=~/.ecc-eval/auth ~/.ecc-eval/codex/node_modules/.bin/codex login \
+mkdir -m 700 -p ~/.yus-eval/auth
+CODEX_HOME=~/.yus-eval/auth ~/.yus-eval/codex/node_modules/.bin/codex login \
   -c 'cli_auth_credentials_store="file"'
-chmod 600 ~/.ecc-eval/auth/auth.json
+chmod 600 ~/.yus-eval/auth/auth.json
 ```
 
 For each call, the evaluator copies `auth.json` into the isolated install's
@@ -72,13 +72,13 @@ rate limits. `CODEX_API_KEY` remains an alternative when no `--auth-home` is giv
 Register first, then execute against the retained registration:
 
 ```sh
-CODEX=$(realpath ~/.ecc-eval/codex/node_modules/@openai/codex/bin/codex.js)
+CODEX=$(realpath ~/.yus-eval/codex/node_modules/@openai/codex/bin/codex.js)
 node docker/context-profiles/ai-eval.js --plan \
-  --executable "$CODEX" --model YOUR_PINNED_MODEL > /tmp/ecc-ai-registration.json
+  --executable "$CODEX" --model YOUR_PINNED_MODEL > /tmp/yus-ai-registration.json
 node docker/context-profiles/ai-eval.js --allow-real-provider \
-  --registration /tmp/ecc-ai-registration.json \
+  --registration /tmp/yus-ai-registration.json \
   --executable "$CODEX" --model YOUR_PINNED_MODEL \
-  --auth-home ~/.ecc-eval/auth > /tmp/ecc-ai-metrics.json
+  --auth-home ~/.yus-eval/auth > /tmp/yus-ai-metrics.json
 ```
 
 The registration binds corpus bytes, registry resource digests, both profile plans,

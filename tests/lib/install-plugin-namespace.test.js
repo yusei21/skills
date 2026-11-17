@@ -1,7 +1,7 @@
 /**
  * Tests for scripts/lib/install/plugin-namespace.js — manual Claude installs
  * place agents, commands and skills at bare names, so plugin-prefixed
- * `ecc:<name>` references in copied markdown must lose the prefix.
+ * `yus:<name>` references in copied markdown must lose the prefix.
  */
 
 'use strict';
@@ -31,9 +31,9 @@ function runTests() {
 
   record(test('strips the prefix from agent names in code spans, bold and tables', () => {
     const input = [
-      '| ecc:planner | Planning |',
-      '1. Use **ecc:code-reviewer** agent',
-      'Use `ecc:tdd-guide` here',
+      '| yus:planner | Planning |',
+      '1. Use **yus:code-reviewer** agent',
+      'Use `yus:tdd-guide` here',
     ].join('\n');
     assert.strictEqual(stripPluginNamespace(input), [
       '| planner | Planning |',
@@ -44,32 +44,32 @@ function runTests() {
 
   record(test('strips the prefix from agent frontmatter and tool-call arguments', () => {
     assert.strictEqual(
-      stripPluginNamespace('agent: ecc:security-reviewer'),
+      stripPluginNamespace('agent: yus:security-reviewer'),
       'agent: security-reviewer'
     );
     assert.strictEqual(
-      stripPluginNamespace('Agent(subagent_type: "ecc:planner", prompt: "...")'),
+      stripPluginNamespace('Agent(subagent_type: "yus:planner", prompt: "...")'),
       'Agent(subagent_type: "planner", prompt: "...")'
     );
   }));
 
   record(test('strips the prefix from slash commands', () => {
-    assert.strictEqual(stripPluginNamespace('see `/ecc:ecc-guide`'), 'see `/ecc-guide`');
-    assert.strictEqual(stripPluginNamespace('/ecc:plan "Add auth"'), '/plan "Add auth"');
+    assert.strictEqual(stripPluginNamespace('see `/yus:yus-guide`'), 'see `/yus-guide`');
+    assert.strictEqual(stripPluginNamespace('/yus:plan "Add auth"'), '/plan "Add auth"');
   }));
 
-  record(test('leaves the plugin identifier ecc@ecc untouched', () => {
-    const input = '`/plugin install ecc@ecc` and `ecc@ecc`';
+  record(test('leaves the plugin identifier yus@yus untouched', () => {
+    const input = '`/plugin install yus@yus` and `yus@yus`';
     assert.strictEqual(stripPluginNamespace(input), input);
   }));
 
-  record(test('leaves words that only end in "ecc" untouched', () => {
+  record(test('leaves words that only end in "yus" untouched', () => {
     const input = 'the decc:thing and tecc:value';
     assert.strictEqual(stripPluginNamespace(input), input);
   }));
 
   record(test('does not touch a colon with no identifier after it', () => {
-    const input = 'the `ecc:` prefix in plugin mode';
+    const input = 'the `yus:` prefix in plugin mode';
     assert.strictEqual(stripPluginNamespace(input), input);
   }));
 

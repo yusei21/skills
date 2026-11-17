@@ -125,7 +125,7 @@ function loadContextRegistry({ repoRoot = DEFAULT_REPO_ROOT } = {}) {
   const entries = skills.map(skill => buildEntry(reader, modules, skill, overrides.get(`skill:${skill.name}`)));
   validateDependencies(entries);
   const value = {
-    schemaVersion: 'ecc.context-registry.v1', id: manifest.id,
+    schemaVersion: 'yus.context-registry.v1', id: manifest.id,
     sourceDigests: [REGISTRY_PATH, manifest.inventory.source].map(source => ({ path: source, digest: reader.read(source).digest })),
     targets: [...TARGETS],
     packs: [...new Set(entries.map(entry => entry.packId))].sort().map(id => ({ id })),

@@ -37,4 +37,4 @@ for (const source of [changelog, releaseNotes, nasikoSkill, modules, components]
   assert.match(source, /Nasiko CLI lifecycle bridge/i);
 }
 
-console.log('ECC 2.2 release copy: ok');
+console.log('yus 2.2 release copy: ok');

@@ -10,7 +10,7 @@ readStdin().then(raw => {
     const server = input.server || input.mcp_server || 'unknown';
     const tool = input.tool || input.mcp_tool || 'unknown';
     const success = input.error ? 'FAILED' : 'OK';
-    console.error(`[ECC] MCP result: ${server}/${tool} - ${success}`);
+    console.error(`[yus] MCP result: ${server}/${tool} - ${success}`);
   } catch {
     // Audit-only hook: malformed payloads must not interrupt the agent loop.
   }

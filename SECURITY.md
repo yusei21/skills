@@ -17,9 +17,7 @@ Security fixes land on `main` first. Backports are best-effort and only for curr
 
 Use GitHub private vulnerability reporting whenever possible — it reaches the maintainer directly:
 
-- <https://github.com/affaan-m/ECC/security/advisories/new>
-
-You can also email **<affaan@ecc.tools>** (the `security@ecc.tools` alias is not monitored — use `affaan@ecc.tools`).
+- <https://github.com/yusei21/yus/security/advisories/new>
 
 Do **not** open a public GitHub issue for security vulnerabilities.
 
@@ -44,57 +42,52 @@ If a report is declined, we will explain whether it is not reproducible, out of 
 
 This policy covers:
 
-- the `affaan-m/ECC` repository
-- the `ecc-universal` npm package
-- ECC plugin, install, repair, dashboard, hook, rule, skill, MCP, and command surfaces shipped from this repository
+- the `yusei21/yus` repository
+- the `yus-universal` npm package
+- yus plugin, install, repair, dashboard, hook, rule, skill, MCP, and command surfaces shipped from this repository
 - GitHub Actions workflows and release automation in this repository
 - the ECC Tools GitHub App integration points documented by this repository
 - AgentShield usage docs when they are embedded here. AgentShield code issues belong in <https://github.com/affaan-m/agentshield>
 
 ## Official Distribution Surfaces
 
-Official ECC surfaces are:
+Official yus surfaces are:
 
-- GitHub repo: <https://github.com/affaan-m/ECC>
-- npm package: `ecc-universal`
-- GitHub App: <https://github.com/apps/ecc-tools>
-- marketplace/plugin slug: `ecc@ecc`
-- website: <https://ecc.tools>
+- GitHub repo: <https://github.com/yusei21/yus>
+- marketplace/plugin slug: `yus@yus`
 
-Official AgentShield surface:
+yus is not published to npm. AgentShield (`ecc-agentshield`,
+<https://github.com/affaan-m/agentshield>) is a separate tool by the author of
+the original ECC project; report its issues there.
 
-- npm package: `ecc-agentshield`
-- GitHub repo: <https://github.com/affaan-m/agentshield>
-
-The following packages have been observed using ECC repository metadata but are **not maintained by ECC**:
+The following packages reuse metadata from the original ECC project and are
+**not maintained here**:
 
 - `@chil_ntl/ecc-cli`
 - `ecc-100xprompt-plugin`
 
-Treat any package not listed under official surfaces as unofficial until verified. Do not install packages named `opencode-ecc`, `everything-claude-code`, or other ECC-like aliases unless this repository explicitly documents them as official.
-
-GitHub dependency graph may also show Go module aliases such as `github.com/affaan-m/ecc` or historical repository paths. ECC is not currently distributed as a supported Go module.
+Treat any package not listed under official surfaces as unofficial until verified. Do not install packages named `opencode-ecc`, `everything-claude-code`, or other yus-like aliases unless this repository explicitly documents them as official.
 
 ## Out of Scope
 
 Reports are usually out of scope when they only show:
 
 - local command execution where the user already controls the local shell and no higher-privilege trust boundary is crossed
-- screenshots, stale line numbers, or reports against `affaan-m/ECC` that do not reproduce on current `affaan-m/ECC`
+- screenshots, stale line numbers, or reports against `yusei21/yus` that do not reproduce on current `yusei21/yus`
 - self-XSS or social engineering with no repository-controlled exploit path
-- dependency graph/package metadata confusion without an install path to an official ECC package
-- vulnerabilities in third-party packages unless ECC pins, installs, or executes them in a way that creates extra impact
+- dependency graph/package metadata confusion without an install path to an official yus package
+- vulnerabilities in third-party packages unless yus pins, installs, or executes them in a way that creates extra impact
 
 Local developer tools can still be valid security issues when untrusted repository content, package installation, generated hooks, or CI automation can trigger execution without clear user intent. Show that trust boundary in the report.
 
 ## Supply-Chain Rules
 
-ECC treats supply-chain exposure as a first-class security surface.
+yus treats supply-chain exposure as a first-class security surface.
 
 - GitHub Actions must use pinned commit SHAs for third-party actions.
 - Workflows must avoid shelling untrusted GitHub context directly into `run:` blocks.
 - Release and install docs must point only to official packages.
-- Package metadata should point at `affaan-m/ECC`, not historical repo paths.
+- Package metadata should point at `yusei21/yus`, not historical repo paths.
 - Private vulnerability reports are triaged privately before public disclosure.
 - Security advisories are published only when a supported release is affected and coordinated disclosure is appropriate.
 
@@ -134,7 +127,7 @@ Compare the PID against the expected binary. Any other process on that port can 
 
 ## Triage: suspicious `<system-reminder>` blocks
 
-ECC runs inside agent harnesses that may inject ephemeral client-side system reminders into the model input on every turn. These blocks are not automatically repository-carried payloads.
+yus runs inside agent harnesses that may inject ephemeral client-side system reminders into the model input on every turn. These blocks are not automatically repository-carried payloads.
 
 Before treating one as an attack, verify:
 

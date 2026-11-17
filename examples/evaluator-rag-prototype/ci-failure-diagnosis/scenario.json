@@ -1,5 +1,5 @@
 {
-  "schema_version": "ecc.evaluator-rag.scenario.v1",
+  "schema_version": "yus.evaluator-rag.scenario.v1",
   "scenario_id": "ci-failure-diagnosis",
   "title": "Diagnose CI failures from captured logs before proposing fixes",
   "mode": "read_only_prototype",
@@ -7,7 +7,7 @@
   "sources": [
     {
       "kind": "repo_doc",
-      "path": "docs/ECC-2.0-GA-ROADMAP.md",
+      "path": "docs/yus-2.0-GA-ROADMAP.md",
       "purpose": "Records ECC-Tools CI failure-mode predictive follow-ups and the evaluator/RAG corpus expansion need"
     },
     {

@@ -1,12 +1,12 @@
-# ECC for Qoder
+# yus for Qoder
 
-This directory contains ECC's native Qoder plugin manifest. The repository root
+This directory contains yus's native Qoder plugin manifest. The repository root
 is the plugin bundle: Qoder loads the canonical `skills/`, `agents/`, and
 `commands/` directories rather than copies maintained under `.qoder-plugin/`.
 
 ## Install and verify
 
-ECC's hook runtime requires Node.js 18 or newer on Qoder's non-interactive
+yus's hook runtime requires Node.js 18 or newer on Qoder's non-interactive
 `PATH`. From a reviewed checkout:
 
 ```bash
@@ -28,7 +28,7 @@ For Qoder IDE, create a ZIP whose root contains `.qoder-plugin/`, `skills/`,
 - The bundled `chrome-devtools` MCP server uses the same pinned `npx` launch
   contract as Codex. It is downloaded on first use and therefore requires Node,
   npm/npx, and network access.
-- Qoder receives only ECC's reviewed `SessionStart` bootstrap. The much broader
+- Qoder receives only yus's reviewed `SessionStart` bootstrap. The much broader
   Claude hook profile is not copied: blocking tool hooks, asynchronous stop
   jobs, and Claude-specific matchers have not been asserted to be Qoder-safe.
 - The Qoder hook uses `command` plus `args`, `QODER_PLUGIN_ROOT`, and Node's own
@@ -36,5 +36,5 @@ For Qoder IDE, create a ZIP whose root contains `.qoder-plugin/`, `skills/`,
   variable expansion, so the launcher contract is portable across native
   Windows, macOS, and Linux when Node 18+ is available.
 
-Qoder plugin installation is separate from ECC's managed installer. Do not
+Qoder plugin installation is separate from yus's managed installer. Do not
 combine it with a manually copied Qoder skill installation.

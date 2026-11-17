@@ -1,6 +1,6 @@
 # Curation
 
-pi/core includes 134 of 326 skills and 24 of 98 commands from the root of ECC.
+pi/core includes 134 of 326 skills and 24 of 98 commands from the root of yus.
 Everything excluded is listed here with its reason.
 
 ## Rules
@@ -20,11 +20,11 @@ Exclude anything that:
 | Skill | Reason |
 |---|---|
 | `agent-payment-x402` | venture-specific x402 payments; wallet and network runtime |
-| `agent-sort` | ECC install planner over the full ECC catalog; not portable |
+| `agent-sort` | yus install planner over the full yus catalog; not portable |
 | `agentic-os` | Claude-Code-only persistent OS mechanics (slash commands, memory, schedules) |
 | `ai-regression-testing` | workflow creates Claude Code custom slash commands (.claude/commands) |
 | `article-writing` | content/marketing writing, not engineering |
-| `automation-audit-ops` | ECC ops audit of hooks/connectors/MCP surfaces |
+| `automation-audit-ops` | yus ops audit of hooks/connectors/MCP surfaces |
 | `autonomous-agent-harness` | Claude-Code-only autonomous harness (hooks, scheduling, computer use) |
 | `autonomous-loops` | Claude-Code-only autonomous loops |
 | `benchmark-methodology` | competitive/marketing benchmarking |
@@ -41,7 +41,7 @@ Exclude anything that:
 | `competitive-platform-analysis` | competitive/marketing analysis |
 | `competitive-report-structure` | competitive/marketing reporting |
 | `config-gc` | Claude-Code-only config garbage collection (~/.claude) |
-| `configure-ecc` | ECC-specific setup wizard |
+| `configure-yus` | yus-specific setup wizard |
 | `connections-optimizer` | social/outreach (X and LinkedIn) |
 | `content-engine` | social/marketing content system |
 | `context-budget` | Claude-Code-only context window audit |
@@ -61,8 +61,8 @@ Exclude anything that:
 | `dmux-workflows` | multi-agent orchestration via dmux |
 | `documentation-lookup` | wraps Context7 SaaS MCP |
 | `dynamic-workflow-mode` | Claude dynamic workflow mode mechanics |
-| `ecc-guide` | ECC repository self-reference |
-| `ecc-recipes` | ECC command catalog self-reference |
+| `yus-guide` | yus repository self-reference |
+| `yus-recipes` | yus command catalog self-reference |
 | `ecc-tools-cost-audit` | ECC Tools commercial billing/ops |
 | `email-ops` | mailbox ops skill |
 | `energy-procurement` | energy procurement niche domain |
@@ -74,14 +74,14 @@ Exclude anything that:
 | `fal-ai-media` | wraps fal.ai SaaS |
 | `finance-billing-ops` | billing/ops skill |
 | `flox-environments` | runtime installer flow (curl\|sh) for Flox |
-| `frontend-design-direction` | ECC-specific design direction |
+| `frontend-design-direction` | yus-specific design direction |
 | `frontend-slides` | presentation/content production, not engineering |
 | `gan-style-harness` | Claude-Code-only generator/evaluator harness |
 | `gateguard` | Claude-Code-only PreToolUse gate |
 | `generating-python-installer` | niche Windows installer packaging with runtime downloads |
 | `github-ops` | makes GitHub API calls via gh at runtime |
 | `google-workspace-ops` | wraps Google Workspace SaaS |
-| `growth-log` | ECC learning-log workflow |
+| `growth-log` | yus learning-log workflow |
 | `healthcare-cdss-patterns` | healthcare niche domain pack |
 | `healthcare-emr-patterns` | healthcare niche domain pack |
 | `healthcare-eval-harness` | healthcare niche domain pack |
@@ -117,7 +117,7 @@ Exclude anything that:
 | `marketing-campaign` | marketing |
 | `master-agreement-generator` | legal docs niche |
 | `messages-ops` | messaging ops skill |
-| `nanoclaw-repl` | ECC product-specific REPL |
+| `nanoclaw-repl` | yus product-specific REPL |
 | `nasiko-control-plane` | venture-specific nasiko-* |
 | `netmiko-ssh-automation` | network-device ops niche; SSH at runtime |
 | `network-bgp-diagnostics` | network ops niche domain |
@@ -127,7 +127,7 @@ Exclude anything that:
 | `nutrient-document-processing` | wraps Nutrient DWS SaaS API |
 | `openclaw-persona-forge` | venture-specific openclaw-* |
 | `opensource-pipeline` | multi-agent roster pipeline |
-| `operator-approval-loop` | ECC ops approval contract |
+| `operator-approval-loop` | yus ops approval contract |
 | `orch-add-feature` | Claude-Code-only orch-* orchestration |
 | `orch-build-mvp` | Claude-Code-only orch-* orchestration |
 | `orch-change-feature` | Claude-Code-only orch-* orchestration |
@@ -135,20 +135,20 @@ Exclude anything that:
 | `orch-pipeline` | Claude-Code-only orch-* orchestration |
 | `orch-refine-code` | Claude-Code-only orch-* orchestration |
 | `plan-canvas` | Claude-Code-only plan canvas server |
-| `plan-orchestrate` | ECC orchestration prompt generator over the full catalog |
+| `plan-orchestrate` | yus orchestration prompt generator over the full catalog |
 | `plankton-code-quality` | Claude-Code-only write-time hooks |
 | `prediction-market-oracle-research` | venture-specific prediction-market-* |
 | `prediction-market-risk-review` | venture-specific prediction-market-* |
 | `production-scheduling` | manufacturing niche domain |
 | `project-flow-ops` | ops over GitHub/Linear SaaS |
-| `prompt-optimizer` | ECC command/agent catalog self-reference |
+| `prompt-optimizer` | yus command/agent catalog self-reference |
 | `quality-nonconformance` | regulated manufacturing niche |
 | `ralphinho-rfc-pipeline` | multi-agent DAG orchestration |
 | `recsys-pipeline-architect` | installs upstream package via npx skills add |
 | `recursive-decision-ledger` | recursive prompting loops |
 | `remotion-video-creation` | video/media production niche |
 | `repo-scan` | downloads an external skill at runtime |
-| `research-ops` | ECC ops research workflow with network enrichment |
+| `research-ops` | yus ops research workflow with network enrichment |
 | `returns-reverse-logistics` | logistics niche domain |
 | `rules-distill` | Claude-Code-only rules distillation mechanics |
 | `safety-guard` | Claude-Code-only PreToolUse hooks |
@@ -163,7 +163,7 @@ Exclude anything that:
 | `security-scan` | wraps AgentShield commercial product |
 | `seo` | SEO/marketing |
 | `skill-comply` | runs agent rosters for compliance checks |
-| `skill-host-compat` | runs an ECC repo CI script (scripts/ci/validate-skill-host-compat.js) |
+| `skill-host-compat` | runs an yus repo CI script (scripts/ci/validate-skill-host-compat.js) |
 | `skill-scout` | network searches of skill marketplaces |
 | `skill-stocktake` | subagent-based Claude skill audit |
 | `social-graph-ranker` | social graph (X and LinkedIn) |
@@ -175,29 +175,29 @@ Exclude anything that:
 | `tasteforge-video` | media generation workflow over fal.ai SaaS |
 | `team-agent-orchestration` | agent squad orchestration |
 | `team-builder` | Claude agents roster picker |
-| `terminal-opener` | ECC harness utility, not engineering content |
-| `terminal-ops` | ECC ops workflow |
+| `terminal-opener` | yus harness utility, not engineering content |
+| `terminal-ops` | yus ops workflow |
 | `tinystruct-patterns` | niche single-framework pack |
 | `token-budget-advisor` | session/token mechanics |
 | `ui-demo` | Playwright video recording with runtime installs |
 | `ui-to-vue` | runs an npx converter package at runtime |
 | `uncloud` | niche cluster ops |
-| `unified-memory` | ECC memory vault (session save/resume family) |
-| `unified-notifications-ops` | ECC notifications ops |
+| `unified-memory` | yus memory vault (session save/resume family) |
+| `unified-notifications-ops` | yus notifications ops |
 | `video-editing` | media production niche |
 | `videodb` | wraps VideoDB SaaS |
 | `visa-doc-translate` | visa/legal docs niche; OCR network calls |
 | `windows-desktop-e2e` | niche Windows desktop automation; pip installs at runtime |
-| `workspace-surface-audit` | ECC harness surface audit |
+| `workspace-surface-audit` | yus harness surface audit |
 | `x-api` | wraps X/Twitter SaaS API |
 | `prompt-caching-strategy` | Provider-specific cache economics and runtime measurement are outside the curated Pi core. |
 | `osint-investigation` | External source investigation and evidence collection are outside the curated offline Pi core. |
 | `mcp-dependency-review` | MCP server configuration and selector review are outside the curated Pi core. |
 | `token-card` | Requires a downloaded tokenchit CLI and reads provider session logs. |
 | `agent-runtime-gateway-smoke-test` | requires authenticated network gateways and remote sandbox callbacks at runtime |
-| `brownfield-retrospective` | depends on the ECC specialist agent roster and spec-miner dispatch workflow; not a compact portable Pi prompt |
+| `brownfield-retrospective` | depends on the yus specialist agent roster and spec-miner dispatch workflow; not a compact portable Pi prompt |
 | `deepseek-harness-setup` | configures an external DeepSeek provider and Claude-Code-specific credentials and hook integration |
-| `story-lifecycle` | Requires ECC agent workflow handoffs and a local Node ledger; native Pi delivery has not been validated. |
+| `story-lifecycle` | Requires yus agent workflow handoffs and a local Node ledger; native Pi delivery has not been validated. |
 | `issue-review` | Requires authenticated GitHub reads and optional remote issue mutations through gh; outside the offline core profile. |
 | `agent-desktop` | drives desktop GUIs through the separately installed agent-desktop CLI |
 | `design-md-library` | pointer that downloads DESIGN.md files from GitHub at use time |
@@ -216,27 +216,27 @@ Exclude anything that:
 
 | Command | Reason |
 |---|---|
-| `auto-update` | ECC self-update/reinstall |
+| `auto-update` | yus self-update/reinstall |
 | `checkpoint` | writes .claude/checkpoints.log (Claude-Code-only) |
 | `cost-report` | Claude Code cost tracking |
-| `cpp-build` | invokes ECC agent roster (cpp-build-resolver) |
-| `cpp-review` | invokes ECC agent roster (cpp-reviewer) |
-| `ecc-guide` | ECC repository self-reference |
-| `epic-claim` | GitHub epic ops over ECC coordination state; network |
-| `epic-decompose` | GitHub epic ops over ECC coordination state; network |
-| `epic-publish` | GitHub epic ops over ECC coordination state; network |
-| `epic-review` | GitHub epic ops over ECC coordination state; network |
-| `epic-sync` | GitHub epic ops over ECC coordination state; network |
-| `epic-unblock` | GitHub epic ops over ECC coordination state; network |
-| `epic-validate` | GitHub epic ops over ECC coordination state; network |
+| `cpp-build` | invokes yus agent roster (cpp-build-resolver) |
+| `cpp-review` | invokes yus agent roster (cpp-reviewer) |
+| `yus-guide` | yus repository self-reference |
+| `epic-claim` | GitHub epic ops over yus coordination state; network |
+| `epic-decompose` | GitHub epic ops over yus coordination state; network |
+| `epic-publish` | GitHub epic ops over yus coordination state; network |
+| `epic-review` | GitHub epic ops over yus coordination state; network |
+| `epic-sync` | GitHub epic ops over yus coordination state; network |
+| `epic-unblock` | GitHub epic ops over yus coordination state; network |
+| `epic-validate` | GitHub epic ops over yus coordination state; network |
 | `evolve` | instincts/continuous-learning mechanics |
-| `flutter-build` | invokes ECC agent roster (dart-build-resolver) |
-| `flutter-review` | invokes ECC agent roster (flutter-reviewer) |
+| `flutter-build` | invokes yus agent roster (dart-build-resolver) |
+| `flutter-review` | invokes yus agent roster (flutter-reviewer) |
 | `gan-build` | GAN generator/evaluator loop harness |
 | `gan-design` | GAN generator/evaluator loop harness |
-| `go-build` | invokes ECC agent roster (go-build-resolver) |
-| `go-review` | invokes ECC agent roster (go-reviewer) |
-| `harness-audit` | ECC harness audit |
+| `go-build` | invokes yus agent roster (go-build-resolver) |
+| `go-review` | invokes yus agent roster (go-reviewer) |
+| `harness-audit` | yus harness audit |
 | `hookify-configure` | hookify (Claude-Code-only hooks) |
 | `hookify-help` | hookify (Claude-Code-only hooks) |
 | `hookify-list` | hookify (Claude-Code-only hooks) |
@@ -245,14 +245,14 @@ Exclude anything that:
 | `instinct-import` | instincts (continuous-learning) |
 | `instinct-status` | instincts (continuous-learning) |
 | `jira` | wraps Jira SaaS API |
-| `kotlin-build` | invokes ECC agent roster (kotlin-build-resolver) |
-| `kotlin-review` | invokes ECC agent roster (kotlin-reviewer) |
+| `kotlin-build` | invokes yus agent roster (kotlin-build-resolver) |
+| `kotlin-review` | invokes yus agent roster (kotlin-reviewer) |
 | `learn-eval` | continuous-learning session extraction |
 | `learn` | continuous-learning session extraction |
 | `loop-start` | autonomous loops |
 | `loop-status` | autonomous loops |
 | `marketing-campaign` | marketing |
-| `model-route` | ECC model routing/cost mechanics |
+| `model-route` | yus model routing/cost mechanics |
 | `multi-backend` | multi-model orchestration |
 | `multi-execute` | multi-model orchestration |
 | `multi-frontend` | multi-model orchestration |
@@ -266,31 +266,31 @@ Exclude anything that:
 | `orch-review` | Claude-Code-only orch-* orchestration |
 | `plan-canvas` | Claude-Code-only plan canvas server |
 | `pm2` | PM2 runtime process manager ops |
-| `project-init` | ECC install-manifest onboarding plan |
+| `project-init` | yus install-manifest onboarding plan |
 | `projects` | instincts (continuous-learning) |
 | `promote` | instincts (continuous-learning) |
 | `prune` | instincts (continuous-learning) |
-| `python-review` | invokes ECC agent roster (python-reviewer) |
-| `quality-gate` | drives the ECC PostToolUse formatter hook script |
-| `react-build` | invokes ECC agent roster (react-build-resolver) |
-| `react-review` | invokes ECC agent roster (react-reviewer) |
+| `python-review` | invokes yus agent roster (python-reviewer) |
+| `quality-gate` | drives the yus PostToolUse formatter hook script |
+| `react-build` | invokes yus agent roster (react-build-resolver) |
+| `react-review` | invokes yus agent roster (react-reviewer) |
 | `resume-session` | Claude Code session save/resume (~/.claude/session-data) |
-| `review-pr` | invokes ECC agent roster (specialized review agents) |
-| `rust-build` | invokes ECC agent roster (rust-build-resolver) |
-| `rust-review` | invokes ECC agent roster (rust-reviewer) |
+| `review-pr` | invokes yus agent roster (specialized review agents) |
+| `rust-build` | invokes yus agent roster (rust-build-resolver) |
+| `rust-review` | invokes yus agent roster (rust-reviewer) |
 | `santa-loop` | multi-agent adversarial review loop |
 | `save-session` | Claude Code session save/resume (~/.claude/session-data) |
 | `security-scan` | wraps AgentShield commercial product |
 | `sessions` | Claude Code session management |
-| `setup-pm` | runs an ECC repo script (scripts/setup-package-manager.js) |
+| `setup-pm` | runs an yus repo script (scripts/setup-package-manager.js) |
 | `skill-create` | Claude Code skill authoring plus instincts |
-| `skill-health` | ECC skill analytics dashboard |
-| `skill-host-compat` | runs an ECC repo CI script (scripts/ci/validate-skill-host-compat.js) |
-| `vue-review` | invokes ECC agent roster (vue-reviewer) |
+| `skill-health` | yus skill analytics dashboard |
+| `skill-host-compat` | runs an yus repo CI script (scripts/ci/validate-skill-host-compat.js) |
+| `vue-review` | invokes yus agent roster (vue-reviewer) |
 | `token-card` | Requires the tokenchit CLI and provider session logs via the token-card skill. |
 | `astra-review` | requires an external Codex CLI and cross-provider review authorization at runtime |
 | `issue-review` | Compatibility shim for the authenticated issue-review workflow; outside the offline core profile. |
 
 ## Renames
 
-- `council` is shipped as `ecc-council` inside pi/core (the root skill keeps its original name).
+- `council` is shipped as `yus-council` inside pi/core (the root skill keeps its original name).

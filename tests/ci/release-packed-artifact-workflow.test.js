@@ -145,7 +145,7 @@ for (const workflowPath of workflowPaths) {
 
     assert.ok(packIndex >= 0, 'missing pack step');
     assert.ok(uploadIndex > packIndex, 'artifact upload must happen after pack and hash');
-    assert.match(verify, /name:\s*ecc-release-artifacts/);
+    assert.match(verify, /name:\s*yus-release-artifacts/);
     assert.match(verify, /\$\{\{ steps\.pack\.outputs\.package_file \}\}/);
     assert.match(verify, /tests\/ci\/packed-artifact-lifecycle\.js/);
   });
@@ -167,9 +167,9 @@ for (const workflowPath of workflowPaths) {
     assert.match(lifecycle, /runs-on:\s*\$\{\{ matrix\.os \}\}/);
     assert.match(lifecycle, /node-version:\s*['"]24\.x['"]/);
     assert.match(lifecycle, /uses:\s*actions\/download-artifact@/);
-    assert.match(lifecycle, /name:\s*ecc-release-artifacts/);
-    assert.match(lifecycle, /ECC_RELEASE_PACKAGE:\s*release-artifacts\/\$\{\{ needs\.verify\.outputs\.package_file \}\}/);
-    assert.match(lifecycle, /ECC_RELEASE_SHA256:\s*\$\{\{ needs\.verify\.outputs\.package_sha256 \}\}/);
+    assert.match(lifecycle, /name:\s*yus-release-artifacts/);
+    assert.match(lifecycle, /YUS_RELEASE_PACKAGE:\s*release-artifacts\/\$\{\{ needs\.verify\.outputs\.package_file \}\}/);
+    assert.match(lifecycle, /YUS_RELEASE_SHA256:\s*\$\{\{ needs\.verify\.outputs\.package_sha256 \}\}/);
     assert.match(lifecycle, /node release-artifacts\/tests\/ci\/packed-artifact-lifecycle\.js/);
     assert.doesNotMatch(lifecycle, /actions\/checkout@/);
     assert.doesNotMatch(lifecycle, /\bsecrets\s*:/, 'lifecycle job must not receive secrets');
@@ -180,12 +180,12 @@ for (const workflowPath of workflowPaths) {
     const publish = jobBlock(source, 'publish');
 
     assert.match(publish, /needs:\s*\[verify, lifecycle\]/);
-    assert.match(publish, /ECC_RELEASE_PACKAGE:\s*\$\{\{ needs\.verify\.outputs\.package_file \}\}/);
-    assert.match(publish, /npm publish "\.\/\$\{ECC_RELEASE_PACKAGE\}"/);
+    assert.match(publish, /YUS_RELEASE_PACKAGE:\s*\$\{\{ needs\.verify\.outputs\.package_file \}\}/);
+    assert.match(publish, /npm publish "\.\/\$\{YUS_RELEASE_PACKAGE\}"/);
     assert.match(publish, /name:\s*Verify artifact before publish/);
-    assert.match(publish, /ECC_RELEASE_SHA256:\s*\$\{\{ needs\.verify\.outputs\.package_sha256 \}\}/);
+    assert.match(publish, /YUS_RELEASE_SHA256:\s*\$\{\{ needs\.verify\.outputs\.package_sha256 \}\}/);
     assert.match(publish, /createHash\(['"]sha256['"]\)/);
-    assert.match(publish, /ecc-universal-\[0-9A-Za-z\.\+-\]/);
+    assert.match(publish, /yus-universal-\[0-9A-Za-z\.\+-\]/);
     assert.ok(
       publish.indexOf('name: Verify artifact before publish')
         < publish.indexOf('name: Create GitHub Release'),
@@ -197,7 +197,7 @@ for (const workflowPath of workflowPaths) {
 // Synthetic repository facts mirror the trusted workflow/attempt API contracts.
 const releaseSha = 'a'.repeat(40);
 const tagSha = 'b'.repeat(40);
-const repository = 'affaan-m/ECC';
+const repository = 'yusei21/yus';
 const inputs = { repository, releaseSha, releaseTag: 'v1.2.3', token: 'synthetic-token' };
 const repoIdentity = { id: 1136590548, full_name: repository, default_branch: 'main' };
 const requiredNames = ['Analyze (actions)', 'Analyze (javascript-typescript)', 'Analyze (python)'];
@@ -286,7 +286,7 @@ const rejectedFixtures = [
   ['wrong main branch', d => withItem(d, 'runs', 0, { head_branch: 'release/x' })],
   ['wrong run SHA', d => withItem(d, 'runs', 0, { head_sha: 'c'.repeat(40) })],
   ['foreign run repository', d => withItem(d, 'runs', 0, { repository: { ...d.runs[0].repository, id: 1 } })],
-  ['foreign head repository', d => withItem(d, 'runs', 0, { head_repository: { ...d.runs[0].head_repository, full_name: 'impostor/ECC' } })],
+  ['foreign head repository', d => withItem(d, 'runs', 0, { head_repository: { ...d.runs[0].head_repository, full_name: 'impostor/yus' } })],
   ['untrusted check app', d => withItem(d, 'checks', 0, { app: { ...d.checks[0].app, id: 1 } })],
   ['wrong app slug', d => withItem(d, 'checks', 0, { app: { ...d.checks[0].app, slug: 'spoof' } })],
   ['wrong check suite', d => withItem(d, 'checks', 0, { check_suite: { id: 999 } })],
@@ -298,7 +298,7 @@ const rejectedFixtures = [
   ['wrong attempt job', d => withItem(d, 'jobs', 0, { run_attempt: 2 })],
   ['wrong run job', d => withItem(d, 'jobs', 0, { run_id: 90 })],
   ['wrong job branch', d => withItem(d, 'jobs', 0, { head_branch: 'feature' })],
-  ['foreign check URL', d => withItem(d, 'jobs', 0, { check_run_url: 'https://api.github.com/repos/spoof/ECC/check-runs/200' })],
+  ['foreign check URL', d => withItem(d, 'jobs', 0, { check_run_url: 'https://api.github.com/repos/spoof/yus/check-runs/200' })],
   ['job name does not match bound check', d => withItem(d, 'checks', 0, { name: 'CodeQL' })],
   ['ambiguous workflow metadata', d => ({ ...d, workflows: [...d.workflows, { ...d.workflows[0], id: 999 }] })],
   ['inactive trusted workflow', d => withItem(d, 'workflows', 0, { state: 'disabled_manually' })],
@@ -444,7 +444,7 @@ test('release input and retry bounds reject unsafe or unbounded values', () => {
   const env = { GITHUB_REPOSITORY: repository, RELEASE_SHA: releaseSha, RELEASE_TAG: 'v1.2.3', GITHUB_TOKEN: inputs.token };
   assert.strictEqual(requiredEnvironment(env).releaseSha, releaseSha);
   for (const change of [
-    { GITHUB_REPOSITORY: '../ECC' }, { RELEASE_SHA: 'short' },
+    { GITHUB_REPOSITORY: '../yus' }, { RELEASE_SHA: 'short' },
     { RELEASE_TAG: 'v1.2.3\nextra' }, { GITHUB_TOKEN: '' }, { RELEASE_TAG_OBJECT_SHA: 'bad' },
   ]) assert.throws(() => requiredEnvironment({ ...env, ...change }));
   for (const options of [{ timeoutMs: 0 }, { timeoutMs: 600001 }, { requestTimeoutMs: 15001 }]) {
@@ -503,9 +503,9 @@ test('final tag-only recheck requires the original verified object SHA', async (
 
 for (const [name, link] of [
   ['self loop', url => `<${url}>; rel="next"`],
-  ['foreign host', () => '<https://evil.invalid/repos/affaan-m/ECC/actions/workflows?page=2>; rel="next"'],
-  ['foreign repository', () => '<https://api.github.com/repos/other/ECC/actions/workflows?page=2>; rel="next"'],
-  ['foreign endpoint', () => '<https://api.github.com/repos/affaan-m/ECC/actions/runs?per_page=100&page=2>; rel="next"'],
+  ['foreign host', () => '<https://evil.invalid/repos/yusei21/yus/actions/workflows?page=2>; rel="next"'],
+  ['foreign repository', () => '<https://api.github.com/repos/other/yus/actions/workflows?page=2>; rel="next"'],
+  ['foreign endpoint', () => '<https://api.github.com/repos/yusei21/yus/actions/runs?per_page=100&page=2>; rel="next"'],
   ['changed query', url => `<${url.replace('per_page=100', 'per_page=1')}&page=2>; rel="next"`],
   ['malformed next', () => 'not-a-link; rel="next"'],
   ['duplicate next', url => `<${url}&page=2>; rel="next", <${url}&page=3>; rel="next"`],
@@ -642,7 +642,7 @@ test('pull-request CI packs once and exports the exact installer artifact identi
   assert.match(pack, /package_file:\s*\$\{\{ steps\.pack\.outputs\.package_file \}\}/);
   assert.match(pack, /package_sha256:\s*\$\{\{ steps\.pack\.outputs\.package_sha256 \}\}/);
   assert.match(pack, /createHash\(['"]sha256['"]\)/);
-  assert.match(pack, /name:\s*ecc-ci-installer-artifact/);
+  assert.match(pack, /name:\s*yus-ci-installer-artifact/);
 });
 
 test('pull-request CI runs the same packed installer on Linux, macOS, and Windows', () => {
@@ -651,25 +651,25 @@ test('pull-request CI runs the same packed installer on Linux, macOS, and Window
   assert.match(lifecycle, /needs:\s*pack-installer/);
   assert.match(lifecycle, /os:\s*\[ubuntu-latest, macos-latest, windows-latest\]/);
   assert.match(lifecycle, /node-version:\s*['"]24\.x['"]/);
-  assert.match(lifecycle, /name:\s*ecc-ci-installer-artifact/);
-  assert.match(lifecycle, /ECC_RELEASE_PACKAGE:\s*release-artifacts\/\$\{\{ needs\.pack-installer\.outputs\.package_file \}\}/);
-  assert.match(lifecycle, /ECC_RELEASE_SHA256:\s*\$\{\{ needs\.pack-installer\.outputs\.package_sha256 \}\}/);
+  assert.match(lifecycle, /name:\s*yus-ci-installer-artifact/);
+  assert.match(lifecycle, /YUS_RELEASE_PACKAGE:\s*release-artifacts\/\$\{\{ needs\.pack-installer\.outputs\.package_file \}\}/);
+  assert.match(lifecycle, /YUS_RELEASE_SHA256:\s*\$\{\{ needs\.pack-installer\.outputs\.package_sha256 \}\}/);
   assert.match(lifecycle, /node tests\/ci\/packed-artifact-lifecycle\.js/);
   assert.doesNotMatch(lifecycle, /\$\{\{\s*secrets\./);
 });
 
 test('packed lifecycle invokes installed public bins, including setup help', () => {
   assert.match(lifecycleRunnerSource, /getNpmExecInvocation/);
-  assert.match(lifecycleRunnerSource, /\['ecc-universal', 'setup', '--help'\]/);
-  assert.match(lifecycleRunnerSource, /\['ecc', \.\.\.args\]/);
-  assert.doesNotMatch(lifecycleRunnerSource, /node_modules.*scripts.*ecc\.js/);
+  assert.match(lifecycleRunnerSource, /\['yus-universal', 'setup', '--help'\]/);
+  assert.match(lifecycleRunnerSource, /\['yus', \.\.\.args\]/);
+  assert.doesNotMatch(lifecycleRunnerSource, /node_modules.*scripts.*yus\.js/);
 });
 
 test('packed lifecycle applies and updates README-primary Claude setup with a fake provider', () => {
   assert.match(lifecycleRunnerSource, /createFakeClaudeExecutable/);
   assert.match(
     lifecycleRunnerSource,
-    /const claudeSetupArgs = \[\s*'ecc-universal', 'setup',\s*'--mode', 'claude-plugin',\s*'--scope', 'user',\s*\]/
+    /const claudeSetupArgs = \[\s*'yus-universal', 'setup',\s*'--mode', 'claude-plugin',\s*'--scope', 'user',\s*\]/
   );
   assert.match(
     lifecycleRunnerSource,
@@ -681,13 +681,13 @@ test('packed lifecycle applies and updates README-primary Claude setup with a fa
   assert.match(lifecycleRunnerSource, /runPackedClaudeSetup\('strict'\)/);
   assert.match(lifecycleRunnerSource, /CLAUDE_CODE_OAUTH_TOKEN/);
   assert.match(lifecycleRunnerSource, /plugin marketplace add/);
-  assert.match(lifecycleRunnerSource, /plugin update ecc@ecc/);
+  assert.match(lifecycleRunnerSource, /plugin update yus@yus/);
 });
 
 test('packed lifecycle mutates through the fully explicit guided Kimi install', () => {
   assert.match(
     lifecycleRunnerSource,
-    /const guidedKimiInstallArgs = \[\s*'ecc-universal', 'install', '--guided',\s*'--harness', 'kimi',\s*'--profile', 'core',\s*\]/
+    /const guidedKimiInstallArgs = \[\s*'yus-universal', 'install', '--guided',\s*'--harness', 'kimi',\s*'--profile', 'core',\s*\]/
   );
   assert.match(
     lifecycleRunnerSource,
@@ -704,11 +704,11 @@ test('packed lifecycle mutates through the fully explicit guided Kimi install', 
   );
   assert.match(
     lifecycleRunnerSource,
-    /runPublicCli\(\['ecc', 'doctor', '--target', 'kimi', '--json'\]\)/
+    /runPublicCli\(\['yus', 'doctor', '--target', 'kimi', '--json'\]\)/
   );
   assert.match(
     lifecycleRunnerSource,
-    /runPublicCli\(\['ecc', 'uninstall', '--target', 'kimi', '--json'\]\)/
+    /runPublicCli\(\['yus', 'uninstall', '--target', 'kimi', '--json'\]\)/
   );
   assert.match(lifecycleRunnerSource, /guidedKimiSentinel/);
   assert.match(lifecycleRunnerSource, /dry-run must not mutate the Kimi target/);

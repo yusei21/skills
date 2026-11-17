@@ -200,7 +200,7 @@ test('withRefreshedFingerprints rewrites fingerprints without touching ids', () 
 });
 
 test('readHooksConfig rejects a sidecar that does not line up', () => {
-  const tempDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'ecc-hooks-'));
+  const tempDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'yus-hooks-'));
   const tempHooks = path.join(tempDir, 'hooks.json');
   fs.writeFileSync(tempHooks, JSON.stringify({ hooks: { PreToolUse: [alpha, beta] } }));
   fs.writeFileSync(
@@ -223,7 +223,7 @@ test('readHooksConfig rejects a sidecar that does not line up', () => {
 });
 
 test('readHooksConfig returns raw config when the sidecar is absent', () => {
-  const tempDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'ecc-hooks-'));
+  const tempDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'yus-hooks-'));
   const tempHooks = path.join(tempDir, 'hooks.json');
   fs.writeFileSync(tempHooks, JSON.stringify({ hooks: { Stop: [{ hooks: [] }] } }));
 
@@ -236,7 +236,7 @@ test('readHooksConfig returns raw config when the sidecar is absent', () => {
 });
 
 test('failed refresh validation preserves the original sidecar bytes', () => {
-  const root = fs.mkdtempSync(path.join(require('os').tmpdir(), 'ecc-metadata-refresh-'));
+  const root = fs.mkdtempSync(path.join(require('os').tmpdir(), 'yus-metadata-refresh-'));
   try {
     for (const relative of ['scripts/ci/validate-hooks.js', 'scripts/lib/hooks-config.js',
       'schemas/hooks.schema.json', 'schemas/hooks-metadata.schema.json']) {

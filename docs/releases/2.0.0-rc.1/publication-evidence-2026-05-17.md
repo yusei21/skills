@@ -1,4 +1,4 @@
-# ECC v2.0.0-rc.1 Publication Evidence - 2026-05-17
+# yus v2.0.0-rc.1 Publication Evidence - 2026-05-17
 
 This is release-readiness evidence only. It does not create a GitHub release,
 npm publication, plugin tag, marketplace submission, or announcement post.
@@ -30,7 +30,7 @@ Tracked repositories in the platform audit were:
 - `affaan-m/agentshield`
 - `affaan-m/JARVIS`
 - `ECC-Tools/ECC-Tools`
-- `ECC-Tools/ECC-website`
+- `ECC-Tools/yus-website`
 
 ## Merge And Triage Batch
 
@@ -46,7 +46,7 @@ Tracked repositories in the platform audit were:
 | Issue #1951 | Closed automatically as completed when PR #1953 merged |
 | Zed adapter commit | Pushed `2371a3cf0543365c1c18e84eba786b1abcb28941` to add project-local Zed support through the selective install target, README Zed guidance, and `.zed/settings.json` planning coverage |
 | Zed Windows CI fix | Pushed `744f4169972fd81618c3114ea1ca5ffb85ef4c82` to normalize the Zed install-plan source-path assertion across Windows path separators |
-| Discussion #1896 | Added a maintainer update confirming Zed support on `main`, documenting the dry-run command, and clarifying that BYOK/OpenRouter secrets stay in Zed/local user settings rather than ECC-managed project files |
+| Discussion #1896 | Added a maintainer update confirming Zed support on `main`, documenting the dry-run command, and clarifying that BYOK/OpenRouter secrets stay in Zed/local user settings rather than yus-managed project files |
 | PR #1967 | Merged Thai localization as `6b282aaa4389e9411e86bfe09d8f4de8018dcf8e` after applying the two maintainer cleanup comments, validating markdownlint and language-switcher coverage, and approving after CodeRabbit, GitGuardian, Greptile, and cubic passed on current head |
 | Supply-chain token-store scanner slice | Pushed `36d390aa7d733d458963a203b91998d3aec477b2` to detect the Mini Shai-Hulud `~/.config/gh-token-monitor/token` dead-man-switch token store, update the incident-response runbook, and add fixture coverage; local sweeps stayed clean and GitHub Actions `26003629550` passed |
 | Legacy-tail dashboard slice | Pushed `f397216aee5a0ca7d168726d3cc41eb47f728b37` and dashboard regeneration commits to keep localization-tail evidence attached to ITO-55 and prevent stale legacy work from being treated as release-current |
@@ -72,7 +72,7 @@ Tracked repositories in the platform audit were:
 | Workflow security | `node scripts/ci/validate-workflow-security.js` | Validated 8 workflow files |
 | Supply-chain IOC scan | `node scripts/ci/scan-supply-chain-iocs.js --root ~/GitHub --home --json`; `node scripts/ci/scan-supply-chain-iocs.js --root ~/Documents/GitHub --home --json` | Passed; each workspace sweep inspected 1,879 files with 0 findings, including user-level persistence targets |
 | npm audit | `npm audit --audit-level=high` | 0 vulnerabilities |
-| npm signatures | `npm audit signatures` across `agentshield`, `everything-claude-code`, `ECC-Tools`, `ECC-website`, and `JARVIS/frontend` | Passed across the primary ECC Node package roots |
+| npm signatures | `npm audit signatures` across `agentshield`, `everything-claude-code`, `ECC-Tools`, `yus-website`, and `JARVIS/frontend` | Passed across the primary yus Node package roots |
 | Preview-pack smoke | `npm run preview-pack:smoke` | Passed; ready yes; digest `dfb1ed014607`; 5 checks passed and 0 failed |
 | AgentShield enterprise CI output slice | AgentShield local `npm run build`, focused action tests, `npm run typecheck`, `npm run lint`, full `npm test`, and `git diff --check`; GitHub Actions `25994354007`, `25994354011`, `25994354026` | Local gates passed; remote CI, Test GitHub Action, and Self-Scan completed successfully for `1124535` |
 | AgentShield policy-promotion Action output slice | AgentShield local `npm run build`, `npx vitest run tests/action-promotion.test.ts tests/action.test.ts`, `npm run typecheck`, `npm run lint`, full `npm test`, and `git diff --check`; GitHub Actions `25995929182`, `25995929190`, `25995929161` | Local gates passed; remote CI, Test GitHub Action, and Self-Scan completed successfully for `1593925` |
@@ -88,7 +88,7 @@ Tracked repositories in the platform audit were:
 ## Current Publication Blockers
 
 - GitHub prerelease `v2.0.0-rc.1` is still not created in this pass.
-- npm `ecc-universal@2.0.0-rc.1` is still not published to the `next`
+- npm `yus-universal@2.0.0-rc.1` is still not published to the `next`
   dist-tag.
 - Claude plugin tag and marketplace propagation remain approval-gated.
 - Codex repo-marketplace distribution is verified for rc.1, but official

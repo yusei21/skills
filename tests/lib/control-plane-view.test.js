@@ -1,7 +1,7 @@
 'use strict';
 /**
  * Tests for scripts/lib/control-pane/control-plane-view.js: the
- * ecc.control-plane.view.v1 contract (tasks, lanes, events, projection,
+ * yus.control-plane.view.v1 contract (tasks, lanes, events, projection,
  * inventory) built from a control-pane snapshot with proximity.
  */
 
@@ -59,7 +59,7 @@ function snapshotFor(sessions, extra = {}) {
     workingSetFor: s => WORKING_SETS[s.id] || [],
     graph: { adjacency: { 'src/api/posts.js': ['src/db/schema.js'] } }
   });
-  return { schemaVersion: 'ecc.control-pane.snapshot.v1', repoRoot: '/tmp/repo', dbPath: '/tmp/ecc2.db', sessions, proximity, ...extra };
+  return { schemaVersion: 'yus.control-pane.snapshot.v1', repoRoot: '/tmp/repo', dbPath: '/tmp/yus2.db', sessions, proximity, ...extra };
 }
 
 (async () => {
@@ -67,27 +67,27 @@ function snapshotFor(sessions, extra = {}) {
 
   await test('view: schema, counts, lanes and tasks from a four-session snapshot', () => {
     const sessions = [
-      session('a', { taskGroup: 'ecc' }),
-      session('b', { harness: 'claude', project: 'ecc-website' }),
+      session('a', { taskGroup: 'yus' }),
+      session('b', { harness: 'claude', project: 'yus-website' }),
       session('c', { harness: 'hermes', state: 'completed', lastHeartbeatAt: '' }),
       session('d', { pid: 4242 })
     ];
     const view = buildControlPlaneView(snapshotFor(sessions), { now: NOW });
     assert.strictEqual(view.schemaVersion, VIEW_SCHEMA_VERSION);
     assert.strictEqual(view.generatedAt, NOW);
-    assert.deepStrictEqual(view.source, { snapshotSchema: 'ecc.control-pane.snapshot.v1', repoRoot: '/tmp/repo', dbPath: '/tmp/ecc2.db' });
+    assert.deepStrictEqual(view.source, { snapshotSchema: 'yus.control-pane.snapshot.v1', repoRoot: '/tmp/repo', dbPath: '/tmp/yus2.db' });
     assert.deepStrictEqual(view.thresholds, { ta: 0.35, ra: 0.7, source: 'static' });
     assert.strictEqual(view.counts.tasks, 4);
     assert.strictEqual(view.counts.agents, 4);
     assert.strictEqual(view.counts.pairs, 6);
     assert.strictEqual(view.counts.lanes, 4);
     const laneIds = view.lanes.map(l => l.id).sort();
-    assert.deepStrictEqual(laneIds, ['group:ecc', 'harness:codex', 'harness:hermes', 'project:ecc-website']);
-    const group = view.lanes.find(l => l.id === 'group:ecc');
-    assert.deepStrictEqual(group, { id: 'group:ecc', label: 'ecc', kind: 'task-group', taskIds: ['a'] });
+    assert.deepStrictEqual(laneIds, ['group:yus', 'harness:codex', 'harness:hermes', 'project:yus-website']);
+    const group = view.lanes.find(l => l.id === 'group:yus');
+    assert.deepStrictEqual(group, { id: 'group:yus', label: 'yus', kind: 'task-group', taskIds: ['a'] });
 
     const a = view.tasks.find(t => t.id === 'a');
-    assert.strictEqual(a.lane, 'group:ecc');
+    assert.strictEqual(a.lane, 'group:yus');
     assert.strictEqual(a.label, 'Task a');
     assert.strictEqual(a.harness, 'codex');
     assert.strictEqual(a.state, 'running');

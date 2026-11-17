@@ -1,5 +1,5 @@
 {
-  "schema_version": "ecc.evaluator-rag.trace.v1",
+  "schema_version": "yus.evaluator-rag.trace.v1",
   "scenario_id": "stale-pr-salvage-maintainer-branch",
   "run_id": "2026-05-12-cleanup-salvage-prototype",
   "read_only": true,
@@ -8,7 +8,7 @@
       "phase": "observation",
       "summary": "Public PR, issue, and discussion queues are clear; release publication remains approval-gated; stale-salvage ledger has landed, skipped, superseded, and manual-review states.",
       "evidence": [
-        "docs/ECC-2.0-GA-ROADMAP.md",
+        "docs/yus-2.0-GA-ROADMAP.md",
         "docs/stale-pr-salvage-ledger.md"
       ]
     },
@@ -18,8 +18,8 @@
       "evidence": [
         "docs/stale-pr-salvage-ledger.md",
         "docs/legacy-artifact-inventory.md",
-        "https://github.com/affaan-m/ECC/pull/1815",
-        "https://github.com/affaan-m/ECC/pull/1818"
+        "https://github.com/yusei21/yus/pull/1815",
+        "https://github.com/yusei21/yus/pull/1818"
       ]
     },
     {

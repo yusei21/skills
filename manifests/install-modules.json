@@ -326,7 +326,7 @@
     {
       "id": "skill-unified-memory",
       "kind": "skills",
-      "description": "Single-skill unified-memory guidance; requires the separately installed ecc-universal CLI runtime.",
+      "description": "Single-skill unified-memory guidance; requires the separately installed yus-universal CLI runtime.",
       "paths": [
         "skills/admin/unified-memory"
       ],
@@ -388,12 +388,12 @@
     {
       "id": "workflow-quality",
       "kind": "skills",
-      "description": "Evaluation, TDD, verification, compaction, learning, and cross-harness memory skills, including the legacy continuous-learning v1 path. The unified-memory workflow requires the separately installed ecc-universal CLI runtime.",
+      "description": "Evaluation, TDD, verification, compaction, learning, and cross-harness memory skills, including the legacy continuous-learning v1 path. The unified-memory workflow requires the separately installed yus-universal CLI runtime.",
       "paths": [
         "skills/admin/agent-sort",
         "skills/ai-agents/agent-introspection-debugging",
         "skills/quality/ai-regression-testing",
-        "skills/core/configure-ecc",
+        "skills/core/configure-yus",
         "skills/admin/deepseek-harness-setup",
         "skills/core/code-tour",
         "skills/admin/continuous-learning",
@@ -429,8 +429,8 @@
         "skills/admin/config-gc",
         "skills/core/context-budget",
         "skills/admin/delivery-gate",
-        "skills/core/ecc-guide",
-        "skills/admin/ecc-recipes",
+        "skills/core/yus-guide",
+        "skills/admin/yus-recipes",
         "skills/admin/growth-log",
         "skills/core/inherit-legacy-style",
         "skills/core/intent-driven-development",

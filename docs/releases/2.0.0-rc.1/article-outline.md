@@ -1,8 +1,8 @@
-# Article Outline - ECC v2.0.0-rc.1
+# Article Outline - yus v2.0.0-rc.1
 
 ## Working Title
 
-Turning ECC Into a Cross-Harness Operating System
+Turning yus Into a Cross-Harness Operating System
 
 ## Core Argument
 
@@ -24,7 +24,7 @@ The leverage comes from treating the harness, reusable workflow layer, and opera
 - too many tool-specific workflows
 - too much context living in personal habit instead of reusable system shape
 
-### 2. What ECC Already Solved
+### 2. What yus Already Solved
 
 - reusable skill format
 - cross-harness install surfaces
@@ -38,7 +38,7 @@ The leverage comes from treating the harness, reusable workflow layer, and opera
 
 ### 3. Why Hermes Is the Operator Layer
 
-- chat, CLI, TUI, cron, and handoffs can sit above the reusable ECC layer
+- chat, CLI, TUI, cron, and handoffs can sit above the reusable yus layer
 - business and content work can run next to engineering work
 - the daily loop becomes easier to inspect and improve
 
@@ -55,7 +55,7 @@ The leverage comes from treating the harness, reusable workflow layer, and opera
 
 ### 5. What Changed Since v1.10.0
 
-- Claude Code remains the core target, but ECC now treats Codex, OpenCode,
+- Claude Code remains the core target, but yus now treats Codex, OpenCode,
   Cursor, Gemini, Zed, and terminal-only workflows as shared execution surfaces.
 - The release process now has repeatable platform, discussion, observability,
   supply-chain, Linear progress, and preview-pack checks.

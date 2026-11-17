@@ -1,7 +1,7 @@
 'use strict';
 // Hidden grader for idempotent-webhooks: exactly-once under sequential,
 // concurrent, and mixed-concurrent duplicates, plus the documented API,
-// regression coverage, and hygiene. Prints ECC_EVAL_SCORE and always exits 0.
+// regression coverage, and hygiene. Prints YUS_EVAL_SCORE and always exits 0.
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -14,7 +14,7 @@ function finish() {
   for (let i = checks.length; i < 12; i++) record(`unreached-${i + 1}`, false);
   const ok = checks.filter(c => c.ok).length;
   for (const c of checks) process.stdout.write(`${c.ok ? 'ok' : 'not ok'} - ${c.name}\n`);
-  process.stdout.write(`ECC_EVAL_SCORE ${JSON.stringify({ score: ok / 12, passed: ok, total: 12 })}\n`);
+  process.stdout.write(`YUS_EVAL_SCORE ${JSON.stringify({ score: ok / 12, passed: ok, total: 12 })}\n`);
   process.exit(0);
 }
 // A crashing agent server must not kill the grader: score what completed.

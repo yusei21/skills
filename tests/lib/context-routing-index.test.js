@@ -11,7 +11,7 @@ const routing = require('../../scripts/lib/context-routing-index');
 
 function fixture(callback) {
   return withFixture(repoRoot => {
-    const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'ecc-routing-index-'));
+    const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'yus-routing-index-'));
     const stateRoot = path.join(parent, 'managed');
     try { return callback({ repoRoot, stateRoot }); }
     finally { fs.rmSync(parent, { recursive: true, force: true }); }
@@ -24,7 +24,7 @@ test('the index is bound to the current managed generation and holds only admiss
   const written = routing.writeRoutingIndex({ repoRoot, stateRoot });
   assert.equal(written.generationDigest, status.carrierDigest);
   const index = routing.readRoutingIndex(stateRoot);
-  assert.equal(index.schemaVersion, 'ecc.context-routing-index.v1');
+  assert.equal(index.schemaVersion, 'yus.context-routing-index.v1');
   assert.equal(index.receiptDigest, status.receiptDigest);
   assert.equal(index.selectionMode, 'suggest');
   const ids = index.entries.map(entry => entry.id);
@@ -84,10 +84,10 @@ test('suggestions rank index entries with the resolver retrieval engine', () => 
 }));
 
 test('the profile CLI writes and inspects the index for a stored profile', () => {
-  const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'ecc-routing-cli-'));
+  const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'yus-routing-cli-'));
   const stateRoot = path.join(parent, 'managed');
   const cli = (...args) => require('node:child_process').spawnSync(process.execPath,
-    [path.join(__dirname, '../../scripts/ecc.js'), 'profile', ...args, '--json'], { encoding: 'utf8', timeout: 120000 });
+    [path.join(__dirname, '../../scripts/yus.js'), 'profile', ...args, '--json'], { encoding: 'utf8', timeout: 120000 });
   try {
     assert.equal(cli('set', 'lean', '--target', 'claude', '--state-root', stateRoot).status, 0);
     const preview = JSON.parse(cli('routing-index', '--state-root', stateRoot, '--dry-run').stdout);
@@ -106,7 +106,7 @@ test('an index is never built from sources that differ from the stored generatio
 }));
 
 test('actual registry: suggestions need a name or trigger anchor like implicit admission', () => {
-  const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'ecc-routing-anchor-'));
+  const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'yus-routing-anchor-'));
   const stateRoot = path.join(parent, 'managed');
   try {
     store.applyStore({ stateRoot, target: 'claude' });

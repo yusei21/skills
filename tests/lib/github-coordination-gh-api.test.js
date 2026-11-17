@@ -2,7 +2,7 @@
  * Tests for scripts/lib/github-coordination/gh-api.js — normalizeIssueNumber
  *
  * Guards against silent truncation of malformed issue numbers
- * (https://github.com/affaan-m/ECC/issues/3514): parseInt-style prefix
+ * (https://github.com/yusei21/yus/issues/3514): parseInt-style prefix
  * parsing accepted "42oops" as 42, "42.9" as 42, and "4e2" as 4, while
  * integers beyond 2^53 lost precision (9007199254740993 became ...992).
  * The same helper also parses --limit, so malformed values there must be

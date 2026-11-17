@@ -2,9 +2,9 @@
 
 const fs = require('fs');
 const atomic = require('../../scripts/lib/atomic-write');
-const aliasPath = process.env.ECC_TEST_ALIAS_PATH;
-const countPath = process.env.ECC_TEST_ALIAS_FAULT_COUNT;
-const errorCode = process.env.ECC_TEST_ALIAS_READ_ERROR;
+const aliasPath = process.env.YUS_TEST_ALIAS_PATH;
+const countPath = process.env.YUS_TEST_ALIAS_FAULT_COUNT;
+const errorCode = process.env.YUS_TEST_ALIAS_READ_ERROR;
 if (!aliasPath || !countPath || !['EACCES', 'EPERM'].includes(errorCode)) {
   throw new Error('Invalid startup alias-read fixture data');
 }

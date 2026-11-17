@@ -14,7 +14,7 @@ const baseRevision = 'a'.repeat(40);
 
 function observation(agentId, overrides = {}) {
   return {
-    agentId, taskId: `task-${agentId}`, repoId: 'ecc', baseRevision,
+    agentId, taskId: `task-${agentId}`, repoId: 'yus', baseRevision,
     scopeRevision: 1, footprint: 'complete', readPaths: [],
     writePaths: ['src/shared.js'], observedAt: '2026-09-15T11:59:00.000Z',
     expiresAt: '2026-09-15T12:05:00.000Z', ...overrides

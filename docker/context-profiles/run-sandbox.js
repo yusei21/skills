@@ -84,7 +84,7 @@ function fingerprintSandboxCli(executable) {
     implementation: { root: sourceRoot, files: files.length, bytes: total, digest: hash.digest('hex') } };
 }
 
-function resolveSandboxCli(commandName = 'ecc-sandbox') {
+function resolveSandboxCli(commandName = 'yus-sandbox') {
   const candidates = path.isAbsolute(commandName) ? [commandName]
     : (process.env.PATH || '').split(path.delimiter).filter(directory => path.isAbsolute(directory))
       .map(directory => path.join(directory, commandName));
@@ -128,7 +128,7 @@ function validateReport(stdout, { tier, manifest }) {
     assert.equal(step?.exit, 0);
     assert.equal(typeof step.stdout_tail, 'string');
     const smoke = JSON.parse(step.stdout_tail.trim());
-    assert.equal(smoke?.schemaVersion, 'ecc.context-sandbox-smoke.v1');
+    assert.equal(smoke?.schemaVersion, 'yus.context-sandbox-smoke.v1');
     assert.equal(smoke.passed, true);
     assert.equal(smoke.os, tier === 1 ? 'linux' : 'darwin');
     assert.equal(smoke.arch, 'arm64');
@@ -148,7 +148,7 @@ function manifestFor({ tier, archiveDigest, verifierDigest, url, runName }) {
   assert.ok([1, 2].includes(tier));
   for (const value of [archiveDigest, verifierDigest]) assert.match(value, /^[a-f0-9]{64}$/);
   assert.match(runName, /^[a-z0-9-]+$/);
-  const guestRoot = tier === 1 ? `/home/ecc/${runName}` : `/tmp/${runName}`;
+  const guestRoot = tier === 1 ? `/home/yus/${runName}` : `/tmp/${runName}`;
   const setup = [`mkdir -m 700 ${quote(guestRoot)}`];
   let runtime = '';
   if (tier === 2) {
@@ -166,7 +166,7 @@ function manifestFor({ tier, archiveDigest, verifierDigest, url, runName }) {
   }
   const check = `const fs=require('fs'),c=require('crypto'); for(const [f,h] of ${JSON.stringify([['package.tgz', archiveDigest], ['sandbox-smoke.js', verifierDigest]])}) {if(c.createHash('sha256').update(fs.readFileSync(f)).digest('hex')!==h)throw Error('Input digest mismatch')}`;
   setup.push(`${runtime}cd ${quote(guestRoot)} && node -e ${quote(check)} && npm install --ignore-scripts --omit=dev --no-audit --no-fund --fetch-timeout=30000 --fetch-retries=1 --prefix consumer ./package.tgz && npm install --ignore-scripts --no-audit --no-fund --fetch-timeout=30000 --fetch-retries=1 --prefix tools @openai/codex@0.154.0 ${quote(`@openai/codex-${tier === 2 ? 'darwin' : 'linux'}-arm64@npm:@openai/codex@0.154.0-${tier === 2 ? 'darwin' : 'linux'}-arm64`)}`);
-  const assertion = `${runtime}export PATH=${quote(`${guestRoot}/tools/node_modules/.bin`)}:$PATH; node ${quote(`${guestRoot}/sandbox-smoke.js`)} ${quote(`${guestRoot}/consumer/node_modules/ecc-universal`)} ${quote(guestRoot)}`;
+  const assertion = `${runtime}export PATH=${quote(`${guestRoot}/tools/node_modules/.bin`)}:$PATH; node ${quote(`${guestRoot}/sandbox-smoke.js`)} ${quote(`${guestRoot}/consumer/node_modules/yus-universal`)} ${quote(guestRoot)}`;
   const manifest = { name: runName, needs: { os: [tier === 1 ? 'linux' : 'macos'], arch: ['arm64'],
     capabilities: ['clean-home', 'pkg-install', 'network:*'], trust: 'first-party', native: tier === 2 },
   resources: { cpu: 2, memory: tier === 1 ? '1GB' : '2GB', timeout: 900 },
@@ -199,14 +199,14 @@ async function run(options) {
   assert.equal(process.arch, 'arm64', 'This acceptance currently certifies arm64 only');
   const repoRoot = path.resolve(__dirname, '../..');
   if (options.sandboxCli) assert.ok(path.isAbsolute(options.sandboxCli), '--sandbox-cli must be an absolute trusted executable');
-  const sandboxBinding = resolveSandboxCli(options.sandboxCli || 'ecc-sandbox');
+  const sandboxBinding = resolveSandboxCli(options.sandboxCli || 'yus-sandbox');
   const sandboxCli = sandboxBinding.path;
-  const stage = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-profile-sandbox-'));
+  const stage = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-profile-sandbox-'));
   const resultRoot = path.resolve(options.output);
   fs.mkdirSync(resultRoot, { recursive: true, mode: 0o700 });
-  const runName = `ecc-profile-tier${options.tier}-${crypto.randomUUID()}`;
+  const runName = `yus-profile-tier${options.tier}-${crypto.randomUUID()}`;
   let server;
-  const receipt = { schemaVersion: 'ecc.context-sandbox-acceptance.v1', runName, tier: options.tier,
+  const receipt = { schemaVersion: 'yus.context-sandbox-acceptance.v1', runName, tier: options.tier,
     sourceRevision: (await command('git', ['rev-parse', 'HEAD'], repoRoot, 10000)).stdout.trim(),
     sourceDirty: (await command('git', ['status', '--porcelain'], repoRoot, 10000)).stdout.length > 0,
     sandboxCli, sandboxCliDigest: sandboxBinding.digest,

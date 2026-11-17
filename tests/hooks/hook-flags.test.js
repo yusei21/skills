@@ -71,11 +71,11 @@ describe(sectionTitle('VALID_PROFILES:'), () => {
 describe(sectionTitle('\nHook preference sources:'), () => {
   test('hooks default enabled when no preference source exists', () => {
     withEnv({
-      ECC_HOOKS_ENABLED: undefined,
+      YUS_HOOKS_ENABLED: undefined,
       CLAUDE_PLUGIN_OPTION_HOOKS_ENABLED: undefined,
-      ECC_HOOK_CONFIG: undefined,
+      YUS_HOOK_CONFIG: undefined,
       CLAUDE_PLUGIN_ROOT: undefined,
-      ECC_PLUGIN_ROOT: undefined,
+      YUS_PLUGIN_ROOT: undefined,
     }, () => {
       assert.strictEqual(areHooksEnabled(), true);
     });
@@ -83,11 +83,11 @@ describe(sectionTitle('\nHook preference sources:'), () => {
 
   test('Claude plugin options control enabled state and profile', () => {
     withEnv({
-      ECC_HOOKS_ENABLED: undefined,
-      ECC_HOOK_PROFILE: undefined,
+      YUS_HOOKS_ENABLED: undefined,
+      YUS_HOOK_PROFILE: undefined,
       CLAUDE_PLUGIN_OPTION_HOOKS_ENABLED: 'false',
       CLAUDE_PLUGIN_OPTION_HOOK_PROFILE: 'minimal',
-      ECC_HOOK_CONFIG: undefined,
+      YUS_HOOK_CONFIG: undefined,
     }, () => {
       assert.strictEqual(areHooksEnabled(), false);
       assert.strictEqual(getHookProfile(), 'minimal');
@@ -98,10 +98,10 @@ describe(sectionTitle('\nHook preference sources:'), () => {
     });
   });
 
-  test('explicit ECC environment overrides Claude plugin options', () => {
+  test('explicit yus environment overrides Claude plugin options', () => {
     withEnv({
-      ECC_HOOKS_ENABLED: 'true',
-      ECC_HOOK_PROFILE: 'strict',
+      YUS_HOOKS_ENABLED: 'true',
+      YUS_HOOK_PROFILE: 'strict',
       CLAUDE_PLUGIN_OPTION_HOOKS_ENABLED: 'false',
       CLAUDE_PLUGIN_OPTION_HOOK_PROFILE: 'minimal',
     }, () => {
@@ -110,28 +110,28 @@ describe(sectionTitle('\nHook preference sources:'), () => {
     });
     assert.strictEqual(
       getHookProfile({
-        ECC_HOOK_PROFILE: '',
+        YUS_HOOK_PROFILE: '',
         CLAUDE_PLUGIN_OPTION_HOOK_PROFILE: 'minimal',
       }),
       'standard',
-      'an explicit empty ECC profile must not fall through to plugin config'
+      'an explicit empty yus profile must not fall through to plugin config'
     );
   });
 
   test('managed hook config is used after explicit and plugin preferences', () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-hook-flags-'));
-    const configPath = path.join(root, 'ecc', 'setup.json');
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-hook-flags-'));
+    const configPath = path.join(root, 'yus', 'setup.json');
     try {
       fs.mkdirSync(path.dirname(configPath), { recursive: true });
       fs.writeFileSync(configPath, JSON.stringify({
         hooks: { enabled: false, profile: 'minimal' },
       }));
       withEnv({
-        ECC_HOOKS_ENABLED: undefined,
-        ECC_HOOK_PROFILE: undefined,
+        YUS_HOOKS_ENABLED: undefined,
+        YUS_HOOK_PROFILE: undefined,
         CLAUDE_PLUGIN_OPTION_HOOKS_ENABLED: undefined,
         CLAUDE_PLUGIN_OPTION_HOOK_PROFILE: undefined,
-        ECC_HOOK_CONFIG: configPath,
+        YUS_HOOK_CONFIG: configPath,
       }, () => {
         assert.deepStrictEqual(readManagedHookConfig(), {
           enabled: false,
@@ -146,9 +146,9 @@ describe(sectionTitle('\nHook preference sources:'), () => {
   });
 
   test('managed hook config accepts a leading UTF-8 BOM', () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-hook-flags-bom-'));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-hook-flags-bom-'));
     const configPath = path.join(root, 'setup.json');
-    const env = { ECC_HOOK_CONFIG: configPath };
+    const env = { YUS_HOOK_CONFIG: configPath };
     try {
       fs.writeFileSync(configPath, '\uFEFF' + JSON.stringify({
         hooks: { enabled: false, profile: 'minimal', note: 'keep\uFEFFinside' },
@@ -162,7 +162,7 @@ describe(sectionTitle('\nHook preference sources:'), () => {
   });
 
   test('a hook evaluation reads managed config only once', () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-hook-flags-read-once-'));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-hook-flags-read-once-'));
     const configPath = path.join(root, 'setup.json');
     const originalReadFileSync = fs.readFileSync;
     let configReadCount = 0;
@@ -175,7 +175,7 @@ describe(sectionTitle('\nHook preference sources:'), () => {
         return originalReadFileSync(...args);
       };
       assert.strictEqual(isHookEnabled('pre:test', {
-        env: { ECC_HOOK_CONFIG: configPath },
+        env: { YUS_HOOK_CONFIG: configPath },
         profiles: ['minimal'],
       }), true);
       assert.strictEqual(configReadCount, 1);
@@ -186,7 +186,7 @@ describe(sectionTitle('\nHook preference sources:'), () => {
   });
 
   test('malformed managed config emits one sanitized diagnostic', () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-hook-flags-invalid-'));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-hook-flags-invalid-'));
     const configPath = path.join(root, 'setup.json');
     const originalWrite = process.stderr.write;
     const diagnostics = [];
@@ -196,9 +196,9 @@ describe(sectionTitle('\nHook preference sources:'), () => {
         diagnostics.push(String(value));
         return true;
       };
-      assert.deepStrictEqual(readManagedHookConfig({ ECC_HOOK_CONFIG: configPath }), {});
+      assert.deepStrictEqual(readManagedHookConfig({ YUS_HOOK_CONFIG: configPath }), {});
       assert.strictEqual(diagnostics.length, 1);
-      assert.match(diagnostics[0], /Warning: unable to read managed ECC hook config/);
+      assert.match(diagnostics[0], /Warning: unable to read managed yus hook config/);
       assert.strictEqual(diagnostics[0].includes('\u001b'), false);
       assert.match(diagnostics[0], /setup\.json/);
     } finally {
@@ -218,7 +218,7 @@ describe(sectionTitle('\nHook preference sources:'), () => {
   });
 
   test('run-with-flags suppresses wrapper hooks when plugin hooks are off', () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-hook-wrapper-'));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-hook-wrapper-'));
     const markerPath = path.join(root, 'ran.txt');
     const hookPath = path.join(root, 'marker.js');
     const runner = path.join(__dirname, '..', '..', 'scripts', 'hooks', 'run-with-flags.js');
@@ -233,7 +233,7 @@ describe(sectionTitle('\nHook preference sources:'), () => {
         CLAUDE_PLUGIN_ROOT: root,
         CLAUDE_PLUGIN_OPTION_HOOKS_ENABLED: 'false',
       };
-      delete env.ECC_HOOKS_ENABLED;
+      delete env.YUS_HOOKS_ENABLED;
       const result = spawnSync(process.execPath, [
         runner,
         'pre:test:marker',
@@ -293,54 +293,54 @@ describe(sectionTitle('\nnormalizeId:'), () => {
 describe(sectionTitle('\ngetHookProfile:'), () => {
   test('defaults to standard when env var not set', () => {
     withEnv({
-      ECC_HOOK_PROFILE: undefined,
+      YUS_HOOK_PROFILE: undefined,
       CLAUDE_PLUGIN_OPTION_HOOK_PROFILE: undefined,
-      ECC_HOOK_CONFIG: undefined,
+      YUS_HOOK_CONFIG: undefined,
       CLAUDE_PLUGIN_ROOT: undefined,
-      ECC_PLUGIN_ROOT: undefined,
+      YUS_PLUGIN_ROOT: undefined,
     }, () => {
       assert.strictEqual(getHookProfile(), 'standard');
     });
   });
 
   test('returns minimal when set to minimal', () => {
-    withEnv({ ECC_HOOK_PROFILE: 'minimal' }, () => {
+    withEnv({ YUS_HOOK_PROFILE: 'minimal' }, () => {
       assert.strictEqual(getHookProfile(), 'minimal');
     });
   });
 
   test('returns standard when set to standard', () => {
-    withEnv({ ECC_HOOK_PROFILE: 'standard' }, () => {
+    withEnv({ YUS_HOOK_PROFILE: 'standard' }, () => {
       assert.strictEqual(getHookProfile(), 'standard');
     });
   });
 
   test('returns strict when set to strict', () => {
-    withEnv({ ECC_HOOK_PROFILE: 'strict' }, () => {
+    withEnv({ YUS_HOOK_PROFILE: 'strict' }, () => {
       assert.strictEqual(getHookProfile(), 'strict');
     });
   });
 
   test('is case-insensitive', () => {
-    withEnv({ ECC_HOOK_PROFILE: 'STRICT' }, () => {
+    withEnv({ YUS_HOOK_PROFILE: 'STRICT' }, () => {
       assert.strictEqual(getHookProfile(), 'strict');
     });
   });
 
   test('trims whitespace from env var', () => {
-    withEnv({ ECC_HOOK_PROFILE: '  minimal  ' }, () => {
+    withEnv({ YUS_HOOK_PROFILE: '  minimal  ' }, () => {
       assert.strictEqual(getHookProfile(), 'minimal');
     });
   });
 
   test('defaults to standard for invalid value', () => {
-    withEnv({ ECC_HOOK_PROFILE: 'invalid' }, () => {
+    withEnv({ YUS_HOOK_PROFILE: 'invalid' }, () => {
       assert.strictEqual(getHookProfile(), 'standard');
     });
   });
 
   test('defaults to standard for empty string', () => {
-    withEnv({ ECC_HOOK_PROFILE: '' }, () => {
+    withEnv({ YUS_HOOK_PROFILE: '' }, () => {
       assert.strictEqual(getHookProfile(), 'standard');
     });
   });
@@ -349,7 +349,7 @@ describe(sectionTitle('\ngetHookProfile:'), () => {
 // getDisabledHookIds tests
 describe(sectionTitle('\ngetDisabledHookIds:'), () => {
   test('returns empty Set when env var not set', () => {
-    withEnv({ ECC_DISABLED_HOOKS: undefined }, () => {
+    withEnv({ YUS_DISABLED_HOOKS: undefined }, () => {
       const result = getDisabledHookIds();
       assert.ok(result instanceof Set);
       assert.strictEqual(result.size, 0);
@@ -357,19 +357,19 @@ describe(sectionTitle('\ngetDisabledHookIds:'), () => {
   });
 
   test('returns empty Set for empty string', () => {
-    withEnv({ ECC_DISABLED_HOOKS: '' }, () => {
+    withEnv({ YUS_DISABLED_HOOKS: '' }, () => {
       assert.strictEqual(getDisabledHookIds().size, 0);
     });
   });
 
   test('returns empty Set for whitespace-only string', () => {
-    withEnv({ ECC_DISABLED_HOOKS: '   ' }, () => {
+    withEnv({ YUS_DISABLED_HOOKS: '   ' }, () => {
       assert.strictEqual(getDisabledHookIds().size, 0);
     });
   });
 
   test('parses single hook id', () => {
-    withEnv({ ECC_DISABLED_HOOKS: 'my-hook' }, () => {
+    withEnv({ YUS_DISABLED_HOOKS: 'my-hook' }, () => {
       const result = getDisabledHookIds();
       assert.strictEqual(result.size, 1);
       assert.ok(result.has('my-hook'));
@@ -377,7 +377,7 @@ describe(sectionTitle('\ngetDisabledHookIds:'), () => {
   });
 
   test('parses multiple comma-separated hook ids', () => {
-    withEnv({ ECC_DISABLED_HOOKS: 'hook-a,hook-b,hook-c' }, () => {
+    withEnv({ YUS_DISABLED_HOOKS: 'hook-a,hook-b,hook-c' }, () => {
       const result = getDisabledHookIds();
       assert.strictEqual(result.size, 3);
       assert.ok(result.has('hook-a'));
@@ -387,7 +387,7 @@ describe(sectionTitle('\ngetDisabledHookIds:'), () => {
   });
 
   test('trims whitespace around hook ids', () => {
-    withEnv({ ECC_DISABLED_HOOKS: ' hook-a , hook-b ' }, () => {
+    withEnv({ YUS_DISABLED_HOOKS: ' hook-a , hook-b ' }, () => {
       const result = getDisabledHookIds();
       assert.strictEqual(result.size, 2);
       assert.ok(result.has('hook-a'));
@@ -396,7 +396,7 @@ describe(sectionTitle('\ngetDisabledHookIds:'), () => {
   });
 
   test('normalizes hook ids to lowercase', () => {
-    withEnv({ ECC_DISABLED_HOOKS: 'MyHook,ANOTHER' }, () => {
+    withEnv({ YUS_DISABLED_HOOKS: 'MyHook,ANOTHER' }, () => {
       const result = getDisabledHookIds();
       assert.ok(result.has('myhook'));
       assert.ok(result.has('another'));
@@ -404,7 +404,7 @@ describe(sectionTitle('\ngetDisabledHookIds:'), () => {
   });
 
   test('filters out empty entries from trailing commas', () => {
-    withEnv({ ECC_DISABLED_HOOKS: 'hook-a,,hook-b,' }, () => {
+    withEnv({ YUS_DISABLED_HOOKS: 'hook-a,,hook-b,' }, () => {
       const result = getDisabledHookIds();
       assert.strictEqual(result.size, 2);
       assert.ok(result.has('hook-a'));
@@ -489,85 +489,85 @@ describe(sectionTitle('\nparseProfiles:'), () => {
 // isHookEnabled tests
 describe(sectionTitle('\nisHookEnabled:'), () => {
   test('returns true by default for a hook (standard profile)', () => {
-    withEnv({ ECC_HOOK_PROFILE: undefined, ECC_DISABLED_HOOKS: undefined }, () => {
+    withEnv({ YUS_HOOK_PROFILE: undefined, YUS_DISABLED_HOOKS: undefined }, () => {
       assert.strictEqual(isHookEnabled('my-hook'), true);
     });
   });
 
   test('returns true for empty hookId', () => {
-    withEnv({ ECC_HOOK_PROFILE: undefined, ECC_DISABLED_HOOKS: undefined }, () => {
+    withEnv({ YUS_HOOK_PROFILE: undefined, YUS_DISABLED_HOOKS: undefined }, () => {
       assert.strictEqual(isHookEnabled(''), true);
     });
   });
 
   test('returns true for null hookId', () => {
-    withEnv({ ECC_HOOK_PROFILE: undefined, ECC_DISABLED_HOOKS: undefined }, () => {
+    withEnv({ YUS_HOOK_PROFILE: undefined, YUS_DISABLED_HOOKS: undefined }, () => {
       assert.strictEqual(isHookEnabled(null), true);
     });
   });
 
   test('returns false when hook is in disabled list', () => {
-    withEnv({ ECC_HOOK_PROFILE: undefined, ECC_DISABLED_HOOKS: 'my-hook' }, () => {
+    withEnv({ YUS_HOOK_PROFILE: undefined, YUS_DISABLED_HOOKS: 'my-hook' }, () => {
       assert.strictEqual(isHookEnabled('my-hook'), false);
     });
   });
 
   test('disabled check is case-insensitive', () => {
-    withEnv({ ECC_HOOK_PROFILE: undefined, ECC_DISABLED_HOOKS: 'MY-HOOK' }, () => {
+    withEnv({ YUS_HOOK_PROFILE: undefined, YUS_DISABLED_HOOKS: 'MY-HOOK' }, () => {
       assert.strictEqual(isHookEnabled('my-hook'), false);
     });
   });
 
   test('returns true when hook is not in disabled list', () => {
-    withEnv({ ECC_HOOK_PROFILE: undefined, ECC_DISABLED_HOOKS: 'other-hook' }, () => {
+    withEnv({ YUS_HOOK_PROFILE: undefined, YUS_DISABLED_HOOKS: 'other-hook' }, () => {
       assert.strictEqual(isHookEnabled('my-hook'), true);
     });
   });
 
   test('returns false when current profile is not in allowed profiles', () => {
-    withEnv({ ECC_HOOK_PROFILE: 'minimal', ECC_DISABLED_HOOKS: undefined }, () => {
+    withEnv({ YUS_HOOK_PROFILE: 'minimal', YUS_DISABLED_HOOKS: undefined }, () => {
       assert.strictEqual(isHookEnabled('my-hook', { profiles: 'strict' }), false);
     });
   });
 
   test('returns true when current profile is in allowed profiles', () => {
-    withEnv({ ECC_HOOK_PROFILE: 'strict', ECC_DISABLED_HOOKS: undefined }, () => {
+    withEnv({ YUS_HOOK_PROFILE: 'strict', YUS_DISABLED_HOOKS: undefined }, () => {
       assert.strictEqual(isHookEnabled('my-hook', { profiles: 'standard,strict' }), true);
     });
   });
 
   test('returns true when current profile matches single allowed profile', () => {
-    withEnv({ ECC_HOOK_PROFILE: 'minimal', ECC_DISABLED_HOOKS: undefined }, () => {
+    withEnv({ YUS_HOOK_PROFILE: 'minimal', YUS_DISABLED_HOOKS: undefined }, () => {
       assert.strictEqual(isHookEnabled('my-hook', { profiles: 'minimal' }), true);
     });
   });
 
   test('disabled hooks take precedence over profile match', () => {
-    withEnv({ ECC_HOOK_PROFILE: 'strict', ECC_DISABLED_HOOKS: 'my-hook' }, () => {
+    withEnv({ YUS_HOOK_PROFILE: 'strict', YUS_DISABLED_HOOKS: 'my-hook' }, () => {
       assert.strictEqual(isHookEnabled('my-hook', { profiles: 'strict' }), false);
     });
   });
 
   test('uses default profiles (standard, strict) when none specified', () => {
-    withEnv({ ECC_HOOK_PROFILE: 'minimal', ECC_DISABLED_HOOKS: undefined }, () => {
+    withEnv({ YUS_HOOK_PROFILE: 'minimal', YUS_DISABLED_HOOKS: undefined }, () => {
       assert.strictEqual(isHookEnabled('my-hook'), false);
     });
   });
 
   test('allows standard profile by default', () => {
-    withEnv({ ECC_HOOK_PROFILE: 'standard', ECC_DISABLED_HOOKS: undefined }, () => {
+    withEnv({ YUS_HOOK_PROFILE: 'standard', YUS_DISABLED_HOOKS: undefined }, () => {
       assert.strictEqual(isHookEnabled('my-hook'), true);
     });
   });
 
   test('allows strict profile by default', () => {
-    withEnv({ ECC_HOOK_PROFILE: 'strict', ECC_DISABLED_HOOKS: undefined }, () => {
+    withEnv({ YUS_HOOK_PROFILE: 'strict', YUS_DISABLED_HOOKS: undefined }, () => {
       assert.strictEqual(isHookEnabled('my-hook'), true);
     });
   });
 
   test('accepts array profiles option', () => {
-    withEnv({ ECC_HOOK_PROFILE: 'minimal', ECC_DISABLED_HOOKS: undefined }, () => {
+    withEnv({ YUS_HOOK_PROFILE: 'minimal', YUS_DISABLED_HOOKS: undefined }, () => {
       assert.strictEqual(isHookEnabled('my-hook', { profiles: ['minimal', 'standard'] }), true);
     });
   });

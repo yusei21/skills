@@ -72,7 +72,7 @@ async function main() {
     ['compiled OMP on Bun', { execPath: '/fake/omp', versions: { bun: '1.4.0' } }, 'node'],
     ['Bun with a Node basename', { execPath: '/fake/node', versions: { bun: '1.4.0' } }, 'node'],
     ['explicit absolute Node path with spaces', {
-      execPath: '/fake/omp', env: { ECC_HOOK_NODE: explicitNode }
+      execPath: '/fake/omp', env: { YUS_HOOK_NODE: explicitNode }
     }, explicitNode]
   ];
   for (const [name, host, expected] of cases) {
@@ -97,7 +97,7 @@ async function main() {
     }
   }
   for (const [name, host, spawnError, expectedLaunches] of [
-    ['invalid override', { execPath: '/fake/omp', env: { ECC_HOOK_NODE: './omp' } }, null, 0],
+    ['invalid override', { execPath: '/fake/omp', env: { YUS_HOOK_NODE: './omp' } }, null, 0],
     ['missing PATH node', { execPath: '/fake/omp' }, new Error('spawn node ENOENT'), 1]
   ]) {
     try {

@@ -29,12 +29,12 @@ Expected result: no output.
 The only tracked legacy directory currently found by filename scan is
 `legacy-command-shims/`.
 
-The umbrella ECC workspace also contains sibling legacy git repositories outside
+The umbrella yus workspace also contains sibling legacy git repositories outside
 this tracked checkout. These are intentionally inventoried separately because
 they can contain raw operator context, local settings, private drafts, or
 untracked files that should not be copied into the public repo wholesale.
 
-Fresh workspace-level check from the ECC umbrella directory:
+Fresh workspace-level check from the yus umbrella directory:
 
 ```sh
 find .. -maxdepth 1 -type d -name '_legacy-documents-*' -print | sort
@@ -43,8 +43,8 @@ find .. -maxdepth 1 -type d -name '_legacy-documents-*' -print | sort
 Expected result:
 
 ```text
-../_legacy-documents-ecc-context-2026-04-30
-../_legacy-documents-ecc-everything-claude-code-2026-04-30
+../_legacy-documents-yus-context-2026-04-30
+../_legacy-documents-yus-everything-claude-code-2026-04-30
 ```
 
 ## Inventory
@@ -62,14 +62,14 @@ Expected result:
 
 ## Workspace-Level Legacy Repos
 
-These sibling repositories live outside the tracked `ECC`
+These sibling repositories live outside the tracked `yus`
 checkout. They are source material for future salvage passes, not installable
 release assets.
 
 | Artifact | State | Evidence | Action |
 | --- | --- | --- | --- |
-| `../_legacy-documents-ecc-everything-claude-code-2026-04-30` | Archive/no-action | Separate legacy checkout on `fix/configure-ecc-skill-copy-paths-1483` at `b78ddbd0`; useful configure-ecc and install-path concepts have been superseded by current install docs and tests. The checkout also has untracked localized project-guidelines examples and a Finder duplicate `skills/business/social-graph-ranker/SKILL 2.md`. | Do not import wholesale. If configure-ecc copy-root regressions reappear, use this branch only as source-attributed archaeology and port through a fresh maintainer branch. Leave Finder duplicates out of source control. |
-| `../_legacy-documents-ecc-context-2026-04-30` | Milestone-tracked | Archived `ECC-context` repo is four commits ahead of its origin and contains context, gameplan, knowledge, marketing, AgentShield, and ECC Tools planning material. It also contains local/private surfaces such as `.env` and local settings. | Keep as a sanitized extraction source for roadmap, launch, AgentShield, and ECC Tools work. Never copy raw context, secrets, personal paths, private settings, or unpublished drafts into this repo. Port only focused, public-safe content with attribution. |
+| `../_legacy-documents-yus-everything-claude-code-2026-04-30` | Archive/no-action | Separate legacy checkout on `fix/configure-yus-skill-copy-paths-1483` at `b78ddbd0`; useful configure-yus and install-path concepts have been superseded by current install docs and tests. The checkout also has untracked localized project-guidelines examples and a Finder duplicate `skills/business/social-graph-ranker/SKILL 2.md`. | Do not import wholesale. If configure-yus copy-root regressions reappear, use this branch only as source-attributed archaeology and port through a fresh maintainer branch. Leave Finder duplicates out of source control. |
+| `../_legacy-documents-yus-context-2026-04-30` | Milestone-tracked | Archived `yus-context` repo is four commits ahead of its origin and contains context, gameplan, knowledge, marketing, AgentShield, and ECC Tools planning material. It also contains local/private surfaces such as `.env` and local settings. | Keep as a sanitized extraction source for roadmap, launch, AgentShield, and ECC Tools work. Never copy raw context, secrets, personal paths, private settings, or unpublished drafts into this repo. Port only focused, public-safe content with attribution. |
 
 ## Workspace Legacy Import Rules
 

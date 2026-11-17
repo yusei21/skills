@@ -38,8 +38,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/affaan-m/ECC"
-Repository = "https://github.com/affaan-m/ECC"
+Homepage = "https://github.com/yusei21/yus"
+Repository = "https://github.com/yusei21/yus"
 
 [project.scripts]
 llm-select = "llm.cli.selector:main"

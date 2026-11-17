@@ -44,10 +44,10 @@ try {
       for (const entry of new Set(Object.values(mod))) loaded.push(typeof entry === 'function' ? await entry(context) : {});
     }
     const live = loaded.filter(hooks => typeof hooks['tool.execute.after'] === 'function');
-    assert.equal(live.length, 1, 'Local discovery must register exactly one live ECC plugin');
+    assert.equal(live.length, 1, 'Local discovery must register exactly one live yus plugin');
     await live[0]['tool.execute.after']({ tool: 'skill', args: { name: 'code-review', arguments: 'private prompt sentinel' } }, {});
     assert.ok(!logs.some(entry => /telemetry disabled/.test(entry.message)));
-    const runs = fs.readFileSync(path.join(process.env.ECC_AGENT_DATA_HOME, 'state/skill-runs.jsonl'), 'utf8');
+    const runs = fs.readFileSync(path.join(process.env.YUS_AGENT_DATA_HOME, 'state/skill-runs.jsonl'), 'utf8');
     assert.equal(runs.trim().split('\\n').length, 1);
     assert.equal(JSON.parse(runs).skill_id, 'code-review');
     assert.ok(!runs.includes('private prompt sentinel'));
@@ -61,9 +61,9 @@ try {
     '--input-type=module', '-e', input, plan.targetRoot], {
     cwd: project, encoding: 'utf8', timeout: 30000,
     env: { ...process.env, HOME: home, USERPROFILE: home,
-      CLAUDE_CONFIG_DIR: path.join(home, '.claude'), ECC_AGENT_DATA_HOME: path.join(home, '.claude'),
+      CLAUDE_CONFIG_DIR: path.join(home, '.claude'), YUS_AGENT_DATA_HOME: path.join(home, '.claude'),
       XDG_CONFIG_HOME: path.join(home, '.config'), OPENCODE_CONFIG_DIR: plan.targetRoot,
-      CLAUDE_PLUGIN_ROOT: '', CLAUDE_CODE_PACKAGE_MANAGER: 'bun', ECC_HOOK_PROFILE: 'standard', ECC_DISABLED_HOOKS: '' },
+      CLAUDE_PLUGIN_ROOT: '', CLAUDE_CODE_PACKAGE_MANAGER: 'bun', YUS_HOOK_PROFILE: 'standard', YUS_DISABLED_HOOKS: '' },
   });
   assert.strictEqual(result.status, 0, result.stderr || result.stdout);
   console.log(result.stdout.trim());

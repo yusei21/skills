@@ -13,7 +13,7 @@ const REGISTRY = 'manifests/context-packs/skill-registry@1.json';
 
 test('canonical skill inventory has one owner and stable portable resource digests', () => withFixture(root => {
   const registry = loadContextRegistry({ repoRoot: root });
-  assert.equal(registry.schemaVersion, 'ecc.context-registry.v1');
+  assert.equal(registry.schemaVersion, 'yus.context-registry.v1');
   assert.equal(registry.entries.length, 5);
   assert.deepEqual(registry, loadContextRegistry({ repoRoot: root }));
   assert.match(registry.registryDigest, /^[a-f0-9]{64}$/);

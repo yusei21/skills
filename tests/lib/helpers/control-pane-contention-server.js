@@ -28,7 +28,7 @@ const { createControlPaneServer } = require('../../../scripts/lib/control-pane/s
 async function main() {
   const app = createControlPaneServer({
     host: '127.0.0.1', port: 0, stateDbPath: process.argv[2],
-    dbPath: `${process.argv[2]}.ecc2`, allowActions: process.argv[3] !== 'read-only'
+    dbPath: `${process.argv[2]}.yus2`, allowActions: process.argv[3] !== 'read-only'
   });
   app.server.prependListener('request', (req, res) => {
     if (req.method === 'POST') {

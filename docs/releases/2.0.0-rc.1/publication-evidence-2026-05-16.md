@@ -1,4 +1,4 @@
-# ECC v2.0.0-rc.1 Publication Evidence - 2026-05-16
+# yus v2.0.0-rc.1 Publication Evidence - 2026-05-16
 
 This is release-readiness evidence only. It does not create a GitHub release,
 npm publication, plugin tag, marketplace submission, or announcement post.
@@ -28,7 +28,7 @@ final release commit with a strictly clean checkout before publishing.
 
 | Item | Result |
 | --- | --- |
-| PR #1944 | Merged statusline ANSI palette update as `50ac061f9e72d7daa137f1bd08760cf74e9b577d`; targeted `node tests/hooks/ecc-statusline.test.js` and `node scripts/ci/validate-hooks.js` passed before merge |
+| PR #1944 | Merged statusline ANSI palette update as `50ac061f9e72d7daa137f1bd08760cf74e9b577d`; targeted `node tests/hooks/yus-statusline.test.js` and `node scripts/ci/validate-hooks.js` passed before merge |
 | PR #1945 | Merged `recsys-pipeline-architect` community skill as `9e973b29fb1a2a0aeb9e6980017b67c3ddb05201`; maintainer patches synced catalog counts and removed emoji blocked by Unicode safety |
 | Issue #1946 | Closed as triaged with a corrected maintainer comment; Linear `ITO-60` now tracks GateGuard proactive fact-forcing preflight UX |
 | PR #1947 | Merged scheduled supply-chain watch/advisory-source evidence as `4093d1bb7a14db1b4d4ea5bd00f2073baf94bfb0`; trunk now has the TanStack/Mini Shai-Hulud/node-ipc IOC scan plus advisory-source report surfaces wired into scheduled watch evidence |
@@ -51,8 +51,8 @@ final release commit with a strictly clean checkout before publishing.
 | Gate | Command | Result |
 | --- | --- | --- |
 | Root suite | `npm test` | 2469 passed, 0 failed |
-| Rust `ecc2` suite | `cd ecc2 && cargo test` | 462 passed, 0 failed; existing dead-code/unused warnings only |
-| Release surface | `node tests/docs/ecc2-release-surface.test.js` | 20 passed |
+| Rust `yus2` suite | `cd yus2 && cargo test` | 462 passed, 0 failed; existing dead-code/unused warnings only |
+| Release surface | `node tests/docs/yus2-release-surface.test.js` | 20 passed |
 | Harness adapters | `npm run harness:adapters -- --check` | PASS; 11 adapters |
 | Harness audit | `npm run harness:audit -- --format json` | 70/70, no top actions |
 | Observability readiness | `npm run observability:ready` | 21/21, ready yes |
@@ -65,7 +65,7 @@ final release commit with a strictly clean checkout before publishing.
 ## Current Publication Blockers
 
 - GitHub prerelease `v2.0.0-rc.1` is still not created in this pass.
-- npm `ecc-universal@2.0.0-rc.1` is still not published to the `next` dist-tag.
+- npm `yus-universal@2.0.0-rc.1` is still not published to the `next` dist-tag.
 - Claude plugin tag and marketplace propagation remain approval-gated.
 - Codex repo-marketplace distribution is verified for rc.1, but official
   Plugin Directory publishing remains blocked on OpenAI's coming-soon

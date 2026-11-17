@@ -9,7 +9,7 @@ function showHelp(exitCode = 0) {
   console.log(`
 Usage: node scripts/repair.js [--target <${SUPPORTED_INSTALL_TARGETS.join('|')}>] [--dry-run] [--json]
 
-Rebuild ECC-managed files recorded in install-state for the current context.
+Rebuild yus-managed files recorded in install-state for the current context.
 `);
   process.exit(exitCode);
 }
@@ -40,9 +40,9 @@ function parseArgs(argv) {
     }
   }
 
-  const dryRunEnv = process.env.ECC_DRY_RUN;
+  const dryRunEnv = process.env.YUS_DRY_RUN;
   if (dryRunEnv !== undefined && dryRunEnv !== '0' && dryRunEnv !== '1') {
-    throw new Error('ECC_DRY_RUN must be "1" or "0" when set');
+    throw new Error('YUS_DRY_RUN must be "1" or "0" when set');
   }
   parsed.dryRun = parsed.dryRun || dryRunEnv === '1';
 
@@ -51,7 +51,7 @@ function parseArgs(argv) {
 
 function printHuman(result) {
   if (result.results.length === 0) {
-    console.log('No ECC install-state files found for the current home/project context.');
+    console.log('No yus install-state files found for the current home/project context.');
     return;
   }
 

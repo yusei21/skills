@@ -17,27 +17,27 @@ assert.equal(isAnnouncementDiscussion({ category: { name: 'Announcements' } }), 
 assert.equal(isAnnouncementDiscussion({ category: { name: 'General' } }), false);
 assert.equal(isAnnouncementDiscussion({ category: { name: 'announcements' } }), false);
 
-assert.equal(releaseMarker('v2.2.0'), '<!-- ecc-release:v2.2.0 -->');
+assert.equal(releaseMarker('v2.2.0'), '<!-- yus-release:v2.2.0 -->');
 const marker = releaseMarker('v2.2.0');
 assert.equal(findReleaseDiscussion([
   { id: 'untrusted', body: marker, category: { name: 'General' } },
   { id: 'canonical', body: marker, category: { name: 'Announcements' } },
 ], marker).id, 'canonical');
-assert.equal(announcementKey({ repository: 'affaan-m/ECC', discussionId: 'D_kw123' }), 'affaan-m/ECC:discussion:D_kw123');
+assert.equal(announcementKey({ repository: 'yusei21/yus', discussionId: 'D_kw123' }), 'yusei21/yus:discussion:D_kw123');
 
 const payload = buildDiscordPayload({
-  title: '@everyone ECC 2.2.0',
+  title: '@everyone yus 2.2.0',
   body: 'A'.repeat(5000),
-  url: 'https://github.com/affaan-m/ECC/discussions/3000',
-  key: 'affaan-m/ECC:discussion:D_kw123',
+  url: 'https://github.com/yusei21/yus/discussions/3000',
+  key: 'yusei21/yus:discussion:D_kw123',
 });
 assert.deepEqual(payload.allowed_mentions, { parse: [] });
 assert.equal(payload.embeds.length, 1);
 assert.ok(payload.embeds[0].description.length <= 4000);
-assert.equal(payload.embeds[0].footer.text, 'ecc:D_kw123');
-assert.equal(payload.embeds[0].url, 'https://github.com/affaan-m/ECC/discussions/3000');
+assert.equal(payload.embeds[0].footer.text, 'yus:D_kw123');
+assert.equal(payload.embeds[0].url, 'https://github.com/yusei21/yus/discussions/3000');
 assert.equal(payload.enforce_nonce, true);
-assert.match(payload.nonce, /^ecc-[a-f0-9]{16}$/);
+assert.match(payload.nonce, /^yus-[a-f0-9]{16}$/);
 
 assert.equal(
   normalizeDiscordWebhookUrl('https://discord.com/api/webhooks/123456789012345678/secret-token-long-enough'),
@@ -48,8 +48,8 @@ assert.throws(() => normalizeDiscordWebhookUrl('https://user@discord.com/api/web
 assert.throws(() => normalizeDiscordWebhookUrl('https://discord.com:444/api/webhooks/123456789012345678/secret-token-long-enough'), /invalid Discord webhook URL/);
 assert.throws(() => normalizeDiscordWebhookUrl('https://discord.com/api/webhooks/123456789012345678/secret-token-long-enough?leak=1'), /invalid Discord webhook URL/);
 
-const receiptMarker = discussionReceiptMarker('affaan-m/ECC:discussion:D_kw123');
-assert.match(receiptMarker, /^<!-- ecc-discord-receipt:[a-f0-9]{32} -->$/);
+const receiptMarker = discussionReceiptMarker('yusei21/yus:discussion:D_kw123');
+assert.match(receiptMarker, /^<!-- yus-discord-receipt:[a-f0-9]{32} -->$/);
 assert.equal(findDiscussionReceipt([
   { id: 'forged', body: `Discord delivery: complete\n${receiptMarker}`, author: { login: 'attacker' } },
   { id: 'pending', body: `Discord delivery: pending.\n${receiptMarker}`, author: { login: 'github-actions' } },

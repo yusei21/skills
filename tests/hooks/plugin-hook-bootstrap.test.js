@@ -38,7 +38,7 @@ function run(args = [], options = {}) {
     env: {
       ...process.env,
       CLAUDE_PLUGIN_ROOT: options.root || '',
-      ECC_PLUGIN_ROOT: options.eccRoot || '',
+      YUS_PLUGIN_ROOT: options.yusRoot || '',
       ...(options.env || {}),
     },
     cwd: options.cwd || process.cwd(),
@@ -87,53 +87,53 @@ function runTests() {
 
   if (test('normalizes Windows Git Bash POSIX drive roots', () => {
     assert.strictEqual(
-      normalizePluginRootForPlatform('/c/Users/x/.claude/plugins/ecc', 'win32'),
-      'C:/Users/x/.claude/plugins/ecc'
+      normalizePluginRootForPlatform('/c/Users/x/.claude/plugins/yus', 'win32'),
+      'C:/Users/x/.claude/plugins/yus'
     );
     assert.strictEqual(
-      normalizePluginRootForPlatform('/z/Work/ECC/scripts/hooks/check-console-log.js', 'win32'),
-      'Z:/Work/ECC/scripts/hooks/check-console-log.js'
+      normalizePluginRootForPlatform('/z/Work/yus/scripts/hooks/check-console-log.js', 'win32'),
+      'Z:/Work/yus/scripts/hooks/check-console-log.js'
     );
   })) passed++; else failed++;
 
   if (test('leaves already-Windows roots unchanged', () => {
     assert.strictEqual(
-      normalizePluginRootForPlatform('C:/Users/x/.claude/plugins/ecc', 'win32'),
-      'C:/Users/x/.claude/plugins/ecc'
+      normalizePluginRootForPlatform('C:/Users/x/.claude/plugins/yus', 'win32'),
+      'C:/Users/x/.claude/plugins/yus'
     );
     assert.strictEqual(
-      normalizePluginRootForPlatform('D:\\Users\\x\\.claude\\plugins\\ecc', 'win32'),
-      'D:\\Users\\x\\.claude\\plugins\\ecc'
+      normalizePluginRootForPlatform('D:\\Users\\x\\.claude\\plugins\\yus', 'win32'),
+      'D:\\Users\\x\\.claude\\plugins\\yus'
     );
   })) passed++; else failed++;
 
   if (test('leaves POSIX-looking roots unchanged off Windows', () => {
     assert.strictEqual(
-      normalizePluginRootForPlatform('/c/Users/x/.claude/plugins/ecc', 'darwin'),
-      '/c/Users/x/.claude/plugins/ecc'
+      normalizePluginRootForPlatform('/c/Users/x/.claude/plugins/yus', 'darwin'),
+      '/c/Users/x/.claude/plugins/yus'
     );
     assert.strictEqual(
-      normalizePluginRootForPlatform('/c/Users/x/.claude/plugins/ecc', 'linux'),
-      '/c/Users/x/.claude/plugins/ecc'
+      normalizePluginRootForPlatform('/c/Users/x/.claude/plugins/yus', 'linux'),
+      '/c/Users/x/.claude/plugins/yus'
     );
   })) passed++; else failed++;
 
   if (test('does not mangle UNC or non-drive absolute paths on Windows', () => {
     assert.strictEqual(
-      normalizePluginRootForPlatform('\\\\server\\share\\ecc', 'win32'),
-      '\\\\server\\share\\ecc'
+      normalizePluginRootForPlatform('\\\\server\\share\\yus', 'win32'),
+      '\\\\server\\share\\yus'
     );
     assert.strictEqual(
-      normalizePluginRootForPlatform('/workspace/ecc', 'win32'),
-      '/workspace/ecc'
+      normalizePluginRootForPlatform('/workspace/yus', 'win32'),
+      '/workspace/yus'
     );
   })) passed++; else failed++;
 
   if (test('lifecycle bootstrap shares Windows root normalization and bounds timeouts', () => {
-    const rootResolver = require(path.join(__dirname, '..', '..', 'scripts', 'lib', 'resolve-ecc-root.js'));
+    const rootResolver = require(path.join(__dirname, '..', '..', 'scripts', 'lib', 'resolve-yus-root.js'));
     assert.strictEqual(
-      rootResolver.normalizePluginRootForPlatform('/c/Users/x/.claude/plugins/ecc', 'win32'),
-      'C:/Users/x/.claude/plugins/ecc'
+      rootResolver.normalizePluginRootForPlatform('/c/Users/x/.claude/plugins/yus', 'win32'),
+      'C:/Users/x/.claude/plugins/yus'
     );
     assert.strictEqual(resolveTimeout('600000'), 300000);
     assert.strictEqual(resolveTimeout('invalid'), 30000);
@@ -149,7 +149,7 @@ process.stdout.write(JSON.stringify({
   raw,
   args: process.argv.slice(2),
   claudeRoot: process.env.CLAUDE_PLUGIN_ROOT,
-  eccRoot: process.env.ECC_PLUGIN_ROOT,
+  yusRoot: process.env.YUS_PLUGIN_ROOT,
 }));
 `);
 
@@ -163,7 +163,7 @@ process.stdout.write(JSON.stringify({
       assert.strictEqual(parsed.raw, 'payload');
       assert.deepStrictEqual(parsed.args, ['one', 'two']);
       assert.strictEqual(parsed.claudeRoot, root);
-      assert.strictEqual(parsed.eccRoot, root);
+      assert.strictEqual(parsed.yusRoot, root);
     } finally {
       cleanup(root);
     }

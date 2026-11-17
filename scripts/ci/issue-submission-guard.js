@@ -5,8 +5,8 @@ const path = require('node:path');
 const { githubAPI, listPages, validatePolicy, strongestWindow, blockAuthor } = require('./pr-burst-guard');
 
 const LOGIN = /^[a-z\d](?:[a-z\d-]{0,38})(?:\[bot\])?$/i;
-const CAP_MARKER = '<!-- ecc-issue-open-cap -->';
-const ALERT_MARKER = '<!-- ecc-issue-burst:';
+const CAP_MARKER = '<!-- yus-issue-open-cap -->';
+const ALERT_MARKER = '<!-- yus-issue-burst:';
 const isIssue = issue => !issue.pull_request;
 const byCreation = (a, b) => Date.parse(a.created_at) - Date.parse(b.created_at) || a.number - b.number;
 
@@ -30,7 +30,7 @@ async function notify(api, root, current, result, policy) {
     batch => batch.some(issue => issue.created_at?.slice(0, 10) < day));
   const existing = rows.find(issue => isIssue(issue) && issue.user?.login === 'github-actions[bot]'
     && issue.body?.includes(marker));
-  const escalation = '<!-- ecc-issue-burst:block-threshold -->';
+  const escalation = '<!-- yus-issue-burst:block-threshold -->';
   if (existing?.body.includes(escalation) && !result.block) return;
   const mentions = policy.notify.map(login => `@${login}`).join(' ');
   const body = [marker, result.block ? escalation : '', `${mentions}: Issue submission moderation triggered.`, '',

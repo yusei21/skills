@@ -3,7 +3,7 @@ name: tdd-workflow
 description: "Test-driven development workflow: write a failing test first, watch it fail, implement the smallest change to green, then refactor with 80%+ coverage across unit, integration, and E2E tests. Use when writing a new feature, fixing a bug, refactoring, or when told to write failing tests first."
 argument-hint: <path/to/*.plan.md>
 metadata:
-  origin: ECC
+  origin: yus
 ---
 
 # Test-Driven Development Workflow
@@ -89,18 +89,18 @@ ALWAYS write tests first, then implement code to make tests pass.
 
 Do not assume `npm test`. The commands in the steps and examples below use `<test>`, `<test-watch>`, and `<coverage>` as placeholders for the project's actual runner. Resolve them once before starting:
 
-1. **Run the package-manager detector** (ships with ECC):
+1. **Run the package-manager detector** (ships with yus):
 
    ```bash
    # Use the configured plugin root or standalone install (~/.claude or
-   # $CLAUDE_CONFIG_DIR). For a reviewed and explicitly authorized ECC checkout:
-   # export CLAUDE_PLUGIN_ROOT="/absolute/path/to/reviewed/ECC"
-   ECC_ROOT="${CLAUDE_PLUGIN_ROOT:-${CLAUDE_CONFIG_DIR:-$HOME/.claude}}"
-   [ -f "$ECC_ROOT/scripts/setup-package-manager.js" ] || { echo "ECC scripts not found in the selected root (set CLAUDE_PLUGIN_ROOT to an authorized ECC checkout)" >&2; exit 1; }
-   node "$ECC_ROOT/scripts/setup-package-manager.js" --detect
+   # $CLAUDE_CONFIG_DIR). For a reviewed and explicitly authorized yus checkout:
+   # export CLAUDE_PLUGIN_ROOT="/absolute/path/to/reviewed/yus"
+   YUS_ROOT="${CLAUDE_PLUGIN_ROOT:-${CLAUDE_CONFIG_DIR:-$HOME/.claude}}"
+   [ -f "$YUS_ROOT/scripts/setup-package-manager.js" ] || { echo "yus scripts not found in the selected root (set CLAUDE_PLUGIN_ROOT to an authorized yus checkout)" >&2; exit 1; }
+   node "$YUS_ROOT/scripts/setup-package-manager.js" --detect
    ```
 
-   The resolution lines use the configured plugin root or standalone install and stop when the selected root lacks the helper. For an ECC checkout you have reviewed and authorized, explicitly set `CLAUDE_PLUGIN_ROOT` to its absolute path first. Project marker files do not establish executable trust. Keep the working directory at the project under test, and keep paths quoted because install locations may contain spaces.
+   The resolution lines use the configured plugin root or standalone install and stop when the selected root lacks the helper. For an yus checkout you have reviewed and authorized, explicitly set `CLAUDE_PLUGIN_ROOT` to its absolute path first. Project marker files do not establish executable trust. Keep the working directory at the project under test, and keep paths quoted because install locations may contain spaces.
 
    It resolves the package manager (npm / pnpm / yarn / bun) from, in order: `CLAUDE_PACKAGE_MANAGER`, `.claude/package-manager.json`, the `package.json` `packageManager` field, the lockfile, then global config.
 

@@ -96,16 +96,16 @@ function readFromHeldOpenStream(chunks, options = {}) {
 
 // Spawn a hook entry point, write the input, and never close stdin.
 // Resolve on 'close' so stdout and stderr are fully drained before asserting.
-// Pin the hook flags so a caller's ECC_HOOKS_ENABLED or ECC_DISABLED_HOOKS
+// Pin the hook flags so a caller's YUS_HOOKS_ENABLED or YUS_DISABLED_HOOKS
 // cannot switch off the hooks these cases assert on.
 async function runWithHeldOpenStdin(args, input) {
   const child = spawn(process.execPath, args, {
     env: {
       ...process.env,
-      ECC_HOOK_INPUT_IDLE_TIMEOUT_MS: '100',
-      ECC_HOOK_PROFILE: 'standard',
-      ECC_HOOKS_ENABLED: 'true',
-      ECC_DISABLED_HOOKS: ''
+      YUS_HOOK_INPUT_IDLE_TIMEOUT_MS: '100',
+      YUS_HOOK_PROFILE: 'standard',
+      YUS_HOOKS_ENABLED: 'true',
+      YUS_DISABLED_HOOKS: ''
     },
     stdio: ['pipe', 'pipe', 'pipe']
   });
@@ -292,7 +292,7 @@ async function runTests() {
   else failed++;
 
   if (
-    await test('resolveStdinIdleTimeout validates ECC_HOOK_INPUT_IDLE_TIMEOUT_MS', async () => {
+    await test('resolveStdinIdleTimeout validates YUS_HOOK_INPUT_IDLE_TIMEOUT_MS', async () => {
       const diagnostics = [];
       const writeDiagnostic = message => diagnostics.push(message);
 
@@ -307,7 +307,7 @@ async function runTests() {
       // setTimeout would fire after 1 ms for a larger delay, so it is clamped.
       assert.strictEqual(resolveStdinIdleTimeout('9999999999', { writeDiagnostic }), 2 ** 31 - 1);
       assert.strictEqual(diagnostics.length, 3);
-      assert.match(diagnostics[0], /ECC_HOOK_INPUT_IDLE_TIMEOUT_MS/);
+      assert.match(diagnostics[0], /YUS_HOOK_INPUT_IDLE_TIMEOUT_MS/);
       assert.match(diagnostics[2], /clamping/);
     })
   )

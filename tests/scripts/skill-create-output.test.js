@@ -160,7 +160,7 @@ describe(sectionTitle('\nfooter():'), () => {
     const output = new SkillCreateOutput('repo');
     const logs = captureLog(() => output.footer());
     const combined = logs.join('\n');
-    assert.ok(combined.includes('ECC'), 'Should include project name');
+    assert.ok(combined.includes('yus'), 'Should include project name');
   });
 });
 

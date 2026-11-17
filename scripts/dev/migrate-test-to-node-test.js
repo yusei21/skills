@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // @ts-check
 /**
- * Codemod: convert a legacy ECC test file to the built-in `node:test` runner.
+ * Codemod: convert a legacy yus test file to the built-in `node:test` runner.
  *
  * Legacy suites define their own `test(name, fn)` helper and count results by
  * hand inside a `runTests()` function:

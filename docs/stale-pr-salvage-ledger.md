@@ -34,7 +34,7 @@ on fresh branches, and credit the source PR.
 | #1414 | F# rules, reviewer agent, and testing skill | Salvaged in #1770 with current install manifests, detection tests, and catalog wiring. |
 | #1429 | JoyCode install target | Salvaged in #1737 through the current JoyCode install target. |
 | #1467 | Scientific skills and OpenCode discovery work | Useful USPTO and gget pieces salvaged in #1740; stale generated claims were not copied. |
-| #1478 | HarmonyOS/ArkTS rules, resolver agent, and CLAUDE example | Salvaged in #1769 with current install wiring; stale `ecc2` session/TUI edits were not carried. |
+| #1478 | HarmonyOS/ArkTS rules, resolver agent, and CLAUDE example | Salvaged in #1769 with current install wiring; stale `yus2` session/TUI edits were not carried. |
 | #1493 | SessionStart context scoping | Salvaged in #1774 with current hook semantics and tests. |
 | #1498 | PRD planning flow | Salvaged in #1777. |
 | #1504 | Statusline/context monitor hooks | Salvaged in #1776 with current hook manifest structure and tests. |
@@ -45,7 +45,7 @@ on fresh branches, and credit the source PR.
 | #1578 | OpenCode file-probe hardening | Salvaged in #1773. |
 | #1603 | `plan-orchestrate` skill | Salvaged in #1766 with current manifest/catalog wiring. |
 | #1658 | Code-reviewer false-positive suppression | Salvaged in the May 12 code-reviewer maintainer pass with current review-agent wording, a proof gate for HIGH/CRITICAL findings, common false-positive exclusions, and a regression test. |
-| #1659 | Frontend design direction and interface-polish skills | Salvaged in the May 12 frontend-design maintainer pass with canonical `skills/` layout and current ECC frontend guidance, while preserving the repo guardrail that the official `frontend-design` skill should be installed from `anthropics/skills`. |
+| #1659 | Frontend design direction and interface-polish skills | Salvaged in the May 12 frontend-design maintainer pass with canonical `skills/` layout and current yus frontend guidance, while preserving the repo guardrail that the official `frontend-design` skill should be installed from `anthropics/skills`. |
 | #1674 | Production audit skill | Salvaged in #1732 after supply-chain/privacy review and rewrite. |
 | #1687 | zh-CN localization sync | Large safe subsets salvaged in #1746-#1752; remaining pieces require translator/manual review. |
 | #1694 | Portfolio curation | Useful focused curation updates salvaged in #1723 and #1724. |
@@ -110,7 +110,7 @@ porting.
 
 ## 2026-05-18 Owner-Wide Queue Cleanup
 
-The ECC release repos were already clean, but an owner-wide `gh search` sweep
+The yus release repos were already clean, but an owner-wide `gh search` sweep
 found stale queues in older public/private projects. The cleanup closed 24
 stale dependency-bot PRs and 72 stale legacy payments/0EM roadmap issues,
 then closed the final 9 stale/generated/conflicting/test PRs and 5
@@ -124,7 +124,7 @@ evidence and final queue disposition are recorded in
 | Dependabot PRs in `stoictradingAI`, `Behavioral_RL`, `dprc-autotrader-v2`, `x-algorithm-score`, `polycule-secure`, and `pragmAItism_defAInce` | Skipped as stale generated dependency bumps; regenerate from current base if still needed. |
 | Legacy issues in `payments0-api`, `payments0-sdk`, `agent-payments-gateway`, `0EM_Frontend`, `0em-payments-dashboard`, and `yield-optimizer` | Superseded by ECC Tools native-payments, hosted analysis, billing-readback, and Linear/project roadmap lanes. |
 | Archived repos touched for PR closure | `stoictradingAI`, `dprc-autotrader-v2`, `polycule-secure`, and `pragmAItism_defAInce` were restored to archived state after stale PR closure. |
-| Final PR/issue sweep | Closed the remaining generated ECC bundles, stale Cloudflare rename PRs, stale README-card PR, test/noise PR, public outreach issues, and empty placeholder issue. Preserved `dexploy#25` findings in Linear `ITO-62` before closure. |
+| Final PR/issue sweep | Closed the remaining generated yus bundles, stale Cloudflare rename PRs, stale README-card PR, test/noise PR, public outreach issues, and empty placeholder issue. Preserved `dexploy#25` findings in Linear `ITO-62` before closure. |
 
 ## Skipped
 

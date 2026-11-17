@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// Runtime dependencies that can be missing when ECC is installed via the
+// Runtime dependencies that can be missing when yus is installed via the
 // Claude Code plugin marketplace (a plain git clone, so `npm install` never
 // runs), even though the code that needs them is fine. Versions are read
 // straight from package.json's "dependencies" field instead of a second
@@ -52,9 +52,9 @@ function describeMissingDependencyError(error) {
     : `npm install --no-save ${moduleName}`;
 
   return (
-    `Missing dependency '${moduleName}'. ECC's production dependencies aren't installed ` +
-    '(this happens when ECC was installed via the Claude Code plugin marketplace, which ' +
-    'clones the repo but never runs npm install). Run "npm install" from the ECC repo ' +
+    `Missing dependency '${moduleName}'. yus's production dependencies aren't installed ` +
+    '(this happens when yus was installed via the Claude Code plugin marketplace, which ' +
+    'clones the repo but never runs npm install). Run "npm install" from the yus repo ' +
     `root, or install just this package with "${installCommand}".`
   );
 }

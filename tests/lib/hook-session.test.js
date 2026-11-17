@@ -20,14 +20,14 @@ console.log('\n=== Hook session ID tests ===\n');
 
 test('payload session_id takes precedence over both environment IDs', () => {
   assert.strictEqual(resolveHookSessionId('{"session_id":"payload-session"}', {
-    ECC_SESSION_ID: 'ecc-session', CLAUDE_SESSION_ID: 'claude-session'
+    YUS_SESSION_ID: 'yus-session', CLAUDE_SESSION_ID: 'claude-session'
   }), 'payload-session');
 });
 
-test('ECC_SESSION_ID takes precedence over CLAUDE_SESSION_ID', () => {
+test('YUS_SESSION_ID takes precedence over CLAUDE_SESSION_ID', () => {
   assert.strictEqual(resolveHookSessionId('{}', {
-    ECC_SESSION_ID: 'ecc-session', CLAUDE_SESSION_ID: 'claude-session'
-  }), 'ecc-session');
+    YUS_SESSION_ID: 'yus-session', CLAUDE_SESSION_ID: 'claude-session'
+  }), 'yus-session');
 });
 
 test('CLAUDE_SESSION_ID remains the legacy fallback', () => {
@@ -36,7 +36,7 @@ test('CLAUDE_SESSION_ID remains the legacy fallback', () => {
 
 test('malformed and empty input safely fall back to the environment', () => {
   for (const input of ['', '  ', '{bad json', undefined, null]) {
-    assert.strictEqual(resolveHookSessionId(input, { ECC_SESSION_ID: 'fallback' }), 'fallback');
+    assert.strictEqual(resolveHookSessionId(input, { YUS_SESSION_ID: 'fallback' }), 'fallback');
   }
 });
 
@@ -49,15 +49,15 @@ test('nonobject JSON does not supply a session ID', () => {
 test('invalid payload ID types and blank IDs fall back safely', () => {
   for (const sessionId of [null, 42, true, {}, [], '', ' \t\n']) {
     assert.strictEqual(resolveHookSessionId(JSON.stringify({ session_id: sessionId }), {
-      ECC_SESSION_ID: 'fallback'
+      YUS_SESSION_ID: 'fallback'
     }), 'fallback');
   }
 });
 
-test('invalid ECC environment IDs fall back to the Claude environment ID', () => {
+test('invalid yus environment IDs fall back to the Claude environment ID', () => {
   for (const sessionId of [undefined, null, 42, true, {}, [], '', ' \t\n']) {
     assert.strictEqual(resolveHookSessionId('{}', {
-      ECC_SESSION_ID: sessionId, CLAUDE_SESSION_ID: 'legacy-session'
+      YUS_SESSION_ID: sessionId, CLAUDE_SESSION_ID: 'legacy-session'
     }), 'legacy-session');
   }
 });
@@ -65,7 +65,7 @@ test('invalid ECC environment IDs fall back to the Claude environment ID', () =>
 test('missing or invalid IDs return an empty string', () => {
   assert.strictEqual(resolveHookSessionId('{}', {}), '');
   assert.strictEqual(resolveHookSessionId('{"session_id":false}', {
-    ECC_SESSION_ID: ' ', CLAUDE_SESSION_ID: null
+    YUS_SESSION_ID: ' ', CLAUDE_SESSION_ID: null
   }), '');
 });
 
@@ -76,7 +76,7 @@ test('only the top-level session_id field is accepted', () => {
 test('raw IDs remain intact for each caller to apply its filename sanitizer', () => {
   for (const sessionId of ['../session\\alpha:*?', 'CON', 'session:one', '  session-one  ', 'sesión']) {
     assert.strictEqual(resolveHookSessionId(JSON.stringify({ session_id: sessionId }), {}), sessionId);
-    assert.strictEqual(resolveHookSessionId('', { ECC_SESSION_ID: sessionId }), sessionId);
+    assert.strictEqual(resolveHookSessionId('', { YUS_SESSION_ID: sessionId }), sessionId);
   }
 });
 

@@ -14,7 +14,7 @@ metadata:
 
 # agent-desktop
 
-> **ECC note.** Requires the `agent-desktop` CLI (install it yourself from
+> **yus note.** Requires the `agent-desktop` CLI (install it yourself from
 > [vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop); this skill never installs it).
 > It can read and operate every app in your desktop session, so use it only when the user asked for
 > desktop automation, and confirm before actions that send, delete, buy or change settings.

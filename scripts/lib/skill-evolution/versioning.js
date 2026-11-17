@@ -256,7 +256,7 @@ function verifySnapshotStorage(skillPath) {
     const descriptor = fs.openSync(staging.contentPath, 'wx');
     try {
       identity = fs.fstatSync(descriptor);
-      fs.writeFileSync(descriptor, 'ECC snapshot storage check\n', 'utf8');
+      fs.writeFileSync(descriptor, 'yus snapshot storage check\n', 'utf8');
     } finally {
       fs.closeSync(descriptor);
     }

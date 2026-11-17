@@ -10,7 +10,7 @@ maintained, stdlib-only package:
   saved merely because a local reference exists.
 
 Raw recovered sources stay outside Git; only a small documented metadata
-fixture ships under ``tasteforge/fixtures/`` (see the ECC skill SOURCE.md).
+fixture ships under ``tasteforge/fixtures/`` (see the yus skill SOURCE.md).
 """
 
 from __future__ import annotations

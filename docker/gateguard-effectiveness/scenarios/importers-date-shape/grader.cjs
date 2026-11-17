@@ -21,4 +21,4 @@ for (const check of checks) {
     /* a throwing check fails */
   }
 }
-console.log(`ECC_EVAL_SCORE ${JSON.stringify({ score: passed / checks.length })}`);
+console.log(`YUS_EVAL_SCORE ${JSON.stringify({ score: passed / checks.length })}`);

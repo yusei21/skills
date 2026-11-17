@@ -1,6 +1,6 @@
-# ECC-029 carrier slice evidence
+# yus-029 carrier slice evidence
 
-Date: September 8, 2026. Milestone: M1 canonical context profiles. The P2a/P2b/P2c stack follows [PR #3037](https://github.com/affaan-m/ECC/pull/3037), based on main `5064474d4d762dc9640234a41617cccb79185cec`. Environment: macOS 26.6.2 arm64, Node 24.9.0, ECC 2.2.1. This source-only report records local development evidence. The packed [carrier contract](context-carriers.md) defines the public boundaries.
+Date: September 8, 2026. Milestone: M1 canonical context profiles. The P2a/P2b/P2c stack follows [PR #3037](https://github.com/yusei21/yus/pull/3037), based on main `5064474d4d762dc9640234a41617cccb79185cec`. Environment: macOS 26.6.2 arm64, Node 24.9.0, yus 2.2.1. This source-only report records local development evidence. The packed [carrier contract](context-carriers.md) defines the public boundaries.
 
 ## Test-first slices and review regressions
 
@@ -24,7 +24,7 @@ Preserve the RED/GREEN commits. Independent security/code review checked the fil
   --include='scripts/profile.js' \
   --include='scripts/ci/validate-context-profiles.js' \
   --reporter=text --reporter=json-summary \
-  --reports-dir=/tmp/ecc-029-carrier-coverage \
+  --reports-dir=/tmp/yus-029-carrier-coverage \
   --check-coverage --lines=80 --functions=80 --branches=80 --statements=80 \
   node --test tests/lib/context-pack-registry.test.js \
   tests/lib/context-profiles.test.js tests/lib/context-resources.test.js \

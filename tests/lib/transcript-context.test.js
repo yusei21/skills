@@ -46,7 +46,7 @@ function test(desc, fn) {
   }
 }
 
-const transcriptRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-transcript-context-'));
+const transcriptRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-transcript-context-'));
 process.on('exit', () => fs.rmSync(transcriptRoot, { recursive: true, force: true }));
 let fixtureSeq = 0;
 
@@ -203,22 +203,22 @@ console.log('\nresolveContextWindowTokens:');
 // Isolation: an env-set window override (either knob) otherwise leaks into the
 // default-window assertions below and fails them (#2290).
 const originalContextWindowEnv = {
-  ECC_CONTEXT_WINDOW_TOKENS: process.env.ECC_CONTEXT_WINDOW_TOKENS,
+  YUS_CONTEXT_WINDOW_TOKENS: process.env.YUS_CONTEXT_WINDOW_TOKENS,
   CLAUDE_CODE_AUTO_COMPACT_WINDOW: process.env.CLAUDE_CODE_AUTO_COMPACT_WINDOW,
 };
-delete process.env.ECC_CONTEXT_WINDOW_TOKENS;
+delete process.env.YUS_CONTEXT_WINDOW_TOKENS;
 delete process.env.CLAUDE_CODE_AUTO_COMPACT_WINDOW;
 
 test('defaults to the standard 200k window', () => {
   assert.strictEqual(resolveContextWindowTokens(50000, 'claude-sonnet-4-6'), STANDARD_CONTEXT_WINDOW_TOKENS);
 });
 
-test('honors an explicit ECC_CONTEXT_WINDOW_TOKENS override (e.g. 400k models, #2290)', () => {
-  process.env.ECC_CONTEXT_WINDOW_TOKENS = '400000';
+test('honors an explicit YUS_CONTEXT_WINDOW_TOKENS override (e.g. 400k models, #2290)', () => {
+  process.env.YUS_CONTEXT_WINDOW_TOKENS = '400000';
   try {
     assert.strictEqual(resolveContextWindowTokens(50000, 'claude-opus-4-x'), 400000);
   } finally {
-    delete process.env.ECC_CONTEXT_WINDOW_TOKENS;
+    delete process.env.YUS_CONTEXT_WINDOW_TOKENS;
   }
 });
 
@@ -232,11 +232,11 @@ test('honors Claude Code native CLAUDE_CODE_AUTO_COMPACT_WINDOW override', () =>
 });
 
 test('ignores a non-positive / invalid window override', () => {
-  process.env.ECC_CONTEXT_WINDOW_TOKENS = 'not-a-number';
+  process.env.YUS_CONTEXT_WINDOW_TOKENS = 'not-a-number';
   try {
     assert.strictEqual(resolveContextWindowTokens(50000, 'claude-sonnet-4-6'), STANDARD_CONTEXT_WINDOW_TOKENS);
   } finally {
-    delete process.env.ECC_CONTEXT_WINDOW_TOKENS;
+    delete process.env.YUS_CONTEXT_WINDOW_TOKENS;
   }
 });
 
@@ -265,11 +265,11 @@ test('recognizes dated/prefixed variants of known large-window model ids (#2461)
 });
 
 test('env window override still wins over the known-model table (#2461)', () => {
-  process.env.ECC_CONTEXT_WINDOW_TOKENS = '400000';
+  process.env.YUS_CONTEXT_WINDOW_TOKENS = '400000';
   try {
     assert.strictEqual(resolveContextWindowTokens(50000, 'claude-fable-5'), 400000);
   } finally {
-    delete process.env.ECC_CONTEXT_WINDOW_TOKENS;
+    delete process.env.YUS_CONTEXT_WINDOW_TOKENS;
   }
 });
 
@@ -292,24 +292,24 @@ for (const [label, tokens, model, explicitWindow, expectedWindow, inferred] of [
   ['[1m] marker', 180000, 'claude-opus-4-5[1m]', undefined, 1000000, false],
   ['known large-window family', 180000, 'claude-fable-5', undefined, 1000000, false],
   ['observed tokens above 200k', 220000, 'unknown-model', undefined, 1000000, true],
-  ['explicit ECC override', 220000, 'claude-opus-4-5[1m]', '400000', 400000, false],
+  ['explicit yus override', 220000, 'claude-opus-4-5[1m]', '400000', 400000, false],
   ['auto-compact fallback', 180000, 'unknown-model', undefined, 786432, false],
-  ['invalid ECC override with marker', 180000, 'claude-opus-4-5[1m]', 'invalid', 1000000, false],
+  ['invalid yus override with marker', 180000, 'claude-opus-4-5[1m]', 'invalid', 1000000, false],
 ]) {
   test(`${label} resolves correctly with an explicit auto-compact trigger`, () => {
-    const previousExplicit = process.env.ECC_CONTEXT_WINDOW_TOKENS;
+    const previousExplicit = process.env.YUS_CONTEXT_WINDOW_TOKENS;
     const previousAutoCompact = process.env.CLAUDE_CODE_AUTO_COMPACT_WINDOW;
     try {
-      if (explicitWindow === undefined) delete process.env.ECC_CONTEXT_WINDOW_TOKENS;
-      else process.env.ECC_CONTEXT_WINDOW_TOKENS = explicitWindow;
+      if (explicitWindow === undefined) delete process.env.YUS_CONTEXT_WINDOW_TOKENS;
+      else process.env.YUS_CONTEXT_WINDOW_TOKENS = explicitWindow;
       process.env.CLAUDE_CODE_AUTO_COMPACT_WINDOW = '786432';
       assert.deepStrictEqual(resolveContextWindow(tokens, model), {
         windowTokens: expectedWindow,
         inferred,
       });
     } finally {
-      if (previousExplicit === undefined) delete process.env.ECC_CONTEXT_WINDOW_TOKENS;
-      else process.env.ECC_CONTEXT_WINDOW_TOKENS = previousExplicit;
+      if (previousExplicit === undefined) delete process.env.YUS_CONTEXT_WINDOW_TOKENS;
+      else process.env.YUS_CONTEXT_WINDOW_TOKENS = previousExplicit;
       if (previousAutoCompact === undefined) delete process.env.CLAUDE_CODE_AUTO_COMPACT_WINDOW;
       else process.env.CLAUDE_CODE_AUTO_COMPACT_WINDOW = previousAutoCompact;
     }
@@ -320,15 +320,15 @@ for (const [label, tokens, model, explicitWindow, expectedWindow, inferred] of [
 // scheduler; a numeric prefix is not evidence of confirmed model capacity.
 for (const invalid of ['200000tokens', '200000.5', '9007199254740992', 'Infinity', '1e309', '0', '-1']) {
   test(`rejects malformed or unsafe window setting ${invalid} without changing precedence`, () => {
-    const previousExplicit = process.env.ECC_CONTEXT_WINDOW_TOKENS;
+    const previousExplicit = process.env.YUS_CONTEXT_WINDOW_TOKENS;
     const previousNative = process.env.CLAUDE_CODE_AUTO_COMPACT_WINDOW;
     try {
-      process.env.ECC_CONTEXT_WINDOW_TOKENS = '';
+      process.env.YUS_CONTEXT_WINDOW_TOKENS = '';
       process.env.CLAUDE_CODE_AUTO_COMPACT_WINDOW = invalid;
       assert.deepStrictEqual(resolveContextWindow(180000, 'unknown-model'), {
         windowTokens: STANDARD_CONTEXT_WINDOW_TOKENS, inferred: true,
       });
-      process.env.ECC_CONTEXT_WINDOW_TOKENS = invalid;
+      process.env.YUS_CONTEXT_WINDOW_TOKENS = invalid;
       process.env.CLAUDE_CODE_AUTO_COMPACT_WINDOW = '400000';
       assert.deepStrictEqual(resolveContextWindow(180000, 'unknown-model'), {
         windowTokens: 400000, inferred: false,
@@ -336,14 +336,14 @@ for (const invalid of ['200000tokens', '200000.5', '9007199254740992', 'Infinity
       assert.deepStrictEqual(resolveContextWindow(180000, 'claude-opus-4-5[1m]'), {
         windowTokens: LARGE_CONTEXT_WINDOW_TOKENS, inferred: false,
       });
-      process.env.ECC_CONTEXT_WINDOW_TOKENS = '400000';
+      process.env.YUS_CONTEXT_WINDOW_TOKENS = '400000';
       process.env.CLAUDE_CODE_AUTO_COMPACT_WINDOW = invalid;
       assert.deepStrictEqual(resolveContextWindow(180000, 'claude-opus-4-5[1m]'), {
         windowTokens: 400000, inferred: false,
       });
     } finally {
-      if (previousExplicit === undefined) delete process.env.ECC_CONTEXT_WINDOW_TOKENS;
-      else process.env.ECC_CONTEXT_WINDOW_TOKENS = previousExplicit;
+      if (previousExplicit === undefined) delete process.env.YUS_CONTEXT_WINDOW_TOKENS;
+      else process.env.YUS_CONTEXT_WINDOW_TOKENS = previousExplicit;
       if (previousNative === undefined) delete process.env.CLAUDE_CODE_AUTO_COMPACT_WINDOW;
       else process.env.CLAUDE_CODE_AUTO_COMPACT_WINDOW = previousNative;
     }
@@ -358,11 +358,11 @@ test('flags the assumed 200k default as inferred', () => {
 });
 
 test('an env override is a detected window, not inferred', () => {
-  process.env.ECC_CONTEXT_WINDOW_TOKENS = '1000000';
+  process.env.YUS_CONTEXT_WINDOW_TOKENS = '1000000';
   try {
     assert.strictEqual(isContextWindowInferred(187000, 'claude-opus-9'), false);
   } finally {
-    delete process.env.ECC_CONTEXT_WINDOW_TOKENS;
+    delete process.env.YUS_CONTEXT_WINDOW_TOKENS;
   }
 });
 

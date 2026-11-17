@@ -25,7 +25,7 @@ function finish() {
     if (ok) score += probe.weight;
     process.stdout.write(`${ok ? 'ok' : 'not ok'} - ${probe.name}\n`);
   }
-  process.stdout.write(`ECC_EVAL_SCORE ${JSON.stringify({ score: Math.round(score * 1000) / 1000 })}\n`);
+  process.stdout.write(`YUS_EVAL_SCORE ${JSON.stringify({ score: Math.round(score * 1000) / 1000 })}\n`);
   process.exit(0);
 }
 process.on('uncaughtException', finish);

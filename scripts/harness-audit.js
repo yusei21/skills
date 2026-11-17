@@ -222,7 +222,7 @@ function hasFileWithExtension(rootDir, relativeDir, extensions) {
 function detectTargetMode(rootDir) {
   const packageJson = safeParseJson(safeRead(rootDir, 'package.json'));
   // 'everything-claude-code' is the legacy package name, kept for older checkouts.
-  if (['ecc-universal', 'everything-claude-code'].includes(packageJson?.name)) {
+  if (['yus-universal', 'everything-claude-code'].includes(packageJson?.name)) {
     return 'repo';
   }
 
@@ -240,20 +240,20 @@ function detectTargetMode(rootDir) {
 
 // The everything-claude-code entries below are legacy install ids, kept so
 // existing 1.x installs are still detected.
-const ECC_PLUGIN_KEY_PATTERNS = [
-  /^ecc@/i,
+const YUS_PLUGIN_KEY_PATTERNS = [
+  /^yus@/i,
   /^everything-claude-code@/i,
 ];
 
-const ECC_LEGACY_PLUGIN_DIRS = [
-  'ecc',
-  'ecc@ecc',
+const YUS_LEGACY_PLUGIN_DIRS = [
+  'yus',
+  'yus@yus',
   'everything-claude-code',
   'everything-claude-code@everything-claude-code',
 ];
 
-const ECC_CACHE_MARKETPLACES = ['everything-claude-code', 'ecc'];
-const ECC_CACHE_PLUGIN_NAMES = ['ecc', 'everything-claude-code'];
+const YUS_CACHE_MARKETPLACES = ['everything-claude-code', 'yus'];
+const YUS_CACHE_PLUGIN_NAMES = ['yus', 'everything-claude-code'];
 
 function uniquePaths(paths) {
   return [...new Set(paths.filter(Boolean))];
@@ -297,7 +297,7 @@ function findPluginInstallFromManifest(installedPluginsPaths) {
     }
 
     for (const [key, value] of Object.entries(manifest.plugins)) {
-      if (!ECC_PLUGIN_KEY_PATTERNS.some(pattern => pattern.test(key))) {
+      if (!YUS_PLUGIN_KEY_PATTERNS.some(pattern => pattern.test(key))) {
         continue;
       }
 
@@ -323,7 +323,7 @@ function findPluginInstallFromManifest(installedPluginsPaths) {
 
 function findPluginInstallFlatLayout(candidateRoots) {
   for (const pluginsDir of candidateRoots) {
-    for (const pluginDir of ECC_LEGACY_PLUGIN_DIRS) {
+    for (const pluginDir of YUS_LEGACY_PLUGIN_DIRS) {
       const hit = findPluginJsonUnder(path.join(pluginsDir, pluginDir));
       if (hit) {
         return hit;
@@ -336,8 +336,8 @@ function findPluginInstallFlatLayout(candidateRoots) {
 
 function findPluginInstallMarketplaceCache(candidateRoots) {
   for (const pluginsDir of candidateRoots) {
-    for (const marketplace of ECC_CACHE_MARKETPLACES) {
-      for (const pluginName of ECC_CACHE_PLUGIN_NAMES) {
+    for (const marketplace of YUS_CACHE_MARKETPLACES) {
+      for (const pluginName of YUS_CACHE_PLUGIN_NAMES) {
         const pluginRoot = path.join(pluginsDir, 'cache', marketplace, pluginName);
         if (!fs.existsSync(pluginRoot)) {
           continue;
@@ -839,10 +839,10 @@ function getConsumerChecks(rootDir) {
       category: 'Tool Coverage',
       points: 4,
       scopes: ['repo'],
-      path: '~/.claude/plugins/ecc/ (legacy everything-claude-code paths also supported)',
-      description: 'ECC is installed for the active user or project',
+      path: '~/.claude/plugins/yus/ (legacy everything-claude-code paths also supported)',
+      description: 'yus is installed for the active user or project',
       pass: Boolean(pluginInstall),
-      fix: 'Install the ECC plugin for this user or project before auditing project-specific harness quality.',
+      fix: 'Install the yus plugin for this user or project before auditing project-specific harness quality.',
     },
     {
       id: 'consumer-project-overrides',
@@ -856,7 +856,7 @@ function getConsumerChecks(rootDir) {
         countFiles(rootDir, '.claude/commands', '.md') > 0 ||
         fileExists(rootDir, '.claude/settings.json') ||
         fileExists(rootDir, '.claude/hooks.json'),
-      fix: 'Add project-local .claude hooks, commands, skills, or settings that tailor ECC to this repo.',
+      fix: 'Add project-local .claude hooks, commands, skills, or settings that tailor yus to this repo.',
     },
     {
       id: 'consumer-instructions',
@@ -1056,7 +1056,7 @@ Usage: node scripts/harness-audit.js [scope] [--scope <repo|hooks|skills|command
        [--root <path>]
 
 Deterministic harness audit based on explicit file/rule checks.
-Audits the current working directory by default and auto-detects ECC repo mode vs consumer-project mode.
+Audits the current working directory by default and auto-detects yus repo mode vs consumer-project mode.
 `);
   process.exit(exitCode);
 }

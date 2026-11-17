@@ -27,39 +27,39 @@ console.log('\n=== Testing packed-artifact lifecycle runner ===\n');
 
 test('resolves package and hash from explicit environment variables', () => {
   const options = lifecycle.parseEnvironment({
-    ECC_RELEASE_PACKAGE: 'release-artifacts/ecc-universal-2.2.0.tgz',
-    ECC_RELEASE_SHA256: 'a'.repeat(64),
+    YUS_RELEASE_PACKAGE: 'release-artifacts/yus-universal-2.2.0.tgz',
+    YUS_RELEASE_SHA256: 'a'.repeat(64),
   }, '/workspace');
 
   assert.strictEqual(
     options.packagePath,
-    path.resolve('/workspace', 'release-artifacts/ecc-universal-2.2.0.tgz')
+    path.resolve('/workspace', 'release-artifacts/yus-universal-2.2.0.tgz')
   );
   assert.strictEqual(options.expectedSha256, 'a'.repeat(64));
 });
 
 test('rejects missing, malformed, and non-tgz release inputs', () => {
-  assert.throws(() => lifecycle.parseEnvironment({}, '/workspace'), /ECC_RELEASE_PACKAGE/);
+  assert.throws(() => lifecycle.parseEnvironment({}, '/workspace'), /YUS_RELEASE_PACKAGE/);
   assert.throws(() => lifecycle.parseEnvironment({
-    ECC_RELEASE_PACKAGE: 'package.zip',
-    ECC_RELEASE_SHA256: 'a'.repeat(64),
+    YUS_RELEASE_PACKAGE: 'package.zip',
+    YUS_RELEASE_SHA256: 'a'.repeat(64),
   }, '/workspace'), /\.tgz/);
   assert.throws(() => lifecycle.parseEnvironment({
-    ECC_RELEASE_PACKAGE: 'release-artifacts/ecc-universal-2.2.0.tgz',
-    ECC_RELEASE_SHA256: 'not-a-hash',
+    YUS_RELEASE_PACKAGE: 'release-artifacts/yus-universal-2.2.0.tgz',
+    YUS_RELEASE_SHA256: 'not-a-hash',
   }, '/workspace'), /SHA-256/);
   assert.throws(() => lifecycle.parseEnvironment({
-    ECC_RELEASE_PACKAGE: '../release-artifacts/ecc-universal-2.2.0.tgz',
-    ECC_RELEASE_SHA256: 'a'.repeat(64),
+    YUS_RELEASE_PACKAGE: '../release-artifacts/yus-universal-2.2.0.tgz',
+    YUS_RELEASE_SHA256: 'a'.repeat(64),
   }, '/workspace'), /release-artifacts/);
   assert.throws(() => lifecycle.parseEnvironment({
-    ECC_RELEASE_PACKAGE: '/tmp/ecc-universal-2.2.0.tgz',
-    ECC_RELEASE_SHA256: 'a'.repeat(64),
+    YUS_RELEASE_PACKAGE: '/tmp/yus-universal-2.2.0.tgz',
+    YUS_RELEASE_SHA256: 'a'.repeat(64),
   }, '/workspace'), /release-artifacts/);
 });
 
 test('hashFile computes a lowercase SHA-256 digest', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-packed-hash-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-packed-hash-'));
   const filePath = path.join(tempDir, 'package.tgz');
 
   try {
@@ -98,7 +98,7 @@ test('lifecycle child processes receive no inherited credentials', () => {
 
 test('public CLI invocations use npm exec instead of internal package paths', () => {
   const invocation = lifecycle.getNpmExecInvocation(
-    ['ecc-universal', 'setup', '--help'],
+    ['yus-universal', 'setup', '--help'],
     { ComSpec: 'C:\\Windows\\System32\\cmd.exe' },
     'win32'
   );
@@ -108,11 +108,11 @@ test('public CLI invocations use npm exec instead of internal package paths', ()
     '/d',
     '/s',
     '/c',
-    'npm exec --offline --yes=false -- ecc-universal setup --help',
+    'npm exec --offline --yes=false -- yus-universal setup --help',
   ]);
 
   const unixInvocation = lifecycle.getNpmExecInvocation(
-    ['ecc', 'doctor', '--target', 'cursor', '--json'],
+    ['yus', 'doctor', '--target', 'cursor', '--json'],
     {},
     'linux'
   );
@@ -121,14 +121,14 @@ test('public CLI invocations use npm exec instead of internal package paths', ()
     unixInvocation.args.slice(0, 4),
     ['exec', '--offline', '--yes=false', '--']
   );
-  assert.strictEqual(unixInvocation.args[4], 'ecc');
+  assert.strictEqual(unixInvocation.args[4], 'yus');
   assert.ok(!unixInvocation.args.some(argument => argument.includes('node_modules')));
 });
 
 test('Windows public CLI invocation accepts the exact Itô capability selection', () => {
   const invocation = lifecycle.getNpmExecInvocation(
     [
-      'ecc', 'install', '--profile', 'core',
+      'yus', 'install', '--profile', 'core',
       '--with', 'capability:ito-compute',
       '--with', 'capability:prediction-markets',
       '--target', 'cursor', '--enable-hooks', '--json',
@@ -140,7 +140,7 @@ test('Windows public CLI invocation accepts the exact Itô capability selection'
   assert.strictEqual(invocation.command, 'C:\\Windows\\System32\\cmd.exe');
   assert.strictEqual(
     invocation.args[3],
-    'npm exec --offline --yes=false -- ecc install --profile core --with capability:ito-compute --with capability:prediction-markets --target cursor --enable-hooks --json'
+    'npm exec --offline --yes=false -- yus install --profile core --with capability:ito-compute --with capability:prediction-markets --target cursor --enable-hooks --json'
   );
 });
 

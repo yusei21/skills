@@ -30,8 +30,8 @@ function inTempRepo(fn) {
 
   try {
     spawnSync('git', ['init'], { cwd: repoDir, stdio: 'pipe', encoding: 'utf8' });
-    spawnSync('git', ['config', 'user.name', 'ECC Test'], { cwd: repoDir, stdio: 'pipe', encoding: 'utf8' });
-    spawnSync('git', ['config', 'user.email', 'ecc@example.com'], { cwd: repoDir, stdio: 'pipe', encoding: 'utf8' });
+    spawnSync('git', ['config', 'user.name', 'yus Test'], { cwd: repoDir, stdio: 'pipe', encoding: 'utf8' });
+    spawnSync('git', ['config', 'user.email', 'yus@example.com'], { cwd: repoDir, stdio: 'pipe', encoding: 'utf8' });
     process.chdir(repoDir);
     return fn(repoDir);
   } finally {
@@ -289,11 +289,11 @@ if (test('runs Windows batch linters through cmd with quoted command and argumen
     '/v:off',
     '/s',
     '/c',
-    '""%ECC_LINTER_TOKEN_0%" "%ECC_LINTER_TOKEN_1%" "%ECC_LINTER_TOKEN_2%" "%ECC_LINTER_TOKEN_3%" "%ECC_LINTER_TOKEN_4%" "%ECC_LINTER_TOKEN_5%" "%ECC_LINTER_TOKEN_6%" "%ECC_LINTER_TOKEN_7%""'
+    '""%YUS_LINTER_TOKEN_0%" "%YUS_LINTER_TOKEN_1%" "%YUS_LINTER_TOKEN_2%" "%YUS_LINTER_TOKEN_3%" "%YUS_LINTER_TOKEN_4%" "%YUS_LINTER_TOKEN_5%" "%YUS_LINTER_TOKEN_6%" "%YUS_LINTER_TOKEN_7%""'
   ]);
   assert.deepStrictEqual(
-    Object.fromEntries(Object.entries(invocation.options.env).filter(([key]) => key.startsWith('ECC_LINTER_TOKEN_'))),
-    Object.fromEntries([command, ...args].map((value, index) => [`ECC_LINTER_TOKEN_${index}`, value]))
+    Object.fromEntries(Object.entries(invocation.options.env).filter(([key]) => key.startsWith('YUS_LINTER_TOKEN_'))),
+    Object.fromEntries([command, ...args].map((value, index) => [`YUS_LINTER_TOKEN_${index}`, value]))
   );
   assert.ok(!invocation.args[4].includes(command), 'untrusted command must not be embedded in cmd source');
   assert.ok(!invocation.args[4].includes(args[1]), 'untrusted argument must not be embedded in cmd source');
@@ -302,7 +302,7 @@ if (test('runs Windows batch linters through cmd with quoted command and argumen
 
   const plainCmd = hook.getLinterInvocation('C:\\tools\\eslint.cmd', [], 'win32');
   assert.ok(/cmd\.exe$/i.test(plainCmd.command));
-  assert.deepStrictEqual(plainCmd.args, ['/d', '/v:off', '/s', '/c', '""%ECC_LINTER_TOKEN_0%""']);
+  assert.deepStrictEqual(plainCmd.args, ['/d', '/v:off', '/s', '/c', '""%YUS_LINTER_TOKEN_0%""']);
   assert.strictEqual(plainCmd.options.shell, false);
 
   const batch = hook.getLinterInvocation('C:\\tools\\lint.BAT', [], 'win32');
@@ -319,38 +319,38 @@ if (test('runs Windows batch linters through cmd with quoted command and argumen
 })) passed++; else failed++;
 
 if (test('isolates Windows cmd token variables without mutating the parent environment', () => {
-  const original = process.env.ECC_LINTER_TOKEN_0;
-  process.env.ECC_LINTER_TOKEN_0 = 'parent value';
+  const original = process.env.YUS_LINTER_TOKEN_0;
+  process.env.YUS_LINTER_TOKEN_0 = 'parent value';
 
   try {
     const invocation = hook.getLinterInvocation('C:\\tools\\eslint.cmd', ['100%.js'], 'win32');
-    assert.strictEqual(invocation.options.env.ECC_LINTER_TOKEN_0, 'C:\\tools\\eslint.cmd');
-    assert.strictEqual(invocation.options.env.ECC_LINTER_TOKEN_1, '100%.js');
-    assert.strictEqual(process.env.ECC_LINTER_TOKEN_0, 'parent value');
+    assert.strictEqual(invocation.options.env.YUS_LINTER_TOKEN_0, 'C:\\tools\\eslint.cmd');
+    assert.strictEqual(invocation.options.env.YUS_LINTER_TOKEN_1, '100%.js');
+    assert.strictEqual(process.env.YUS_LINTER_TOKEN_0, 'parent value');
   } finally {
-    if (original === undefined) delete process.env.ECC_LINTER_TOKEN_0;
-    else process.env.ECC_LINTER_TOKEN_0 = original;
+    if (original === undefined) delete process.env.YUS_LINTER_TOKEN_0;
+    else process.env.YUS_LINTER_TOKEN_0 = original;
   }
 })) passed++; else failed++;
 
 if (process.platform === 'win32') {
   if (test('passes percent and exclamation filenames literally to a Windows batch linter', () => {
-    const repoDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc cmd literal '));
+    const repoDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus cmd literal '));
     try {
       const command = path.join(repoDir, 'lint %!.cmd');
       const capturePath = path.join(repoDir, 'captured arguments.txt');
       fs.writeFileSync(command, [
         '@echo off',
         'setlocal DisableDelayedExpansion',
-        '> "%ECC_CAPTURE_PATH%" echo(%~1',
-        '>> "%ECC_CAPTURE_PATH%" echo(%~2',
+        '> "%YUS_CAPTURE_PATH%" echo(%~1',
+        '>> "%YUS_CAPTURE_PATH%" echo(%~2',
         ''
       ].join('\r\n'), 'utf8');
 
       const invocation = hook.getLinterInvocation(command, ['100% ready.js', '!important!.js'], 'win32');
       const result = spawnSync(invocation.command, invocation.args, {
         ...invocation.options,
-        env: { ...invocation.options.env, ECC_CAPTURE_PATH: capturePath }
+        env: { ...invocation.options.env, YUS_CAPTURE_PATH: capturePath }
       });
 
       assert.strictEqual(result.status, 0, result.stderr || result.error?.message);

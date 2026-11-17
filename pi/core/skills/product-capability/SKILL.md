@@ -1,8 +1,8 @@
 ---
 name: product-capability
-description: Translate PRD intent, roadmap asks, or product discussions into an implementation-ready capability plan that exposes constraints, invariants, interfaces, and unresolved decisions before multi-service work starts. Use when the user needs an ECC-native PRD-to-SRS lane instead of vague planning prose.
+description: Translate PRD intent, roadmap asks, or product discussions into an implementation-ready capability plan that exposes constraints, invariants, interfaces, and unresolved decisions before multi-service work starts. Use when the user needs an yus-native PRD-to-SRS lane instead of vague planning prose.
 metadata:
-  origin: ECC
+  origin: yus
 ---
 
 # Product Capability
@@ -99,7 +99,7 @@ End with the exact handoff:
 - needs architecture review first
 - needs product clarification first
 
-If useful, point to the next ECC-native lane:
+If useful, point to the next yus-native lane:
 
 - `project-flow-ops`
 - `workspace-surface-audit`
@@ -132,11 +132,11 @@ OPEN QUESTIONS
 - blockers or product decisions still required
 
 HANDOFF
-- what should happen next and which ECC lane should take it
+- what should happen next and which yus lane should take it
 ```
 
 ## Good Outcomes
 
 - Product intent is now concrete enough to implement without rediscovering hidden constraints mid-PR.
 - Engineering review has a durable artifact instead of relying on memory or Slack context.
-- The resulting plan is reusable across Claude Code, Codex, Cursor, OpenCode, and ECC 2.0 planning surfaces.
+- The resulting plan is reusable across Claude Code, Codex, Cursor, OpenCode, and yus 2.0 planning surfaces.

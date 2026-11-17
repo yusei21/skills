@@ -36,9 +36,9 @@ function isCoveredByAncestor(target, roots) {
   return false
 }
 
-// `node scripts/<name>.js`, tolerating quoted ECC_ROOT or SKILL_DIR prefixes.
+// `node scripts/<name>.js`, tolerating quoted YUS_ROOT or SKILL_DIR prefixes.
 const SCRIPT_INVOCATION_RE =
-  /node\s+["']?(?:\$\{?(?:ECC_ROOT|SKILL_DIR)\}?\/)?scripts\/([A-Za-z0-9._/-]+\.js)["']?/g
+  /node\s+["']?(?:\$\{?(?:YUS_ROOT|SKILL_DIR)\}?\/)?scripts\/([A-Za-z0-9._/-]+\.js)["']?/g
 
 function collectCommandScriptReferences(repoRoot) {
   const commandsDir = path.join(repoRoot, "commands")
@@ -63,7 +63,7 @@ function buildExpectedPublishPaths(repoRoot) {
 
   const extraPaths = [
     "manifests",
-    "scripts/ecc.js",
+    "scripts/yus.js",
     "scripts/eval-harness.js",
     "examples/eval-harness",
     "scripts/feedback.js",
@@ -111,7 +111,7 @@ function buildExpectedPublishPaths(repoRoot) {
     "scripts/gemini-adapt-agents.js",
     "scripts/qwen-adapt-agents.js",
     "scripts/gateguard-report.js",
-    "scripts/sync-ecc-to-codex.sh",
+    "scripts/sync-yus-to-codex.sh",
     "scripts/codex/legacy-sync-state.js",
     "scripts/codex/install-global-git-hooks.sh",
     "scripts/codex/check-codex-global-state.sh",
@@ -121,7 +121,7 @@ function buildExpectedPublishPaths(repoRoot) {
     "scripts/codex/merge-mcp-config.js",
     ".codex-plugin",
     ".qoder-plugin",
-    "plugins/ecc",
+    "plugins/yus",
     ".mcp.json",
     "install.sh",
     "install.ps1",
@@ -134,13 +134,13 @@ function buildExpectedPublishPaths(repoRoot) {
     "NOTICE.md",
     "NOTICE.pt-BR.md",
     "NOTICE.zh-CN.md",
-    "assets/ecc-icon.svg",
+    "assets/yus-icon.svg",
     "assets/hero.png",
     "assets/images/community",
     "docs/CODEX-NAVIGATION-GUIDE.md",
     "docs/COMMAND-AGENT-MAP.md",
     "docs/ROADMAP.md",
-    "docs/design/ecc-memory-vault.md",
+    "docs/design/yus-memory-vault.md",
     "docs/design/context-profiles.md",
     "docs/design/context-carriers.md",
     "docs/design/context-profile-delivery.md",
@@ -199,7 +199,7 @@ function main() {
       )
     }],
     ["npm pack --ignore-scripts publishes the reduced runtime surface (prepack not tested)", () => {
-      const cache = fs.mkdtempSync(path.join(os.tmpdir(), "ecc-pack-surface-"))
+      const cache = fs.mkdtempSync(path.join(os.tmpdir(), "yus-pack-surface-"))
       let result
       try {
         result = runNpm(["pack", "--dry-run", "--json", "--ignore-scripts", "--offline", "--cache", cache], {
@@ -282,7 +282,7 @@ function main() {
         "scripts/release-video-suite.js",
         "scripts/work-items.js",
         "scripts/platform-audit.js",
-        "scripts/sync-ecc-to-codex.sh",
+        "scripts/sync-yus-to-codex.sh",
         "scripts/codex/legacy-sync-state.js",
         "scripts/codex/install-global-git-hooks.sh",
         "scripts/codex/check-codex-global-state.sh",
@@ -305,15 +305,15 @@ function main() {
         "NOTICE.md",
         "NOTICE.pt-BR.md",
         "NOTICE.zh-CN.md",
-        "plugins/ecc/.codex-plugin/plugin.json",
-        "assets/ecc-icon.svg",
+        "plugins/yus/.codex-plugin/plugin.json",
+        "assets/yus-icon.svg",
         "assets/hero.png",
         "assets/images/community/discord.svg",
         "assets/images/community/heart.svg",
         "docs/CODEX-NAVIGATION-GUIDE.md",
         "docs/COMMAND-AGENT-MAP.md",
         "docs/ROADMAP.md",
-        "docs/design/ecc-memory-vault.md",
+        "docs/design/yus-memory-vault.md",
         "schemas/install-state.schema.json",
         "schemas/memory.schema.json",
         "skills/backend/backend-patterns/SKILL.md",

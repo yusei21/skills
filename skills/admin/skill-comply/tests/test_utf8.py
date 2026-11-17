@@ -125,9 +125,9 @@ def test_real_cli_receives_utf8_prompt_on_stdin(tmp_path: Path, monkeypatch: pyt
         "#!/usr/bin/env python3\n"
         "import os, sys\n"
         "data = sys.stdin.buffer.read()\n"
-        "with open(os.environ['ECC_FAKE_CLAUDE_STDIN'], 'wb') as stream:\n"
+        "with open(os.environ['YUS_FAKE_CLAUDE_STDIN'], 'wb') as stream:\n"
         "    stream.write(data)\n"
-        "with open(os.environ['ECC_FAKE_CLAUDE_RESPONSE'], 'rb') as stream:\n"
+        "with open(os.environ['YUS_FAKE_CLAUDE_RESPONSE'], 'rb') as stream:\n"
         "    sys.stdout.buffer.write(stream.read())\n",
         encoding="ascii",
     )
@@ -135,8 +135,8 @@ def test_real_cli_receives_utf8_prompt_on_stdin(tmp_path: Path, monkeypatch: pyt
     captured = tmp_path / "stdin.bin"
     response = tmp_path / "response.yaml"
     response.write_text(yaml.safe_dump(SPEC, allow_unicode=True), encoding="utf-8")
-    monkeypatch.setenv("ECC_FAKE_CLAUDE_STDIN", str(captured))
-    monkeypatch.setenv("ECC_FAKE_CLAUDE_RESPONSE", str(response))
+    monkeypatch.setenv("YUS_FAKE_CLAUDE_STDIN", str(captured))
+    monkeypatch.setenv("YUS_FAKE_CLAUDE_RESPONSE", str(response))
     monkeypatch.setenv("PATH", str(tmp_path) + os.pathsep + os.environ["PATH"])
 
     skill = tmp_path / "SKILL.md"
@@ -163,7 +163,7 @@ def test_report_is_written_as_utf8(tmp_path: Path, monkeypatch: pytest.MonkeyPat
 
 
 def test_utf8_boundaries_under_legacy_encoding() -> None:
-    if os.environ.get("ECC_UTF8_TEST_CHILD") == "1":
+    if os.environ.get("YUS_UTF8_TEST_CHILD") == "1":
         pytest.skip("The child process must not launch another child")
     script = dedent("""
         import codecs
@@ -203,7 +203,7 @@ def test_utf8_boundaries_under_legacy_encoding() -> None:
         cwd=source.parents[1],
         env={**os.environ, "LC_ALL": "C", "PYTHONCOERCELOCALE": "0", "PYTHONUTF8": "0",
              "PYTHONIOENCODING": "utf-8", "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
-             "PYTEST_ADDOPTS": "", "ECC_UTF8_TEST_CHILD": "1"},
+             "PYTEST_ADDOPTS": "", "YUS_UTF8_TEST_CHILD": "1"},
         capture_output=True,
         encoding="utf-8",
         timeout=120,

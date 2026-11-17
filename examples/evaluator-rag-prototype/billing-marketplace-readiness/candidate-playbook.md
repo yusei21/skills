@@ -32,10 +32,10 @@ their own approval path.
 
 ## Validation Gates
 
-- `rg -n "billing|Billing|Marketplace|marketplace|subscription|seat|entitlement|plan" README.md docs/releases/2.0.0-rc.1 docs/ECC-2.0-GA-ROADMAP.md`
+- `rg -n "billing|Billing|Marketplace|marketplace|subscription|seat|entitlement|plan" README.md docs/releases/2.0.0-rc.1 docs/yus-2.0-GA-ROADMAP.md`
 - `gh api repos/ECC-Tools/ECC-Tools`
 - Manual live check of `https://github.com/marketplace/ecc-tools`
-- `npx --yes markdownlint-cli docs/releases/2.0.0-rc.1/*.md docs/ECC-2.0-GA-ROADMAP.md`
+- `npx --yes markdownlint-cli docs/releases/2.0.0-rc.1/*.md docs/yus-2.0-GA-ROADMAP.md`
 - `git diff --check`
 
 Record the evidence in a maintainer-owned PR before release copy is published.

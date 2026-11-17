@@ -92,7 +92,7 @@ function describeClaudeSkillOperation(targetRoot, operation) {
     return null;
   }
 
-  // Install-state files record either the flat source layout (older ECC) or
+  // Install-state files record either the flat source layout (older yus) or
   // skills/<department>/<skill>/...; both map to the same installed skill.
   const { flattenSkillPath, knownDepartments } = require('../skill-layout');
   const sourceParts = flattenSkillPath(sourceRelativePath, knownDepartments()).split('/');
@@ -103,7 +103,7 @@ function describeClaudeSkillOperation(targetRoot, operation) {
   const skillName = sourceParts[1];
   const relativeParts = sourceParts.slice(2);
   const flatSkillRoot = path.join(targetRoot, 'skills', skillName);
-  const legacySkillRoot = path.join(targetRoot, 'skills', 'ecc', skillName);
+  const legacySkillRoot = path.join(targetRoot, 'skills', 'yus', skillName);
 
   return {
     sourceKey: sourceRelativePath,
@@ -221,16 +221,16 @@ function classifyPreviousOperations(plan, previousState) {
 
 function createConflictWarning(skillName, flatSkillRoot, retainsLegacy) {
   const legacySuffix = retainsLegacy
-    ? ' The existing ECC-managed nested copy was retained and remains tracked for uninstall.'
+    ? ' The existing yus-managed nested copy was retained and remains tracked for uninstall.'
     : '';
-  return `Skipped Claude skill '${skillName}' at ${flatSkillRoot}: the flat skill directory is user-owned because it is not recorded in ECC install-state.${legacySuffix}`;
+  return `Skipped Claude skill '${skillName}' at ${flatSkillRoot}: the flat skill directory is user-owned because it is not recorded in yus install-state.${legacySuffix}`;
 }
 
 function createFileConflictWarning(destinationPath, retainsLegacy) {
   const legacySuffix = retainsLegacy
-    ? ' The matching ECC-managed nested file was retained and remains tracked for uninstall.'
+    ? ' The matching yus-managed nested file was retained and remains tracked for uninstall.'
     : '';
-  return `Skipped user-owned Claude skill file ${destinationPath}: the existing file is not recorded in ECC install-state.${legacySuffix}`;
+  return `Skipped user-owned Claude skill file ${destinationPath}: the existing file is not recorded in yus install-state.${legacySuffix}`;
 }
 
 function createDisabledMigration(plan, previousState) {

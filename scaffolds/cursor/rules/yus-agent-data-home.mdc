@@ -1,0 +1,16 @@
+---
+description: "yus Cursor memory boundary — keeps session data out of Claude Code's ~/.claude"
+alwaysApply: true
+---
+
+# yus agent data home (Cursor)
+
+This project uses yus with **isolated memory persistence** for Cursor:
+
+- Default data root: `~/.cursor/yus` (not `~/.claude`)
+- Env var: `YUS_AGENT_DATA_HOME` (set automatically by yus's Cursor `sessionStart` hook when hooks are wired)
+- Project override: `.cursor/yus-agent-data.json` → `agentDataHome`
+
+If the user asks where yus stored session context or learned skills, point them at `$YUS_AGENT_DATA_HOME/session-data/` and `$YUS_AGENT_DATA_HOME/skills/learned/`.
+
+To **share** memory with Claude Code intentionally (not recommended for parallel use), set `YUS_AGENT_DATA_HOME` to `~/.claude` in the shell or in `.cursor/yus-agent-data.json`.

@@ -62,7 +62,7 @@ function runScript(input, envOverrides = {}, options = {}) {
     timeout: 10000,
     env: {
       ...process.env, ...ISOLATED_HOME_ENV,
-      ECC_SESSION_ID: '', CLAUDE_SESSION_ID: '',
+      YUS_SESSION_ID: '', CLAUDE_SESSION_ID: '',
       ...envOverrides,
     },
     cwd: options.cwd,
@@ -94,7 +94,7 @@ function runTests() {
     const inputStr = JSON.stringify(input);
     const result = runScript(input, {
       CLAUDE_HOOK_EVENT_NAME: 'PostToolUse',
-      ECC_SESSION_ID: 'sess-123',
+      YUS_SESSION_ID: 'sess-123',
     });
     assert.strictEqual(result.code, 0);
     assert.strictEqual(result.stdout, inputStr);
@@ -112,7 +112,7 @@ function runTests() {
     const result = runScript(input, {
       ...withTempHome(tmpHome),
       CLAUDE_HOOK_EVENT_NAME: 'PostToolUse',
-      ECC_SESSION_ID: 'ecc-session-1234',
+      YUS_SESSION_ID: 'yus-session-1234',
     });
     assert.strictEqual(result.code, 0);
 
@@ -120,7 +120,7 @@ function runTests() {
     assert.ok(fs.existsSync(metricsFile), `Expected metrics file at ${metricsFile}`);
 
     const row = JSON.parse(fs.readFileSync(metricsFile, 'utf8').trim());
-    assert.strictEqual(row.session_id, 'ecc-session-1234');
+    assert.strictEqual(row.session_id, 'yus-session-1234');
     assert.strictEqual(row.tool_name, 'Write');
     assert.strictEqual(row.input_params_json, '{"file_path":"src/app.rs"}');
     assert.deepStrictEqual(row.file_paths, ['src/app.rs']);
@@ -144,7 +144,7 @@ function runTests() {
     const result = runScript(input, {
       ...withTempHome(tmpHome),
       CLAUDE_HOOK_EVENT_NAME: 'PostToolUse',
-      ECC_SESSION_ID: 'ecc-session-5678',
+      YUS_SESSION_ID: 'yus-session-5678',
     });
     assert.strictEqual(result.code, 0);
 
@@ -173,7 +173,7 @@ function runTests() {
     const result = runScript(input, {
       ...withTempHome(tmpHome),
       CLAUDE_HOOK_EVENT_NAME: 'PostToolUse',
-      ECC_SESSION_ID: 'ecc-session-edit',
+      YUS_SESSION_ID: 'yus-session-edit',
     });
     assert.strictEqual(result.code, 0);
 
@@ -214,7 +214,7 @@ function runTests() {
     const result = runScript(input, {
       ...withTempHome(tmpHome),
       CLAUDE_HOOK_EVENT_NAME: 'PostToolUse',
-      ECC_SESSION_ID: 'ecc-session-multiedit',
+      YUS_SESSION_ID: 'yus-session-multiedit',
     });
     assert.strictEqual(result.code, 0);
 
@@ -244,8 +244,8 @@ function runTests() {
     const repoDir = fs.mkdtempSync(path.join(os.tmpdir(), 'session-activity-tracker-repo-'));
 
     spawnSync('git', ['init'], { cwd: repoDir, encoding: 'utf8' });
-    spawnSync('git', ['config', 'user.email', 'ecc@example.com'], { cwd: repoDir, encoding: 'utf8' });
-    spawnSync('git', ['config', 'user.name', 'ECC Tests'], { cwd: repoDir, encoding: 'utf8' });
+    spawnSync('git', ['config', 'user.email', 'yus@example.com'], { cwd: repoDir, encoding: 'utf8' });
+    spawnSync('git', ['config', 'user.name', 'yus Tests'], { cwd: repoDir, encoding: 'utf8' });
 
     const srcDir = path.join(repoDir, 'src');
     fs.mkdirSync(srcDir, { recursive: true });
@@ -267,7 +267,7 @@ function runTests() {
     const result = runScript(input, {
       ...withTempHome(tmpHome),
       CLAUDE_HOOK_EVENT_NAME: 'PostToolUse',
-      ECC_SESSION_ID: 'ecc-session-write-modify',
+      YUS_SESSION_ID: 'yus-session-write-modify',
     }, {
       cwd: repoDir,
     });
@@ -293,8 +293,8 @@ function runTests() {
     const repoDir = fs.mkdtempSync(path.join(os.tmpdir(), 'session-activity-tracker-delete-repo-'));
 
     spawnSync('git', ['init'], { cwd: repoDir, encoding: 'utf8' });
-    spawnSync('git', ['config', 'user.email', 'ecc@example.com'], { cwd: repoDir, encoding: 'utf8' });
-    spawnSync('git', ['config', 'user.name', 'ECC Tests'], { cwd: repoDir, encoding: 'utf8' });
+    spawnSync('git', ['config', 'user.email', 'yus@example.com'], { cwd: repoDir, encoding: 'utf8' });
+    spawnSync('git', ['config', 'user.name', 'yus Tests'], { cwd: repoDir, encoding: 'utf8' });
 
     const srcDir = path.join(repoDir, 'src');
     fs.mkdirSync(srcDir, { recursive: true });
@@ -315,7 +315,7 @@ function runTests() {
     const result = runScript(input, {
       ...withTempHome(tmpHome),
       CLAUDE_HOOK_EVENT_NAME: 'PostToolUse',
-      ECC_SESSION_ID: 'ecc-session-delete',
+      YUS_SESSION_ID: 'yus-session-delete',
     }, {
       cwd: repoDir,
     });
@@ -341,8 +341,8 @@ function runTests() {
     const repoDir = fs.mkdtempSync(path.join(os.tmpdir(), 'session-activity-tracker-nested-repo-'));
 
     spawnSync('git', ['init'], { cwd: repoDir, encoding: 'utf8' });
-    spawnSync('git', ['config', 'user.email', 'ecc@example.com'], { cwd: repoDir, encoding: 'utf8' });
-    spawnSync('git', ['config', 'user.name', 'ECC Tests'], { cwd: repoDir, encoding: 'utf8' });
+    spawnSync('git', ['config', 'user.email', 'yus@example.com'], { cwd: repoDir, encoding: 'utf8' });
+    spawnSync('git', ['config', 'user.name', 'yus Tests'], { cwd: repoDir, encoding: 'utf8' });
 
     const srcDir = path.join(repoDir, 'src');
     const nestedCwd = path.join(repoDir, 'subdir');
@@ -367,7 +367,7 @@ function runTests() {
     const result = runScript(input, {
       ...withTempHome(tmpHome),
       CLAUDE_HOOK_EVENT_NAME: 'PostToolUse',
-      ECC_SESSION_ID: 'ecc-session-nested-cwd',
+      YUS_SESSION_ID: 'yus-session-nested-cwd',
     }, {
       cwd: nestedCwd,
     });
@@ -388,7 +388,7 @@ function runTests() {
     fs.rmSync(repoDir, { recursive: true, force: true });
   }) ? passed++ : failed++);
 
-  (test('prefers ECC_SESSION_ID over CLAUDE_SESSION_ID and redacts bash summaries', () => {
+  (test('prefers YUS_SESSION_ID over CLAUDE_SESSION_ID and redacts bash summaries', () => {
     const tmpHome = makeTempDir();
     const input = {
       tool_name: 'Bash',
@@ -400,14 +400,14 @@ function runTests() {
     const result = runScript(input, {
       ...withTempHome(tmpHome),
       CLAUDE_HOOK_EVENT_NAME: 'PostToolUse',
-      ECC_SESSION_ID: 'ecc-session-1',
+      YUS_SESSION_ID: 'yus-session-1',
       CLAUDE_SESSION_ID: 'claude-session-2',
     });
     assert.strictEqual(result.code, 0);
 
     const metricsFile = path.join(tmpHome, '.claude', 'metrics', 'tool-usage.jsonl');
     const row = JSON.parse(fs.readFileSync(metricsFile, 'utf8').trim());
-    assert.strictEqual(row.session_id, 'ecc-session-1');
+    assert.strictEqual(row.session_id, 'yus-session-1');
     assert.ok(row.input_summary.includes('<REDACTED>'));
     assert.ok(!row.input_summary.includes('abc123'));
     assert.ok(!row.input_summary.includes('topsecret'));
@@ -418,12 +418,12 @@ function runTests() {
     fs.rmSync(tmpHome, { recursive: true, force: true });
   }) ? passed++ : failed++);
 
-  for (const [label, eccId, payloadId, legacyId, expectedId] of [
-    ['harness payload keeps its identity despite an inherited ECC environment', 'ecc-native-owner', 'claude-conversation', 'stale-parent', 'claude-conversation'],
+  for (const [label, yusId, payloadId, legacyId, expectedId] of [
+    ['harness payload keeps its identity despite an inherited yus environment', 'yus-native-owner', 'claude-conversation', 'stale-parent', 'claude-conversation'],
     ['standalone payload wins over a stale legacy environment', '', 'claude-standalone', 'stale-parent', 'claude-standalone'],
-    ['invalid ECC identity falls back to the payload', '../invalid-owner', 'claude-standalone', 'stale-parent', 'claude-standalone'],
-    ['invalid payload falls back to a valid ECC environment', 'ecc-native-owner', 'bad\\payload', 'stale-parent', 'ecc-native-owner'],
-    ['invalid ECC and payload identities fall back to the legacy environment', 'bad/owner', 'bad\\payload', 'claude-legacy', 'claude-legacy'],
+    ['invalid yus identity falls back to the payload', '../invalid-owner', 'claude-standalone', 'stale-parent', 'claude-standalone'],
+    ['invalid payload falls back to a valid yus environment', 'yus-native-owner', 'bad\\payload', 'stale-parent', 'yus-native-owner'],
+    ['invalid yus and payload identities fall back to the legacy environment', 'bad/owner', 'bad\\payload', 'claude-legacy', 'claude-legacy'],
   ]) {
     (test(`actual activity producer: ${label}`, () => {
       const tmpHome = makeTempDir();
@@ -434,9 +434,9 @@ function runTests() {
         };
         const result = runScript(input, {
           ...withTempHome(tmpHome),
-          ECC_AGENT_DATA_HOME: path.join(tmpHome, '.claude'),
+          YUS_AGENT_DATA_HOME: path.join(tmpHome, '.claude'),
           CLAUDE_CONFIG_DIR: path.join(tmpHome, '.claude'),
-          ECC_SESSION_ID: eccId, CLAUDE_SESSION_ID: legacyId,
+          YUS_SESSION_ID: yusId, CLAUDE_SESSION_ID: legacyId,
         });
         assert.strictEqual(result.code, 0, result.stderr);
         assert.strictEqual(result.stdout, JSON.stringify(input));
@@ -451,13 +451,13 @@ function runTests() {
     }) ? passed++ : failed++);
   }
 
-  (test('concurrent payload sessions stay separate under one inherited ECC environment', () => {
+  (test('concurrent payload sessions stay separate under one inherited yus environment', () => {
     const tmpHome = makeTempDir();
     try {
       const env = {
-        ...withTempHome(tmpHome), ECC_AGENT_DATA_HOME: path.join(tmpHome, '.claude'),
+        ...withTempHome(tmpHome), YUS_AGENT_DATA_HOME: path.join(tmpHome, '.claude'),
         CLAUDE_CONFIG_DIR: path.join(tmpHome, '.claude'),
-        ECC_SESSION_ID: 'registered-parent', CLAUDE_SESSION_ID: 'inherited-parent',
+        YUS_SESSION_ID: 'registered-parent', CLAUDE_SESSION_ID: 'inherited-parent',
       };
       for (const sessionId of ['provider-session-a', 'provider-session-b']) {
         const result = runScript({
@@ -502,7 +502,7 @@ function runTests() {
     const result = runScript(invalidInput, {
       ...withTempHome(tmpHome),
       CLAUDE_HOOK_EVENT_NAME: 'PostToolUse',
-      ECC_SESSION_ID: 'sess-123',
+      YUS_SESSION_ID: 'sess-123',
     });
     assert.strictEqual(result.code, 0);
     assert.strictEqual(result.stdout, invalidInput);
@@ -513,7 +513,7 @@ function runTests() {
   (test('skips non-PostToolUse events and rows without required identifiers', () => {
     assert.strictEqual(buildActivityRow(
       { tool_name: 'Read', tool_input: { file_path: 'README.md' } },
-      { CLAUDE_HOOK_EVENT_NAME: 'PreToolUse', ECC_SESSION_ID: 'sess' }
+      { CLAUDE_HOOK_EVENT_NAME: 'PreToolUse', YUS_SESSION_ID: 'sess' }
     ), null);
     assert.strictEqual(buildActivityRow(
       { tool_name: 'Read', tool_input: { file_path: 'README.md' } },
@@ -521,7 +521,7 @@ function runTests() {
     ), null);
     assert.strictEqual(buildActivityRow(
       { tool_input: { file_path: 'README.md' } },
-      { CLAUDE_HOOK_EVENT_NAME: 'PostToolUse', ECC_SESSION_ID: 'sess' }
+      { CLAUDE_HOOK_EVENT_NAME: 'PostToolUse', YUS_SESSION_ID: 'sess' }
     ), null);
   }) ? passed++ : failed++);
 
@@ -680,7 +680,7 @@ function runTests() {
     const result = runScript(input, {
       ...withTempHome(tmpHome),
       CLAUDE_HOOK_EVENT_NAME: 'PostToolUse',
-      ECC_SESSION_ID: 'ecc-session-non-git-create',
+      YUS_SESSION_ID: 'yus-session-non-git-create',
     }, {
       cwd: tmpCwd,
     });
@@ -717,7 +717,7 @@ function runTests() {
     const result = runScript(input, {
       ...withTempHome(tmpHome),
       CLAUDE_HOOK_EVENT_NAME: 'PostToolUse',
-      ECC_SESSION_ID: 'ecc-session-absolute-outside',
+      YUS_SESSION_ID: 'yus-session-absolute-outside',
     });
 
     assert.strictEqual(result.code, 0);
@@ -736,7 +736,7 @@ function runTests() {
     const result = runScript('', {
       ...withTempHome(tmpHome),
       CLAUDE_HOOK_EVENT_NAME: 'PostToolUse',
-      ECC_SESSION_ID: 'sess-empty',
+      YUS_SESSION_ID: 'sess-empty',
     });
 
     assert.strictEqual(result.code, 0);

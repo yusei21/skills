@@ -23,7 +23,7 @@ assert.match(scanner.uses, /@[a-f0-9]{40}$/);
 
 let passed = 0;
 for (const kind of ['regular', 'missing', 'symlink', 'directory']) {
-  const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-npmscan-inputs-'));
+  const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-npmscan-inputs-'));
   const checkout = path.join(temporary, 'checkout');
   const output = path.join(temporary, 'output');
   const secret = path.join(temporary, 'synthetic-private.txt');

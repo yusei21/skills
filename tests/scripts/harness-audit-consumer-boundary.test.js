@@ -8,7 +8,7 @@ const { test } = require("node:test");
 const { buildReport } = require("../../scripts/harness-audit");
 
 test("consumer audit unmatched glob never enumerates linked directory targets", t => {
-  const temporary = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "ecc-audit-boundary-"));
+  const temporary = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "yus-audit-boundary-"));
   t.after(() => fs.rmSync(temporary, { recursive: true, force: true }));
   const project = path.join(temporary, "project");
   const outside = path.join(temporary, "outside");
@@ -43,7 +43,7 @@ test("consumer audit unmatched glob never enumerates linked directory targets", 
 
 
 test("consumer audit does not treat a linked directory as a matching testpath", t => {
-  const temporary = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "ecc-audit-link-match-"));
+  const temporary = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "yus-audit-link-match-"));
   t.after(() => fs.rmSync(temporary, { recursive: true, force: true }));
   const project = path.join(temporary, "project");
   fs.mkdirSync(path.join(project, "scan"), { recursive: true });

@@ -9,7 +9,7 @@ const adapter = createInstallTargetAdapter({
   target: 'codex',
   kind: 'home',
   rootSegments: ['.codex'],
-  installStatePathSegments: ['ecc-install-state.json'],
+  installStatePathSegments: ['yus-install-state.json'],
   nativeRootRelativePath: '.codex',
   excludedSourcePaths: HOME_INSTALL_EXCLUDED_SOURCE_PATHS,
 });

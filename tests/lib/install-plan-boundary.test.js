@@ -65,7 +65,7 @@ function createPlan(createManifestInstallPlan, homeDir) {
   });
 
   test('does not load js-yaml while generating a real manifest plan', () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-pure-plan-load-'));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-pure-plan-load-'));
     const loaded = [];
     const originalLoad = Module._load;
     try {
@@ -85,7 +85,7 @@ function createPlan(createManifestInstallPlan, homeDir) {
   });
 
   test('preserves the install-executor manifest-plan contract exactly', () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-pure-plan-contract-'));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-pure-plan-contract-'));
     try {
       const pure = require(PLAN_ENTRY).createManifestInstallPlan;
       const facade = require('../../scripts/lib/install-executor').createManifestInstallPlan;

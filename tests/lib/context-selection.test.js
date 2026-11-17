@@ -366,7 +366,7 @@ test('routing entries drop only coded admission denials; a corrupt source still 
 test('admission denials carry stable codes', () => withFixture(root => {
   write(root, 'skills/shared/SKILL.md', '---\nname: shared\ndescription: Shared helper\ndisable-model-invocation: true\n---\nShared');
   assert.throws(() => resolve(root, { query: 'shared', proposedIds: ['skill:shared'] }, { load: true }),
-    error => error.code === 'ECC_CONTEXT_MANUAL_ONLY');
+    error => error.code === 'YUS_CONTEXT_MANUAL_ONLY');
 }));
 
 test('suggestion evidence requires an exact name or the absolute fallback floor', () => {

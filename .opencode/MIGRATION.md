@@ -1,6 +1,6 @@
 # Migration Guide: Claude Code to OpenCode
 
-This guide helps you migrate from Claude Code to OpenCode while using the ECC configuration.
+This guide helps you migrate from Claude Code to OpenCode while using the yus configuration.
 
 ## Overview
 
@@ -65,9 +65,9 @@ export const PrettierPlugin = async ({ $ }) => {
 }
 ```
 
-### ECC Plugin Hooks Included
+### yus Plugin Hooks Included
 
-The ECC OpenCode configuration includes translated hooks:
+The yus OpenCode configuration includes translated hooks:
 
 | Hook | OpenCode Event | Purpose |
 |------|----------------|---------|
@@ -88,7 +88,7 @@ npm install -g opencode
 curl -fsSL https://opencode.ai/install | bash
 ```
 
-### 2. Use the ECC OpenCode Configuration
+### 2. Use the yus OpenCode Configuration
 
 The `.opencode/` directory in this repository contains the translated configuration:
 
@@ -96,7 +96,7 @@ The `.opencode/` directory in this repository contains the translated configurat
 .opencode/
 ├── opencode.json              # Main configuration
 ├── plugins/                   # Hook plugins (translated from hooks.json)
-│   ├── ecc-hooks.ts           # All ECC hooks as plugins
+│   ├── yus-hooks.ts           # All yus hooks as plugins
 │   └── index.ts               # Plugin exports
 ├── tools/                     # Custom tools
 │   ├── run-tests.ts           # Run test suite
@@ -280,27 +280,27 @@ After migration, ALL 23 commands are available:
 
 ## Plugin Installation
 
-### Option 1: Use ECC Configuration Directly
+### Option 1: Use yus Configuration Directly
 
 The `.opencode/` directory contains everything pre-configured.
 
 ### Option 2: Install as npm Package
 
 ```bash
-npm install ecc-universal
+npm install yus-universal
 ```
 
 Then in your `opencode.json`:
 ```json
 {
-  "plugin": ["ecc-universal"]
+  "plugin": ["yus-universal"]
 }
 ```
 
-This only loads the published ECC OpenCode plugin module (hooks/events and exported plugin tools).
-It does **not** automatically inject ECC's full `agent`, `command`, or `instructions` config into your project.
+This only loads the published yus OpenCode plugin module (hooks/events and exported plugin tools).
+It does **not** automatically inject yus's full `agent`, `command`, or `instructions` config into your project.
 
-If you want the full ECC OpenCode workflow surface, use the repository's bundled `.opencode/opencode.json` as your base config or copy these pieces into your project:
+If you want the full yus OpenCode workflow surface, use the repository's bundled `.opencode/opencode.json` as your base config or copy these pieces into your project:
 - `.opencode/commands/`
 - `.opencode/prompts/`
 - `.opencode/instructions/INSTRUCTIONS.md`
@@ -331,7 +331,7 @@ If you want the full ECC OpenCode workflow surface, use the repository's bundled
 1. Verify the command is defined in `opencode.json` or as `.md` file in `.opencode/commands/`
 2. Check the referenced agent exists
 3. Ensure the template uses `$ARGUMENTS` for user input
-4. If you installed only `plugin: ["ecc-universal"]`, note that npm plugin install does not auto-add ECC commands or agents to your project config
+4. If you installed only `plugin: ["yus-universal"]`, note that npm plugin install does not auto-add yus commands or agents to your project config
 
 ## Best Practices
 
@@ -365,4 +365,4 @@ If you need to switch back:
 
 For issues specific to:
 - **OpenCode CLI**: Report to OpenCode's issue tracker
-- **ECC Configuration**: Report to [github.com/affaan-m/ECC](https://github.com/affaan-m/ECC)
+- **yus Configuration**: Report to [github.com/yusei21/yus](https://github.com/yusei21/yus)

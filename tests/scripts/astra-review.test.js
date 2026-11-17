@@ -63,8 +63,8 @@ test('parseArgs defaults to uncommitted scope and gpt-6-astra', () => {
   assert.strictEqual(options.consent, false);
 });
 
-test('parseArgs honors ECC_ASTRA_MODEL and ECC_ASTRA_CONSENT', () => {
-  const options = cli.parseArgs([], { ECC_ASTRA_MODEL: 'gpt-5.5', ECC_ASTRA_CONSENT: '1' });
+test('parseArgs honors YUS_ASTRA_MODEL and YUS_ASTRA_CONSENT', () => {
+  const options = cli.parseArgs([], { YUS_ASTRA_MODEL: 'gpt-5.5', YUS_ASTRA_CONSENT: '1' });
 
   assert.strictEqual(options.model, 'gpt-5.5');
   assert.strictEqual(options.consent, true);

@@ -52,10 +52,10 @@ for (const id of fs.readdirSync(casesDir).sort()) {
 }
 
 const corpus = {
-  schemaVersion: 'ecc.context-eval-complex-corpus.v1',
+  schemaVersion: 'yus.context-eval-complex-corpus.v1',
   id: corpusId,
   sampling: 'Realistic multi-file engineering tasks, fixed before any provider call, with deterministic '
-    + 'hidden graders scoring partial credit (ECC_EVAL_SCORE). Descriptive pilot: no '
+    + 'hidden graders scoring partial credit (YUS_EVAL_SCORE). Descriptive pilot: no '
     + 'population-representativeness claim. See complex-eval/DESIGN.md for the preregistered methodology.',
   minimumDistinctTasks: tasks.length,
   nonInferiorityMargin: 0.05,

@@ -14,7 +14,7 @@ let passed = 0;
 let failed = 0;
 
 function test(description, fn) {
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-stocktake-save-'));
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-stocktake-save-'));
   try {
     fn(path.join(tempRoot, 'results.json'));
     console.log(`  ✓ ${description}`);

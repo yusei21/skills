@@ -11,12 +11,12 @@ const { compileContextProfile } = require('../../scripts/lib/context-profiles');
 const { withCarrierFixture } = require('../../tests/lib/helpers/context-carrier-fixture');
 
 const repoRoot = path.resolve(__dirname, '../..');
-const temp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-packed-context-')));
-const expectedSource = process.env.ECC_EXPECTED_CARRIERS
-  ? JSON.parse(fs.readFileSync(process.env.ECC_EXPECTED_CARRIERS, 'utf8')) : null;
+const temp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-packed-context-')));
+const expectedSource = process.env.YUS_EXPECTED_CARRIERS
+  ? JSON.parse(fs.readFileSync(process.env.YUS_EXPECTED_CARRIERS, 'utf8')) : null;
 
 function profileCommand(args, temp, env, expectedStatus = 0) {
-  const result = spawnSync(process.execPath, [path.join(repoRoot, 'scripts/ecc.js'), 'profile', ...args, '--json'], {
+  const result = spawnSync(process.execPath, [path.join(repoRoot, 'scripts/yus.js'), 'profile', ...args, '--json'], {
     cwd: temp, env, encoding: 'utf8', timeout: 60000, maxBuffer: 16 * 1024 * 1024,
   });
   assert.equal(result.status, expectedStatus, result.stderr || result.stdout);
@@ -118,7 +118,7 @@ try {
         assert.deepEqual(artifact, expectedSource.find(item => item.target === target && item.profileId === profileId),
           'Packed carrier differs from source artifact');
       }
-      const cli = spawnSync(process.execPath, [path.join(repoRoot, 'scripts/ecc.js'),
+      const cli = spawnSync(process.execPath, [path.join(repoRoot, 'scripts/yus.js'),
         'profile', 'carrier', profileId, '--target', target, '--json'],
       { cwd: temp, env, encoding: 'utf8', timeout: 60000, maxBuffer: 16 * 1024 * 1024 });
       assert.equal(cli.status, 0, cli.stderr);

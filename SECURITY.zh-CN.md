@@ -17,10 +17,7 @@
 
 请尽量使用 GitHub 的私密漏洞报告功能，它会直接送达维护者：
 
-- <https://github.com/affaan-m/ECC/security/advisories/new>
-
-也可以发邮件至 **<affaan@ecc.tools>**（`security@ecc.tools` 这个别名无人查看，请使用
-`affaan@ecc.tools`）。
+- <https://github.com/yusei21/yus/security/advisories/new>
 
 **不要**为安全漏洞创建公开的 GitHub issue。
 
@@ -45,9 +42,9 @@
 
 本策略涵盖：
 
-- `affaan-m/ECC` 仓库
-- `ecc-universal` npm 包
-- 从本仓库发布的 ECC 插件、安装、修复、仪表盘、钩子、规则、技能、MCP 和命令
+- `yusei21/yus` 仓库
+- `yus-universal` npm 包
+- 从本仓库发布的 yus 插件、安装、修复、仪表盘、钩子、规则、技能、MCP 和命令
 - 本仓库中的 GitHub Actions 工作流和发布自动化
 - 本仓库文档中描述的 ECC Tools GitHub App 集成点
 - 嵌入在本仓库中的 AgentShield 使用文档。AgentShield 代码问题请提交到
@@ -55,51 +52,43 @@
 
 ## 官方发布渠道
 
-ECC 的官方渠道：
+yus 的官方渠道：
 
-- GitHub 仓库：<https://github.com/affaan-m/ECC>
-- npm 包：`ecc-universal`
-- GitHub App：<https://github.com/apps/ecc-tools>
-- 插件市场/插件标识：`ecc@ecc`
-- 网站：<https://ecc.tools>
+- GitHub 仓库：<https://github.com/yusei21/yus>
+- 插件市场/插件标识：`yus@yus`
 
-AgentShield 的官方渠道：
+yus 没有发布到 npm。AgentShield（`ecc-agentshield`，<https://github.com/affaan-m/agentshield>）是原
+ECC 项目作者的独立工具，它的问题请到那里报告。
 
-- npm 包：`ecc-agentshield`
-- GitHub 仓库：<https://github.com/affaan-m/agentshield>
-
-以下包被发现使用了 ECC 仓库的元数据，但**并非由 ECC 维护**：
+以下包复用了原 ECC 项目的元数据，**并非由本项目维护**：
 
 - `@chil_ntl/ecc-cli`
 - `ecc-100xprompt-plugin`
 
 在核实之前，请把不在官方渠道列表中的任何包都视为非官方。除非本仓库明确说明它们是官方的，
-否则不要安装名为 `opencode-ecc`、`everything-claude-code` 或其他类似 ECC 名称的包。
-
-GitHub 依赖关系图还可能显示 Go 模块别名（如 `github.com/affaan-m/ecc`）或历史仓库路径。
-ECC 目前不以受支持的 Go 模块形式发布。
+否则不要安装名为 `opencode-ecc`、`everything-claude-code` 或其他类似 yus 名称的包。
 
 ## 不在范围内
 
 以下情况的报告通常不在范围内：
 
 - 用户本已控制本地 shell、且未跨越更高权限信任边界的本地命令执行
-- 截图、过时的行号，或针对 `affaan-m/ECC` 但在当前 `affaan-m/ECC` 上无法复现的报告
+- 截图、过时的行号，或针对 `yusei21/yus` 但在当前 `yusei21/yus` 上无法复现的报告
 - 没有仓库可控利用路径的 self-XSS 或社会工程
-- 没有通往官方 ECC 包的安装路径的依赖关系图/包元数据混淆
-- 第三方包中的漏洞，除非 ECC 以造成额外影响的方式固定、安装或执行了它们
+- 没有通往官方 yus 包的安装路径的依赖关系图/包元数据混淆
+- 第三方包中的漏洞，除非 yus 以造成额外影响的方式固定、安装或执行了它们
 
 当不受信任的仓库内容、包安装、生成的钩子或 CI 自动化能在用户没有明确意图时触发执行，
 本地开发工具的问题仍可能是有效的安全问题。请在报告中说明这一信任边界。
 
 ## 供应链规则
 
-ECC 把供应链风险视为一等安全面。
+yus 把供应链风险视为一等安全面。
 
 - 第三方 GitHub Actions 必须固定到提交 SHA。
 - 工作流不得把不受信任的 GitHub 上下文直接传入 `run:` 块。
 - 发布和安装文档只能指向官方包。
-- 包元数据应指向 `affaan-m/ECC`，而不是历史仓库路径。
+- 包元数据应指向 `yusei21/yus`，而不是历史仓库路径。
 - 私密漏洞报告在公开披露前先私下分诊。
 - 只有当受支持的版本受影响且适合协调披露时，才发布安全公告。
 
@@ -144,7 +133,7 @@ lsof -iTCP:18801 -sTCP:LISTEN
 
 ## 分诊：可疑的 `<system-reminder>` 块
 
-ECC 运行在智能体环境中，这些环境可能在每一轮都向模型输入注入临时的客户端系统提醒。这些块
+yus 运行在智能体环境中，这些环境可能在每一轮都向模型输入注入临时的客户端系统提醒。这些块
 并不一定是由仓库携带的内容。
 
 在把它当作攻击之前，请确认：

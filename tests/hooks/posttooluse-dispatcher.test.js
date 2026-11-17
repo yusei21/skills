@@ -33,7 +33,7 @@ function runDispatcher(mode, toolName, env = {}) {
     tool_name: toolName,
     tool_input: ['Bash', 'PowerShell'].includes(toolName)
       ? { command: 'true' }
-      : { file_path: path.join(os.tmpdir(), 'ecc-posttooluse-test.txt') },
+      : { file_path: path.join(os.tmpdir(), 'yus-posttooluse-test.txt') },
     tool_response: {}
   });
 
@@ -44,7 +44,7 @@ function runDispatcher(mode, toolName, env = {}) {
     env: {
       ...process.env,
       CLAUDE_PLUGIN_ROOT: repoRoot,
-      ECC_PLUGIN_ROOT: repoRoot,
+      YUS_PLUGIN_ROOT: repoRoot,
       ...env
     },
     timeout: 10000
@@ -64,7 +64,7 @@ function runConfiguredCommand(entry, raw, env = {}) {
     env: {
       ...process.env,
       CLAUDE_PLUGIN_ROOT: repoRoot,
-      ECC_PLUGIN_ROOT: repoRoot,
+      YUS_PLUGIN_ROOT: repoRoot,
       ...env
     },
     timeout: 10000
@@ -85,10 +85,10 @@ function runInspectingDispatcher(input, env = {}) {
     env: {
       ...process.env,
       CLAUDE_PLUGIN_ROOT: repoRoot,
-      ECC_HOOK_PROFILE: 'standard',
-      ECC_DISABLED_HOOKS: '',
+      YUS_HOOK_PROFILE: 'standard',
+      YUS_DISABLED_HOOKS: '',
       ...env,
-      ECC_DRY_RUN: '0'
+      YUS_DRY_RUN: '0'
     },
     timeout: 10000,
     maxBuffer: 4 * 1024 * 1024
@@ -116,13 +116,13 @@ function runTests() {
       assert.ok(entries[0].hooks[0].command.endsWith('" sync'));
       assert.ok(entries[1].hooks[0].command.includes('posttooluse-dispatcher.js'));
       assert.ok(entries[1].hooks[0].command.endsWith('" async'));
-      assert.ok(entries.every(entry => entry.hooks[0].command.includes('resolve-ecc-root')));
+      assert.ok(entries.every(entry => entry.hooks[0].command.includes('resolve-yus-root')));
       assert.ok(
         entries.every(entry => !entry.hooks[0].command.includes('plugin-hook-bootstrap.js')),
         'PostToolUse dispatchers should not spawn a second Node bootstrap process'
       );
       assert.ok(
-        entries.every(entry => !entry.hooks[0].command.includes('ECC_POSTTOOLUSE_PASSTHROUGH')),
+        entries.every(entry => !entry.hooks[0].command.includes('YUS_POSTTOOLUSE_PASSTHROUGH')),
         'PostToolUse commands must not opt back into raw stdin passthrough'
       );
       assert.ok(entries[1].hooks[0].timeout >= 30);
@@ -143,41 +143,41 @@ function runTests() {
             'post:edit:console-warn',
             'post:governance-capture',
             'post:session-activity-tracker',
-            'post:ecc-metrics-bridge',
-            'post:ecc-context-monitor'
+            'post:yus-metrics-bridge',
+            'post:yus-context-monitor'
           ],
           async: ['post:quality-gate', 'post:observe:continuous-learning']
         },
         {
           tool: 'Write',
-          sync: ['post:hookify-runtime', 'post:edit:design-quality-check', 'post:edit:accumulator', 'post:governance-capture', 'post:session-activity-tracker', 'post:ecc-metrics-bridge', 'post:ecc-context-monitor'],
+          sync: ['post:hookify-runtime', 'post:edit:design-quality-check', 'post:edit:accumulator', 'post:governance-capture', 'post:session-activity-tracker', 'post:yus-metrics-bridge', 'post:yus-context-monitor'],
           async: ['post:quality-gate', 'post:observe:continuous-learning']
         },
         {
           tool: 'Bash',
-          sync: ['post:hookify-runtime', 'post:governance-capture', 'post:session-activity-tracker', 'post:ecc-metrics-bridge', 'post:ecc-context-monitor'],
+          sync: ['post:hookify-runtime', 'post:governance-capture', 'post:session-activity-tracker', 'post:yus-metrics-bridge', 'post:yus-context-monitor'],
           async: ['post:bash:dispatcher', 'post:observe:continuous-learning']
         },
         {
           tool: 'PowerShell',
-          sync: ['post:hookify-runtime', 'post:governance-capture', 'post:session-activity-tracker', 'post:ecc-metrics-bridge', 'post:ecc-context-monitor'],
+          sync: ['post:hookify-runtime', 'post:governance-capture', 'post:session-activity-tracker', 'post:yus-metrics-bridge', 'post:yus-context-monitor'],
           async: ['post:observe:continuous-learning']
         },
         {
           tool: 'powershell',
-          sync: ['post:hookify-runtime', 'post:governance-capture', 'post:session-activity-tracker', 'post:ecc-metrics-bridge', 'post:ecc-context-monitor'],
+          sync: ['post:hookify-runtime', 'post:governance-capture', 'post:session-activity-tracker', 'post:yus-metrics-bridge', 'post:yus-context-monitor'],
           async: ['post:observe:continuous-learning']
         },
         {
           tool: 'Read',
-          sync: ['post:hookify-runtime', 'post:session-activity-tracker', 'post:ecc-metrics-bridge', 'post:ecc-context-monitor'],
+          sync: ['post:hookify-runtime', 'post:session-activity-tracker', 'post:yus-metrics-bridge', 'post:yus-context-monitor'],
           async: ['post:observe:continuous-learning']
         }
       ];
 
       for (const expected of cases) {
-        const sync = runDispatcher('sync', expected.tool, { ECC_DRY_RUN: '1' });
-        const asyncResult = runDispatcher('async', expected.tool, { ECC_DRY_RUN: '1' });
+        const sync = runDispatcher('sync', expected.tool, { YUS_DRY_RUN: '1' });
+        const asyncResult = runDispatcher('async', expected.tool, { YUS_DRY_RUN: '1' });
         assert.strictEqual(sync.status, 0, sync.stderr);
         assert.strictEqual(asyncResult.status, 0, asyncResult.stderr);
         assert.deepStrictEqual(previewedIds(sync.stderr), expected.sync, `${expected.tool} sync IDs`);
@@ -196,10 +196,10 @@ function runTests() {
       const raw = JSON.stringify({
         hook_event_name: 'PostToolUse',
         tool_name: 'Edit',
-        tool_input: { file_path: path.join(os.tmpdir(), 'ecc-posttooluse-test.txt') },
+        tool_input: { file_path: path.join(os.tmpdir(), 'yus-posttooluse-test.txt') },
         tool_response: {}
       });
-      const results = entries.map(entry => runConfiguredCommand(entry, raw, { ECC_DRY_RUN: '1' }));
+      const results = entries.map(entry => runConfiguredCommand(entry, raw, { YUS_DRY_RUN: '1' }));
 
       for (const result of results) {
         assert.strictEqual(result.status, 0, result.stderr);
@@ -213,8 +213,8 @@ function runTests() {
         'post:edit:console-warn',
         'post:governance-capture',
         'post:session-activity-tracker',
-        'post:ecc-metrics-bridge',
-        'post:ecc-context-monitor',
+        'post:yus-metrics-bridge',
+        'post:yus-context-monitor',
         'post:quality-gate',
         'post:observe:continuous-learning'
       ]);
@@ -238,7 +238,7 @@ function runTests() {
         assert.ok(Buffer.byteLength(raw, 'utf8') > 1024 * 1024);
 
         for (const entry of entries) {
-          const result = runConfiguredCommand(entry, raw, { ECC_DRY_RUN: '1' });
+          const result = runConfiguredCommand(entry, raw, { YUS_DRY_RUN: '1' });
           assert.strictEqual(result.status, 0, result.stderr);
           assert.strictEqual(result.stdout, '', `${entry.id} should suppress truncated pass-through`);
           assert.ok(result.stderr.includes('stdin exceeded'), `${entry.id} should report truncation`);
@@ -253,8 +253,8 @@ function runTests() {
     test('legacy passthrough env cannot restore silent sync or async output', () => {
       for (const mode of ['sync', 'async']) {
         const result = runDispatcher(mode, 'Read', {
-          ECC_DRY_RUN: '1',
-          ECC_POSTTOOLUSE_PASSTHROUGH: '1'
+          YUS_DRY_RUN: '1',
+          YUS_POSTTOOLUSE_PASSTHROUGH: '1'
         });
         assert.strictEqual(result.status, 0, result.stderr);
         assert.strictEqual(result.stdout, '', `${mode} dispatcher must ignore legacy passthrough opt-in`);
@@ -266,7 +266,7 @@ function runTests() {
 
   if (
     test('configured stdin cap controls PostToolUse input and hook context', () => {
-      const result = runInspectingDispatcher('x'.repeat(256), { ECC_HOOK_INPUT_MAX_BYTES: '128' });
+      const result = runInspectingDispatcher('x'.repeat(256), { YUS_HOOK_INPUT_MAX_BYTES: '128' });
       assert.strictEqual(result.status, 0, result.stderr);
       assert.deepStrictEqual(JSON.parse(result.stdout), {
         raw: null,
@@ -283,7 +283,7 @@ function runTests() {
   if (
     test('PostToolUse stdin cap honors UTF-8 byte boundaries', () => {
       const character = String.fromCodePoint(0xe9);
-      const exact = runInspectingDispatcher(character.repeat(2), { ECC_HOOK_INPUT_MAX_BYTES: '4' });
+      const exact = runInspectingDispatcher(character.repeat(2), { YUS_HOOK_INPUT_MAX_BYTES: '4' });
       assert.strictEqual(exact.status, 0, exact.stderr);
       assert.deepStrictEqual(JSON.parse(exact.stdout), {
         raw: character.repeat(2),
@@ -292,7 +292,7 @@ function runTests() {
         maxStdin: 4
       });
 
-      const truncated = runInspectingDispatcher(character.repeat(2), { ECC_HOOK_INPUT_MAX_BYTES: '3' });
+      const truncated = runInspectingDispatcher(character.repeat(2), { YUS_HOOK_INPUT_MAX_BYTES: '3' });
       assert.strictEqual(truncated.status, 0, truncated.stderr);
       assert.deepStrictEqual(JSON.parse(truncated.stdout), {
         raw: character,
@@ -308,7 +308,7 @@ function runTests() {
   if (
     test('invalid PostToolUse stdin caps fall back with a diagnostic', () => {
       for (const value of ['0', '-1', '1.5', 'not-a-number']) {
-        const result = runInspectingDispatcher('payload', { ECC_HOOK_INPUT_MAX_BYTES: value });
+        const result = runInspectingDispatcher('payload', { YUS_HOOK_INPUT_MAX_BYTES: value });
         assert.strictEqual(result.status, 0, result.stderr);
         assert.strictEqual(JSON.parse(result.stdout).maxStdin, 1024 * 1024);
         assert.match(result.stderr, /must be a positive safe integer/);
@@ -321,7 +321,7 @@ function runTests() {
   if (
     test('PostToolUse stdin cap cannot exceed the 1 MiB safety maximum', () => {
       const result = runInspectingDispatcher('x'.repeat(1024 * 1024 + 1), {
-        ECC_HOOK_INPUT_MAX_BYTES: String(2 * 1024 * 1024)
+        YUS_HOOK_INPUT_MAX_BYTES: String(2 * 1024 * 1024)
       });
       assert.strictEqual(result.status, 0, result.stderr);
       assert.deepStrictEqual(JSON.parse(result.stdout), {
@@ -340,28 +340,28 @@ function runTests() {
   if (
     test('profiles and disabled IDs remain scoped to each original hook', () => {
       const minimalSync = runDispatcher('sync', 'Edit', {
-        ECC_DRY_RUN: '1',
-        ECC_HOOK_PROFILE: 'minimal'
+        YUS_DRY_RUN: '1',
+        YUS_HOOK_PROFILE: 'minimal'
       });
       assert.strictEqual(minimalSync.status, 0, minimalSync.stderr);
-      assert.deepStrictEqual(previewedIds(minimalSync.stderr), ['post:hookify-runtime', 'post:ecc-metrics-bridge']);
+      assert.deepStrictEqual(previewedIds(minimalSync.stderr), ['post:hookify-runtime', 'post:yus-metrics-bridge']);
 
       const minimalAsync = runDispatcher('async', 'Bash', {
-        ECC_DRY_RUN: '1',
-        ECC_HOOK_PROFILE: 'minimal'
+        YUS_DRY_RUN: '1',
+        YUS_HOOK_PROFILE: 'minimal'
       });
       assert.strictEqual(minimalAsync.status, 0, minimalAsync.stderr);
       assert.deepStrictEqual(previewedIds(minimalAsync.stderr), ['post:bash:dispatcher'], 'bash dispatcher phase must stay reachable in minimal profile like main; its sub-hooks gate themselves');
 
       const disabled = runDispatcher('sync', 'Edit', {
-        ECC_DRY_RUN: '1',
-        ECC_DISABLED_HOOKS: 'post:edit:accumulator'
+        YUS_DRY_RUN: '1',
+        YUS_DISABLED_HOOKS: 'post:edit:accumulator'
       });
       assert.strictEqual(disabled.status, 0, disabled.stderr);
       const ids = previewedIds(disabled.stderr);
       assert.ok(!ids.includes('post:edit:accumulator'));
       assert.ok(ids.includes('post:edit:design-quality-check'));
-      assert.ok(ids.includes('post:ecc-context-monitor'));
+      assert.ok(ids.includes('post:yus-context-monitor'));
     })
   )
     passed++;
@@ -371,8 +371,8 @@ function runTests() {
     test('Claude plugin hooks_enabled=false suppresses both dispatcher phases', () => {
       for (const mode of ['sync', 'async']) {
         const result = runDispatcher(mode, 'Edit', {
-          ECC_DRY_RUN: '1',
-          ECC_HOOKS_ENABLED: undefined,
+          YUS_DRY_RUN: '1',
+          YUS_HOOKS_ENABLED: undefined,
           CLAUDE_PLUGIN_OPTION_HOOKS_ENABLED: 'false'
         });
         assert.strictEqual(result.status, 0, result.stderr);
@@ -393,14 +393,14 @@ function runTests() {
       const raw = JSON.stringify({
         hook_event_name: 'PostToolUse',
         tool_name: 'Edit',
-        tool_input: { file_path: path.join(os.tmpdir(), 'ecc-posttooluse-test.txt') },
+        tool_input: { file_path: path.join(os.tmpdir(), 'yus-posttooluse-test.txt') },
         tool_response: {}
       });
 
       for (const entry of entries) {
         const result = runConfiguredCommand(entry, raw, {
-          ECC_DRY_RUN: '1',
-          ECC_DISABLED_HOOKS: entry.id
+          YUS_DRY_RUN: '1',
+          YUS_DISABLED_HOOKS: entry.id
         });
         assert.strictEqual(result.status, 0, result.stderr);
         assert.deepStrictEqual(previewedIds(result.stderr), [], `${entry.id} should disable all child hooks`);
@@ -413,10 +413,10 @@ function runTests() {
 
   if (
     test('dry-run has no PostToolUse side effects', () => {
-      const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-posttooluse-dry-run-'));
+      const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-posttooluse-dry-run-'));
       try {
         const result = runDispatcher('sync', 'Edit', {
-          ECC_DRY_RUN: '1',
+          YUS_DRY_RUN: '1',
           HOME: homeDir,
           USERPROFILE: homeDir,
           CLAUDE_SESSION_ID: 'dry-run-session'
@@ -473,7 +473,7 @@ function runTests() {
         }
       ];
 
-      const result = runHooks(raw, hooks, { toolName: 'Read', env: { ECC_HOOK_PROFILE: 'standard' } });
+      const result = runHooks(raw, hooks, { toolName: 'Read', env: { YUS_HOOK_PROFILE: 'standard' } });
       assert.deepStrictEqual(
         calls,
         [
@@ -501,7 +501,7 @@ function runTests() {
             run: () => ({ stdout: explicitOutput, stderr: 'failure detail', exitCode: 9 })
           }
         ],
-        { toolName: 'Read', env: { ECC_HOOK_PROFILE: 'standard' } }
+        { toolName: 'Read', env: { YUS_HOOK_PROFILE: 'standard' } }
       );
       assert.strictEqual(explicitFailure.stdout, explicitOutput);
       assert.strictEqual(explicitFailure.exitCode, 9);
@@ -526,8 +526,8 @@ function runTests() {
         env: {
           ...process.env,
           CLAUDE_PLUGIN_ROOT: repoRoot,
-          ECC_POSTTOOLUSE_PASSTHROUGH: '1',
-          ECC_DRY_RUN: '0'
+          YUS_POSTTOOLUSE_PASSTHROUGH: '1',
+          YUS_DRY_RUN: '0'
         },
         timeout: 10000
       });
@@ -585,7 +585,7 @@ function runTests() {
 
       const merged = runHooks(JSON.stringify({ tool_name: 'Read' }), [contextHook('post:test:one', 'first warning'), contextHook('post:test:two', 'second warning')], {
         toolName: 'Read',
-        env: { ECC_HOOK_PROFILE: 'standard' }
+        env: { YUS_HOOK_PROFILE: 'standard' }
       });
       assert.strictEqual(merged.stdout, envelope('first warning\nsecond warning'), 'context envelopes should merge into one');
       assert.ok(!merged.stderr.includes('dropped'), merged.stderr);
@@ -625,7 +625,7 @@ function runTests() {
           profiles: 'standard,strict',
           run: () => ({ exitCode: 7 })
         }
-      ], { toolName: 'Read', env: { ECC_HOOK_PROFILE: 'standard' } });
+      ], { toolName: 'Read', env: { YUS_HOOK_PROFILE: 'standard' } });
 
       const output = JSON.parse(result.stdout);
       assert.strictEqual(output.decision, 'block');
@@ -649,7 +649,7 @@ function runTests() {
         cwd: repoRoot,
         input: raw,
         encoding: 'utf8',
-        env: { ...process.env, CLAUDE_PLUGIN_ROOT: repoRoot, ECC_POSTTOOLUSE_PASSTHROUGH: '1' },
+        env: { ...process.env, CLAUDE_PLUGIN_ROOT: repoRoot, YUS_POSTTOOLUSE_PASSTHROUGH: '1' },
         timeout: 10000
       });
       assert.strictEqual(result.status, 0, result.stderr);

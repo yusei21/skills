@@ -4,7 +4,7 @@
  * Plan Canvas browser chrome: the editor shell that frames an artifact,
  * plus the rendered-markdown artifact template.
  *
- * Visual language mirrors the ECC web dashboard (scripts/dashboard-web.js):
+ * Visual language mirrors the yus web dashboard (scripts/dashboard-web.js):
  * same design tokens, dark-first with a light theme, accent→pink brand
  * gradient. Everything is served inline — no CDNs, no external assets.
  */
@@ -15,17 +15,17 @@ const { escapeHtml } = require('./markdown');
 
 // Pinned Mermaid ESM build, loaded in the browser only when an artifact
 // actually contains a diagram. Override with a local/vendored URL (e.g. an
-// air-gapped mirror) via ECC_PLAN_CANVAS_MERMAID_URL. If the fetch fails, the
+// air-gapped mirror) via YUS_PLAN_CANVAS_MERMAID_URL. If the fetch fails, the
 // diagram source stays visible as a styled code block — nothing breaks.
 const DEFAULT_MERMAID_URL = 'https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs';
 
 function mermaidUrl(env = process.env) {
-  const override = env.ECC_PLAN_CANVAS_MERMAID_URL;
+  const override = env.YUS_PLAN_CANVAS_MERMAID_URL;
   return override && String(override).trim() ? String(override).trim() : DEFAULT_MERMAID_URL;
 }
 
 // Browser module that renders `<pre class="mermaid">` blocks, themed to match
-// the ECC canvas. Kept import-only so a CDN failure degrades gracefully.
+// the yus canvas. Kept import-only so a CDN failure degrades gracefully.
 function mermaidLoaderScript(url) {
   return `<script type="module">
   try {
@@ -200,7 +200,7 @@ function canvasClientJs() {
   const sendBtn = $('send');
   const statusEl = $('sendStatus');
   const presence = $('presence');
-  const QKEY = 'ecc-plan-canvas:queue:' + key;
+  const QKEY = 'yus-plan-canvas:queue:' + key;
   let queue = [];
   let lastScroll = { x: 0, y: 0 };
   let ended = boot.status === 'ended';
@@ -209,7 +209,7 @@ function canvasClientJs() {
   try { queue = JSON.parse(sessionStorage.getItem(QKEY) || '[]'); } catch { queue = []; }
 
   // --- theme ---------------------------------------------------------
-  const themeKey = 'ecc-plan-canvas:theme';
+  const themeKey = 'yus-plan-canvas:theme';
   function applyTheme(t) {
     if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
     else document.documentElement.removeAttribute('data-theme');
@@ -219,7 +219,7 @@ function canvasClientJs() {
   // origin (loopback is a common trigger). Unguarded, that killed the whole
   // client IIFE here, before the send button and Enter handlers bound below:
   // every control rendered and stayed inert. sessionStorage is already guarded
-  // above and below; match it. See affaan-m/ECC#2702.
+  // above and below; match it. See yusei21/yus#2702.
   function readTheme() {
     try { return localStorage.getItem(themeKey); } catch { return null; }
   }
@@ -529,7 +529,7 @@ function renderCanvasHtml(session, { clientPath = '/client.js', cssPath = '/canv
 </html>`;
 }
 
-// ECC-styled document template for rendered markdown plan artifacts.
+// yus-styled document template for rendered markdown plan artifacts.
 function renderMarkdownArtifactHtml(bodyHtml, { title, sdkSrc }) {
   const hasMermaid = bodyHtml.includes('class="mermaid"');
   return `<!DOCTYPE html>

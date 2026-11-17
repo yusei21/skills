@@ -2,24 +2,24 @@
 name: tasteforge-video
 description: Use for file-driven multimodal image, video, and 3D-asset discovery; taste interviews; distill or apply workflows; style-pack validation; editable EDL/FCPXML export; provenance audits; and offline planning that must fail closed before provider generation.
 metadata:
-  origin: ECC
+  origin: yus
 ---
 
 # TasteForge Video
 
 For the complete standalone creative pipeline, use `taste-distillation` then
-`taste-application`. Those ECC skills ship their Python scripts directly:
+`taste-application`. Those yus skills ship their Python scripts directly:
 measure references, generate or pass through existing takes, grade, cut,
 composite, verify, and hand off to Blender and Resolve. No separate video
-repository is required for that flow. This skill documents ECC's packaged offline engine and its strict evidence contract.
+repository is required for that flow. This skill documents yus's packaged offline engine and its strict evidence contract.
 
 TasteForge turns "make it feel like this reference" into a repeatable,
 inspectable workflow: interview taste, distill it into a structured style
 pack, validate the pack, apply its measured cadence and look to local media,
 and export an editable timeline. The canonical implementation is the
-`tasteforge` package shipped inside ECC at
+`tasteforge` package shipped inside yus at
 `skills/media/taste-application/scripts/tasteforge/`. `Ito-Markets/ito-video` is an
-example project that consumes the packaged ECC engine.
+example project that consumes the packaged yus engine.
 
 ## When to Use
 
@@ -48,7 +48,7 @@ example project that consumes the packaged ECC engine.
 This boundary is the core of this compatibility skill. Its operations are
 **local, deterministic, and offline**:
 
-| Operation | Deterministic? | ECC may run |
+| Operation | Deterministic? | yus may run |
 |---|---|---|
 | Taste interview → profile | yes (offline) | yes |
 | Pack inspect / validate against schemas | yes | yes |
@@ -59,10 +59,10 @@ This boundary is the core of this compatibility skill. Its operations are
 | Vision-model distillation of stills | **provider generation** | **no** |
 | Reference-to-video, image-to-3D, hosted compose | **provider generation** | **no** |
 
-**Provider generation must fail closed in ECC.** Any live Fal (or other
+**Provider generation must fail closed in yus.** Any live Fal (or other
 provider) call — generating shots, minting prop meshes, hosted VLM
 distillation — requires explicit separately authorized execution under a
-separate lane with its own review. In this compatibility lane, ECC never calls Fal, never reads any API
+separate lane with its own review. In this compatibility lane, yus never calls Fal, never reads any API
 key or other credentials (`FAL_KEY` included), uploads no media, and mutates
 no provider account state. When a request needs provider generation, state
 exactly that boundary, run the local half (interview, pack validation,
@@ -77,10 +77,10 @@ dry-run/dry_run semantics — say "dry-run spec" or "deterministic plan", never
 
 ## Canonical Implementation
 
-- Repository: `affaan-m/ECC`; Python distribution `ecc-tasteforge`, package
+- Repository: `yusei21/yus`; Python distribution `yus-tasteforge`, package
   directory `skills/media/taste-application/scripts/tasteforge/`. Install from the
-  extracted ECC package with `python3 -m pip install ./skills/media/taste-application/scripts`.
-  The example project `Ito-Markets/ito-video` pins a specific ECC commit.
+  extracted yus package with `python3 -m pip install ./skills/media/taste-application/scripts`.
+  The example project `Ito-Markets/ito-video` pins a specific yus commit.
 - CLI: `python3 -m tasteforge <command>` — `provenance`, `inspect`, `validate`,
   `interview`, `distill`, `apply`, `export`, `multimodal`. `--live` flags exit
   with code 2 and refuse.
@@ -91,18 +91,18 @@ dry-run/dry_run semantics — say "dry-run spec" or "deterministic plan", never
   `skills/media/taste-application/SOURCE.md`. Run `python3 -m tasteforge provenance` for the machine-
   readable version.
 
-Use the installed ECC engine for local deterministic commands and interpret
+Use the installed yus engine for local deterministic commands and interpret
 its JSON. Install the packaged engine if absent; do not reconstruct its logic
 inline. `taste.resolve` is a compatibility import of `tasteforge.resolve`, so
 the creative scripts and example project share one verified Resolve adapter.
 
-The `python3 -m tasteforge` CLI uses the installed `ecc-tasteforge` distribution. The standalone `taste-distillation` and `taste-application`
-scripts ship in ECC's opt-in media-generation module with their own Python
+The `python3 -m tasteforge` CLI uses the installed `yus-tasteforge` distribution. The standalone `taste-distillation` and `taste-application`
+scripts ship in yus's opt-in media-generation module with their own Python
 requirements. Neither path requires publishing the user's repository or media.
 
 Before resuming a saved checkout, record its commit and inspect local branches
 and worktrees for later implementation fixes. Run the canonical package's tests
-and `python3 -m tasteforge apply --help`; ECC's text and fixture tests do not
+and `python3 -m tasteforge apply --help`; yus's text and fixture tests do not
 prove that the selected Python checkout implements this contract.
 
 ## Chaining the Creative Skills
@@ -241,7 +241,7 @@ weakening validation.
 ## Example Session
 
 ```bash
-# after installing the ECC engine; paths below are your project inputs
+# after installing the yus engine; paths below are your project inputs
 python3 -m tasteforge validate stylepacks/flashethereal
 python3 -m tasteforge interview --answers answers.json --genre flashethereal --out profile.json
 python3 -m tasteforge distill --profile profile.json --pack stylepacks/flashethereal --out spec.json

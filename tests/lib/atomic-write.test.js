@@ -32,7 +32,7 @@ function loadHelper(platform, rename, { clockStep = 25, read = fs.readFileSync }
 let passed = 0;
 let failed = 0;
 function test(name, run) {
-  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-atomic-rename-')));
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-atomic-rename-')));
   const destination = path.join(root, 'state.json');
   fs.writeFileSync(destination, 'old');
   try { run({ root, destination }); passed++; console.log(`PASS ${name}`); }

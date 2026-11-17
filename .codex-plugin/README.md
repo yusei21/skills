@@ -1,6 +1,6 @@
-# .codex-plugin — Codex Native Plugin for ECC
+# .codex-plugin — Codex Native Plugin for yus
 
-This directory contains the **Codex plugin manifest** for ECC.
+This directory contains the **Codex plugin manifest** for yus.
 
 ## Structure
 
@@ -21,33 +21,33 @@ hooks/codex-hooks.json — Codex-compatible lifecycle hook projection
 
 ## Installation
 
-Codex 0.146.0 and newer use `plugin add`, not `plugin install`. Add ECC's
+Codex 0.146.0 and newer use `plugin add`, not `plugin install`. Add yus's
 repository marketplace, install the native plugin, and verify the registration:
 
 ```bash
-codex plugin marketplace add affaan-m/ECC
-codex plugin add ecc@ecc
+codex plugin marketplace add yusei21/yus
+codex plugin add yus@yus
 codex plugin list --json
 ```
 
 Both add commands are safe to run again. A repeated marketplace add reports
 `alreadyAdded: true`, and a repeated plugin add keeps the same enabled plugin
-registration. To fetch a newer marketplace snapshot before applying a new ECC
+registration. To fetch a newer marketplace snapshot before applying a new yus
 release, run:
 
 ```bash
-codex plugin marketplace upgrade ecc
-codex plugin add ecc@ecc
+codex plugin marketplace upgrade yus
+codex plugin add yus@yus
 ```
 
 For local development, the same native journey accepts a checkout path:
 
 ```bash
-codex plugin marketplace add /absolute/path/to/ECC
-codex plugin add ecc@ecc
+codex plugin marketplace add /absolute/path/to/yus
+codex plugin add yus@yus
 ```
 
-ECC's marketplace entry points at the repository root. Codex copies the selected
+yus's marketplace entry points at the repository root. Codex copies the selected
 plugin source into its cache, so the root source keeps `skills/`, `.mcp.json`,
 `hooks/`, hook scripts, and presentation assets together. Parent-relative paths
 from a thin plugin directory would escape that cache and produce an installed
@@ -68,22 +68,22 @@ profiles are not Codex hook profiles: handlers that block tools, use unsupported
 events, run asynchronously, or fail Codex's hook protocol stay out of the native
 bundle. Codex enables hook support by default, but native plugin installation
 does not silently authorize commands. Start a new Codex session, open `/hooks`,
-then review and trust the ECC hook definition before enabling it.
+then review and trust the yus hook definition before enabling it.
 Codex records trust against each definition's hash, so changed hooks require
 review again. Use `/plugins` for plugin enablement and `/hooks` for hook trust;
 these are separate controls.
 
-Once the cached skills are available, invoke `$configure-ecc` inside Codex for
-ECC's guided configuration. Installing the plugin again is idempotent and does
+Once the cached skills are available, invoke `$configure-yus` inside Codex for
+yus's guided configuration. Installing the plugin again is idempotent and does
 not create a second scope or duplicate hook registration.
 
 ## Runtime dependencies and Codex 0.164.0 cache checks
 
-Native marketplace installation copies ECC's source; it does not run `npm ci`
+Native marketplace installation copies yus's source; it does not run `npm ci`
 for its hook dependencies. If a hook reports a missing runtime package, first
 run `codex plugin list --json` with the same `CODEX_HOME` as the affected
-session. Find the installed, enabled `ecc@ecc` entry and its version; do not
-select a version merely because its directory exists. From an ECC checkout,
+session. Find the installed, enabled `yus@yus` entry and its version; do not
+select a version merely because its directory exists. From an yus checkout,
 check that version explicitly:
 
 ```bash
@@ -91,8 +91,8 @@ check that version explicitly:
 node scripts/codex/check-plugin-cache.js --version '<installed-version>'
 ```
 
-If the affected session's hook warning identifies the exact ECC plugin root,
-prefer `node scripts/codex/check-plugin-cache.js --plugin-dir "/absolute/path/to/active/ecc/cache"`.
+If the affected session's hook warning identifies the exact yus plugin root,
+prefer `node scripts/codex/check-plugin-cache.js --plugin-dir "/absolute/path/to/active/yus/cache"`.
 Use the same `CODEX_HOME` for the version check (or pass `--codex-home`). The
 checker's default comes from the checkout's `package.json`; it does not discover
 the active version, and a passing check against an older cache is insufficient.
@@ -103,7 +103,7 @@ Codex 0.164.0 can reject a plugin after a normal dependency install with
 `unsupported plugin entry type ... node_modules/.bin/js-yaml`. npm normally
 creates executable symlinks in `.bin`; that Codex version's hook fingerprint
 walker accepts only directories and regular files. See
-[ECC #3742](https://github.com/affaan-m/ECC/issues/3742) and the
+[yus #3742](https://github.com/yusei21/yus/issues/3742) and the
 [Codex fingerprint implementation](https://github.com/openai/codex/blob/rust-v0.164.0/codex-rs/hooks/src/engine/plugin_fingerprint.rs).
 
 For an explicitly chosen cache-local dependency install, use npm's
@@ -111,11 +111,11 @@ For an explicitly chosen cache-local dependency install, use npm's
 option to install the runtime packages without creating executable links:
 
 ```bash
-# Set this to the active ECC plugin root confirmed above.
-ECC_PLUGIN_CACHE="/absolute/path/to/active/ecc/cache"
+# Set this to the active yus plugin root confirmed above.
+YUS_PLUGIN_CACHE="/absolute/path/to/active/yus/cache"
 (
   set -eu
-  cd -- "$ECC_PLUGIN_CACHE"
+  cd -- "$YUS_PLUGIN_CACHE"
   test -f package.json
   test -f package-lock.json
   npm ci --omit=dev --ignore-scripts --no-audit --no-fund --no-bin-links
@@ -123,13 +123,13 @@ ECC_PLUGIN_CACHE="/absolute/path/to/active/ecc/cache"
 )
 ```
 
-The cache root must contain ECC's `package.json` and `package-lock.json`. The
+The cache root must contain yus's `package.json` and `package-lock.json`. The
 subshell stops on a failed directory change, missing manifest, or failed install
 before running any later command, and leaves the caller's directory unchanged.
 `npm ci` replaces its dependency tree; this opt-in command is not part of the
 default Codex installer. The final command checks Node package resolution, not
 Codex hook execution. Executable shortcuts in `node_modules/.bin` are
-intentionally unavailable; ECC hooks load these packages through Node.
+intentionally unavailable; yus hooks load these packages through Node.
 
 Restart Codex, review the updated hook definitions in `/hooks`, and verify a
 new session's actual hook result. Do not disable fingerprint or trust checks.
@@ -141,28 +141,28 @@ again.
 ## Native plugin versus legacy managed sync
 
 The commands above are the native Codex plugin path. The deprecated legacy managed sync
-(`bash scripts/sync-ecc-to-codex.sh`) is a separate compatibility
+(`bash scripts/sync-yus-to-codex.sh`) is a separate compatibility
 path that merges files into `~/.codex`. It is not a native plugin install and
 does not create a marketplace registration. Prefer the native path on current
 Codex; use the legacy managed sync only when you intentionally need its copied
 configuration layer.
 
 New sync runs record a versioned ownership manifest. Inspect or remove that
-layer explicitly with `ecc uninstall --legacy-codex-sync --dry-run`, followed
-by `ecc uninstall --legacy-codex-sync`. Cleanup never targets conversation
+layer explicitly with `yus uninstall --legacy-codex-sync --dry-run`, followed
+by `yus uninstall --legacy-codex-sync`. Cleanup never targets conversation
 history or native plugin caches. Older pre-manifest installs are cleaned
 conservatively and unverifiable files are retained with warnings.
 
-After install, `codex plugin list` is only a registration check. From an ECC
-checkout, set `ECC_PLUGIN_CACHE` to the active root identified above, then run
+After install, `codex plugin list` is only a registration check. From an yus
+checkout, set `YUS_PLUGIN_CACHE` to the active root identified above, then run
 the cache check to verify that the installed manifest can resolve its referenced
 skills, MCP config, and assets:
 
 ```bash
-node scripts/codex/check-plugin-cache.js --plugin-dir "$ECC_PLUGIN_CACHE"
+node scripts/codex/check-plugin-cache.js --plugin-dir "$YUS_PLUGIN_CACHE"
 ```
 
-The installed plugin registers under the short slug `ecc` so tool and command names
+The installed plugin registers under the short slug `yus` so tool and command names
 stay below provider length limits.
 
 ## MCP Servers Included
@@ -177,7 +177,7 @@ The former defaults (`github`, `context7`, `exa`, `memory`, `playwright`, `seque
 
 - The `skills/` directory at the repo root is the source of truth for the Codex
   plugin package; do not duplicate skill content inside `.codex-plugin/`.
-- ECC is moving to a skills-first workflow surface. Legacy `commands/` remain for
+- yus is moving to a skills-first workflow surface. Legacy `commands/` remain for
   compatibility on harnesses that still expect slash-entry shims.
 - MCP server credentials are inherited from the launching environment (env vars)
 - This manifest does **not** override `~/.codex/config.toml` settings

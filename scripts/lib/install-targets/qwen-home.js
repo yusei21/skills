@@ -5,7 +5,7 @@ const adapter = createInstallTargetAdapter({
   target: 'qwen',
   kind: 'home',
   rootSegments: ['.qwen'],
-  installStatePathSegments: ['ecc-install-state.json'],
+  installStatePathSegments: ['yus-install-state.json'],
   nativeRootRelativePath: '.qwen',
 });
 

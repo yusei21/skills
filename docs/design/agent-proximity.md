@@ -128,7 +128,7 @@ been shown to preserve the risk score or predict collisions.
 (what the trigger layer acts on), the 3D `positions` and `fileCoordinates` (what
 the renderer draws), and pairwise `links` with risk (the edges to color).
 
-## 5. How it wires into ECC
+## 5. How it wires into yus
 
 - **Inputs** come from the session/work state: each running session's worktree
   diff gives its working set *W_a*; the dependency graph is built from the repo

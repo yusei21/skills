@@ -8,7 +8,7 @@ const { spawnSync } = require('node:child_process');
 const { test } = require('node:test');
 
 test('Pi generation stays byte-identical after local Python execution creates caches', t => {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-pi-cache-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-pi-cache-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const write = (relative, content) => {
     const destination = path.join(root, relative);
@@ -23,7 +23,7 @@ test('Pi generation stays byte-identical after local Python execution creates ca
   write('skills/demo/SKILL.md', '---\nname: demo\ndescription: Review local code.\n---\n\n# Demo\n');
   write('skills/demo/scripts/main.py', 'print("fixture")\n');
   write('manifests/pi-core.json', JSON.stringify({
-    profile: { dir: 'pi/core', packageName: 'ecc-pi-core', license: 'MIT', keywords: ['pi-package'] },
+    profile: { dir: 'pi/core', packageName: 'yus-pi-core', license: 'MIT', keywords: ['pi-package'] },
     curationRules: { include: ['local'], exclude: [] },
     skills: { include: ['demo'], exclude: {} },
     commands: { include: [], exclude: {} },

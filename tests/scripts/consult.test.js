@@ -35,7 +35,7 @@ function findMatchIndex(payload, componentId) {
     const result = run(['--help']);
 
     assert.strictEqual(result.status, 0, result.stderr);
-    assert.match(result.stdout, /Consult ECC install components/);
+    assert.match(result.stdout, /Consult yus install components/);
     assert.match(result.stdout, /node scripts\/consult\.js "security reviews"/);
   });
 
@@ -43,7 +43,7 @@ function findMatchIndex(payload, componentId) {
     const result = run(['--help', '--target', 'not-a-target']);
 
     assert.strictEqual(result.status, 0, result.stderr);
-    assert.match(result.stdout, /Consult ECC install components/);
+    assert.match(result.stdout, /Consult yus install components/);
   });
 
   test('recommends security components and profile for a natural language query', () => {
@@ -51,14 +51,14 @@ function findMatchIndex(payload, componentId) {
 
     assert.strictEqual(result.status, 0, result.stderr);
     const payload = parseJson(result.stdout);
-    assert.strictEqual(payload.schemaVersion, 'ecc.consult.v1');
+    assert.strictEqual(payload.schemaVersion, 'yus.consult.v1');
     assert.strictEqual(payload.query, 'security reviews');
     assert.strictEqual(payload.target, 'claude');
     assert.strictEqual(payload.matches[0].componentId, 'capability:security');
     assert.ok(payload.matches[0].reasons.some(reason => reason.includes('security')));
     assert.strictEqual(
       payload.matches[0].installCommand,
-      'npx ecc-universal install --profile minimal --target claude --with capability:security'
+      'npx yus-universal install --profile minimal --target claude --with capability:security'
     );
     assert.ok(payload.profiles.some(profile => profile.id === 'security'));
     assert.ok(payload.profiles.find(profile => profile.id === 'security').installCommand.includes('--profile security'));
@@ -68,10 +68,10 @@ function findMatchIndex(payload, componentId) {
     const result = run(['I', 'want', 'a', 'skill', 'for', 'security', 'reviews']);
 
     assert.strictEqual(result.status, 0, result.stderr);
-    assert.match(result.stdout, /ECC consult/);
+    assert.match(result.stdout, /yus consult/);
     assert.match(result.stdout, /capability:security/);
-    assert.match(result.stdout, /npx ecc-universal install --profile minimal --target claude --with capability:security/);
-    assert.match(result.stdout, /npx ecc-universal plan --profile minimal --target claude --with capability:security/);
+    assert.match(result.stdout, /npx yus-universal install --profile minimal --target claude --with capability:security/);
+    assert.match(result.stdout, /npx yus-universal plan --profile minimal --target claude --with capability:security/);
   });
 
   test('recommends machine-learning component and reviewer agent', () => {
@@ -131,8 +131,8 @@ function findMatchIndex(payload, componentId) {
     assert.ok(!payload.profiles.some(profile => profile.id === 'mle'));
   });
 
-  test('works from outside the ECC repository', () => {
-    const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-consult-project-'));
+  test('works from outside the yus repository', () => {
+    const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-consult-project-'));
     try {
       const result = run(['nextjs', 'react', '--json'], { cwd: projectDir });
 

@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "ecc.context-eval-corpus.v2",
+  "schemaVersion": "yus.context-eval-corpus.v2",
   "id": "coding-tasks@1",
-  "sampling": "Purposive coding-task corpus fixed before any provider call: 22 small JavaScript repairs paired with one plausibly helpful ECC skill, 8 trivial no-workflow fixes (some with misleading workflow vocabulary), and selection probes for exact names, paraphrases, no-workflow queries and policy blocks; equal weight per distinct task and no population-representativeness claim.",
+  "sampling": "Purposive coding-task corpus fixed before any provider call: 22 small JavaScript repairs paired with one plausibly helpful yus skill, 8 trivial no-workflow fixes (some with misleading workflow vocabulary), and selection probes for exact names, paraphrases, no-workflow queries and policy blocks; equal weight per distinct task and no population-representativeness claim.",
   "minimumDistinctTasks": 30,
   "nonInferiorityMargin": 0.05,
   "selection": [
@@ -17,7 +17,7 @@
     { "id":"excluded-explicit", "category":"policy", "query":"Use python-patterns.", "exclude":["skill:python-patterns"],"explicitIds":["skill:python-patterns"],"expectedBlock":"excluded" },
     { "id":"authority-boundary", "category":"policy", "query":"Use inherit-legacy-style to preserve conventions.", "explicitIds":["skill:inherit-legacy-style"],"expectedBlock":"native-authority" },
     { "id":"opt-out-conflict", "category":"policy", "query":"Use python-patterns.", "noWorkflow":true,"explicitIds":["skill:python-patterns"],"expectedBlock":"opt-out-conflict" },
-    { "id":"unknown-explicit", "category":"policy", "query":"Use an unavailable workflow.", "explicitIds":["skill:ecc-eval-nonexistent"],"expectedBlock":"unknown-id" },
+    { "id":"unknown-explicit", "category":"policy", "query":"Use an unavailable workflow.", "explicitIds":["skill:yus-eval-nonexistent"],"expectedBlock":"unknown-id" },
     { "id":"exact-security-review", "category":"exact", "query":"Use security-review to check this login handler for SQL injection and leaked secrets.", "expectedIds":["skill:security-review"] },
     { "id":"exact-error-handling", "category":"exact", "query":"Use error-handling to add typed error classes to the config loader.", "expectedIds":["skill:error-handling"] },
     { "id":"exact-database-migrations", "category":"exact", "query":"Use database-migrations to add a NOT NULL column to a large Postgres table.", "expectedIds":["skill:database-migrations"] },

@@ -2,7 +2,7 @@
 
 [English](TROUBLESHOOTING.md) | [Português](TROUBLESHOOTING.pt-BR.md) | **中文**
 
-ECC 插件的常见问题及解决方法。
+yus 插件的常见问题及解决方法。
 
 ## 目录
 
@@ -251,10 +251,10 @@ tmux attach -t dev
 
 **解决方法：**
 ```bash
-# 先看看 ECC 对这台机器还记录了什么
-ecc list-installed
-ecc doctor
-ecc repair
+# 先看看 yus 对这台机器还记录了什么
+yus list-installed
+yus doctor
+yus repair
 
 # 只有 doctor/repair 无法恢复缺失文件时才重新安装
 
@@ -266,7 +266,7 @@ mv ~/.claude/plugins/cache ~/.claude/plugins/cache.backup.$(date +%Y%m%d-%H%M%S)
 mkdir -p ~/.claude/plugins/cache
 
 # 从插件市场重新安装
-# Claude Code → Extensions → ECC → Uninstall
+# Claude Code → Extensions → yus → Uninstall
 # 然后从插件市场重新安装
 
 # 如果是插件市场或账号访问问题，请单独通过 ECC Tools 恢复账号；重新安装不能代替账号恢复
@@ -276,8 +276,8 @@ claude --version
 # 需要 Claude Code 2.0+
 
 # 手动安装（插件市场失败时）
-git clone https://github.com/affaan-m/ECC.git
-cp -r ECC ~/.claude/plugins/ecc
+git clone https://github.com/yusei21/yus.git
+cp -r yus ~/.claude/plugins/yus
 ```
 
 ### 包管理器检测失败
@@ -310,7 +310,7 @@ rm package-lock.json  # 使用 pnpm/yarn/bun 时
 ### OpenCode 在 Termux/Android 上无法启动
 
 **现象：**已修改文件跟踪悄悄停止工作（OpenCode 日志中出现一次
-`[ECC] changed-files tracking disabled` 警告），或者在旧版本中 `opencode` 启动时直接因
+`[yus] changed-files tracking disabled` 警告），或者在旧版本中 `opencode` 启动时直接因
 Bun 的 `ResolveMessage` 崩溃，例如：
 
 ```
@@ -320,23 +320,23 @@ ResolveMessage: Cannot find module '../plugins/lib/changed-files-store.js' from 
 **原因：**
 - 这台机器上的 `~/.opencode` 安装缺失或不完整——通常 `tools/` 和 `plugins/` 都在，但
   `plugins/lib/` 没有复制完（安装被中断，或存储/权限问题，在 Android 文件系统上更常见）。
-  `changed-files` 工具和 `ecc-hooks` 插件都依赖 `plugins/lib/changed-files-store.js`；由于
-  `ecc-hooks.ts` 是 OpenCode 的插件入口（在会话启动时、`tools/index.ts` 汇总文件之前加载一次），
+  `changed-files` 工具和 `yus-hooks` 插件都依赖 `plugins/lib/changed-files-store.js`；由于
+  `yus-hooks.ts` 是 OpenCode 的插件入口（在会话启动时、`tools/index.ts` 汇总文件之前加载一次），
   那里缺少依赖会让整个 OpenCode 会话在任何钩子加载前崩溃，而不只是那一个工具。
 
 **解决方法：**
 ```bash
-# 在 ECC 仓库中检查并修复缺失/不完整的托管文件
-ecc doctor --target opencode
-ecc repair --target opencode
+# 在 yus 仓库中检查并修复缺失/不完整的托管文件
+yus doctor --target opencode
+yus repair --target opencode
 
 # 如果报告没有差异，但设备上 plugins/ 仍然缺失，
-# 针对 opencode 目标重新运行 ECC 安装器
+# 针对 opencode 目标重新运行 yus 安装器
 ```
 
 **注意：**如果你还看到引用 `~/.config/opencode/oh-my-opencode-slim.json` 的
 `ProviderModelNotFoundError: Model not found: openai/gpt-5.5`，那个文件属于第三方插件
-[`oh-my-opencode-slim`](https://github.com/alvinunreal/oh-my-opencode-slim)，不是 ECC——ECC 从不
+[`oh-my-opencode-slim`](https://github.com/alvinunreal/oh-my-opencode-slim)，不是 yus——yus 从不
 写入 `~/.config/opencode/`。请在那里修正模型前缀（用 `opencode/...` 而不是 `openai/...`），或向
 那个项目报告。
 
@@ -416,11 +416,11 @@ chmod -R u+rwX,go+rX ~/.claude/homunculus
 ```bash
 # 安装插件依赖
 # 把 <version> 换成 `claude plugin list` 中显示的版本，例如 2.2.3
-cd "$HOME/.claude/plugins/cache/ecc/ecc/<version>"
+cd "$HOME/.claude/plugins/cache/yus/yus/<version>"
 npm install
 
 # 或者手动安装时
-cd ~/.claude/plugins/ecc
+cd ~/.claude/plugins/yus
 npm install
 ```
 
@@ -442,7 +442,7 @@ find ~/.claude/plugins -name "*.sh" -exec dos2unix {} \;
 
 如果问题仍然存在：
 
-1. **查看 GitHub Issues**：[github.com/affaan-m/ECC/issues](https://github.com/affaan-m/ECC/issues)
+1. **查看 GitHub Issues**：[github.com/yusei21/yus/issues](https://github.com/yusei21/yus/issues)
 2. **开启调试日志**：
    ```bash
    export CLAUDE_DEBUG=1

@@ -1,9 +1,9 @@
 ---
 name: benchmark
-description: Measure performance baselines and detect regressions across browser Core Web Vitals (LCP, INP, CLS, page weight), API endpoint latency percentiles, and build/test feedback times, with before/after comparison stored in git-tracked .ecc/benchmarks JSON. Use when checking page speed, responding to 'it feels slow' reports, verifying launch performance targets, or comparing stack alternatives.
+description: Measure performance baselines and detect regressions across browser Core Web Vitals (LCP, INP, CLS, page weight), API endpoint latency percentiles, and build/test feedback times, with before/after comparison stored in git-tracked .yus/benchmarks JSON. Use when checking page speed, responding to 'it feels slow' reports, verifying launch performance targets, or comparing stack alternatives.
 license: MIT
 metadata:
-  origin: ECC
+  origin: yus
 ---
 
 # Benchmark — Performance Baseline & Regression Detection
@@ -86,7 +86,7 @@ Output:
 
 ## Output
 
-Stores baselines in `.ecc/benchmarks/` as JSON. Git-tracked so the team shares baselines.
+Stores baselines in `.yus/benchmarks/` as JSON. Git-tracked so the team shares baselines.
 
 ## Integration
 

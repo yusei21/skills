@@ -32,7 +32,7 @@ async function startWorker() {
 }
 
 async function withDatabase(fn) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-store-concurrency-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-store-concurrency-'));
   const dbPath = path.join(dir, 'state.db');
   return withCleanup(() => fn(dbPath), [() => fs.rmSync(dir, { recursive: true, force: true })]);
 }

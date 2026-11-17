@@ -1,7 +1,7 @@
 'use strict';
 // Hidden grader for sentinel-api: runs exploit probes and functional regression
 // probes against the agent's service, in-process, plus static source checks.
-// Prints ECC_EVAL_SCORE and always exits 0.
+// Prints YUS_EVAL_SCORE and always exits 0.
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -14,13 +14,13 @@ function finish() {
   finished = true;
   const ok = checks.filter(c => c.ok).length;
   for (const c of checks) console.log(`${c.ok ? 'ok' : 'not ok'} - ${c.name}`);
-  console.log(`ECC_EVAL_SCORE ${JSON.stringify({ score: checks.length ? ok / checks.length : 0, passed: ok, total: checks.length })}`);
+  console.log(`YUS_EVAL_SCORE ${JSON.stringify({ score: checks.length ? ok / checks.length : 0, passed: ok, total: checks.length })}`);
   process.exit(0);
 }
 setTimeout(finish, 45000).unref();
 
 const HARDCODED_TOKEN = 'fixture-token';
-const GRADER_TOKEN = 'ecc-grader-admin-token-31f7';
+const GRADER_TOKEN = 'yus-grader-admin-token-31f7';
 
 function sourceFiles(directory, found = []) {
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {

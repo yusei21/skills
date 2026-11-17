@@ -8,15 +8,15 @@ const path = require('path');
 const { FEEDBACK_ROUTES, exitFeedbackLines, getFeedbackPayload, problemReportLines } = require('../../scripts/lib/feedback-links');
 
 const ISSUE_TEMPLATE_DIR = path.join(__dirname, '..', '..', '.github', 'ISSUE_TEMPLATE');
-const ISSUES_NEW_URL = 'https://github.com/affaan-m/ECC/issues/new';
+const ISSUES_NEW_URL = 'https://github.com/yusei21/yus/issues/new';
 
-test('every route is a new-issue URL on the ECC repository with only a template query', () => {
+test('every route is a new-issue URL on the yus repository with only a template query', () => {
   assert.deepEqual(Object.keys(FEEDBACK_ROUTES).sort(), ['feature', 'feedback', 'problem']);
   for (const [name, route] of Object.entries(FEEDBACK_ROUTES)) {
     const parsed = new URL(route);
     assert.equal(parsed.protocol, 'https:', `${name} protocol`);
     assert.equal(parsed.hostname, 'github.com', `${name} host`);
-    assert.equal(parsed.pathname, '/affaan-m/ECC/issues/new', `${name} path`);
+    assert.equal(parsed.pathname, '/yusei21/yus/issues/new', `${name} path`);
     assert.equal(parsed.username, '', `${name} username`);
     assert.equal(parsed.password, '', `${name} password`);
     assert.equal(parsed.hash, '', `${name} hash`);
@@ -51,7 +51,7 @@ test('the route table is frozen', () => {
 
 test('the payload declares the public schema and no diagnostics upload', () => {
   assert.deepEqual(getFeedbackPayload(), {
-    schemaVersion: 'ecc.feedback.v1',
+    schemaVersion: 'yus.feedback.v1',
     privacy: 'public-github',
     diagnosticsUploaded: false,
     routes: { ...FEEDBACK_ROUTES }

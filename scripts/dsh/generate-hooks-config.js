@@ -2,22 +2,22 @@
 /**
  * Generate a DeepSeek Harness (DSH) hooks config from hooks/hooks.json.
  *
- * DSH bridges ECC command hooks through the first-party plugin
+ * DSH bridges yus command hooks through the first-party plugin
  * @deepseek-ai/dsh-hooks-claude-code. The bridge supports a subset of
  * Claude Code hook events and lower-cases tool names in matchers, so this
- * script converts the canonical ECC hooks.json into a DSH-compatible file.
+ * script converts the canonical yus hooks.json into a DSH-compatible file.
  *
  * Usage:
- *   node scripts/dsh/generate-hooks-config.js [--ecc-root <dir>] [--out <file>]
+ *   node scripts/dsh/generate-hooks-config.js [--yus-root <dir>] [--out <file>]
  *
  * Defaults:
- *   --ecc-root  directory of this checkout (repo root)
- *   --out       <ecc-root>/hooks/hooks.dsh.json
+ *   --yus-root  directory of this checkout (repo root)
+ *   --out       <yus-root>/hooks/hooks.dsh.json
  *
  * The output is a Claude Code hooks-format file consumed by the bridge:
  *   { "hooks": { "PreToolUse": [ { "matcher": "...", "hooks": [...] } ] } }
  *
- * Unsupported ECC events (no DSH bridge counterpart) are skipped and
+ * Unsupported yus events (no DSH bridge counterpart) are skipped and
  * reported on stderr: PreCompact, PostToolUseFailure, SessionEnd.
  */
 'use strict';
@@ -42,16 +42,16 @@ const TOOL_NAME_MAP = {
 };
 
 function parseArgs(argv) {
-  const opts = { eccRoot: null, out: null };
+  const opts = { yusRoot: null, out: null };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
-    if (a === '--ecc-root' || a === '--out') {
+    if (a === '--yus-root' || a === '--out') {
       const value = argv[++i];
       if (value === undefined || value.startsWith('--')) {
         process.stderr.write('Missing value for ' + a + '\n');
         process.exit(2);
       }
-      if (a === '--ecc-root') opts.eccRoot = value;
+      if (a === '--yus-root') opts.yusRoot = value;
       else opts.out = value;
     }
     else {
@@ -79,10 +79,10 @@ function mapMatcher(matcher) {
 }
 
 /**
- * Rewrite an ECC command into a DSH bridge command.
+ * Rewrite an yus command into a DSH bridge command.
  *
  * The bridge runs commands with bash -c but does not export the plugin
- * root as an environment variable for every hook process. Each ECC hook
+ * root as an environment variable for every hook process. Each yus hook
  * command embeds a resolver (`node -e "..." <hook-id> <script> [args]`)
  * that resolves scripts/hooks/plugin-hook-bootstrap.js from the
  * CLAUDE_PLUGIN_ROOT environment variable, so prefixing the variables
@@ -92,17 +92,17 @@ function shellQuote(value) {
   return "'" + String(value).replace(/'/g, "'\\''") + "'";
 }
 
-function mapCommand(command, eccRoot) {
-  const prefix = 'CLAUDE_PLUGIN_ROOT=' + shellQuote(eccRoot) +
-    ' ECC_PLUGIN_ROOT=' + shellQuote(eccRoot) + ' ';
+function mapCommand(command, yusRoot) {
+  const prefix = 'CLAUDE_PLUGIN_ROOT=' + shellQuote(yusRoot) +
+    ' YUS_PLUGIN_ROOT=' + shellQuote(yusRoot) + ' ';
   return prefix + command;
 }
 
 /**
- * Convert the ECC hooks document into the DSH bridge format.
+ * Convert the yus hooks document into the DSH bridge format.
  * Returns { config, report } where report lists skipped events/entries.
  */
-function generateConfig(eccRoot, sourceDoc) {
+function generateConfig(yusRoot, sourceDoc) {
   const out = { hooks: {} };
   const report = [];
   for (const entry of Object.entries(sourceDoc.hooks || {})) {
@@ -120,7 +120,7 @@ function generateConfig(eccRoot, sourceDoc) {
           report.push('skip non-command hook on ' + event);
           continue;
         }
-        const mapped = { type: 'command', command: mapCommand(h.command, eccRoot) };
+        const mapped = { type: 'command', command: mapCommand(h.command, yusRoot) };
         if (typeof h.timeout === 'number') mapped.timeout = h.timeout;
         hooks.push(mapped);
         report.push('ok ' + event);
@@ -136,10 +136,10 @@ function generateConfig(eccRoot, sourceDoc) {
 
 function main() {
   const opts = parseArgs(process.argv);
-  const eccRoot = path.resolve(opts.eccRoot || path.join(__dirname, '..', '..'));
-  const sourcePath = path.join(eccRoot, 'hooks', 'hooks.json');
+  const yusRoot = path.resolve(opts.yusRoot || path.join(__dirname, '..', '..'));
+  const sourcePath = path.join(yusRoot, 'hooks', 'hooks.json');
   if (!fs.existsSync(sourcePath)) {
-    process.stderr.write('ECC hooks.json not found at ' + sourcePath + '\n');
+    process.stderr.write('yus hooks.json not found at ' + sourcePath + '\n');
     process.exit(1);
   }
   let doc;
@@ -149,8 +149,8 @@ function main() {
     process.stderr.write('Failed to parse ' + sourcePath + ': ' + err.message + '\n');
     process.exit(1);
   }
-  const result = generateConfig(eccRoot, doc);
-  const outPath = opts.out || path.join(eccRoot, 'hooks', 'hooks.dsh.json');
+  const result = generateConfig(yusRoot, doc);
+  const outPath = opts.out || path.join(yusRoot, 'hooks', 'hooks.dsh.json');
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, JSON.stringify(result.config, null, 2) + '\n');
   const okCount = result.report.filter(function (r) { return r.indexOf('ok ') === 0; }).length;

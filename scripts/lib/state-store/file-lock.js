@@ -77,7 +77,7 @@ function releaseOwnedLock(lockPath, descriptor, identity) {
 }
 
 function acquireLock(dbPath, timeoutMs) {
-  const lockPath = `${dbPath}.ecc-state.lock`;
+  const lockPath = `${dbPath}.yus-state.lock`;
   const deadline = performance.now() + timeoutMs;
   for (;;) {
     let descriptor;
@@ -93,8 +93,8 @@ function acquireLock(dbPath, timeoutMs) {
         // EPERM can also mean genuine access denial; preserve its diagnostics
         // rather than advising the caller to remove a possibly unrelated lock.
         if (retryablePermissionError) throw error;
-        const busy = new Error(`State store is busy: ${dbPath}. Retry after the other ECC operation finishes. `
-          + `If an operation terminated unexpectedly, stop all ECC processes using this database, `
+        const busy = new Error(`State store is busy: ${dbPath}. Retry after the other yus operation finishes. `
+          + `If an operation terminated unexpectedly, stop all yus processes using this database, `
           + `then inspect and remove the leftover lock: ${lockPath}`);
         busy.code = 'STATE_STORE_BUSY';
         throw busy;

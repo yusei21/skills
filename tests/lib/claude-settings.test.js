@@ -1,5 +1,5 @@
 /**
- * Focused coverage for safely managing ECC hook entries in Claude settings.
+ * Focused coverage for safely managing yus hook entries in Claude settings.
  */
 
 'use strict';
@@ -112,7 +112,7 @@ function assertAtomicParentReplacementRejected(stage) {
     fs.closeSync = function(descriptor) {
       const result = originalClose.call(fs, descriptor);
       // At the rename boundary the staging handle has been closed. Windows
-      // can now replace the parent, exercising ECC's identity check too.
+      // can now replace the parent, exercising yus's identity check too.
       if (!replacementAttempted && stage === 'rename' && descriptor === tempDescriptor) replaceParent();
       return result;
     };
@@ -193,29 +193,29 @@ function runTests() {
     const source = {
       hooks: {
         Stop: [entry(
-          'ecc:stop',
+          'yus:stop',
           'var e=process.env.CLAUDE_PLUGIN_ROOT; '
             + 'process.env.CLAUDE_PLUGIN_ROOT=r; ${CLAUDE_PLUGIN_ROOT}'
         )],
       },
     };
     const before = clone(source);
-    const materialized = materializeManagedHooks(source, '/opt/ecc');
+    const materialized = materializeManagedHooks(source, '/opt/yus');
     const command = materialized.Stop[0].hooks[0].command;
     const encodedRoot = command.match(/Buffer\.from\('([^']+)','base64'\)/)[1];
 
     assert.deepStrictEqual(source, before);
     assert.ok(!command.includes('var e=process.env.CLAUDE_PLUGIN_ROOT;'));
     assert.ok(!command.includes('${CLAUDE_PLUGIN_ROOT}'));
-    assert.strictEqual(Buffer.from(encodedRoot, 'base64').toString('utf8'), '/opt/ecc');
-    assert.throws(() => materializeManagedHooks({}, '/opt/ecc'), /hooks object/);
+    assert.strictEqual(Buffer.from(encodedRoot, 'base64').toString('utf8'), '/opt/yus');
+    assert.throws(() => materializeManagedHooks({}, '/opt/yus'), /hooks object/);
     assert.throws(() => materializeManagedHooks(source, ''), /target root/);
     assert.throws(
       () => materializeManagedHooks({
         hooks: {
-          Stop: [entry('ecc:stop', 'node -e "const e=process.env.CLAUDE_PLUGIN_ROOT"')],
+          Stop: [entry('yus:stop', 'node -e "const e=process.env.CLAUDE_PLUGIN_ROOT"')],
         },
-      }, '/opt/ecc'),
+      }, '/opt/yus'),
       /Unable to resolve CLAUDE_PLUGIN_ROOT/
     );
   })) passed++; else failed++;
@@ -230,14 +230,14 @@ function runTests() {
     };
     const before = clone(source);
 
-    const resolved = replacePluginRootPlaceholders(source, '/opt/ecc');
+    const resolved = replacePluginRootPlaceholders(source, '/opt/yus');
 
     assert.deepStrictEqual(source, before);
     assert.deepStrictEqual(resolved, {
       SessionStart: [{
         id: 'session:start',
-        command: '/opt/ecc/start.js:/opt/ecc',
-        nested: ['/opt/ecc/nested.js', 3, null],
+        command: '/opt/yus/start.js:/opt/yus',
+        nested: ['/opt/yus/nested.js', 3, null],
       }],
     });
   })) passed++; else failed++;
@@ -352,7 +352,7 @@ function runTests() {
         theme: 'dark',
         managed: true,
       });
-      assert.ok(!fs.existsSync(`${settingsPath}.ecc.lock`));
+      assert.ok(!fs.existsSync(`${settingsPath}.yus.lock`));
     } finally {
       fs.lstatSync = originalLstatSync;
       Object.defineProperty(process, 'platform', {
@@ -384,10 +384,10 @@ function runTests() {
           settingsPath,
           settings => ({ settings: { ...settings, managed: true } })
         ),
-        error => error.code === 'ECC_SETTINGS_CHANGED'
+        error => error.code === 'YUS_SETTINGS_CHANGED'
       );
       assert.strictEqual(fs.readFileSync(settingsPath, 'utf8'), initial);
-      assert.ok(!fs.existsSync(`${settingsPath}.ecc.lock`));
+      assert.ok(!fs.existsSync(`${settingsPath}.yus.lock`));
     } finally {
       fs.lstatSync = originalLstatSync;
       Object.defineProperty(process, 'platform', {
@@ -438,7 +438,7 @@ function runTests() {
           settingsPath,
           settings => ({ settings: { ...settings, managed: true } })
         ),
-        error => error.code === 'ECC_SETTINGS_CHANGED'
+        error => error.code === 'YUS_SETTINGS_CHANGED'
       );
       assert.strictEqual(sawBigIntFstat, true);
       assert.strictEqual(sawBigIntLstat, true);
@@ -519,7 +519,7 @@ function runTests() {
   if (test('atomic settings updates recover a stale invalid lock after its lease', () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-settings-stale-lock-'));
     const settingsPath = path.join(tempDir, 'settings.json');
-    const lockPath = `${settingsPath}.ecc.lock`;
+    const lockPath = `${settingsPath}.yus.lock`;
     try {
       fs.writeFileSync(lockPath, '', { mode: 0o600 });
       const stale = new Date(Date.now() - (10 * 60 * 1000));
@@ -537,10 +537,10 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  if (test('atomic settings updates serialize nested ECC writers and release the lock', () => {
+  if (test('atomic settings updates serialize nested yus writers and release the lock', () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-settings-lock-'));
     const settingsPath = path.join(tempDir, 'settings.json');
-    const lockPath = `${settingsPath}.ecc.lock`;
+    const lockPath = `${settingsPath}.yus.lock`;
     try {
       updateSettingsAtomic(settingsPath, settings => {
         assert.throws(
@@ -548,7 +548,7 @@ function runTests() {
             settingsPath,
             nested => ({ settings: { ...nested, nested: true } })
           ),
-          /Another ECC process is updating Claude settings/
+          /Another yus process is updating Claude settings/
         );
         return { settings: { ...settings, outer: true } };
       });
@@ -565,7 +565,7 @@ function runTests() {
   if (test('atomic settings updates honor an already-held lock', () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-settings-lock-held-'));
     const settingsPath = path.join(tempDir, 'settings.json');
-    const lockPath = `${settingsPath}.ecc.lock`;
+    const lockPath = `${settingsPath}.yus.lock`;
     try {
       fs.writeFileSync(lockPath, JSON.stringify({ pid: process.pid }), { mode: 0o600 });
       updateSettingsAtomic(
@@ -583,7 +583,7 @@ function runTests() {
   if (test('settings lock release failures do not replace the primary update error', () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-settings-release-error-'));
     const settingsPath = path.join(tempDir, 'settings.json');
-    const lockPath = `${settingsPath}.ecc.lock`;
+    const lockPath = `${settingsPath}.yus.lock`;
     try {
       let caught;
       try {
@@ -606,7 +606,7 @@ function runTests() {
   if (test('settings lock release preserves a lock with an unequal nonzero Windows device id', () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-settings-release-dev-'));
     const settingsPath = path.join(tempDir, 'settings.json');
-    const lockPath = `${settingsPath}.ecc.lock`;
+    const lockPath = `${settingsPath}.yus.lock`;
     const originalLstatSync = fs.lstatSync;
     const originalPlatform = process.platform;
     let lockContents;
@@ -614,7 +614,7 @@ function runTests() {
       Object.defineProperty(process, 'platform', { value: 'win32', configurable: true });
       fs.lstatSync = function(targetPath, ...args) {
         const stats = originalLstatSync.call(fs, targetPath, ...args);
-        if (!String(targetPath).includes('.ecc.lock.release-')) return stats;
+        if (!String(targetPath).includes('.yus.lock.release-')) return stats;
         const mismatchedDev = typeof stats.dev === 'bigint' ? stats.dev + 1n : stats.dev + 1;
         return deriveStats(stats, { dev: mismatchedDev });
       };
@@ -639,7 +639,7 @@ function runTests() {
   if (test('stale lock recovery preserves a lock with an unequal nonzero Windows device id', () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-settings-stale-dev-'));
     const settingsPath = path.join(tempDir, 'settings.json');
-    const lockPath = `${settingsPath}.ecc.lock`;
+    const lockPath = `${settingsPath}.yus.lock`;
     const originalLstatSync = fs.lstatSync;
     const originalPlatform = process.platform;
     const lockContents = 'foreign stale lock\n';
@@ -650,7 +650,7 @@ function runTests() {
       Object.defineProperty(process, 'platform', { value: 'win32', configurable: true });
       fs.lstatSync = function(targetPath, ...args) {
         const stats = originalLstatSync.call(fs, targetPath, ...args);
-        if (!stats || !String(targetPath).includes('.ecc.lock.stale-')) return stats;
+        if (!stats || !String(targetPath).includes('.yus.lock.stale-')) return stats;
         const mismatchedDev = typeof stats.dev === 'bigint' ? stats.dev + 1n : stats.dev + 1;
         return deriveStats(stats, { dev: mismatchedDev });
       };
@@ -660,7 +660,7 @@ function runTests() {
           settingsPath,
           settings => ({ settings: { ...settings, recovered: true } })
         ),
-        /Another ECC process is updating Claude settings/
+        /Another yus process is updating Claude settings/
       );
       assert.strictEqual(fs.readFileSync(lockPath, 'utf8'), lockContents);
       assert.ok(!fs.existsSync(`${lockPath}.recover`));
@@ -690,7 +690,7 @@ function runTests() {
           settingsPath,
           settings => ({ settings: { ...settings, managed: true } })
         ),
-        error => error.code === 'ELOOP' || error.code === 'ECC_SETTINGS_CHANGED'
+        error => error.code === 'ELOOP' || error.code === 'YUS_SETTINGS_CHANGED'
       );
       assert.deepStrictEqual(JSON.parse(fs.readFileSync(realPath, 'utf8')), { theme: 'dark' });
     } finally {
@@ -708,8 +708,8 @@ function runTests() {
       },
     };
     const managed = {
-      SessionStart: [entry('ecc:start', 'node /opt/ecc/start.js')],
-      Stop: [entry('ecc:stop', 'node /opt/ecc/stop.js')],
+      SessionStart: [entry('yus:start', 'node /opt/yus/start.js')],
+      Stop: [entry('yus:stop', 'node /opt/yus/stop.js')],
     };
     const settingsBefore = clone(settings);
     const managedBefore = clone(managed);
@@ -727,8 +727,8 @@ function runTests() {
       },
     });
     assert.deepStrictEqual(result.added, [
-      { event: 'SessionStart', id: 'ecc:start' },
-      { event: 'Stop', id: 'ecc:stop' },
+      { event: 'SessionStart', id: 'yus:start' },
+      { event: 'Stop', id: 'yus:stop' },
     ]);
     assert.deepStrictEqual(result.updated, []);
   })) passed++; else failed++;
@@ -736,50 +736,50 @@ function runTests() {
   if (test('fresh merge treats a different entry with the same event and id as a conflict', () => {
     const settings = {
       hooks: {
-        Stop: [entry('ecc:stop', 'user-modified')],
+        Stop: [entry('yus:stop', 'user-modified')],
       },
     };
     const managed = {
-      Stop: [entry('ecc:stop', 'managed')],
+      Stop: [entry('yus:stop', 'managed')],
     };
 
     assert.throws(
       () => mergeManagedHooks(settings, managed),
-      /Refusing to overwrite.*Stop.*ecc:stop/
+      /Refusing to overwrite.*Stop.*yus:stop/
     );
-    assert.deepStrictEqual(settings.hooks.Stop[0], entry('ecc:stop', 'user-modified'));
+    assert.deepStrictEqual(settings.hooks.Stop[0], entry('yus:stop', 'user-modified'));
   })) passed++; else failed++;
 
   if (test('fresh merge adopts an identical existing event and id without duplicating it', () => {
-    const managed = { Stop: [entry('ecc:stop', 'managed')] };
+    const managed = { Stop: [entry('yus:stop', 'managed')] };
     const result = mergeManagedHooks({ hooks: clone(managed) }, managed);
 
     assert.deepStrictEqual(result.settings.hooks.Stop, managed.Stop);
-    assert.deepStrictEqual(result.unchanged, [{ event: 'Stop', id: 'ecc:stop' }]);
+    assert.deepStrictEqual(result.unchanged, [{ event: 'Stop', id: 'yus:stop' }]);
   })) passed++; else failed++;
 
   if (test('upgrade replaces an entry only while it still equals previous managed content', () => {
-    const previousManagedHooks = { Stop: [entry('ecc:stop', 'version-1')] };
-    const managedHooks = { Stop: [entry('ecc:stop', 'version-2')] };
+    const previousManagedHooks = { Stop: [entry('yus:stop', 'version-1')] };
+    const managedHooks = { Stop: [entry('yus:stop', 'version-2')] };
     const result = mergeManagedHooks(
-      { hooks: { Stop: [entry('ecc:stop', 'version-1')] } },
+      { hooks: { Stop: [entry('yus:stop', 'version-1')] } },
       managedHooks,
       { previousManagedHooks }
     );
 
     assert.deepStrictEqual(result.settings.hooks.Stop, managedHooks.Stop);
-    assert.deepStrictEqual(result.updated, [{ event: 'Stop', id: 'ecc:stop' }]);
+    assert.deepStrictEqual(result.updated, [{ event: 'Stop', id: 'yus:stop' }]);
   })) passed++; else failed++;
 
   if (test('upgrade fails closed when previous managed content has drifted', () => {
-    const settings = { hooks: { Stop: [entry('ecc:stop', 'customer-edit')] } };
+    const settings = { hooks: { Stop: [entry('yus:stop', 'customer-edit')] } };
     const before = clone(settings);
 
     assert.throws(
       () => mergeManagedHooks(
         settings,
-        { Stop: [entry('ecc:stop', 'version-2')] },
-        { previousManagedHooks: { Stop: [entry('ecc:stop', 'version-1')] } }
+        { Stop: [entry('yus:stop', 'version-2')] },
+        { previousManagedHooks: { Stop: [entry('yus:stop', 'version-1')] } }
       ),
       /drifted|Refusing to overwrite/
     );
@@ -787,59 +787,59 @@ function runTests() {
   })) passed++; else failed++;
 
   if (test('upgrade is idempotent when the desired entry is already installed', () => {
-    const desired = { Stop: [entry('ecc:stop', 'version-2')] };
+    const desired = { Stop: [entry('yus:stop', 'version-2')] };
     const result = mergeManagedHooks(
       { hooks: clone(desired) },
       desired,
-      { previousManagedHooks: { Stop: [entry('ecc:stop', 'version-1')] } }
+      { previousManagedHooks: { Stop: [entry('yus:stop', 'version-1')] } }
     );
 
     assert.deepStrictEqual(result.settings.hooks, desired);
-    assert.deepStrictEqual(result.unchanged, [{ event: 'Stop', id: 'ecc:stop' }]);
+    assert.deepStrictEqual(result.unchanged, [{ event: 'Stop', id: 'yus:stop' }]);
   })) passed++; else failed++;
 
   if (test('upgrade removes unchanged entries that are no longer managed', () => {
     const previousManagedHooks = {
       Stop: [
-        entry('ecc:keep', 'version-1'),
-        entry('ecc:removed', 'old-command'),
+        entry('yus:keep', 'version-1'),
+        entry('yus:removed', 'old-command'),
       ],
     };
-    const desired = { Stop: [entry('ecc:keep', 'version-2')] };
+    const desired = { Stop: [entry('yus:keep', 'version-2')] };
     const userEntry = entry('user:stop', 'keep-user');
     const result = mergeManagedHooks({
       hooks: { Stop: [userEntry, ...previousManagedHooks.Stop] },
     }, desired, { previousManagedHooks });
 
     assert.deepStrictEqual(result.settings.hooks.Stop, [userEntry, desired.Stop[0]]);
-    assert.deepStrictEqual(result.removed, [{ event: 'Stop', id: 'ecc:removed' }]);
+    assert.deepStrictEqual(result.removed, [{ event: 'Stop', id: 'yus:removed' }]);
   })) passed++; else failed++;
 
   if (test('upgrade removes multiple retired hooks without deleting their neighbor', () => {
     const previousManagedHooks = {
-      Stop: [entry('ecc:a', 'a'), entry('ecc:b', 'b')],
+      Stop: [entry('yus:a', 'a'), entry('yus:b', 'b')],
     };
     const userEntry = entry('user:c', 'keep-user');
     const result = mergeManagedHooks({
       hooks: { Stop: [...previousManagedHooks.Stop, userEntry] },
-    }, { SessionStart: [entry('ecc:start', 'start')] }, { previousManagedHooks });
+    }, { SessionStart: [entry('yus:start', 'start')] }, { previousManagedHooks });
 
     assert.deepStrictEqual(result.settings.hooks.Stop, [userEntry]);
     assert.deepStrictEqual(result.removed, [
-      { event: 'Stop', id: 'ecc:a' },
-      { event: 'Stop', id: 'ecc:b' },
+      { event: 'Stop', id: 'yus:a' },
+      { event: 'Stop', id: 'yus:b' },
     ]);
   })) passed++; else failed++;
 
   if (test('upgrade refuses to remove a retired entry after user drift', () => {
-    const previousManagedHooks = { Stop: [entry('ecc:removed', 'old-command')] };
-    const settings = { hooks: { Stop: [entry('ecc:removed', 'user-edited')] } };
+    const previousManagedHooks = { Stop: [entry('yus:removed', 'old-command')] };
+    const settings = { hooks: { Stop: [entry('yus:removed', 'user-edited')] } };
 
     assert.throws(
-      () => mergeManagedHooks(settings, { SessionStart: [entry('ecc:start', 'start')] }, {
+      () => mergeManagedHooks(settings, { SessionStart: [entry('yus:start', 'start')] }, {
         previousManagedHooks,
       }),
-      /Refusing to remove.*ecc:removed.*drifted/
+      /Refusing to remove.*yus:removed.*drifted/
     );
   })) passed++; else failed++;
 
@@ -849,15 +849,15 @@ function runTests() {
         {
           hooks: {
             Stop: [
-              entry('ecc:stop', 'version-1'),
-              entry('ecc:stop', 'another-copy'),
+              entry('yus:stop', 'version-1'),
+              entry('yus:stop', 'another-copy'),
             ],
           },
         },
-        { Stop: [entry('ecc:stop', 'version-2')] },
-        { previousManagedHooks: { Stop: [entry('ecc:stop', 'version-1')] } }
+        { Stop: [entry('yus:stop', 'version-2')] },
+        { previousManagedHooks: { Stop: [entry('yus:stop', 'version-1')] } }
       ),
-      /multiple.*ecc:stop/i
+      /multiple.*yus:stop/i
     );
   })) passed++; else failed++;
 
@@ -875,27 +875,27 @@ function runTests() {
   if (test('repair mode overwrites a drifted same-event managed id and preserves neighbors', () => {
     const userEntry = { id: 'user:hook', command: 'keep-me' };
     const result = repairManagedHooks(
-      { hooks: { Stop: [userEntry, entry('ecc:stop', 'drifted')] } },
-      { Stop: [entry('ecc:stop', 'repaired')] }
+      { hooks: { Stop: [userEntry, entry('yus:stop', 'drifted')] } },
+      { Stop: [entry('yus:stop', 'repaired')] }
     );
 
     assert.deepStrictEqual(result.settings.hooks.Stop, [
       userEntry,
-      entry('ecc:stop', 'repaired'),
+      entry('yus:stop', 'repaired'),
     ]);
-    assert.deepStrictEqual(result.updated, [{ event: 'Stop', id: 'ecc:stop' }]);
+    assert.deepStrictEqual(result.updated, [{ event: 'Stop', id: 'yus:stop' }]);
   })) passed++; else failed++;
 
   if (test('inspect reports exact, missing, and drifted managed entries plus the actual subset', () => {
     const expected = {
-      SessionStart: [entry('ecc:start', 'start')],
+      SessionStart: [entry('yus:start', 'start')],
       Stop: [
-        entry('ecc:stop', 'expected'),
-        entry('ecc:missing', 'missing'),
+        entry('yus:stop', 'expected'),
+        entry('yus:missing', 'missing'),
       ],
     };
-    const actualStart = entry('ecc:start', 'start');
-    const actualDrift = entry('ecc:stop', 'changed');
+    const actualStart = entry('yus:start', 'start');
+    const actualDrift = entry('yus:stop', 'changed');
     const result = inspectManagedHooks({
       hooks: {
         SessionStart: [actualStart, { id: 'user:start', command: 'user' }],
@@ -904,11 +904,11 @@ function runTests() {
     }, expected);
 
     assert.strictEqual(result.status, 'missing');
-    assert.deepStrictEqual(result.matched, [{ event: 'SessionStart', id: 'ecc:start' }]);
-    assert.deepStrictEqual(result.missing, [{ event: 'Stop', id: 'ecc:missing' }]);
+    assert.deepStrictEqual(result.matched, [{ event: 'SessionStart', id: 'yus:start' }]);
+    assert.deepStrictEqual(result.missing, [{ event: 'Stop', id: 'yus:missing' }]);
     assert.deepStrictEqual(result.drifted, [{
       event: 'Stop',
-      id: 'ecc:stop',
+      id: 'yus:stop',
       expected: expected.Stop[0],
       actual: actualDrift,
     }]);
@@ -921,34 +921,34 @@ function runTests() {
   if (test('inspect fails closed on duplicate matching ids in one settings event', () => {
     assert.throws(
       () => inspectManagedHooks(
-        { hooks: { Stop: [entry('ecc:stop', 'a'), entry('ecc:stop', 'b')] } },
-        { Stop: [entry('ecc:stop', 'expected')] }
+        { hooks: { Stop: [entry('yus:stop', 'a'), entry('yus:stop', 'b')] } },
+        { Stop: [entry('yus:stop', 'expected')] }
       ),
-      /multiple.*ecc:stop/i
+      /multiple.*yus:stop/i
     );
   })) passed++; else failed++;
 
   if (test('inspect and uninstall key ownership by event plus id', () => {
-    const recorded = { Stop: [entry('ecc:stop', 'managed')] };
-    const moved = { hooks: { SessionStart: [entry('ecc:stop', 'managed')] } };
+    const recorded = { Stop: [entry('yus:stop', 'managed')] };
+    const moved = { hooks: { SessionStart: [entry('yus:stop', 'managed')] } };
 
     const inspection = inspectManagedHooks(moved, recorded);
     assert.strictEqual(inspection.status, 'missing');
-    assert.deepStrictEqual(inspection.missing, [{ event: 'Stop', id: 'ecc:stop' }]);
+    assert.deepStrictEqual(inspection.missing, [{ event: 'Stop', id: 'yus:stop' }]);
 
     const uninstall = uninstallManagedHooks(moved, recorded);
     assert.deepStrictEqual(uninstall.settings, moved);
-    assert.deepStrictEqual(uninstall.missing, [{ event: 'Stop', id: 'ecc:stop' }]);
+    assert.deepStrictEqual(uninstall.missing, [{ event: 'Stop', id: 'yus:stop' }]);
   })) passed++; else failed++;
 
   if (test('uninstall removes exact recorded entries, retains drift, and cleans empty events', () => {
     const recorded = {
-      SessionStart: [entry('ecc:start', 'start')],
-      Stop: [entry('ecc:stop', 'recorded')],
-      Notification: [entry('ecc:notify', 'notify')],
+      SessionStart: [entry('yus:start', 'start')],
+      Stop: [entry('yus:stop', 'recorded')],
+      Notification: [entry('yus:notify', 'notify')],
     };
     const userEntry = { matcher: 'Bash', hooks: [{ type: 'command', command: 'user' }] };
-    const driftedStop = entry('ecc:stop', 'customer-edit');
+    const driftedStop = entry('yus:stop', 'customer-edit');
     const settings = {
       theme: 'dark',
       hooks: {
@@ -969,12 +969,12 @@ function runTests() {
       },
     });
     assert.deepStrictEqual(result.removed, [
-      { event: 'SessionStart', id: 'ecc:start' },
-      { event: 'Notification', id: 'ecc:notify' },
+      { event: 'SessionStart', id: 'yus:start' },
+      { event: 'Notification', id: 'yus:notify' },
     ]);
     assert.deepStrictEqual(result.retained, [{
       event: 'Stop',
-      id: 'ecc:stop',
+      id: 'yus:stop',
       expected: recorded.Stop[0],
       actual: driftedStop,
       reason: 'modified',
@@ -982,7 +982,7 @@ function runTests() {
   })) passed++; else failed++;
 
   if (test('uninstall removes consecutive managed hooks without deleting a user neighbor', () => {
-    const recorded = { Stop: [entry('ecc:a', 'a'), entry('ecc:b', 'b')] };
+    const recorded = { Stop: [entry('yus:a', 'a'), entry('yus:b', 'b')] };
     const userEntry = entry('user:c', 'keep-user');
     const result = uninstallManagedHooks({
       hooks: { Stop: [...recorded.Stop, userEntry] },
@@ -990,36 +990,36 @@ function runTests() {
 
     assert.deepStrictEqual(result.settings.hooks.Stop, [userEntry]);
     assert.deepStrictEqual(result.removed, [
-      { event: 'Stop', id: 'ecc:a' },
-      { event: 'Stop', id: 'ecc:b' },
+      { event: 'Stop', id: 'yus:a' },
+      { event: 'Stop', id: 'yus:b' },
     ]);
   })) passed++; else failed++;
 
   if (test('uninstall removes hooks entirely after the final managed event is emptied', () => {
-    const recorded = { Stop: [entry('ecc:stop', 'recorded')] };
+    const recorded = { Stop: [entry('yus:stop', 'recorded')] };
     const result = uninstallManagedHooks({ theme: 'dark', hooks: clone(recorded) }, recorded);
 
     assert.deepStrictEqual(result.settings, { theme: 'dark' });
-    assert.deepStrictEqual(result.removed, [{ event: 'Stop', id: 'ecc:stop' }]);
+    assert.deepStrictEqual(result.removed, [{ event: 'Stop', id: 'yus:stop' }]);
     assert.deepStrictEqual(result.retained, []);
   })) passed++; else failed++;
 
   if (test('uninstall accepts structurally valid hooks from an older runtime contract', () => {
     const recorded = {
       LegacyEvent: [{
-        id: 'ecc:legacy',
+        id: 'yus:legacy',
         hooks: [{ type: 'legacy-handler', payload: { version: 1 } }],
       }],
     };
     const result = uninstallManagedHooks({ hooks: clone(recorded) }, recorded);
 
     assert.deepStrictEqual(result.settings, {});
-    assert.deepStrictEqual(result.removed, [{ event: 'LegacyEvent', id: 'ecc:legacy' }]);
+    assert.deepStrictEqual(result.removed, [{ event: 'LegacyEvent', id: 'yus:legacy' }]);
   })) passed++; else failed++;
 
   if (test('all settings transforms reject non-array hook events before changing data', () => {
     const settings = { hooks: { Stop: 'invalid' } };
-    const managed = { Stop: [entry('ecc:stop', 'expected')] };
+    const managed = { Stop: [entry('yus:stop', 'expected')] };
 
     assert.throws(() => mergeManagedHooks(settings, managed), /hooks\.Stop.*array/);
     assert.throws(() => repairManagedHooks(settings, managed), /hooks\.Stop.*array/);

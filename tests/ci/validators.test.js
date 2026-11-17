@@ -303,7 +303,7 @@ function writeCatalogFixture(testDir, options = {}) {
 
   fs.writeFileSync(path.join(testDir, 'agents', 'planner.md'), '---\nmodel: sonnet\ntools: Read\n---\n# Planner');
   fs.writeFileSync(path.join(testDir, 'commands', 'plan.md'), '---\ndescription: Plan\n---\n# Plan');
-  fs.writeFileSync(path.join(testDir, 'skills', 'demo-skill', 'SKILL.md'), '---\nname: demo-skill\ndescription: Demo skill\norigin: ECC\n---\n# Demo Skill');
+  fs.writeFileSync(path.join(testDir, 'skills', 'demo-skill', 'SKILL.md'), '---\nname: demo-skill\ndescription: Demo skill\norigin: yus\n---\n# Demo Skill');
 
   fs.writeFileSync(readmePath, `Access to ${readmeCounts.agents} agents, ${readmeCounts.skills} skills, and ${readmeCounts.commands} commands.\n- **Public surface synced to the live repo** - metadata, catalog counts, plugin manifests, and install-facing docs now match the actual OSS surface: ${readmeCounts.agents} agents, ${readmeCounts.skills} skills, and ${readmeCounts.commands} legacy command shims.\n|-- agents/           # ${readmeProjectTreeAgents} specialized subagents for delegation
 |-- skills/           # ${readmeProjectTreeSkills} reusable workflows loaded on demand
@@ -314,22 +314,22 @@ ${readmeExtraTreeBlock}\n| Feature | Claude Code | Cursor IDE | Codex CLI | Open
   fs.writeFileSync(zhDocsReadmePath, `**搞定！** 你现在可以使用 ${zhDocsReadmeCounts.agents} 个智能体、${zhDocsReadmeCounts.skills} 项技能和 ${zhDocsReadmeCounts.commands} 个命令了。\n| 功能特性 | Claude Code | OpenCode | 状态 |\n|---------|-------------|----------|--------|\n| 智能体 | \u2705 ${zhDocsTableCounts.agents} 个 | \u2705 12 个 | **Claude Code 领先** |\n| 命令 | \u2705 ${zhDocsTableCounts.commands} 个 | \u2705 31 个 | **Claude Code 领先** |\n| 技能 | \u2705 ${zhDocsTableCounts.skills} 项 | \u2705 37 项 | **Claude Code 领先** |\n\n| 功能特性 | 数量 | 格式 |\n|-----------|-------|---------|\n| 技能 | ${zhDocsUnrelatedSkillsCount} | .agents/skills/ |\n\n## 跨工具功能对等\n\n| 功能特性 | Claude Code | Cursor IDE | Codex CLI | OpenCode |\n|---------|------------|------------|-----------|----------|\n| **智能体** | ${zhDocsParityCounts.agents} | 共享 (AGENTS.md) | 共享 (AGENTS.md) | 12 |\n| **命令** | ${zhDocsParityCounts.commands} | 共享 | 基于指令 | 31 |\n| **技能** | ${zhDocsParityCounts.skills} | 共享 | 10 (原生格式) | 37 |\n`);
   fs.writeFileSync(zhAgentsPath, `这是一个**生产就绪的 AI 编码插件**，提供 ${zhAgentsSummaryCounts.agents} 个专业代理、${zhAgentsSummaryCounts.skills} 项技能、${zhAgentsSummaryCounts.commands} 条命令以及自动化钩子工作流，用于软件开发。\n\n\`\`\`\n${zhAgentsStructureLines.join('\n')}\n\`\`\`\n`);
   fs.writeFileSync(pluginJsonPath, JSON.stringify({
-    name: 'ecc',
+    name: 'yus',
     description: `Battle-tested plugin — ${pluginCounts.agents} agents, ${pluginCounts.skills} skills, ${pluginCounts.commands} legacy command shims`,
   }, null, 2));
   fs.writeFileSync(marketplaceJsonPath, JSON.stringify({
     plugins: [{
-      name: 'ecc',
+      name: 'yus',
       description: `Marketplace plugin — ${marketplaceCounts.agents} agents, ${marketplaceCounts.skills} skills, ${marketplaceCounts.commands} legacy command shims`,
     }],
   }, null, 2));
   fs.writeFileSync(
     soulPath,
-    `ECC is a production-ready AI coding plugin with ${crossHarnessCounts.agents} specialized agents, ${crossHarnessCounts.skills} skills, ${crossHarnessCounts.commands} commands, and automated hook workflows.\n`
+    `yus is a production-ready AI coding plugin with ${crossHarnessCounts.agents} specialized agents, ${crossHarnessCounts.skills} skills, ${crossHarnessCounts.commands} commands, and automated hook workflows.\n`
   );
   fs.writeFileSync(
     geminiPath,
-    `ECC is a cross-harness coding system with ${crossHarnessCounts.agents} specialized agents, ${crossHarnessCounts.skills} skills, and ${crossHarnessCounts.commands} commands.\n`
+    `yus is a cross-harness coding system with ${crossHarnessCounts.agents} specialized agents, ${crossHarnessCounts.skills} skills, and ${crossHarnessCounts.commands} commands.\n`
   );
 
   return { readmePath, agentsPath, zhRootReadmePath, zhDocsReadmePath, zhAgentsPath, pluginJsonPath, marketplaceJsonPath, soulPath, geminiPath };
@@ -1168,7 +1168,7 @@ describe(sectionTitle('\nvalidate-skills.js:'), () => {
     const skillDir = path.join(testDir, 'no-name-skill');
     fs.mkdirSync(skillDir);
     fs.writeFileSync(path.join(skillDir, 'SKILL.md'),
-      '---\ndescription: "X"\norigin: ECC\n---\n# Skill');
+      '---\ndescription: "X"\norigin: yus\n---\n# Skill');
 
     const result = runSkillsValidator(testDir);
     assert.strictEqual(result.code, 0,
@@ -1184,7 +1184,7 @@ describe(sectionTitle('\nvalidate-skills.js:'), () => {
     const skillDir = path.join(testDir, 'no-name-skill');
     fs.mkdirSync(skillDir);
     fs.writeFileSync(path.join(skillDir, 'SKILL.md'),
-      '---\ndescription: "X"\norigin: ECC\n---\n# Skill');
+      '---\ndescription: "X"\norigin: yus\n---\n# Skill');
 
     const result = runSkillsValidator(testDir, ['--strict']);
     assert.strictEqual(result.code, 1, '--strict must fail CI on missing name');
@@ -1198,7 +1198,7 @@ describe(sectionTitle('\nvalidate-skills.js:'), () => {
     const skillDir = path.join(testDir, 'block-desc-skill');
     fs.mkdirSync(skillDir);
     fs.writeFileSync(path.join(skillDir, 'SKILL.md'),
-      '---\nname: block-desc-skill\ndescription: |-\n  line one\n  line two\norigin: ECC\n---\n# Skill');
+      '---\nname: block-desc-skill\ndescription: |-\n  line one\n  line two\norigin: yus\n---\n# Skill');
 
     const result = runSkillsValidator(testDir);
     assert.strictEqual(result.code, 0, 'Default mode should not fail CI');
@@ -1213,11 +1213,11 @@ describe(sectionTitle('\nvalidate-skills.js:'), () => {
     const folded = path.join(testDir, 'folded-skill');
     fs.mkdirSync(folded);
     fs.writeFileSync(path.join(folded, 'SKILL.md'),
-      '---\nname: folded-skill\ndescription: >\n  joined\n  on spaces\norigin: ECC\n---\n# Skill');
+      '---\nname: folded-skill\ndescription: >\n  joined\n  on spaces\norigin: yus\n---\n# Skill');
     const inline = path.join(testDir, 'inline-skill');
     fs.mkdirSync(inline);
     fs.writeFileSync(path.join(inline, 'SKILL.md'),
-      '---\nname: inline-skill\ndescription: "single line"\norigin: ECC\n---\n# Skill');
+      '---\nname: inline-skill\ndescription: "single line"\norigin: yus\n---\n# Skill');
 
     const result = runSkillsValidator(testDir, ['--strict']);
     assert.strictEqual(result.code, 0,
@@ -1236,7 +1236,7 @@ describe(sectionTitle('\nvalidate-skills.js:'), () => {
     const real = path.join(testDir, 'real-skill');
     fs.mkdirSync(real);
     fs.writeFileSync(path.join(real, 'SKILL.md'),
-      '---\nname: real-skill\ndescription: "x"\norigin: ECC\n---\n# Skill');
+      '---\nname: real-skill\ndescription: "x"\norigin: yus\n---\n# Skill');
 
     const result = runSkillsValidator(testDir, ['--strict']);
     assert.strictEqual(result.code, 0, 'Hidden dirs should be skipped');
@@ -1251,7 +1251,7 @@ describe(sectionTitle('\nvalidate-skills.js:'), () => {
     fs.mkdirSync(skillDir);
     // `name:` key present but value is blank.
     fs.writeFileSync(path.join(skillDir, 'SKILL.md'),
-      '---\nname:    \ndescription: "X"\norigin: ECC\n---\n# Skill');
+      '---\nname:    \ndescription: "X"\norigin: yus\n---\n# Skill');
 
     const result = runSkillsValidator(testDir);
     assert.strictEqual(result.code, 0,
@@ -1267,7 +1267,7 @@ describe(sectionTitle('\nvalidate-skills.js:'), () => {
     const skillDir = path.join(testDir, 'keep-desc-skill');
     fs.mkdirSync(skillDir);
     fs.writeFileSync(path.join(skillDir, 'SKILL.md'),
-      '---\nname: keep-desc-skill\ndescription: |+\n  line one\n  line two\norigin: ECC\n---\n# Skill');
+      '---\nname: keep-desc-skill\ndescription: |+\n  line one\n  line two\norigin: yus\n---\n# Skill');
 
     const result = runSkillsValidator(testDir);
     assert.strictEqual(result.code, 0, 'Default mode should not fail CI');
@@ -1282,7 +1282,7 @@ describe(sectionTitle('\nvalidate-skills.js:'), () => {
     fs.mkdirSync(skillDir);
     // `|-2  # note` is still a literal block scalar in YAML 1.2.
     fs.writeFileSync(path.join(skillDir, 'SKILL.md'),
-      '---\nname: indent-desc-skill\ndescription: |-2  # trimmed two-space indent\n    line one\n    line two\norigin: ECC\n---\n# Skill');
+      '---\nname: indent-desc-skill\ndescription: |-2  # trimmed two-space indent\n    line one\n    line two\norigin: yus\n---\n# Skill');
 
     const result = runSkillsValidator(testDir);
     assert.strictEqual(result.code, 0, 'Default mode should not fail CI');
@@ -1296,7 +1296,7 @@ describe(sectionTitle('\nvalidate-skills.js:'), () => {
     const skillDir = path.join(testDir, 'no-name-skill-env');
     fs.mkdirSync(skillDir);
     fs.writeFileSync(path.join(skillDir, 'SKILL.md'),
-      '---\ndescription: "X"\norigin: ECC\n---\n# Skill');
+      '---\ndescription: "X"\norigin: yus\n---\n# Skill');
 
     const result = runSkillsValidator(testDir, [], { CI_STRICT_SKILLS: '1' });
     assert.strictEqual(result.code, 1, 'CI_STRICT_SKILLS=1 must fail CI on missing name');
@@ -1310,7 +1310,7 @@ describe(sectionTitle('\nvalidate-skills.js:'), () => {
     const skillDir = path.join(testDir, 'comment-only-name');
     fs.mkdirSync(skillDir);
     fs.writeFileSync(path.join(skillDir, 'SKILL.md'),
-      '---\nname: # todo\ndescription: "X"\norigin: ECC\n---\n# Skill');
+      '---\nname: # todo\ndescription: "X"\norigin: yus\n---\n# Skill');
 
     const result = runSkillsValidator(testDir, ['--strict']);
     assert.strictEqual(result.code, 1, 'Strict mode must fail CI on empty name');

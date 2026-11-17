@@ -16,7 +16,7 @@
 //   color  Claude Code presentation only.
 //
 // The transform is therefore an allowlist rather than a denylist: unknown keys
-// added to ECC agents later cannot silently leak into the Copilot copy.
+// added to yus agents later cannot silently leak into the Copilot copy.
 const SUPPORTED_FRONTMATTER_KEYS = Object.freeze(['name', 'description']);
 
 const REQUIRED_FRONTMATTER_KEYS = Object.freeze(['name', 'description']);

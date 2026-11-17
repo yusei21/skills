@@ -89,9 +89,9 @@ function parseInstallArgs(argv) {
     }
   }
 
-  const dryRunEnv = process.env.ECC_DRY_RUN;
+  const dryRunEnv = process.env.YUS_DRY_RUN;
   if (dryRunEnv !== undefined && dryRunEnv !== '0' && dryRunEnv !== '1') {
-    throw new Error('ECC_DRY_RUN must be "1" or "0" when set');
+    throw new Error('YUS_DRY_RUN must be "1" or "0" when set');
   }
   parsed.dryRun = parsed.dryRun || dryRunEnv === '1';
 
@@ -112,7 +112,7 @@ function normalizeInstallRequest(options = {}) {
   const localeComponentId = locale ? LOCALE_ALIAS_TO_COMPONENT_ID[locale] : null;
   if (locale && !localeComponentId) {
     throw new Error(
-      `Unsupported locale: "${locale}". ${listSupportedLocales().length ? `Supported locales: ${listSupportedLocales().join(', ')}` : 'This ECC build ships no translated documentation.'}`
+      `Unsupported locale: "${locale}". ${listSupportedLocales().length ? `Supported locales: ${listSupportedLocales().join(', ')}` : 'This yus build ships no translated documentation.'}`
     );
   }
   if (locale && !supportsLocale) {

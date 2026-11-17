@@ -23,13 +23,13 @@
 
 const { spawn } = require('child_process');
 
-const WINDOWS_BROWSER_URL = 'ECC_BROWSER_URL';
+const WINDOWS_BROWSER_URL = 'YUS_BROWSER_URL';
 // Only this constant is encoded as PowerShell source. The validated URL is
 // process-environment data, never command text or an interpolated argument.
 const WINDOWS_BROWSER_SCRIPT = `$ErrorActionPreference = 'Stop'
 try {
-  $value = [System.Environment]::GetEnvironmentVariable('ECC_BROWSER_URL', 'Process')
-  [System.Environment]::SetEnvironmentVariable('ECC_BROWSER_URL', $null, 'Process')
+  $value = [System.Environment]::GetEnvironmentVariable('YUS_BROWSER_URL', 'Process')
+  [System.Environment]::SetEnvironmentVariable('YUS_BROWSER_URL', $null, 'Process')
   $uri = $null
   if (-not [System.Uri]::TryCreate($value, [System.UriKind]::Absolute, [ref]$uri) -or @('http', 'https') -notcontains $uri.Scheme -or $uri.UserInfo) { exit 1 }
   $info = New-Object System.Diagnostics.ProcessStartInfo

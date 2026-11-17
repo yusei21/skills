@@ -57,7 +57,7 @@ process.stdin.on('data', chunk => {
 });
 
 /**
- * Echo stdin back (ECC pass-through convention), then exit once the pipe has
+ * Echo stdin back (yus pass-through convention), then exit once the pipe has
  * flushed. Direct/legacy entrypoints preserve complete supported payloads up
  * to 16MiB; the production runner applies its stricter bounded-input policy.
  */

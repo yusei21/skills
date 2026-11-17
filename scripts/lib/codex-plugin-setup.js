@@ -4,9 +4,9 @@ const { execFile: nodeExecFile } = require('child_process');
 const path = require('path');
 const { normalizeGitHubGitOrigin } = require('./github-origin');
 
-const CODEX_PLUGIN_ID = 'ecc@ecc';
-const OFFICIAL_MARKETPLACE_NAME = 'ecc';
-const OFFICIAL_MARKETPLACE_REPO = 'affaan-m/ECC';
+const CODEX_PLUGIN_ID = 'yus@yus';
+const OFFICIAL_MARKETPLACE_NAME = 'yus';
+const OFFICIAL_MARKETPLACE_REPO = 'yusei21/yus';
 const NORMALIZED_OFFICIAL_MARKETPLACE_REPO = OFFICIAL_MARKETPLACE_REPO.toLowerCase();
 const MAX_OUTPUT_BYTES = 10 * 1024 * 1024;
 const PROVIDER_COMMAND_TIMEOUT_MS = 120 * 1000;
@@ -70,13 +70,13 @@ function parseMarketplaceInventory(stdout, phase) {
       );
     }
   }
-  const eccEntries = inventory.marketplaces.filter(
+  const yusEntries = inventory.marketplaces.filter(
     marketplace => marketplace.name === OFFICIAL_MARKETPLACE_NAME
   );
-  if (eccEntries.length > 1) {
+  if (yusEntries.length > 1) {
     fail(
       'INVALID_MARKETPLACE_INVENTORY',
-      'Codex marketplace inventory contains duplicate `ecc` entries',
+      'Codex marketplace inventory contains duplicate `yus` entries',
       { phase }
     );
   }
@@ -124,10 +124,10 @@ function parsePluginInventory(stdout, phase) {
   const inventory = parseJsonObject(stdout, 'plugin', phase);
   assertPluginEntries(inventory.installed, 'installed', phase);
   assertPluginEntries(inventory.available, 'available', phase);
-  const eccEntries = inventory.installed.filter(
+  const yusEntries = inventory.installed.filter(
     plugin => plugin.pluginId === CODEX_PLUGIN_ID
   );
-  if (eccEntries.length > 1) {
+  if (yusEntries.length > 1) {
     fail(
       'INVALID_PLUGIN_INVENTORY',
       `Codex plugin inventory contains duplicate ${CODEX_PLUGIN_ID} entries`,
@@ -187,7 +187,7 @@ async function runCodexCommand(args, options = {}, dependencies = {}) {
     if (error?.code === 'ENOENT') {
       fail(
         'CODEX_NOT_FOUND',
-        'Codex CLI is not installed or `codex` is not on PATH. Install Codex, then rerun ECC setup.',
+        'Codex CLI is not installed or `codex` is not on PATH. Install Codex, then rerun yus setup.',
         { argv, phase: options.phase }
       );
     }
@@ -232,7 +232,7 @@ async function resolveMarketplaceRepository(marketplace, options = {}, dependenc
     const detail = String(error?.stderr || error?.message || '').trim();
     fail(
       'MARKETPLACE_COLLISION',
-      `Refusing the existing \`ecc\` marketplace because its Git provenance could not be verified${detail ? `: ${detail}` : ''}.`,
+      `Refusing the existing \`yus\` marketplace because its Git provenance could not be verified${detail ? `: ${detail}` : ''}.`,
       { phase: options.phase || 'marketplace-provenance' }
     );
   }
@@ -260,14 +260,14 @@ async function assertOfficialMarketplace(
     const detail = String(error?.message || error || '').trim();
     fail(
       'MARKETPLACE_COLLISION',
-      `Refusing the existing \`ecc\` marketplace because its provenance could not be verified${detail ? `: ${detail}` : ''}.`,
+      `Refusing the existing \`yus\` marketplace because its provenance could not be verified${detail ? `: ${detail}` : ''}.`,
       { phase }
     );
   }
   if (repository !== NORMALIZED_OFFICIAL_MARKETPLACE_REPO) {
     fail(
       'MARKETPLACE_COLLISION',
-      'Refusing the existing `ecc` marketplace because it is not the official affaan-m/ECC source.',
+      'Refusing the existing `yus` marketplace because it is not the official yusei21/yus source.',
       { phase }
     );
   }
@@ -326,7 +326,7 @@ function parseMarketplaceUpgradeResult(stdout, marketplace) {
   ) {
     fail(
       'MARKETPLACE_REFRESH_FAILED',
-      'Codex did not confirm that the official ECC marketplace was refreshed.',
+      'Codex did not confirm that the official yus marketplace was refreshed.',
       { phase, argv }
     );
   }
@@ -412,7 +412,7 @@ async function reconcileCodexPlugin(options = {}, dependencies = {}) {
   if (!findEccMarketplace(verifiedMarketplaces)) {
     fail(
       'MARKETPLACE_VERIFICATION_FAILED',
-      'Could not verify the ECC marketplace after reconciliation.',
+      'Could not verify the yus marketplace after reconciliation.',
       { phase: 'marketplace-verification' }
     );
   }

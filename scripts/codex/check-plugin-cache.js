@@ -20,8 +20,8 @@ function usage() {
     'Options:',
     '  --codex-home <dir>   Override CODEX_HOME (default: $CODEX_HOME or ~/.codex)',
     '  --plugin-dir <dir>   Check a specific installed plugin cache directory',
-    '  --marketplace <name> Marketplace cache name (default: ecc)',
-    '  --plugin <name>      Plugin cache name (default: ecc)',
+    '  --marketplace <name> Marketplace cache name (default: yus)',
+    '  --plugin <name>      Plugin cache name (default: yus)',
     '  --version <version>  Plugin version (default: package.json version)',
     '  --help              Show this help text',
   ].join('\n'));
@@ -45,8 +45,8 @@ function validateCacheSegment(flag, value) {
 
 function parseArgs(argv) {
   const defaults = {
-    marketplace: 'ecc',
-    plugin: 'ecc',
+    marketplace: 'yus',
+    plugin: 'yus',
     version: PACKAGE_JSON.version,
     codexHome: process.env.CODEX_HOME || path.join(os.homedir(), '.codex'),
     pluginDir: null,
@@ -93,7 +93,7 @@ function parseArgs(argv) {
 }
 
 function log(message) {
-  console.log(`[ecc-codex] ${message}`);
+  console.log(`[yus-codex] ${message}`);
 }
 
 function readJson(filePath) {
@@ -189,8 +189,8 @@ function checkCache(options) {
       log(`Re-run with --version <version> if you want to inspect a different cache entry.`);
     } else {
       log(`No installed cache entries found for ${options.marketplace}/${options.plugin}.`);
-      if (options.marketplace === 'ecc' && options.plugin === 'ecc') {
-        log('Run: codex plugin marketplace add affaan-m/ECC');
+      if (options.marketplace === 'yus' && options.plugin === 'yus') {
+        log('Run: codex plugin marketplace add yusei21/yus');
       } else {
         log('Install the requested plugin into the Codex plugin cache.');
       }
@@ -228,9 +228,9 @@ function checkCache(options) {
     log(`${failures} cached manifest reference(s) do not resolve.`);
     log('codex plugin list only confirms marketplace registration; it is not proof of runtime skill loading.');
     log('Refresh the native marketplace and re-add the plugin using the same CODEX_HOME as the affected session:');
-    if (options.marketplace === 'ecc' && options.plugin === 'ecc') {
-      log('codex plugin marketplace upgrade ecc');
-      log('codex plugin add ecc@ecc');
+    if (options.marketplace === 'yus' && options.plugin === 'yus') {
+      log('codex plugin marketplace upgrade yus');
+      log('codex plugin add yus@yus');
     } else {
       log('Follow the requested plugin marketplace instructions to refresh and re-add that native plugin.');
     }
@@ -248,7 +248,7 @@ function main() {
   try {
     options = parseArgs(process.argv.slice(2));
   } catch (error) {
-    console.error(`[ecc-codex] ${error.message}`);
+    console.error(`[yus-codex] ${error.message}`);
     usage();
     process.exit(1);
   }
@@ -261,7 +261,7 @@ function main() {
   try {
     process.exit(checkCache(options));
   } catch (error) {
-    console.error(`[ecc-codex] ${error.message}`);
+    console.error(`[yus-codex] ${error.message}`);
     process.exit(1);
   }
 }

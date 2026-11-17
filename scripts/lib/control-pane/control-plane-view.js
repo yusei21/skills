@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * ECC control-plane live view.
+ * yus control-plane live view.
  *
- * One JSON document, `ecc.control-plane.view.v1`, that joins three things the
+ * One JSON document, `yus.control-plane.view.v1`, that joins three things the
  * repo already computes separately:
  *
  *   1. the control-pane session snapshot (state.js): who is running where,
@@ -14,7 +14,7 @@
  *      declared tasks and sessions, heartbeat freshness, lease conflicts.
  *
  * The output is shaped as tasks, lanes and events so another control plane
- * (the Ito ops board) can consume it without knowing ECC internals:
+ * (the Ito ops board) can consume it without knowing yus internals:
  *
  *   task   = one agent session (id, lane, harness, state, worktree, working
  *            set size, projected point, inventory observation)
@@ -30,7 +30,7 @@
 const { DEFAULTS, rightOfWay } = require('../agent-proximity/distance');
 const { projectPairs, createProjectionWindow } = require('../agent-proximity/projection');
 
-const VIEW_SCHEMA_VERSION = 'ecc.control-plane.view.v1';
+const VIEW_SCHEMA_VERSION = 'yus.control-plane.view.v1';
 const EVENT_KINDS = {
   advisory: 'proximity.advisory',
   leaseConflict: 'inventory.lease-conflict'

@@ -2,9 +2,9 @@
 'use strict';
 
 /**
- * ECC Agent IR — parser.
+ * yus Agent IR — parser.
  *
- * Reads ECC's canonical agent files (Claude frontmatter markdown) and emits
+ * Reads yus's canonical agent files (Claude frontmatter markdown) and emits
  * harness-neutral IR objects validated against `schemas/agent.schema.json`.
  *
  * Design constraints:
@@ -24,7 +24,7 @@ const Ajv = require('ajv');
 const AGENTS_DIR = path.join(__dirname, '..', '..', 'agents');
 const SCHEMA_PATH = path.join(__dirname, '..', '..', 'schemas', 'agent.schema.json');
 
-const IR_SCHEMA_CONST = 'ecc.agent-ir.v1';
+const IR_SCHEMA_CONST = 'yus.agent-ir.v1';
 const VALID_MODELS = ['haiku', 'sonnet', 'opus'];
 
 let _ajv = null;

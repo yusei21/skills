@@ -5,14 +5,14 @@ const { runPreBash } = require('./bash-hook-dispatcher');
 const { readStdinRaw, resolveMaxStdin } = require('./hook-input');
 const { isHookEnabled } = require('../lib/hook-flags');
 
-const maxStdin = resolveMaxStdin(process.env.ECC_HOOK_INPUT_MAX_BYTES, {
+const maxStdin = resolveMaxStdin(process.env.YUS_HOOK_INPUT_MAX_BYTES, {
   writeDiagnostic: message => process.stderr.write(message)
 });
 
 readStdinRaw(process.stdin, {
   maxStdin,
   truncated: /^(1|true|yes)$/i.test(
-    String(process.env.ECC_HOOK_INPUT_TRUNCATED_UPSTREAM || '')
+    String(process.env.YUS_HOOK_INPUT_TRUNCATED_UPSTREAM || '')
   )
 }).then(({ raw, truncated }) => {
   if (!isHookEnabled('pre:bash:dispatcher', {

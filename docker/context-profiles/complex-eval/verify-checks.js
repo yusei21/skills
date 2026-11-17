@@ -16,7 +16,7 @@ const referenceDir = path.join(root, process.argv[3] || 'reference');
 const naiveDir = path.join(root, process.argv[4] || 'naive');
 
 function stage(task, overlayDir) {
-  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), `ecc-complex-${task}-`));
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), `yus-complex-${task}-`));
   const copy = (from, to) => {
     for (const entry of fs.readdirSync(from, { withFileTypes: true })) {
       const target = path.join(to, entry.name);

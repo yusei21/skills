@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://ecc.tools/schemas/capsule-envelope.schema.json",
   "title": "Capsule Envelope v1",
-  "description": "One append-only journal entry recorded by the ECC eval-harness capsule. Mirrors scripts/lib/eval-harness/envelope.js, which is the enforcing implementation.",
+  "description": "One append-only journal entry recorded by the yus eval-harness capsule. Mirrors scripts/lib/eval-harness/envelope.js, which is the enforcing implementation.",
   "type": "object",
   "additionalProperties": false,
   "required": [

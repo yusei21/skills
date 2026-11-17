@@ -30,7 +30,7 @@ function run(args = [], options = {}) {
 }
 
 function createTempDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-qwen-adapt-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'yus-qwen-adapt-'));
 }
 
 function cleanupTempDir(dirPath) {
@@ -49,7 +49,7 @@ function readAgent(dirPath, name) {
   test('shows help with an explicit help flag', () => {
     const result = run(['--help']);
     assert.strictEqual(result.code, 0, result.stderr);
-    assert.ok(result.stdout.includes('Adapt ECC agent frontmatter for Qwen Code'));
+    assert.ok(result.stdout.includes('Adapt yus agent frontmatter for Qwen Code'));
     assert.ok(result.stdout.includes('Usage:'));
   });
 
@@ -491,11 +491,11 @@ function readAgent(dirPath, name) {
       writeAgent(sourceRoot, 'a-valid.md', valid);
       writeAgent(sourceRoot, 'z-invalid.md', invalid);
       writeAgent(targetRoot, 'z-invalid.md', 'OPERATOR_OWNED_BYTES');
-      writeAgent(targetRoot, 'ecc-install-state.json', '{"preserve":"receipt"}');
+      writeAgent(targetRoot, 'yus-install-state.json', '{"preserve":"receipt"}');
       const plan = {
         adapter: { id: 'qwen-home', target: 'qwen' },
         targetRoot,
-        installStatePath: path.join(targetRoot, 'ecc-install-state.json'),
+        installStatePath: path.join(targetRoot, 'yus-install-state.json'),
         operations: ['a-valid.md', 'z-invalid.md'].map(name => ({
           kind: 'copy-file', sourcePath: path.join(sourceRoot, name),
           sourceRelativePath: `agents/${name}`,

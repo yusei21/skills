@@ -58,7 +58,7 @@ async function runSynthetic(test) {
     let attempts = 0;
     let callbacks = 0;
     const fixture = lockFixture({ openSync(state, open, file, flags, mode) {
-      assert.strictEqual(file, 'synthetic.db.ecc-state.lock');
+      assert.strictEqual(file, 'synthetic.db.yus-state.lock');
       assert.strictEqual(flags, 'wx');
       assert.strictEqual(mode, 0o600);
       attempts += 1;
@@ -86,7 +86,7 @@ async function runSynthetic(test) {
         assert.doesNotMatch(result.error.message, /remove|leftover lock/i);
       } else {
         assert.strictEqual(result.error.code, 'STATE_STORE_BUSY');
-        assert.match(result.error.message, /synthetic\.db\.ecc-state\.lock/);
+        assert.match(result.error.message, /synthetic\.db\.yus-state\.lock/);
       }
       assert.strictEqual(attempts, 2);
       assert.deepStrictEqual(fixture.calls, ['open', 'open']);
@@ -430,7 +430,7 @@ async function run() {
   let passed = 0;
   let failed = 0;
   async function test(name, callback) {
-    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-state-persistence-'));
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-state-persistence-'));
     try {
       await callback(path.join(directory, 'state.db'));
       console.log(`  PASS ${name}`);
@@ -662,7 +662,7 @@ async function run() {
         assert.throws(() => first.upsertWorkItem(item('failed')), error => error === failure);
       } finally { fs.renameSync = rename; }
       assert.deepStrictEqual(fs.readFileSync(dbPath), before);
-      assert.strictEqual(fs.existsSync(`${dbPath}.ecc-state.lock`), false);
+      assert.strictEqual(fs.existsSync(`${dbPath}.yus-state.lock`), false);
       second.upsertWorkItem(item('other-process'));
       first.upsertWorkItem(item('retry'));
       assert.deepStrictEqual(first.listWorkItems().items.map(row => row.id).sort(), ['other-process', 'retry']);
@@ -682,7 +682,7 @@ async function run() {
         throw failure;
       })(), error => error === failure);
       assert.deepStrictEqual(fs.readFileSync(dbPath), before);
-      assert.strictEqual(fs.existsSync(`${dbPath}.ecc-state.lock`), false);
+      assert.strictEqual(fs.existsSync(`${dbPath}.yus-state.lock`), false);
       store.upsertWorkItem(item('next'));
       assert.deepStrictEqual(store.listWorkItems().items.map(row => row.id), ['next']);
     } finally { store.close(); }
@@ -724,7 +724,7 @@ async function run() {
   });
 
   await test('live and abandoned locks time out without stealing ownership or touching the database', async dbPath => {
-    const lock = `${dbPath}.ecc-state.lock`;
+    const lock = `${dbPath}.yus-state.lock`;
     fs.writeFileSync(dbPath, 'untouched');
     for (const metadata of [{ pid: process.pid }, { pid: 999999999 }, null]) {
       const bytes = JSON.stringify(metadata);
@@ -745,7 +745,7 @@ async function run() {
     try {
       assert.throws(() => withStateStoreLock(dbPath, () => assert.fail('callback should not run')), error => error === failure);
     } finally { fs.writeFileSync = write; }
-    assert.strictEqual(fs.existsSync(`${dbPath}.ecc-state.lock`), false);
+    assert.strictEqual(fs.existsSync(`${dbPath}.yus-state.lock`), false);
     assert.strictEqual(withStateStoreLock(dbPath, () => 'retry'), 'retry');
   });
 
@@ -753,7 +753,7 @@ async function run() {
     const unlink = fs.unlinkSync;
     const primary = new Error('operation failed');
     const cleanup = new Error('cleanup failed');
-    const lock = `${dbPath}.ecc-state.lock`;
+    const lock = `${dbPath}.yus-state.lock`;
     fs.unlinkSync = file => {
       if (file === lock) throw cleanup;
       return unlink(file);

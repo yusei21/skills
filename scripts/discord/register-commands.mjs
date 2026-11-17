@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Registers the ECC bot's guild slash commands (bulk overwrite, instant).
+// Registers the yus bot's guild slash commands (bulk overwrite, instant).
 // Env: DISCORD_BOT_TOKEN, DISCORD_APP_ID, DISCORD_GUILD_ID
 'use strict';
 
@@ -10,19 +10,19 @@ if (!TOKEN || !APP_ID || !GUILD) {
 }
 
 const COMMANDS = [
-  { name: 'ecc', description: 'What ECC is + all the links' },
-  { name: 'help', description: 'List ECC bot commands' },
+  { name: 'yus', description: 'What yus is + all the links' },
+  { name: 'help', description: 'List yus bot commands' },
   {
     name: 'skill',
-    description: 'Look up an ECC skill by name',
+    description: 'Look up an yus skill by name',
     options: [{ type: 3, name: 'name', description: 'skill name or keyword', required: true }],
   },
   {
     name: 'docs',
-    description: 'Search the ECC docs',
+    description: 'Search the yus docs',
     options: [{ type: 3, name: 'query', description: 'search terms', required: true }],
   },
-  { name: 'release', description: 'Latest ECC release' },
+  { name: 'release', description: 'Latest yus release' },
 ];
 
 const res = await fetch(`https://discord.com/api/v10/applications/${APP_ID}/guilds/${GUILD}/commands`, {

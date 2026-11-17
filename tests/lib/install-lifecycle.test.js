@@ -60,7 +60,7 @@ function writeState(filePath, options) {
 
 function createCursorStateOptions(projectRoot, overrides = {}) {
   const targetRoot = overrides.targetRoot || path.join(projectRoot, '.cursor');
-  const installStatePath = overrides.installStatePath || path.join(targetRoot, 'ecc-install-state.json');
+  const installStatePath = overrides.installStatePath || path.join(targetRoot, 'yus-install-state.json');
 
   return {
     adapter: { id: 'cursor-project', target: 'cursor', kind: 'project' },
@@ -103,7 +103,7 @@ function writeCursorState(projectRoot, overrides = {}) {
 function writeClaudeState(homeDir, overrides = {}) {
   const targetRoot = overrides.targetRoot || path.join(homeDir, '.claude');
   const installStatePath = overrides.installStatePath
-    || path.join(targetRoot, 'ecc', 'install-state.json');
+    || path.join(targetRoot, 'yus', 'install-state.json');
   const options = {
     adapter: { id: 'claude-home', target: 'claude', kind: 'home' },
     targetRoot,
@@ -157,7 +157,7 @@ function currentManagedHooks(targetRoot) {
 
 function createOpencodeStateOptions(homeDir, overrides = {}) {
   const targetRoot = overrides.targetRoot || path.join(homeDir, '.config', 'opencode');
-  const installStatePath = overrides.installStatePath || path.join(targetRoot, 'ecc-install-state.json');
+  const installStatePath = overrides.installStatePath || path.join(targetRoot, 'yus-install-state.json');
 
   return {
     adapter: { id: 'opencode-home', target: 'opencode', kind: 'home' },
@@ -199,7 +199,7 @@ function writeOpencodeState(homeDir, overrides = {}) {
 
 function writeRecordedOpenCodeActivation(homeDir, sourceRoot = REPO_ROOT) {
   const targetRoot = path.join(homeDir, '.config', 'opencode');
-  const operations = ['opencode.json', 'plugins/ecc-hooks.ts', 'plugins/index.ts'].map(relativePath => {
+  const operations = ['opencode.json', 'plugins/yus-hooks.ts', 'plugins/index.ts'].map(relativePath => {
     const sourceRelativePath = `.opencode/${relativePath}`;
     const content = fs.readFileSync(path.join(sourceRoot, sourceRelativePath));
     const destinationPath = path.join(targetRoot, relativePath);
@@ -236,7 +236,7 @@ function withPrivateOpenCodeSource(homeDir, callback) {
   for (const [relative, value] of Object.entries(files)) {
     fs.writeFileSync(path.join(sourceRoot, relative), formatJson(value));
   }
-  for (const relative of ['opencode.json', 'plugins/ecc-hooks.ts', 'plugins/index.ts']) {
+  for (const relative of ['opencode.json', 'plugins/yus-hooks.ts', 'plugins/index.ts']) {
     const destination = path.join(sourceRoot, '.opencode', relative);
     fs.mkdirSync(path.dirname(destination), { recursive: true });
     fs.copyFileSync(path.join(REPO_ROOT, '.opencode', relative), destination);
@@ -356,8 +356,8 @@ function managedOperation(kind, destinationPath, overrides = {}) {
     const projectRoot = createTempDir('install-lifecycle-project-');
 
     try {
-      const claudeStatePath = path.join(homeDir, '.claude', 'ecc', 'install-state.json');
-      const cursorStatePath = path.join(projectRoot, '.cursor', 'ecc-install-state.json');
+      const claudeStatePath = path.join(homeDir, '.claude', 'yus', 'install-state.json');
+      const cursorStatePath = path.join(projectRoot, '.cursor', 'yus-install-state.json');
 
       writeState(claudeStatePath, {
         adapter: { id: 'claude-home', target: 'claude', kind: 'home' },
@@ -437,7 +437,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
       assert.strictEqual(records[0].error, null);
 
       const targetRoot = path.join(projectRoot, '.cursor');
-      const statePath = path.join(targetRoot, 'ecc-install-state.json');
+      const statePath = path.join(targetRoot, 'yus-install-state.json');
       fs.mkdirSync(targetRoot, { recursive: true });
       fs.writeFileSync(statePath, '{not-json', 'utf8');
 
@@ -460,7 +460,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
     const homeDir = createTempDir('install-lifecycle-opencode-home-');
     const projectRoot = createTempDir('install-lifecycle-opencode-project-');
     const targetRoot = path.join(homeDir, 'custom-opencode');
-    const installStatePath = path.join(targetRoot, 'ecc-install-state.json');
+    const installStatePath = path.join(targetRoot, 'yus-install-state.json');
     const sourceRelativePath = path.join('rules', 'common', 'coding-style.md');
     const sourcePath = path.join(REPO_ROOT, sourceRelativePath);
     const destinationPath = path.join(targetRoot, 'rules', 'common', 'coding-style.md');
@@ -543,7 +543,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(projectRoot, '.cursor');
-      const statePath = path.join(targetRoot, 'ecc-install-state.json');
+      const statePath = path.join(targetRoot, 'yus-install-state.json');
       fs.mkdirSync(targetRoot, { recursive: true });
 
       writeState(statePath, {
@@ -600,7 +600,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const actualTargetRoot = path.join(projectRoot, '.cursor');
-      const actualStatePath = path.join(actualTargetRoot, 'ecc-install-state.json');
+      const actualStatePath = path.join(actualTargetRoot, 'yus-install-state.json');
       const recordedTargetRoot = path.join(projectRoot, '.old-cursor');
       const recordedStatePath = path.join(recordedTargetRoot, 'state.json');
       const copyDestination = path.join(actualTargetRoot, 'rules', 'missing-source.md');
@@ -758,7 +758,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
     const projectRoot = createTempDir('install-lifecycle-project-');
 
     try {
-      const statePath = path.join(projectRoot, '.cursor', 'ecc-install-state.json');
+      const statePath = path.join(projectRoot, '.cursor', 'yus-install-state.json');
       fs.mkdirSync(path.dirname(statePath), { recursive: true });
       fs.writeFileSync(statePath, '{"schemaVersion":"wrong"}\n');
 
@@ -783,7 +783,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(homeDir, '.claude');
-      const statePath = path.join(targetRoot, 'ecc', 'install-state.json');
+      const statePath = path.join(targetRoot, 'yus', 'install-state.json');
       const managedFile = path.join(targetRoot, 'rules', 'common', 'coding-style.md');
       const sourceContent = fs.readFileSync(path.join(REPO_ROOT, 'rules', 'common', 'coding-style.md'), 'utf8');
       fs.mkdirSync(path.dirname(managedFile), { recursive: true });
@@ -930,12 +930,12 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(homeDir, '.claude');
-      const installStatePath = path.join(targetRoot, 'ecc', 'install-state.json');
+      const installStatePath = path.join(targetRoot, 'yus', 'install-state.json');
       const flatSkillPath = path.join(targetRoot, 'skills', 'tdd-workflow', 'SKILL.md');
       const legacySkillPath = path.join(
         targetRoot,
         'skills',
-        'ecc',
+        'yus',
         'tdd-workflow',
         'SKILL.md'
       );
@@ -1028,13 +1028,13 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(homeDir, '.claude');
-      const adapterStatePath = path.join(targetRoot, 'ecc', 'install-state.json');
+      const adapterStatePath = path.join(targetRoot, 'yus', 'install-state.json');
       const recordedStatePath = path.join(outsideRoot, 'recorded-state.json');
       const flatSkillPath = path.join(targetRoot, 'skills', 'tdd-workflow', 'SKILL.md');
       const legacySkillPath = path.join(
         targetRoot,
         'skills',
-        'ecc',
+        'yus',
         'tdd-workflow',
         'SKILL.md'
       );
@@ -1189,7 +1189,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
     const okProjectRoot = createTempDir('install-lifecycle-ok-');
 
     try {
-      const invalidStatePath = path.join(invalidProjectRoot, '.cursor', 'ecc-install-state.json');
+      const invalidStatePath = path.join(invalidProjectRoot, '.cursor', 'yus-install-state.json');
       fs.mkdirSync(path.dirname(invalidStatePath), { recursive: true });
       fs.writeFileSync(invalidStatePath, '{"schemaVersion":"wrong"}\n');
 
@@ -1431,7 +1431,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
     try {
       withTemporarilyMovedPath(path.join(REPO_ROOT, '.opencode', 'dist'), () => {
         const cursorTargetRoot = path.join(projectRoot, '.cursor');
-        const cursorStatePath = path.join(cursorTargetRoot, 'ecc-install-state.json');
+        const cursorStatePath = path.join(cursorTargetRoot, 'yus-install-state.json');
         const cursorDestinationPath = path.join(cursorTargetRoot, 'rules', 'coding-style.md');
         fs.mkdirSync(path.dirname(cursorDestinationPath), { recursive: true });
 
@@ -1694,7 +1694,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(projectRoot, '.cursor');
-      const statePath = path.join(targetRoot, 'ecc-install-state.json');
+      const statePath = path.join(targetRoot, 'yus-install-state.json');
       const sourcePath = path.join(REPO_ROOT, '.cursor', 'hooks.json');
       const destinationPath = path.join(targetRoot, 'hooks.json');
       fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
@@ -1755,7 +1755,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(projectRoot, '.agents');
-      const statePath = path.join(targetRoot, 'ecc-install-state.json');
+      const statePath = path.join(targetRoot, 'yus-install-state.json');
       const operations = ['code-review.md', 'testing.md'].map(fileName => ({
         kind: 'copy-file',
         moduleId: 'rules-core',
@@ -1852,7 +1852,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
       fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
       fs.writeFileSync(destinationPath, installedContent);
       const contentSha256 = crypto.createHash('sha256').update(installedContent).digest('hex');
-      const installStatePath = path.join(targetRoot, 'ecc-install-state.json');
+      const installStatePath = path.join(targetRoot, 'yus-install-state.json');
 
       writeState(installStatePath, createCursorStateOptions(projectRoot, {
         operations: [managedOperation('copy-file', destinationPath, {
@@ -1889,7 +1889,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(projectRoot, '.cursor');
-      const statePath = path.join(targetRoot, 'ecc-install-state.json');
+      const statePath = path.join(targetRoot, 'yus-install-state.json');
       fs.mkdirSync(targetRoot, { recursive: true });
 
       writeState(statePath, {
@@ -1972,7 +1972,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(projectRoot, '.cursor');
-      const installStatePath = path.join(targetRoot, 'ecc-install-state.json');
+      const installStatePath = path.join(targetRoot, 'yus-install-state.json');
       const destinationPath = path.join(targetRoot, 'opencode.json');
       const sourceConfig = JSON.parse(fs.readFileSync(
         path.join(REPO_ROOT, '.opencode', 'opencode.json'),
@@ -1996,7 +1996,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
           strategy: 'preserve-relative-path',
           ownership: 'managed',
           scaffoldOnly: false,
-          contentTransform: 'opencode-disable-ecc-hooks',
+          contentTransform: 'opencode-disable-yus-hooks',
         }],
       }));
 
@@ -2030,7 +2030,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
           exemptValidationCodes: ['opencode-plugin-not-built'],
         });
         applyInstallPlan(plan);
-        const pluginPaths = ['ecc-hooks.ts', 'index.ts'].map(name => path.join(plan.targetRoot, 'plugins', name));
+        const pluginPaths = ['yus-hooks.ts', 'index.ts'].map(name => path.join(plan.targetRoot, 'plugins', name));
         for (const pluginPath of pluginPaths) {
           assert.strictEqual(fs.readFileSync(pluginPath, 'utf8'), getDisabledOpenCodePluginContent());
           fs.unlinkSync(pluginPath);
@@ -2084,7 +2084,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
           },
         });
         assert.strictEqual(result.results[0].status, 'repaired');
-        for (const name of ['ecc-hooks.ts', 'index.ts']) {
+        for (const name of ['yus-hooks.ts', 'index.ts']) {
           assert.strictEqual(fs.readFileSync(path.join(recorded.targetRoot, 'plugins', name), 'utf8'), getDisabledOpenCodePluginContent());
         }
         assert.ok(!JSON.parse(fs.readFileSync(path.join(recorded.targetRoot, 'opencode.json'), 'utf8')).plugin.includes('./plugins'));
@@ -2092,7 +2092,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
         assert.notStrictEqual(state.request.hookConsent, 'enabled');
         assert.ok(!state.resolution.selectedModules.includes('hooks-runtime'));
         for (const operation of state.operations.filter(operation => (
-          ['.opencode/plugins/ecc-hooks.ts', '.opencode/plugins/index.ts'].includes(operation.sourceRelativePath)
+          ['.opencode/plugins/yus-hooks.ts', '.opencode/plugins/index.ts'].includes(operation.sourceRelativePath)
         ))) {
           assert.strictEqual(operation.contentTransform, 'opencode-disable-plugin-entrypoint');
         }
@@ -2107,7 +2107,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
     try {
       withTemporarilyMovedPath(path.join(REPO_ROOT, '.opencode', 'dist'), () => {
         const recorded = writeRecordedOpenCodeActivation(homeDir);
-        const pluginPath = path.join(recorded.targetRoot, 'plugins', 'ecc-hooks.ts');
+        const pluginPath = path.join(recorded.targetRoot, 'plugins', 'yus-hooks.ts');
         const missingPath = path.join(recorded.targetRoot, 'plugins', 'index.ts');
         const configPath = path.join(recorded.targetRoot, 'opencode.json');
         fs.appendFileSync(pluginPath, '// user custom hook\n');
@@ -2183,7 +2183,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
     try {
       withPrivateOpenCodeSource(homeDir, sourceRoot => {
         const recorded = writeRecordedOpenCodeActivation(homeDir, sourceRoot);
-        const pluginPath = path.join(recorded.targetRoot, 'plugins', 'ecc-hooks.ts');
+        const pluginPath = path.join(recorded.targetRoot, 'plugins', 'yus-hooks.ts');
         const canonicalPluginPath = fs.realpathSync(pluginPath);
         const changedContent = 'globalThis.userChangedHook = true;\n';
         const stateBefore = fs.readFileSync(recorded.installStatePath);
@@ -2366,7 +2366,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(homeDir, '.claude');
-      const statePath = path.join(targetRoot, 'ecc', 'install-state.json');
+      const statePath = path.join(targetRoot, 'yus', 'install-state.json');
       const destinationPath = path.join(targetRoot, 'plugin.json');
       fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
       fs.writeFileSync(destinationPath, '{"drifted":true}\n');
@@ -2425,7 +2425,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(projectRoot, '.cursor');
-      const statePath = path.join(targetRoot, 'ecc-install-state.json');
+      const statePath = path.join(targetRoot, 'yus-install-state.json');
       const destinationPath = path.join(targetRoot, 'hooks.json');
       fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
       fs.writeFileSync(destinationPath, JSON.stringify({
@@ -2500,7 +2500,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(projectRoot, '.cursor');
-      const statePath = path.join(targetRoot, 'ecc-install-state.json');
+      const statePath = path.join(targetRoot, 'yus-install-state.json');
       const destinationPath = path.join(targetRoot, 'legacy-note.txt');
       fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
       fs.writeFileSync(destinationPath, 'stale');
@@ -2812,7 +2812,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(projectRoot, '.cursor');
-      const adapterStatePath = path.join(targetRoot, 'ecc-install-state.json');
+      const adapterStatePath = path.join(targetRoot, 'yus-install-state.json');
       const recordedStatePath = path.join(outsideRoot, 'recorded-state.json');
       const stateOptions = createCursorStateOptions(projectRoot, {
         installStatePath: recordedStatePath,
@@ -2849,7 +2849,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(projectRoot, '.cursor');
-      const statePath = path.join(targetRoot, 'ecc-install-state.json');
+      const statePath = path.join(targetRoot, 'yus-install-state.json');
       const destinationPath = path.join(targetRoot, 'hooks.json');
       fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
       fs.writeFileSync(destinationPath, JSON.stringify({
@@ -2917,7 +2917,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(tempDir, '.claude');
-      const statePath = path.join(targetRoot, 'ecc', 'install-state.json');
+      const statePath = path.join(targetRoot, 'yus', 'install-state.json');
       const destinationPath = path.join(targetRoot, 'plugin.json');
       fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
       fs.writeFileSync(destinationPath, '{"generated":true}\n');
@@ -2978,7 +2978,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(projectRoot, '.cursor');
-      const statePath = path.join(targetRoot, 'ecc-install-state.json');
+      const statePath = path.join(targetRoot, 'yus-install-state.json');
       const destinationPath = path.join(targetRoot, 'legacy-note.txt');
       fs.mkdirSync(targetRoot, { recursive: true });
 
@@ -3072,7 +3072,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
     const projectRoot = createTempDir('install-lifecycle-project-');
 
     try {
-      const statePath = path.join(projectRoot, '.cursor', 'ecc-install-state.json');
+      const statePath = path.join(projectRoot, '.cursor', 'yus-install-state.json');
       fs.mkdirSync(path.dirname(statePath), { recursive: true });
       fs.writeFileSync(statePath, '{not-json', 'utf8');
 
@@ -3098,7 +3098,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(projectRoot, '.cursor');
-      const adapterStatePath = path.join(targetRoot, 'ecc-install-state.json');
+      const adapterStatePath = path.join(targetRoot, 'yus-install-state.json');
       const recordedStatePath = path.join(outsideRoot, 'recorded-state.json');
       const stateOptions = createCursorStateOptions(projectRoot, {
         installStatePath: recordedStatePath,
@@ -3198,7 +3198,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
     try {
       const targetRoot = path.join(projectRoot, '.cursor');
-      const adapterStatePath = path.join(targetRoot, 'ecc-install-state.json');
+      const adapterStatePath = path.join(targetRoot, 'yus-install-state.json');
       const destinationPath = path.join(targetRoot, 'rules', 'nested', 'managed.md');
       fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
       fs.writeFileSync(destinationPath, 'managed\n');
@@ -3559,7 +3559,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
         if (
           !swapped
           && path.basename(sourcePath) === path.basename(destinationPath)
-          && path.basename(path.dirname(targetPath)).startsWith('.ecc-remove-')
+          && path.basename(path.dirname(targetPath)).startsWith('.yus-remove-')
         ) {
           originalRenameSync.call(fs, destinationParent, backupParent);
           fs.symlinkSync(
@@ -3921,7 +3921,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
       const targetRoot = path.join(homeDir, '.claude');
       const settingsPath = path.join(targetRoot, 'settings.json');
       const currentHooks = currentManagedHooks(targetRoot);
-      const retiredHook = managedHookEntry('ecc:retired', 'node retired.js');
+      const retiredHook = managedHookEntry('yus:retired', 'node retired.js');
       const recordedHooks = {
         ...currentHooks,
         Stop: [...currentHooks.Stop, retiredHook],
@@ -3948,9 +3948,9 @@ function managedOperation(kind, destinationPath, overrides = {}) {
 
       assert.strictEqual(result.results[0].status, 'repaired');
       const repaired = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
-      assert.ok(!repaired.hooks.Stop.some(entry => entry.id === 'ecc:retired'));
+      assert.ok(!repaired.hooks.Stop.some(entry => entry.id === 'yus:retired'));
       assert.deepStrictEqual(repaired.hooks, currentHooks);
-      const state = readInstallState(path.join(targetRoot, 'ecc', 'install-state.json'));
+      const state = readInstallState(path.join(targetRoot, 'yus', 'install-state.json'));
       const settingsOperation = state.operations.find(operation => (
         operation.kind === 'update-claude-settings'
       ));
@@ -3969,15 +3969,15 @@ function managedOperation(kind, destinationPath, overrides = {}) {
       const targetRoot = path.join(homeDir, '.claude');
       const settingsPath = path.join(targetRoot, 'settings.json');
       const managedHooks = {
-        SessionStart: [managedHookEntry('ecc:start', 'node managed-start.js')],
-        Stop: [managedHookEntry('ecc:stop', 'node managed-stop.js')],
+        SessionStart: [managedHookEntry('yus:start', 'node managed-start.js')],
+        Stop: [managedHookEntry('yus:stop', 'node managed-stop.js')],
       };
       const userHook = {
         id: 'user:stop',
         matcher: 'Bash',
         hooks: [{ type: 'command', command: 'user-command' }],
       };
-      const driftedHook = managedHookEntry('ecc:stop', 'node user-edited-stop.js');
+      const driftedHook = managedHookEntry('yus:stop', 'node user-edited-stop.js');
       fs.mkdirSync(targetRoot, { recursive: true });
       fs.writeFileSync(settingsPath, formatJson({
         theme: 'dark',
@@ -4025,7 +4025,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
       const targetRoot = path.join(homeDir, '.claude');
       const settingsPath = path.join(targetRoot, 'settings.json');
       const managedHooks = {
-        Stop: [managedHookEntry('ecc:stop', 'node managed-stop.js')],
+        Stop: [managedHookEntry('yus:stop', 'node managed-stop.js')],
       };
       fs.mkdirSync(targetRoot, { recursive: true });
       fs.writeFileSync(settingsPath, formatJson({
@@ -4068,7 +4068,7 @@ function managedOperation(kind, destinationPath, overrides = {}) {
       const victimPath = path.join(targetRoot, 'victim.json');
       const settingsPath = path.join(targetRoot, 'settings.json');
       const managedHooks = {
-        Stop: [managedHookEntry('ecc:stop', 'node managed-stop.js')],
+        Stop: [managedHookEntry('yus:stop', 'node managed-stop.js')],
       };
       fs.mkdirSync(targetRoot, { recursive: true });
       fs.writeFileSync(victimPath, formatJson({ sentinel: true, hooks: managedHooks }));

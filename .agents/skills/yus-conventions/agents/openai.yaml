@@ -1,0 +1,7 @@
+interface:
+  display_name: "yus"
+  short_description: "Repo workflows and conventions for yus"
+  brand_color: "#0EA5E9"
+  default_prompt: "Use $yus-conventions to follow this repository's conventions and workflows."
+policy:
+  allow_implicit_invocation: true

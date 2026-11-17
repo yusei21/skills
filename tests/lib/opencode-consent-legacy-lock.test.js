@@ -22,7 +22,7 @@ const SOURCE_RELATIVE_PATH = path.join('skills', 'admin', 'skill-comply', 'SKILL
 const INSTALLED_RELATIVE_PATH = path.join('skills', 'skill-comply', 'SKILL.md');
 const SKILL_CONTENT = '---\nname: skill-comply\ndescription: Synthetic migration fixture.\n---\n\n# Inert fixture\n';
 const sha256 = value => crypto.createHash('sha256').update(value).digest('hex');
-const lockPath = root => path.join(root, 'ecc-install-state.json.ecc.lock');
+const lockPath = root => path.join(root, 'yus-install-state.json.yus.lock');
 
 function writeJson(filePath, value) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
@@ -30,18 +30,18 @@ function writeJson(filePath, value) {
 }
 
 function privateFixture(callback) {
-  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-legacy-consent-lock-')));
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-legacy-consent-lock-')));
   const sourceRoot = path.join(root, 'source');
   const homeDir = path.join(root, 'home');
   const legacyRoot = path.join(homeDir, '.opencode');
   const canonicalRoot = path.join(homeDir, '.config', 'opencode');
   const sourcePath = path.join(sourceRoot, SOURCE_RELATIVE_PATH);
   const legacyFile = path.join(legacyRoot, INSTALLED_RELATIVE_PATH);
-  const legacyStatePath = path.join(legacyRoot, 'ecc-install-state.json');
-  const canonicalStatePath = path.join(canonicalRoot, 'ecc-install-state.json');
+  const legacyStatePath = path.join(legacyRoot, 'yus-install-state.json');
+  const canonicalStatePath = path.join(canonicalRoot, 'yus-install-state.json');
   const adapter = { id: 'opencode-home', target: 'opencode', kind: 'home' };
   try {
-    writeJson(path.join(sourceRoot, 'package.json'), { name: 'synthetic-ecc-lock-fixture', version: '2.2.2' });
+    writeJson(path.join(sourceRoot, 'package.json'), { name: 'synthetic-yus-lock-fixture', version: '2.2.2' });
     writeJson(path.join(sourceRoot, 'manifests', 'install-modules.json'), {
       version: 1,
       modules: [{ id: 'workflow-quality', kind: 'skills', description: 'Inert test skill.',
@@ -109,7 +109,7 @@ function assertHeldAndIndependentWritersRefused(value) {
   const legacyBytes = fs.readFileSync(value.legacyStatePath);
   assert.throws(() => applyInstallPlan(value.canonicalPlan, {
     beforeInstallStateRead() { assert.fail('Independent apply reached state read while migration held both locks'); },
-  }), /Another ECC process.*OpenCode/);
+  }), /Another yus process.*OpenCode/);
   let nestedBuilds = 0;
   const nested = repair(value, () => {
     nestedBuilds++;
@@ -117,7 +117,7 @@ function assertHeldAndIndependentWritersRefused(value) {
   });
   assert.strictEqual(nested.results.length, 1, JSON.stringify(nested));
   assert.strictEqual(nested.results[0].status, 'error');
-  assert.match(nested.results[0].error, /Another ECC process.*OpenCode/);
+  assert.match(nested.results[0].error, /Another yus process.*OpenCode/);
   assert.strictEqual(nestedBuilds, 0);
   assert.strictEqual(fs.existsSync(value.canonicalStatePath), false);
   assert.deepStrictEqual(fs.readFileSync(value.legacyStatePath), legacyBytes);
@@ -152,7 +152,7 @@ function addLegacyActivations(value, consent = null) {
   state.resolution.selectedModules.push('platform-configs');
   for (const [relative, content] of [
     ['opencode.json', '{"plugin":["./plugins"],"userSetting":true}\n'],
-    ['plugins/ecc-hooks.ts', 'export default async () => ({ "session.created": () => {} });\n'],
+    ['plugins/yus-hooks.ts', 'export default async () => ({ "session.created": () => {} });\n'],
   ]) {
     const sourceRelativePath = `.opencode/${relative}`;
     const sourcePath = path.join(value.sourceRoot, sourceRelativePath);
@@ -233,7 +233,7 @@ function runTests() {
     assertSourceUnchanged(value);
     assertBothLocksReleased(value);
   });
-  for (const unrelated of ['directory', 'file', 'symlink', 'invalid-state', 'malformed-state', 'non-ECC-state']) {
+  for (const unrelated of ['directory', 'file', 'symlink', 'invalid-state', 'malformed-state', 'non-yus-state']) {
     test(`canonical apply ignores an unrelated legacy ${unrelated} without locking it`, value => {
       fs.rmSync(value.legacyRoot, { recursive: true, force: true });
       if (unrelated === 'file') fs.writeFileSync(value.legacyRoot, 'user file');
@@ -244,7 +244,7 @@ function runTests() {
         fs.mkdirSync(value.legacyRoot, { recursive: true });
         if (unrelated === 'malformed-state') fs.writeFileSync(value.legacyStatePath, '{malformed');
         if (unrelated === 'invalid-state') writeJson(value.legacyStatePath, { unrelated: true });
-        if (unrelated === 'non-ECC-state') {
+        if (unrelated === 'non-yus-state') {
           const state = { ...value.canonicalPlan.statePreview, target: { id: 'user-tool', target: 'user-tool',
             root: value.legacyRoot, installStatePath: value.legacyStatePath } };
           writeJson(value.legacyStatePath, state);
@@ -270,7 +270,7 @@ function runTests() {
       assert.strictEqual(fs.existsSync(lockPath(value.canonicalRoot)), false);
     });
   }
-  test('unreadable legacy ECC state remains an explicit failure before writes', value => {
+  test('unreadable legacy yus state remains an explicit failure before writes', value => {
     const original = fileSystem.openSync;
     let attempted = false;
     fileSystem.openSync = (candidate, ...args) => {
@@ -326,10 +326,10 @@ function runTests() {
       const state = readInstallState(value.canonicalStatePath);
       assert.ok(!state.resolution.selectedModules.includes('hooks-runtime'));
       assert.notStrictEqual(state.request.hookConsent, 'enabled');
-      assert.strictEqual(fs.readFileSync(path.join(value.canonicalRoot, 'plugins/ecc-hooks.ts'), 'utf8'),
+      assert.strictEqual(fs.readFileSync(path.join(value.canonicalRoot, 'plugins/yus-hooks.ts'), 'utf8'),
         getDisabledOpenCodePluginContent());
       assert.deepStrictEqual(JSON.parse(fs.readFileSync(path.join(value.canonicalRoot, 'opencode.json'))).plugin, []);
-      for (const relative of ['opencode.json', 'plugins/ecc-hooks.ts', 'ecc-install-state.json']) {
+      for (const relative of ['opencode.json', 'plugins/yus-hooks.ts', 'yus-install-state.json']) {
         assert.strictEqual(fs.existsSync(path.join(value.legacyRoot, relative)), false);
       }
       assertBothLocksReleased(value);
@@ -338,7 +338,7 @@ function runTests() {
   test('a legacy root holding the pre-fix declined factory stub still migrates', value => {
     const state = addLegacyActivations(value, 'declined');
     const oldStub = 'export default async () => ({});\n';
-    const stubPath = path.join(value.legacyRoot, 'plugins/ecc-hooks.ts');
+    const stubPath = path.join(value.legacyRoot, 'plugins/yus-hooks.ts');
     fs.writeFileSync(stubPath, oldStub);
     state.operations.find(operation => operation.destinationPath === stubPath).contentSha256 = sha256(oldStub);
     writeInstallState(value.legacyStatePath, state);
@@ -346,13 +346,13 @@ function runTests() {
     // The inert legacy file must be gone: OpenCode scans plugin paths independently.
     assert.strictEqual(result.results[0].status, 'repaired', JSON.stringify(result));
     assert.strictEqual(fs.existsSync(stubPath), false);
-    assert.strictEqual(fs.readFileSync(path.join(value.canonicalRoot, 'plugins/ecc-hooks.ts'), 'utf8'),
+    assert.strictEqual(fs.readFileSync(path.join(value.canonicalRoot, 'plugins/yus-hooks.ts'), 'utf8'),
       getDisabledOpenCodePluginContent());
   });
   test('a retained pre-fix declined factory stub never reports a successful repair', value => {
     const state = addLegacyActivations(value, 'declined');
     const oldStub = 'export default async () => ({});\n';
-    const stubPath = path.join(value.legacyRoot, 'plugins/ecc-hooks.ts');
+    const stubPath = path.join(value.legacyRoot, 'plugins/yus-hooks.ts');
     fs.writeFileSync(stubPath, oldStub);
     state.operations.find(operation => operation.destinationPath === stubPath).contentSha256 = sha256(oldStub);
     writeInstallState(value.legacyStatePath, state);
@@ -376,8 +376,8 @@ function runTests() {
   for (const defect of ['modified', 'missing-digest', 'source-mismatch', 'source-missing', 'symlink', 'unrecorded-alias', 'merge-json']) {
     test(`legacy ${defect} activation refuses before build and preserves ownership`, value => {
       const state = addLegacyActivations(value);
-      const plugin = path.join(value.legacyRoot, 'plugins/ecc-hooks.ts');
-      const source = path.join(value.sourceRoot, '.opencode/plugins/ecc-hooks.ts');
+      const plugin = path.join(value.legacyRoot, 'plugins/yus-hooks.ts');
+      const source = path.join(value.sourceRoot, '.opencode/plugins/yus-hooks.ts');
       if (defect === 'modified') fs.writeFileSync(plugin, 'user edit\n');
       if (defect === 'missing-digest') delete state.operations[2].contentSha256;
       if (defect === 'source-mismatch') fs.writeFileSync(source, 'different trusted source\n');
@@ -399,7 +399,7 @@ function runTests() {
   for (const failure of ['late-edit', 'remove-error', 'quarantine-edit']) {
     test(`legacy ${failure} never reports successful deactivation`, value => {
       addLegacyActivations(value);
-      const plugin = path.join(value.legacyRoot, 'plugins/ecc-hooks.ts');
+      const plugin = path.join(value.legacyRoot, 'plugins/yus-hooks.ts');
       const originalRename = fileSystem.renameSync;
       const before = fs.readFileSync(value.legacyStatePath);
       let failedRemoval = false;

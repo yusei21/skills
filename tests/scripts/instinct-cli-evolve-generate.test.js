@@ -47,7 +47,7 @@ function test(name, fn) {
 }
 
 function createTempDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-instinct-cli-evolve-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'yus-instinct-cli-evolve-'));
 }
 
 function cleanupDir(dir) {

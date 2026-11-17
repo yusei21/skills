@@ -1,4 +1,4 @@
-# Como contribuir com o ECC
+# Como contribuir com o yus
 
 [English](CONTRIBUTING.md) | **Português** | [中文](CONTRIBUTING.zh-CN.md)
 
@@ -59,8 +59,8 @@ Comandos de barra que disparam fluxos úteis:
 
 ```bash
 # 1. Faça o fork e clone
-gh repo fork affaan-m/ECC --clone
-cd ECC
+gh repo fork yusei21/yus --clone
+cd yus
 
 # 2. Crie um branch
 git checkout -b feat/my-contribution
@@ -113,7 +113,7 @@ ficam em inglês.
 ---
 name: your-skill-name
 description: Brief description shown in skill list and used for auto-activation
-origin: ECC
+origin: yus
 ---
 
 # Your Skill Title
@@ -172,8 +172,8 @@ coleção pessoal de prompts, leia a [Skill Adaptation Policy](docs/skill-adapta
 Versão curta:
 
 - copie a ideia por trás, não a identidade do produto externo
-- renomeie a skill quando o ECC mudar ou ampliar bastante o que ela faz
-- prefira regras, skills, scripts e MCPs nativos do ECC a novas dependências
+- renomeie a skill quando o yus mudar ou ampliar bastante o que ela faz
+- prefira regras, skills, scripts e MCPs nativos do yus a novas dependências
   de terceiros por padrão
 - não publique uma skill cujo valor principal é mandar o usuário instalar um
   pacote não verificado
@@ -448,7 +448,7 @@ buscar dados atualizados em vez de depender só dos dados de treinamento. Isso
 
 ### Subconjuntos de skills (Codex e Cursor)
 
-O ECC distribui subconjuntos de skills para outros ambientes:
+O yus distribui subconjuntos de skills para outros ambientes:
 
 - **Codex:** `.agents/skills/`; as skills listadas em `agents/openai.yaml` são
   carregadas pelo Codex.
@@ -626,8 +626,7 @@ versão de correção.
 
 ## Dúvidas?
 
-- **Issues:** [github.com/affaan-m/ECC/issues](https://github.com/affaan-m/ECC/issues)
-- **X/Twitter:** [@affaanmustafa](https://x.com/affaanmustafa)
+- **Issues:** [github.com/yusei21/yus/issues](https://github.com/yusei21/yus/issues)
 
 ---
 

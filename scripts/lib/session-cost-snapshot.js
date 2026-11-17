@@ -7,7 +7,7 @@ const path = require('path');
 const { writeFileAtomic } = require('./atomic-write');
 const { sanitizeSessionId } = require('./session-bridge');
 
-const COST_SNAPSHOT_SCHEMA_VERSION = 'ecc.cost-snapshot.v1';
+const COST_SNAPSHOT_SCHEMA_VERSION = 'yus.cost-snapshot.v1';
 const COST_SNAPSHOT_DIRECTORY = 'cost-snapshots';
 const COST_LOG_FILENAME = 'costs.jsonl';
 const READ_CHUNK_BYTES = 64 * 1024;
@@ -17,7 +17,7 @@ const FINGERPRINT_WINDOW_BYTES = 256;
 const PRUNE_INTERVAL_MS = 24 * 60 * 60 * 1000;
 const SNAPSHOT_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 const MAX_SNAPSHOTS = 512;
-const WARNING_CACHE_PREFIX = 'ecc-cost-snapshot-warnings-';
+const WARNING_CACHE_PREFIX = 'yus-cost-snapshot-warnings-';
 
 function assertSafeSessionId(sessionId) {
   if (sanitizeSessionId(sessionId) !== sessionId) {

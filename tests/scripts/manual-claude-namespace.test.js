@@ -8,12 +8,12 @@ const { spawnSync } = require('child_process');
 const { createHash } = require('crypto');
 const { readInstallState, writeInstallState } = require('../../scripts/lib/install-state');
 
-const cli = path.resolve(__dirname, '../../scripts/ecc.js');
+const cli = path.resolve(__dirname, '../../scripts/yus.js');
 let passed = 0;
 let failed = 0;
 
 for (const target of ['claude', 'claude-project']) {
-  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-native-names-')));
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-native-names-')));
   const home = path.join(root, 'home');
   const project = path.join(root, 'project');
   fs.mkdirSync(home);
@@ -23,14 +23,14 @@ for (const target of ['claude', 'claude-project']) {
     HOME: home,
     USERPROFILE: home,
     CLAUDE_CONFIG_DIR: path.join(home, '.claude'),
-    ECC_AGENT_DATA_HOME: path.join(home, '.claude'),
+    YUS_AGENT_DATA_HOME: path.join(home, '.claude'),
     XDG_CONFIG_HOME: path.join(home, '.config'),
     OPENCODE_CONFIG_DIR: path.join(home, '.config/opencode'),
     CODEX_HOME: path.join(home, '.codex'),
-    ECC_DRY_RUN: '0',
+    YUS_DRY_RUN: '0',
   };
   const installRoot = path.join(target === 'claude' ? home : project, '.claude');
-  const rule = path.join(installRoot, 'rules/ecc/common/agents.md');
+  const rule = path.join(installRoot, 'rules/yus/common/agents.md');
   const run = args => {
     const result = spawnSync(process.execPath, [cli, ...args], {
       cwd: project, env, encoding: 'utf8', maxBuffer: 4 * 1024 * 1024, timeout: 45000,
@@ -41,7 +41,7 @@ for (const target of ['claude', 'claude-project']) {
   };
   const assertNativeNames = () => {
     assert.match(fs.readFileSync(rule, 'utf8'), /Agent\(subagent_type: "planner"/);
-    assert.doesNotMatch(fs.readFileSync(rule, 'utf8'), /Agent\(subagent_type: "ecc:planner"/);
+    assert.doesNotMatch(fs.readFileSync(rule, 'utf8'), /Agent\(subagent_type: "yus:planner"/);
     assert.ok(fs.existsSync(path.join(installRoot, 'agents/planner.md')));
     assert.ok(fs.existsSync(path.join(installRoot, 'skills/tdd-workflow/SKILL.md')));
   };
@@ -55,10 +55,10 @@ for (const target of ['claude', 'claude-project']) {
     assert.strictEqual(report.summary.warningCount, 0);
     // Seed obsolete managed records from an older install, then exercise the
     // public reinstall instead of calling reconciliation directly.
-    const statePath = path.join(installRoot, 'ecc/install-state.json');
+    const statePath = path.join(installRoot, 'yus/install-state.json');
     const obsoleteContent = '# obsolete managed rule\n';
     const stalePaths = ['obsolete-unchanged.md', 'obsolete-edited.md']
-      .map(name => path.join(installRoot, 'rules/ecc/common', name));
+      .map(name => path.join(installRoot, 'rules/yus/common', name));
     const state = readInstallState(statePath);
     for (const file of stalePaths) {
       fs.writeFileSync(file, obsoleteContent);

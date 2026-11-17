@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# ECC Trae Uninstaller
-# Uninstalls ECC workflows from a Trae project.
+# yus Trae Uninstaller
+# Uninstalls yus workflows from a Trae project.
 #
 # Usage:
 #   ./uninstall.sh              # Uninstall from current directory
@@ -66,7 +66,7 @@ do_uninstall() {
         trae_full_path="$target_dir/$trae_dir"
     fi
     
-    echo "ECC Trae Uninstaller"
+    echo "yus Trae Uninstaller"
     echo "===================="
     echo ""
     echo "Target:  $trae_full_path/"
@@ -80,13 +80,13 @@ do_uninstall() {
     trae_root_resolved="$(resolve_path "$trae_full_path")"
 
     # Manifest file path
-    MANIFEST="$trae_full_path/.ecc-manifest"
+    MANIFEST="$trae_full_path/.yus-manifest"
     
     if [ ! -f "$MANIFEST" ]; then
-        echo "Warning: No manifest file found (.ecc-manifest)"
+        echo "Warning: No manifest file found (.yus-manifest)"
         echo ""
         echo "This could mean:"
-        echo "  1. ECC was installed with an older version without manifest support"
+        echo "  1. yus was installed with an older version without manifest support"
         echo "  2. The manifest file was manually deleted"
         echo ""
         read -p "Do you want to remove the entire $trae_dir directory? (y/N) " -n 1 -r
@@ -102,9 +102,9 @@ do_uninstall() {
         exit 0
     fi
     
-    echo "Found manifest file - will only remove files installed by ECC"
+    echo "Found manifest file - will only remove files installed by yus"
     echo ""
-    read -p "Are you sure you want to uninstall ECC from $trae_dir? (y/N) " -n 1 -r
+    read -p "Are you sure you want to uninstall yus from $trae_dir? (y/N) " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         echo "Uninstall cancelled."

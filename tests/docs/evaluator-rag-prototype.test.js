@@ -62,10 +62,10 @@ test('fixtures use one scenario id and declare read-only behavior', () => {
   const report = readJson('report.json');
   const verifier = readJson('verifier-result.json');
 
-  assert.strictEqual(scenario.schema_version, 'ecc.evaluator-rag.scenario.v1');
-  assert.strictEqual(trace.schema_version, 'ecc.evaluator-rag.trace.v1');
-  assert.strictEqual(report.schema_version, 'ecc.evaluator-rag.report.v1');
-  assert.strictEqual(verifier.schema_version, 'ecc.evaluator-rag.verifier.v1');
+  assert.strictEqual(scenario.schema_version, 'yus.evaluator-rag.scenario.v1');
+  assert.strictEqual(trace.schema_version, 'yus.evaluator-rag.trace.v1');
+  assert.strictEqual(report.schema_version, 'yus.evaluator-rag.report.v1');
+  assert.strictEqual(verifier.schema_version, 'yus.evaluator-rag.verifier.v1');
 
   for (const artifact of [trace, report, verifier]) {
     assert.strictEqual(artifact.scenario_id, scenario.scenario_id);
@@ -131,7 +131,7 @@ test('candidate playbook preserves stale-salvage operating rules', () => {
 });
 
 test('roadmap points to the evaluator RAG prototype and hosted PR check', () => {
-  const roadmap = read('docs/ECC-2.0-GA-ROADMAP.md');
+  const roadmap = read('docs/yus-2.0-GA-ROADMAP.md');
 
   assert.ok(roadmap.includes('docs/architecture/evaluator-rag-prototype.md'));
   assert.ok(roadmap.includes('examples/evaluator-rag-prototype/'));
@@ -286,7 +286,7 @@ test('AgentShield policy exception scenario rejects blanket suppression', () => 
     'approving policy exceptions without SARIF or report evidence',
     'treating expired exceptions as active',
     'blanket-suppressing AgentShield policy packs or organization-policy gates',
-    'editing AgentShield code or policy files from this ECC evaluator run'
+    'editing AgentShield code or policy files from this yus evaluator run'
   ]) {
     assert.ok(scenario.forbidden_actions.includes(blocked), `Missing AgentShield forbidden action: ${blocked}`);
   }
@@ -417,12 +417,12 @@ test('connector gap artifacts share identity and preserve read-only scope', () =
     ['trace.json', 'trace'], ['report.json', 'report'], ['verifier-result.json', 'verifier']
   ]) {
     const artifact = readFixtureJson(`connector-diagnostics-gap/${file}`);
-    assert.strictEqual(artifact.schema_version, `ecc.evaluator-rag.${schema}.v1`);
+    assert.strictEqual(artifact.schema_version, `yus.evaluator-rag.${schema}.v1`);
     assert.strictEqual(artifact.scenario_id, scenario.scenario_id);
     assert.strictEqual(artifact.run_id, 'illustrative-connector-gap');
     assert.strictEqual(artifact.read_only, true);
   }
-  assert.strictEqual(scenario.schema_version, 'ecc.evaluator-rag.scenario.v1');
+  assert.strictEqual(scenario.schema_version, 'yus.evaluator-rag.scenario.v1');
 });
 
 test('connector gap decisions reject unsupported monitors and preserve uncertainty', () => {
@@ -443,7 +443,7 @@ test('connector gap decisions reject unsupported monitors and preserve uncertain
   assert.ok(accepted.reasons.includes('Keeps retention and deployed settings unknown until checked'));
   assert.ok(rejected.reasons.includes('Infers absent capability from an unavailable settings channel'));
   assert.ok(scenario.forbidden_actions.includes('treating unavailable research as proof of missing capability'));
-  assert.ok(scenario.forbidden_actions.includes('claiming the reported incident is a reproduced ECC defect'));
+  assert.ok(scenario.forbidden_actions.includes('claiming the reported incident is a reproduced yus defect'));
   assert.ok(scenario.forbidden_actions.includes('deploying a background monitor from this evaluator'));
   assert.ok(scenario.acceptance_gates.includes('state the observed limitation separately from unknown settings'));
   assert.ok(playbook.includes('If research is unavailable, preserve the uncertainty and next targeted read'));
@@ -528,10 +528,10 @@ test('public feedback goal fidelity keeps automation and the artifact promotion 
   const playbook = read('examples/evaluator-rag-prototype/public-feedback-goal-fidelity/candidate-playbook.md');
 
   assert.strictEqual(scenario.scenario_id, 'public-feedback-goal-fidelity');
-  assert.strictEqual(scenario.schema_version, 'ecc.evaluator-rag.scenario.v1');
+  assert.strictEqual(scenario.schema_version, 'yus.evaluator-rag.scenario.v1');
   assert.strictEqual(scenario.mode, 'read_only_prototype');
   for (const [artifact, kind] of [[trace, 'trace'], [report, 'report'], [verifier, 'verifier']]) {
-    assert.strictEqual(artifact.schema_version, `ecc.evaluator-rag.${kind}.v1`);
+    assert.strictEqual(artifact.schema_version, `yus.evaluator-rag.${kind}.v1`);
     assert.strictEqual(artifact.scenario_id, scenario.scenario_id);
     assert.strictEqual(artifact.read_only, true);
     assert.strictEqual(artifact.run_id, trace.run_id);

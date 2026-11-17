@@ -1,5 +1,5 @@
 {
-  "schema_version": "ecc.evaluator-rag.scenario.v1",
+  "schema_version": "yus.evaluator-rag.scenario.v1",
   "scenario_id": "public-feedback-goal-fidelity",
   "title": "Preserve the chosen outcome and causal chain when shortening feedback",
   "mode": "read_only_prototype",
@@ -7,7 +7,7 @@
   "sources": [
     {
       "kind": "public_feedback",
-      "url": "https://github.com/affaan-m/ECC/issues/3695",
+      "url": "https://github.com/yusei21/yus/issues/3695",
       "purpose": "Reported corrected goal drift and proposed evaluation"
     },
     {
@@ -16,7 +16,7 @@
       "purpose": "Corrected public text cited by the reporter; not recovery of its earlier revision"
     }
   ],
-  "evidence_limits": "The earlier published revision was not independently recovered. Original HTML and earlier HTML response are unavailable; revised output was reported supplied but not compared, rendered, fact-checked or accepted by the user. ECC activation/version and causal contribution remain unknown.",
+  "evidence_limits": "The earlier published revision was not independently recovered. Original HTML and earlier HTML response are unavailable; revised output was reported supplied but not compared, rendered, fact-checked or accepted by the user. yus activation/version and causal contribution remain unknown.",
   "inputs": {
     "chosen_outcome": "OUTCOME_A: an end-to-end automated workflow producing the prepared result",
     "causal_chain": [

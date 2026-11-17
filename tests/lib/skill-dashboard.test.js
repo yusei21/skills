@@ -333,7 +333,7 @@ function runTests() {
         warnThreshold: 0.1,
       });
 
-      assert.ok(result.text.includes('ECC Skill Health Dashboard'));
+      assert.ok(result.text.includes('yus Skill Health Dashboard'));
       assert.ok(result.text.includes('Success Rate'));
       assert.ok(result.text.includes('Failure Patterns'));
       assert.ok(result.text.includes('Pending Amendments'));
@@ -407,9 +407,9 @@ function runTests() {
     // Isolated roots so the full-coverage case is guaranteed rather than
     // conditional: every discovered skill needs a run inside the 30-day window.
     if (test('renderDashboard omits the warning once every skill is measured', () => {
-      const coveredRoot = createTempDir('ecc-dashboard-covered-');
-      const coveredLearned = createTempDir('ecc-dashboard-covered-');
-      const coveredImported = createTempDir('ecc-dashboard-covered-');
+      const coveredRoot = createTempDir('yus-dashboard-covered-');
+      const coveredLearned = createTempDir('yus-dashboard-covered-');
+      const coveredImported = createTempDir('yus-dashboard-covered-');
       const coveredRuns = path.join(homeDir, '.claude', 'state', 'covered-skill-runs.jsonl');
       try {
         for (const name of ['covered-a', 'covered-b']) {
@@ -617,7 +617,7 @@ function runTests() {
         now,
       });
 
-      assert.ok(result.text.includes('ECC Skill Health Dashboard'));
+      assert.ok(result.text.includes('yus Skill Health Dashboard'));
       assert.ok(result.text.includes('No failure patterns detected'));
       assert.strictEqual(result.data.summary.total_skills, 0);
     })) passed++; else failed++;

@@ -10,14 +10,14 @@ const test = require('node:test');
 const ROOT = path.resolve(__dirname, '../..');
 
 function withReadOnlyCli(fn) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-carrier-cli-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-carrier-cli-'));
   const user = path.join(root, 'user');
   const workspace = path.join(root, 'workspace');
   fs.mkdirSync(user);
   fs.mkdirSync(workspace);
   fs.writeFileSync(path.join(user, 'settings.json'), '{"existing":true}\n');
   try {
-    fn(args => spawnSync(process.execPath, [path.join(ROOT, 'scripts/ecc.js'), 'profile', ...args], {
+    fn(args => spawnSync(process.execPath, [path.join(ROOT, 'scripts/yus.js'), 'profile', ...args], {
       cwd: workspace, encoding: 'utf8', timeout: 30000, maxBuffer: 4 * 1024 * 1024,
       env: {
         PATH: process.env.PATH, SystemRoot: process.env.SystemRoot,
@@ -50,7 +50,7 @@ function payload(result) {
 test('profile help exposes carrier planning without a write command', () => withReadOnlyCli(run => {
   const result = run(['--help']);
   assert.equal(result.status, 0);
-  assert.match(result.stdout, /ecc profile carrier/);
+  assert.match(result.stdout, /yus profile carrier/);
   assert.match(result.stdout, /read-only/i);
 }));
 

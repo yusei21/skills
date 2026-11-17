@@ -75,7 +75,7 @@ test('skills/operations/issue-review/SKILL.md exists with name and inline descri
   assert.ok(/^name:\s*issue-review\s*$/m.test(frontmatter), 'Expected name to match the directory');
   assert.ok(/^description:\s*\S/m.test(frontmatter), 'Expected a non-empty description');
   assert.ok(!/^description:\s*[|>]/m.test(frontmatter), 'Expected an inline scalar description');
-  assert.ok(/^\s+origin:\s*ECC\s*$/m.test(frontmatter), 'Expected metadata.origin: ECC');
+  assert.ok(/^\s+origin:\s*yus\s*$/m.test(frontmatter), 'Expected metadata.origin: yus');
 });
 
 test('SKILL.md stays under the CONTRIBUTING line cap', () => {
@@ -114,7 +114,7 @@ test('verification binds code evidence to the canonical issue repository', () =>
 function fixtureGitEnvironment(root, extra = {}) {
   const env = Object.fromEntries(Object.entries(process.env)
     .filter(([key]) => !/^(?:GIT_|BASH_ENV$|ENV$)/i.test(key)));
-  const home = path.join(root, '.git', 'ecc-fixture-home');
+  const home = path.join(root, '.git', 'yus-fixture-home');
   const config = path.join(home, 'gitconfig');
   const templates = path.join(home, 'templates');
   fs.mkdirSync(templates, { recursive: true });
@@ -132,7 +132,7 @@ function fixtureGitEnvironment(root, extra = {}) {
 }
 
 function withTargetCheckout(fn) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-issue-review-target-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-issue-review-target-'));
   function git(...args) {
     const result = spawnSync('git', ['-c', 'maintenance.auto=false', '-c', 'gc.auto=0', '-C', root, ...args], {
       encoding: 'utf8', timeout: 10000,
@@ -477,7 +477,7 @@ function expandReviewCommand(command, values) {
 }
 
 test('documented cross-repository writes replay faithful shell quoting and literal file/label data', () => {
-  const ambient = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-issue-review-gh-'));
+  const ambient = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-issue-review-gh-'));
   try {
     const publish = sectionBody(skill, '### Phase 8: PUBLISH (opt-in only)');
     const commands = [...publish.matchAll(/`(gh issue (?:comment|edit) [^`]+)`/g)].map(match => match[1]);
@@ -504,7 +504,7 @@ test('documented cross-repository writes replay faithful shell quoting and liter
 });
 
 test('documented PR and issue searches pass shell payloads as one literal keyword argument', () => {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-issue-review-search-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-issue-review-search-'));
   try {
     const commands = [...skill.matchAll(/^gh (?:pr|issue) list [^\n]+/gm)].map(match => match[0]);
     assert.strictEqual(commands.length, 2);

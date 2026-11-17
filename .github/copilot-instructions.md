@@ -1,6 +1,6 @@
-# ECC for GitHub Copilot
+# yus for GitHub Copilot
 
-ECC baseline rules for GitHub Copilot Chat in VS Code.
+yus baseline rules for GitHub Copilot Chat in VS Code.
 These instructions are always active. Use the prompts in `.github/prompts/` for deeper workflows.
 
 ## Core Workflow
@@ -100,7 +100,7 @@ Before marking work complete:
 - [ ] No hardcoded values (use constants or env config)
 - [ ] No in-place mutation
 
-## ECC Prompt Library
+## yus Prompt Library
 
 Use these prompts in Copilot Chat for deeper workflows:
 

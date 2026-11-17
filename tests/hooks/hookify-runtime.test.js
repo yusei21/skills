@@ -1,5 +1,5 @@
 /**
- * Contract tests for the ECC-native Hookify rule runtime (#2561).
+ * Contract tests for the yus-native Hookify rule runtime (#2561).
  */
 
 'use strict';
@@ -27,7 +27,7 @@ function test(name, fn) {
 }
 
 function createProject() {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-hookify-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-hookify-'));
   fs.mkdirSync(path.join(root, '.claude'), { recursive: true });
   return root;
 }

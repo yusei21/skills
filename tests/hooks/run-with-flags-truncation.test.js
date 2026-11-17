@@ -79,7 +79,7 @@ else failed++;
 
 if (
   test('oversized payload never echoes truncated stdin for a disabled hook', () => {
-    const result = runRunner(['pre:write:doc-file-warning', 'scripts/hooks/doc-file-warning.js', 'standard,strict'], oversizedPayload(), { ECC_DISABLED_HOOKS: 'pre:write:doc-file-warning' });
+    const result = runRunner(['pre:write:doc-file-warning', 'scripts/hooks/doc-file-warning.js', 'standard,strict'], oversizedPayload(), { YUS_DISABLED_HOOKS: 'pre:write:doc-file-warning' });
     assert.strictEqual(result.status, 0);
     assert.strictEqual(result.stdout, '', 'disabled-hook path must not echo truncated stdin');
   })
@@ -137,7 +137,7 @@ if (
       tool_name: 'Write',
       tool_input: { file_path: '/tmp/medium.md', content: 'z'.repeat(256 * 1024) }
     });
-    const result = runRunner(['pre:write:doc-file-warning', 'scripts/hooks/doc-file-warning.js', 'standard,strict'], payload, { ECC_DISABLED_HOOKS: 'pre:write:doc-file-warning' });
+    const result = runRunner(['pre:write:doc-file-warning', 'scripts/hooks/doc-file-warning.js', 'standard,strict'], payload, { YUS_DISABLED_HOOKS: 'pre:write:doc-file-warning' });
     assert.strictEqual(result.status, 0);
     assert.strictEqual(result.stdout, '');
   })
@@ -150,17 +150,17 @@ function oversizedToolPayload(toolName, toolInput) {
 }
 
 // Pin every switch that decides whether the hook runs, so an inherited
-// ECC_DISABLED_HOOKS / profile / cap cannot make these pass or fail by accident.
+// YUS_DISABLED_HOOKS / profile / cap cannot make these pass or fail by accident.
 const GATEGUARD_ENV_BASELINE = {
   CLAUDE_PLUGIN_ROOT: repoRoot,
-  ECC_HOOK_CONFIG: path.join(repoRoot, 'tests', 'fixtures', 'no-such-hook-config.json'),
-  ECC_HOOKS_ENABLED: 'true',
-  ECC_HOOK_PROFILE: 'standard',
-  ECC_DISABLED_HOOKS: '',
-  ECC_DRY_RUN: '',
-  ECC_HOOK_INPUT_MAX_BYTES: String(MAX_STDIN),
-  ECC_HOOK_INPUT_TRUNCATED_UPSTREAM: '',
-  ECC_GATEGUARD: '',
+  YUS_HOOK_CONFIG: path.join(repoRoot, 'tests', 'fixtures', 'no-such-hook-config.json'),
+  YUS_HOOKS_ENABLED: 'true',
+  YUS_HOOK_PROFILE: 'standard',
+  YUS_DISABLED_HOOKS: '',
+  YUS_DRY_RUN: '',
+  YUS_HOOK_INPUT_MAX_BYTES: String(MAX_STDIN),
+  YUS_HOOK_INPUT_TRUNCATED_UPSTREAM: '',
+  YUS_GATEGUARD: '',
   GATEGUARD_DISABLED: ''
 };
 
@@ -182,7 +182,7 @@ for (const [hookId, toolName, toolInput] of GATEGUARD_TRUNCATION_CASES) {
     passed++;
   else failed++;
 
-  for (const offEnv of [{ ECC_GATEGUARD: 'off' }, { GATEGUARD_DISABLED: '1' }, { ECC_DISABLED_HOOKS: hookId }]) {
+  for (const offEnv of [{ YUS_GATEGUARD: 'off' }, { GATEGUARD_DISABLED: '1' }, { YUS_DISABLED_HOOKS: hookId }]) {
     if (
       test(`${hookId} oversized payload passes when GateGuard is off via ${Object.keys(offEnv)[0]}`, () => {
         const result = runRunner([hookId, 'scripts/hooks/gateguard-fact-force.js', 'standard,strict'], oversizedToolPayload(toolName, toolInput), {

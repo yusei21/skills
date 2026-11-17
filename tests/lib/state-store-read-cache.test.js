@@ -34,7 +34,7 @@ async function createFixture(dbPath, { platform = process.platform } = {}) {
   const facade = {
     ...fs,
     openSync(file, ...args) {
-      if (file === `${dbPath}.ecc-state.lock`) {
+      if (file === `${dbPath}.yus-state.lock`) {
         lockAttempts += 1;
         if (lockBlocked) throw Object.assign(new Error('held by another writer'), { code: 'EEXIST' });
       }
@@ -115,7 +115,7 @@ async function run() {
   let failed = 0;
   async function test(name, callback, options) {
     // Resolve host aliases before a fixture simulates another platform.
-    const directory = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-state-read-cache-')));
+    const directory = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-state-read-cache-')));
     try {
       const dbPath = path.join(directory, 'state.db');
       await callback(dbPath, await createFixture(dbPath, options));

@@ -19,7 +19,7 @@ This command runs on **Opus** (`model: opus`). Opus orchestrates, verifies findi
 ## Prerequisites
 
 - Codex CLI installed and logged in with ChatGPT: `codex login`
-- `gpt-6-astra` available on the account (check with `codex` model picker; override with `ECC_ASTRA_MODEL`)
+- `gpt-6-astra` available on the account (check with `codex` model picker; override with `YUS_ASTRA_MODEL`)
 - Invoking this command is your consent to send the diff to OpenAI. Do not run it on code you are not allowed to share.
 
 ## Usage
@@ -46,10 +46,10 @@ ASTRA=""
 for candidate in "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/scripts/astra-review.js" \
                  "./.claude/scripts/astra-review.js" \
                  "$HOME/.claude/scripts/astra-review.js" \
-                 "./scripts/astra-review.js"; do   # plugin, project-local, global, the ECC repo itself
+                 "./scripts/astra-review.js"; do   # plugin, project-local, global, the yus repo itself
   [ -f "$candidate" ] && ASTRA="$candidate" && break
 done
-[ -n "$ASTRA" ] || { echo "astra-review.js not found; install ECC commands-core"; exit 2; }
+[ -n "$ASTRA" ] || { echo "astra-review.js not found; install yus commands-core"; exit 2; }
 node "$ASTRA" --dry-run [scope flags] | head -40
 ```
 
@@ -121,4 +121,4 @@ Remaining:      [unresolved CRITICAL/HIGH, if any]
 - If Codex is missing, fall back to `/code-review` and say clearly that no cross-provider review happened.
 - The Fable-limit fallback also sends the confirmed findings and the files Astra opens to OpenAI. Invoking this command covers that too.
 - `--fix-findings` cannot be combined with a scope flag. `--dry-run` prints the fix prompt without calling Codex.
-- Full manual (setup, scopes, push gating, troubleshooting): `docs/ASTRA-REVIEW-GUIDE.md` in the ECC repository.
+- Full manual (setup, scopes, push gating, troubleshooting): `docs/ASTRA-REVIEW-GUIDE.md` in the yus repository.

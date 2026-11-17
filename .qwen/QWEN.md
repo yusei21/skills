@@ -1,14 +1,14 @@
-# ECC for Qwen Code
+# yus for Qwen Code
 
-This file provides Qwen Code with the baseline ECC workflow, review standards, and security checks for installations that use the `qwen` target.
+This file provides Qwen Code with the baseline yus workflow, review standards, and security checks for installations that use the `qwen` target.
 
 ## Overview
 
-ECC is a cross-harness coding system with specialized agents, skills, and commands.
+yus is a cross-harness coding system with specialized agents, skills, and commands.
 
 The Qwen target installs the full managed manifest surface into `~/.qwen/`: `rules/`, `agents/`, `commands/`, `skills/`, and `mcp-configs/`. This file carries Qwen-specific guidance; repo-wide operating rules live in `AGENTS.md`. Qwen Code 0.25.0 loads both at the home level under default settings, but `AGENTS.md` is not the documented default context filename, so set `context.fileName` if a later release stops loading it.
 
-`docs/QWEN-GUIDE.md` covers install layout, updating, and uninstalling. It lives in the ECC repository and is **not** copied into `~/.qwen/`, so read it from a checkout or from <https://github.com/affaan-m/ecc/blob/main/docs/QWEN-GUIDE.md>.
+`docs/QWEN-GUIDE.md` covers install layout, updating, and uninstalling. It lives in the yus repository and is **not** copied into `~/.qwen/`, so read it from a checkout or from <https://github.com/yusei21/yus/blob/main/docs/QWEN-GUIDE.md>.
 
 ## Core Workflow
 
@@ -42,11 +42,11 @@ Before any commit:
 - Run targeted verification for touched areas before shipping
 - Prefer contained local implementations over adding new third-party runtime dependencies
 
-## Reading ECC Content On Qwen Code
+## Reading yus Content On Qwen Code
 
-ECC skills, rules, and agent prompts are authored against Claude Code tool names. Qwen Code uses different identifiers, so translate them when following instructions:
+yus skills, rules, and agent prompts are authored against Claude Code tool names. Qwen Code uses different identifiers, so translate them when following instructions:
 
-| In ECC content | Qwen Code tool |
+| In yus content | Qwen Code tool |
 | --- | --- |
 | `Read` | `read_file` |
 | `Write` | `write_file` |
@@ -65,9 +65,9 @@ Some Qwen Code tools are deferred until their schema is reviewed — reach them 
 
 ## Not Available On This Target
 
-Hook runtime files are intentionally not selected for Qwen until its hook/event contract is confirmed (see the Scope section of `docs/QWEN-GUIDE.md` in the ECC repository). Hook-driven ECC features therefore do not run here: do not report a hook-enforced guard, format-on-save pass, or cost-tracking metric as active. `mcp-configs/` ships connector baselines but is not merged into Qwen's own settings, so an MCP-backed skill needs its server registered before it can work.
+Hook runtime files are intentionally not selected for Qwen until its hook/event contract is confirmed (see the Scope section of `docs/QWEN-GUIDE.md` in the yus repository). Hook-driven yus features therefore do not run here: do not report a hook-enforced guard, format-on-save pass, or cost-tracking metric as active. `mcp-configs/` ships connector baselines but is not merged into Qwen's own settings, so an MCP-backed skill needs its server registered before it can work.
 
-## ECC Areas To Reuse
+## yus Areas To Reuse
 
 - `AGENTS.md` for repo-wide operating rules
 - `skills/` for deep workflow guidance

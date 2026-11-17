@@ -9,22 +9,22 @@ const path = require('path');
 const { pathToFileURL } = require('url');
 const { spawnSync } = require('child_process');
 
-const PACKAGE_NAME = 'ecc-universal';
+const PACKAGE_NAME = 'yus-universal';
 const HASH_PATTERN = /^[a-f0-9]{64}$/i;
-const PACKAGE_PATH_PATTERN = /^release-artifacts\/ecc-universal-[0-9A-Za-z.+-]+\.tgz$/;
+const PACKAGE_PATH_PATTERN = /^release-artifacts\/yus-universal-[0-9A-Za-z.+-]+\.tgz$/;
 
 function parseEnvironment(environment = process.env, cwd = process.cwd()) {
-  const packageValue = environment.ECC_RELEASE_PACKAGE;
-  const hashValue = environment.ECC_RELEASE_SHA256;
+  const packageValue = environment.YUS_RELEASE_PACKAGE;
+  const hashValue = environment.YUS_RELEASE_SHA256;
 
   if (!packageValue) {
-    throw new Error('ECC_RELEASE_PACKAGE must name the downloaded release .tgz');
+    throw new Error('YUS_RELEASE_PACKAGE must name the downloaded release .tgz');
   }
   if (!PACKAGE_PATH_PATTERN.test(String(packageValue))) {
-    throw new Error('ECC_RELEASE_PACKAGE must name one ECC .tgz under release-artifacts');
+    throw new Error('YUS_RELEASE_PACKAGE must name one yus .tgz under release-artifacts');
   }
   if (!HASH_PATTERN.test(hashValue || '')) {
-    throw new Error('ECC_RELEASE_SHA256 must be a 64-character SHA-256 digest');
+    throw new Error('YUS_RELEASE_SHA256 must be a 64-character SHA-256 digest');
   }
 
   return {
@@ -148,7 +148,7 @@ function getNpmExecInvocation(publicArgs, environment, platform = process.platfo
 
 function installPackage(projectDir, packagePath, environment) {
   const projectManifest = {
-    name: 'ecc-packed-artifact-lifecycle',
+    name: 'yus-packed-artifact-lifecycle',
     version: '1.0.0',
     private: true,
     dependencies: {
@@ -189,8 +189,8 @@ function fakeClaudeProviderMain() {
   const fs = require('fs');
   const path = require('path');
   const args = process.argv.slice(2);
-  const statePath = process.env.ECC_TEST_CLAUDE_STATE;
-  const callsPath = process.env.ECC_TEST_CLAUDE_CALLS;
+  const statePath = process.env.YUS_TEST_CLAUDE_STATE;
+  const callsPath = process.env.YUS_TEST_CLAUDE_CALLS;
 
   if (!statePath || !callsPath) {
     process.stderr.write('Fake Claude requires explicit state and call-log paths.\n');
@@ -205,7 +205,7 @@ function fakeClaudeProviderMain() {
     'utf8'
   );
   const createReadArtifacts = () => {
-    if (process.env.ECC_TEST_CLAUDE_CREATE_READ_ARTIFACTS !== '1') return;
+    if (process.env.YUS_TEST_CLAUDE_CREATE_READ_ARTIFACTS !== '1') return;
     const configDir = process.env.CLAUDE_CONFIG_DIR;
     const backupDir = path.join(configDir, 'backups');
     fs.mkdirSync(backupDir, { recursive: true });
@@ -233,29 +233,29 @@ function fakeClaudeProviderMain() {
     writeState({
       ...state,
       marketplaces: [{
-        name: 'ecc',
-        repo: 'affaan-m/ECC',
+        name: 'yus',
+        repo: 'yusei21/yus',
         scope: 'user',
         source: 'github',
       }],
     });
     return;
   }
-  if (joined === 'plugin marketplace update ecc') {
+  if (joined === 'plugin marketplace update yus') {
     return;
   }
-  if (joined.startsWith('plugin install ecc@ecc ')) {
+  if (joined.startsWith('plugin install yus@yus ')) {
     writeState({
       ...state,
-      plugins: [{ enabled: true, id: 'ecc@ecc', scope: 'user', version: '2.2.0' }],
+      plugins: [{ enabled: true, id: 'yus@yus', scope: 'user', version: '2.2.0' }],
     });
     return;
   }
-  if (joined.startsWith('plugin update ecc@ecc ')) {
+  if (joined.startsWith('plugin update yus@yus ')) {
     writeState({
       ...state,
       plugins: (state.plugins || []).map(plugin => (
-        plugin.id === 'ecc@ecc' && plugin.scope === 'user'
+        plugin.id === 'yus@yus' && plugin.scope === 'user'
           ? { ...plugin, enabled: true, version: '2.2.0' }
           : plugin
       )),
@@ -387,7 +387,7 @@ function runTargetSmoke(options) {
     ]),
     `${options.target} packed install`
   );
-  const statePath = path.join(options.targetRoot, 'ecc-install-state.json');
+  const statePath = path.join(options.targetRoot, 'yus-install-state.json');
   const installedSkillPath = path.join(
     options.targetRoot,
     'skills',
@@ -424,7 +424,7 @@ function runLifecycle(options) {
   assertDownloadedArtifact(options.packagePath, process.cwd());
   assertHash(hashFile(options.packagePath), options.expectedSha256);
 
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-packed-lifecycle-'));
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-packed-lifecycle-'));
   const homeDir = path.join(tempRoot, 'home');
   const projectDir = path.join(tempRoot, 'project');
   fs.mkdirSync(homeDir, { recursive: true });
@@ -436,7 +436,7 @@ function runLifecycle(options) {
     installPackage(projectDir, options.packagePath, environment);
 
     const cursorRoot = path.join(projectDir, '.cursor');
-    const statePath = path.join(cursorRoot, 'ecc-install-state.json');
+    const statePath = path.join(cursorRoot, 'yus-install-state.json');
     const sentinelPath = path.join(cursorRoot, 'user-sentinel.txt');
     fs.mkdirSync(cursorRoot, { recursive: true });
     fs.writeFileSync(sentinelPath, 'keep this user file\n', 'utf8');
@@ -451,13 +451,13 @@ function runLifecycle(options) {
       });
     };
     const runCli = (args, commandOptions = {}) => runPublicCli(
-      ['ecc', ...args],
+      ['yus', ...args],
       commandOptions
     );
 
-    const setupHelp = runPublicCli(['ecc-universal', 'setup', '--help']);
-    assert.match(setupHelp.stdout, /ECC guided setup/);
-    assert.match(setupHelp.stdout, /ecc setup --mode claude-plugin/);
+    const setupHelp = runPublicCli(['yus-universal', 'setup', '--help']);
+    assert.match(setupHelp.stdout, /yus guided setup/);
+    assert.match(setupHelp.stdout, /yus setup --mode claude-plugin/);
 
     for (const credentialName of [
       'ANTHROPIC_API_KEY',
@@ -488,14 +488,14 @@ function runLifecycle(options) {
     const claudeSetupEnvironment = {
       ...environment,
       CLAUDE_CONFIG_DIR: claudeConfigDir,
-      ECC_TEST_CLAUDE_CALLS: fakeClaudeCallsPath,
-      ECC_TEST_CLAUDE_CREATE_READ_ARTIFACTS: '1',
-      ECC_TEST_CLAUDE_STATE: fakeClaudeStatePath,
+      YUS_TEST_CLAUDE_CALLS: fakeClaudeCallsPath,
+      YUS_TEST_CLAUDE_CREATE_READ_ARTIFACTS: '1',
+      YUS_TEST_CLAUDE_STATE: fakeClaudeStatePath,
       PATH: `${fakeClaudeBinDir}${path.delimiter}${environment.PATH || environment.Path || ''}`,
       Path: `${fakeClaudeBinDir}${path.delimiter}${environment.Path || environment.PATH || ''}`,
     };
     const claudeSetupArgs = [
-      'ecc-universal', 'setup',
+      'yus-universal', 'setup',
       '--mode', 'claude-plugin',
       '--scope', 'user',
     ];
@@ -555,10 +555,10 @@ function runLifecycle(options) {
 
     const fakeClaudeState = JSON.parse(fs.readFileSync(fakeClaudeStatePath, 'utf8'));
     assert.deepStrictEqual(fakeClaudeState.plugins, [
-      { enabled: true, id: 'ecc@ecc', scope: 'user', version: '2.2.0' },
+      { enabled: true, id: 'yus@yus', scope: 'user', version: '2.2.0' },
     ]);
     assert.deepStrictEqual(fakeClaudeState.marketplaces, [
-      { name: 'ecc', repo: 'affaan-m/ECC', scope: 'user', source: 'github' },
+      { name: 'yus', repo: 'yusei21/yus', scope: 'user', source: 'github' },
     ]);
     const fakeClaudeCalls = readJsonLines(fakeClaudeCallsPath).map(args => args.join(' '));
     assert.ok(
@@ -566,22 +566,22 @@ function runLifecycle(options) {
       'initial packed Claude setup must add the official marketplace'
     );
     assert.ok(
-      fakeClaudeCalls.includes('plugin marketplace update ecc'),
+      fakeClaudeCalls.includes('plugin marketplace update yus'),
       'repeat packed Claude setup must update the official marketplace'
     );
     assert.ok(
-      fakeClaudeCalls.some(call => call.startsWith('plugin install ecc@ecc ')),
-      'initial packed Claude setup must install ecc@ecc'
+      fakeClaudeCalls.some(call => call.startsWith('plugin install yus@yus ')),
+      'initial packed Claude setup must install yus@yus'
     );
     assert.ok(
-      fakeClaudeCalls.includes('plugin update ecc@ecc --scope user'),
-      'repeat packed Claude setup must update ecc@ecc'
+      fakeClaudeCalls.includes('plugin update yus@yus --scope user'),
+      'repeat packed Claude setup must update yus@yus'
     );
     const claudeSettings = JSON.parse(
       fs.readFileSync(path.join(claudeConfigDir, 'settings.json'), 'utf8')
     );
     assert.strictEqual(
-      claudeSettings.pluginConfigs['ecc@ecc'].options.hook_profile,
+      claudeSettings.pluginConfigs['yus@yus'].options.hook_profile,
       'strict'
     );
     assert.strictEqual(
@@ -591,7 +591,7 @@ function runLifecycle(options) {
     );
 
     const guidedKimiRoot = path.join(projectDir, '.kimi-code');
-    const guidedKimiStatePath = path.join(guidedKimiRoot, 'ecc-install-state.json');
+    const guidedKimiStatePath = path.join(guidedKimiRoot, 'yus-install-state.json');
     const guidedKimiSkillPath = path.join(
       guidedKimiRoot,
       'skills',
@@ -604,7 +604,7 @@ function runLifecycle(options) {
     fs.writeFileSync(guidedKimiSentinel, 'keep this Kimi user file\n', 'utf8');
     const guidedKimiBeforeDryRun = fs.readdirSync(guidedKimiRoot).sort();
     const guidedKimiInstallArgs = [
-      'ecc-universal', 'install', '--guided',
+      'yus-universal', 'install', '--guided',
       '--harness', 'kimi',
       '--profile', 'core',
     ];
@@ -664,14 +664,14 @@ function runLifecycle(options) {
     );
 
     const guidedKimiDoctor = parseJsonOutput(
-      runPublicCli(['ecc', 'doctor', '--target', 'kimi', '--json']),
+      runPublicCli(['yus', 'doctor', '--target', 'kimi', '--json']),
       'guided Kimi doctor'
     );
     assert.strictEqual(guidedKimiDoctor.summary.errorCount, 0);
     assert.strictEqual(guidedKimiDoctor.summary.warningCount, 0);
 
     const guidedKimiUninstall = parseJsonOutput(
-      runPublicCli(['ecc', 'uninstall', '--target', 'kimi', '--json']),
+      runPublicCli(['yus', 'uninstall', '--target', 'kimi', '--json']),
       'guided Kimi uninstall'
     );
     assert.strictEqual(guidedKimiUninstall.summary.errorCount, 0);
@@ -786,7 +786,7 @@ function runLifecycle(options) {
 
     const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
     const driftPath = findDriftCandidate(state, cursorRoot);
-    fs.appendFileSync(driftPath, '\nECC_PACKED_LIFECYCLE_DRIFT\n', 'utf8');
+    fs.appendFileSync(driftPath, '\nYUS_PACKED_LIFECYCLE_DRIFT\n', 'utf8');
 
     const driftedDoctor = parseJsonOutput(
       runCli(['doctor', '--target', 'cursor', '--json'], { expectedStatus: 1 }),
@@ -866,7 +866,7 @@ function runLifecycle(options) {
       node: process.version,
       lifecycle: [
         'npm-install',
-        'public-ecc-universal-setup',
+        'public-yus-universal-setup',
         'claude-setup-dry-run-isolated',
         'claude-setup-git-preflight',
         'claude-setup-install',
@@ -878,7 +878,7 @@ function runLifecycle(options) {
         'guided-kimi-uninstall',
         'guided-kimi-sentinel-preserved',
         'cursor-ito-install',
-        'public-ecc-ito-fail-closed',
+        'public-yus-ito-fail-closed',
         'cursor-repeat-install',
         'doctor-clean',
         'status-installed',

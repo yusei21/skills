@@ -2,7 +2,7 @@
 // Hidden grader for keccak-selector. Every vector is independently cross-checked:
 // the implementation is validated against Node's SHA3-256 (same Keccak-f[1600]
 // permutation, different padding suffix) including multi-block and q=1 padding
-// edge inputs. Prints ECC_EVAL_SCORE and always exits 0.
+// edge inputs. Prints YUS_EVAL_SCORE and always exits 0.
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -59,5 +59,5 @@ record('no-external-dependencies', !bareImport && !pkg.dependencies && !pkg.devD
 
 const ok = checks.filter(c => c.ok).length;
 for (const c of checks) console.log(`${c.ok ? 'ok' : 'not ok'} - ${c.name}`);
-console.log(`ECC_EVAL_SCORE ${JSON.stringify({ score: ok / checks.length, passed: ok, total: checks.length })}`);
+console.log(`YUS_EVAL_SCORE ${JSON.stringify({ score: ok / checks.length, passed: ok, total: checks.length })}`);
 process.exit(0);

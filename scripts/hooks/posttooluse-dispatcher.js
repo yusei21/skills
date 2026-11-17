@@ -18,17 +18,17 @@ const { run: runConsoleWarn } = require('./post-edit-console-warn');
 const { run: runGovernanceCapture } = require('./governance-capture');
 const { run: runSessionActivityTracker } = require('./session-activity-tracker');
 const { run: runObserve } = require('./observe-runner');
-const { run: runMetricsBridge } = require('./ecc-metrics-bridge');
-const { run: runContextMonitor } = require('./ecc-context-monitor');
+const { run: runMetricsBridge } = require('./yus-metrics-bridge');
+const { run: runContextMonitor } = require('./yus-context-monitor');
 const { run: runSkillRunTracker } = require('./skill-run-tracker');
 const { run: runHookify } = require('./hookify-runtime');
 const { createHookContextScanner } = require('./hook-input-limits');
 
-const MAX_STDIN = resolveMaxStdin(process.env.ECC_HOOK_INPUT_MAX_BYTES, {
+const MAX_STDIN = resolveMaxStdin(process.env.YUS_HOOK_INPUT_MAX_BYTES, {
   writeDiagnostic: message => process.stderr.write(message)
 });
 const UPSTREAM_TRUNCATED = /^(1|true|yes)$/i.test(
-  String(process.env.ECC_HOOK_INPUT_TRUNCATED_UPSTREAM || '')
+  String(process.env.YUS_HOOK_INPUT_TRUNCATED_UPSTREAM || '')
 );
 
 const SYNC_HOOKS = [
@@ -47,8 +47,8 @@ const SYNC_HOOKS = [
   { id: 'post:edit:console-warn', matcher: 'Edit', profiles: 'standard,strict', script: 'scripts/hooks/post-edit-console-warn.js', run: runConsoleWarn },
   { id: 'post:governance-capture', matcher: 'Bash|PowerShell|Write|Edit|MultiEdit', profiles: 'standard,strict', script: 'scripts/hooks/governance-capture.js', run: runGovernanceCapture },
   { id: 'post:session-activity-tracker', matcher: '*', profiles: 'standard,strict', script: 'scripts/hooks/session-activity-tracker.js', run: runSessionActivityTracker },
-  { id: 'post:ecc-metrics-bridge', matcher: '*', profiles: 'minimal,standard,strict', script: 'scripts/hooks/ecc-metrics-bridge.js', run: runMetricsBridge },
-  { id: 'post:ecc-context-monitor', matcher: '*', profiles: 'standard,strict', script: 'scripts/hooks/ecc-context-monitor.js', run: runContextMonitor }
+  { id: 'post:yus-metrics-bridge', matcher: '*', profiles: 'minimal,standard,strict', script: 'scripts/hooks/yus-metrics-bridge.js', run: runMetricsBridge },
+  { id: 'post:yus-context-monitor', matcher: '*', profiles: 'standard,strict', script: 'scripts/hooks/yus-context-monitor.js', run: runContextMonitor }
 ];
 
 const ASYNC_HOOKS = [
@@ -69,7 +69,7 @@ const ASYNC_HOOKS = [
 ];
 
 function getPluginRoot(env = process.env) {
-  return env.CLAUDE_PLUGIN_ROOT || env.ECC_PLUGIN_ROOT || path.resolve(__dirname, '..', '..');
+  return env.CLAUDE_PLUGIN_ROOT || env.YUS_PLUGIN_ROOT || path.resolve(__dirname, '..', '..');
 }
 
 function matchesTool(matcher, toolName) {
@@ -240,7 +240,7 @@ function runHooks(raw, hooks, options = {}) {
 
   for (const hook of hooks) {
     if (!matchesTool(hook.matcher, toolName) || !isEnabled(hook, env)) continue;
-    if (env.ECC_DRY_RUN === '1') {
+    if (env.YUS_DRY_RUN === '1') {
       stderr += buildDryRunPreview(hook, raw);
       continue;
     }

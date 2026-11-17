@@ -69,7 +69,7 @@ function runHook(hookId, payload, env = {}) {
     encoding: 'utf8',
     env: {
       ...process.env,
-      ECC_HOOK_PROFILE: 'standard',
+      YUS_HOOK_PROFILE: 'standard',
       GATEGUARD_STATE_DIR: stateDir,
       CLAUDE_SESSION_ID: SESSION_ID,
       CLAUDE_PROJECT_DIR: projectRoot,

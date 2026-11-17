@@ -29,7 +29,7 @@ function run(args = []) {
   test('shows help with no arguments', () => {
     const result = run();
     assert.strictEqual(result.code, 0);
-    assert.ok(result.stdout.includes('Discover ECC install components and profiles'));
+    assert.ok(result.stdout.includes('Discover yus install components and profiles'));
   });
 
   test('shows help with an explicit help flag', () => {

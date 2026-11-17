@@ -223,7 +223,7 @@ function buildProximitySnapshot(sessions, options = {}) {
 /**
  * Deliver proximity triggers via an injected message sink. The sink is
  * `sendMessage({ fromSession, toSession, content, msgType })` — e.g. a writer
- * for the ECC `messages` table the control pane already reads. Best-effort:
+ * for the yus `messages` table the control pane already reads. Best-effort:
  * a failing send is skipped, never thrown. Returns the dispatched count.
  */
 function dispatchProximityTriggers(triggers, deps = {}) {

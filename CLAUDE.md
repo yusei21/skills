@@ -22,10 +22,10 @@ This is a **Claude Code plugin** - a collection of production-ready agents, skil
 node tests/run-all.js
 
 # Run files through a 4-process pool, or only files whose path contains a pattern
-ECC_TEST_JOBS=4 node tests/run-all.js
-ECC_TEST_ONLY=package-manager,hooks/hooks.test node tests/run-all.js
+YUS_TEST_JOBS=4 node tests/run-all.js
+YUS_TEST_ONLY=package-manager,hooks/hooks.test node tests/run-all.js
 # Suites that rebuild or back up .opencode/dist, or assert a time budget, must run after the pool, one at a time
-ECC_TEST_JOBS=4 ECC_TEST_SERIAL=$(grep -rlE --include='*.test.js' 'build-opencode|\.backup-|dist\.backup|time budget' tests | sed 's#^tests/##' | paste -sd, -) node tests/run-all.js
+YUS_TEST_JOBS=4 YUS_TEST_SERIAL=$(grep -rlE --include='*.test.js' 'build-opencode|\.backup-|dist\.backup|time budget' tests | sed 's#^tests/##' | paste -sd, -) node tests/run-all.js
 
 # Run individual test files
 node tests/lib/utils.test.js

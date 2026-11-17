@@ -1,12 +1,12 @@
 ---
-description: Generate a local Claude Code cost report from the ECC cost-tracker metrics log. Use for a terminal summary or CSV export of tracked spend; the cost-tracking skill covers the same metrics log for on-demand cost/budget questions asked in conversation.
+description: Generate a local Claude Code cost report from the yus cost-tracker metrics log. Use for a terminal summary or CSV export of tracked spend; the cost-tracking skill covers the same metrics log for on-demand cost/budget questions asked in conversation.
 argument-hint: "[csv]"
 ---
 
 # Cost Report
 
 Summarize local Claude Code spend by day, model, and session from the metrics
-log that ECC's `stop:cost-tracker` hook writes.
+log that yus's `stop:cost-tracker` hook writes.
 
 ## Where the data lives
 

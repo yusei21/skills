@@ -46,15 +46,15 @@ function runTests() {
 
   if (test('resolves relative config paths from the provided cwd', () => {
     const cwd = '/workspace/app';
-    const resolved = resolveInstallConfigPath('configs/ecc-install.json', { cwd });
-    assert.strictEqual(resolved, path.join(cwd, 'configs', 'ecc-install.json'));
+    const resolved = resolveInstallConfigPath('configs/yus-install.json', { cwd });
+    assert.strictEqual(resolved, path.join(cwd, 'configs', 'yus-install.json'));
   })) passed++; else failed++;
 
   if (test('finds the default project install config in the provided cwd', () => {
     const cwd = createTempDir('install-config-');
 
     try {
-      const configPath = path.join(cwd, 'ecc-install.json');
+      const configPath = path.join(cwd, 'yus-install.json');
       writeJson(configPath, {
         version: 1,
         profile: 'core',
@@ -80,7 +80,7 @@ function runTests() {
     const cwd = createTempDir('install-config-');
 
     try {
-      const configPath = path.join(cwd, 'ecc-install.json');
+      const configPath = path.join(cwd, 'yus-install.json');
       writeJson(configPath, {
         version: 1,
         target: 'cursor',
@@ -93,7 +93,7 @@ function runTests() {
         },
       });
 
-      const config = loadInstallConfig('ecc-install.json', { cwd });
+      const config = loadInstallConfig('yus-install.json', { cwd });
       assert.strictEqual(config.path, configPath);
       assert.strictEqual(config.target, 'cursor');
       assert.strictEqual(config.profileId, 'developer');
@@ -112,7 +112,7 @@ function runTests() {
       const ids = ['agent:planner', 'skill:security-review', 'locale:ja'];
 
       try {
-        const configPath = path.join(cwd, 'ecc-install.json');
+        const configPath = path.join(cwd, 'yus-install.json');
         writeJson(configPath, { version: 1, [field]: ids });
         const config = loadInstallConfig(configPath);
         assert.deepStrictEqual(config[`${field}ComponentIds`], ids);
@@ -125,7 +125,7 @@ function runTests() {
       const cwd = createTempDir('install-config-');
 
       try {
-        const configPath = path.join(cwd, 'ecc-install.json');
+        const configPath = path.join(cwd, 'yus-install.json');
         for (const id of ['unknown:planner', 'skill:', 'skill:../security-review', 'skill:SecurityReview']) {
           writeJson(configPath, { version: 1, [field]: [id] });
           assert.throws(() => loadInstallConfig(configPath), /Invalid install config/);
@@ -140,7 +140,7 @@ function runTests() {
     const cwd = createTempDir('install-config-');
 
     try {
-      const configPath = path.join(cwd, 'ecc-install.json');
+      const configPath = path.join(cwd, 'yus-install.json');
       const value = { version: 1, target: 'cursor', modules: ['rules-core'] };
       writeJson(configPath, value);
       const expected = loadInstallConfig(configPath);
@@ -158,7 +158,7 @@ function runTests() {
     const cwd = createTempDir('install-config-');
 
     try {
-      const configPath = path.join(cwd, 'ecc-install.json');
+      const configPath = path.join(cwd, 'yus-install.json');
       const options = { note: 'custom\uFEFFvalue' };
       fs.writeFileSync(configPath, `\uFEFF${JSON.stringify({ version: 1, options })}`, 'utf8');
       assert.deepStrictEqual(loadInstallConfig(configPath).options, options);
@@ -171,10 +171,10 @@ function runTests() {
     const cwd = createTempDir('install-config-');
 
     try {
-      const configPath = path.join(cwd, 'ecc-install.json');
+      const configPath = path.join(cwd, 'yus-install.json');
       for (const content of ['\uFEFF{', ' \uFEFF{"version":1}', '\uFEFF\uFEFF{"version":1}']) {
         fs.writeFileSync(configPath, content, 'utf8');
-        assert.throws(() => loadInstallConfig(configPath), /Invalid JSON in ecc-install.json/);
+        assert.throws(() => loadInstallConfig(configPath), /Invalid JSON in yus-install.json/);
       }
     } finally {
       cleanup(cwd);
@@ -185,7 +185,7 @@ function runTests() {
     const cwd = createTempDir('install-config-');
 
     try {
-      const configPath = path.join(cwd, 'ecc-install.json');
+      const configPath = path.join(cwd, 'yus-install.json');
       fs.writeFileSync(configPath, '\uFEFF{"version":2,"target":"ghost-target"}', 'utf8');
       assert.throws(() => loadInstallConfig(configPath), /Invalid install config/);
     } finally {
@@ -197,13 +197,13 @@ function runTests() {
     const cwd = createTempDir('install-config-');
 
     try {
-      writeJson(path.join(cwd, 'ecc-install.json'), {
+      writeJson(path.join(cwd, 'yus-install.json'), {
         version: 2,
         target: 'ghost-target',
       });
 
       assert.throws(
-        () => loadInstallConfig('ecc-install.json', { cwd }),
+        () => loadInstallConfig('yus-install.json', { cwd }),
         /Invalid install config/
       );
     } finally {
@@ -216,7 +216,7 @@ function runTests() {
 
     try {
       assert.throws(
-        () => loadInstallConfig('ecc-install.json', { cwd }),
+        () => loadInstallConfig('yus-install.json', { cwd }),
         /Install config not found/
       );
     } finally {

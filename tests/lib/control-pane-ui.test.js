@@ -1,5 +1,5 @@
 /**
- * Tests for the browser script the local ECC2 control pane serves.
+ * Tests for the browser script the local yus2 control pane serves.
  */
 const assert = require('assert');
 const fs = require('fs');
@@ -185,13 +185,13 @@ function openPage(snapshot, { hold = false } = {}) {
 const settle = () => new Promise(resolve => setImmediate(resolve));
 
 async function isolatedSnapshot() {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-control-pane-ui-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-control-pane-ui-'));
   try {
     // Explicit config and both database paths keep this UI test away from
     // user config, parent-directory config, and the default state store.
     return JSON.parse(JSON.stringify(await buildControlPaneSnapshot({
       config: {},
-      dbPath: path.join(root, 'missing-ecc2.db'),
+      dbPath: path.join(root, 'missing-yus2.db'),
       stateDbPath: path.join(root, 'missing-state.db'),
       repoRoot: root,
       cwd: root,
@@ -508,7 +508,7 @@ async function runTests() {
         assert.ok(!error.textContent.includes(page.now.toLocaleString()), 'the failed snapshot has no successful timestamp');
 
         // Failed refreshes neither enable nor disable the prior work-item controls.
-        page.script.window.eccMoveItem('prior-item', 'ready');
+        page.script.window.yusMoveItem('prior-item', 'ready');
         const move = page.requests.find(request => request.url === '/api/work-items/prior-item/move');
         assert.strictEqual(Boolean(move), allowActions, 'work-item permission still matches the prior board');
         const run = page.script.runAction('recall-knowledge');

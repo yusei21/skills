@@ -31,7 +31,7 @@ const DEFAULT_TOTAL_BUDGET_MS = 270_000;
 const MAX_TOTAL_BUDGET_MS = 270_000;
 
 function getTotalBudgetMs(env = process.env) {
-  const raw = String(env.ECC_STOP_FORMAT_TYPECHECK_BUDGET_MS || '').trim();
+  const raw = String(env.YUS_STOP_FORMAT_TYPECHECK_BUDGET_MS || '').trim();
   if (!/^\d+$/.test(raw)) return DEFAULT_TOTAL_BUDGET_MS;
   const parsed = Number(raw);
   return Number.isSafeInteger(parsed) && parsed > 0
@@ -82,7 +82,7 @@ function getAccumFile(rawSessionId) {
     rawSessionId ||
     crypto.createHash('sha1').update(process.cwd()).digest('hex').slice(0, 12);
   const sessionId = raw.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 64);
-  return path.join(os.tmpdir(), `ecc-edited-${sessionId}.txt`);
+  return path.join(os.tmpdir(), `yus-edited-${sessionId}.txt`);
 }
 
 function formatBatch(projectRoot, files, timeoutMs) {

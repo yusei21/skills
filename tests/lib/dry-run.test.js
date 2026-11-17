@@ -15,9 +15,9 @@ const { spawnSync } = require('child_process');
 const sectionTitle = title => String(title).trim().replace(/:$/, '');
 
 describe(sectionTitle('isDryRun():'), () => {
-  test('returns false when ECC_DRY_RUN is unset', () => {
+  test('returns false when YUS_DRY_RUN is unset', () => {
     const env = { ...process.env };
-    delete env.ECC_DRY_RUN;
+    delete env.YUS_DRY_RUN;
     const result = spawnSync(process.execPath, [
       '-e',
       'const { isDryRun } = require("./scripts/lib/hook-flags"); process.exit(isDryRun() ? 1 : 0)',
@@ -25,8 +25,8 @@ describe(sectionTitle('isDryRun():'), () => {
     assert.strictEqual(result.status, 0);
   });
 
-  test('returns true when ECC_DRY_RUN=1', () => {
-    const env = { ...process.env, ECC_DRY_RUN: '1' };
+  test('returns true when YUS_DRY_RUN=1', () => {
+    const env = { ...process.env, YUS_DRY_RUN: '1' };
     const result = spawnSync(process.execPath, [
       '-e',
       'const { isDryRun } = require("./scripts/lib/hook-flags"); process.exit(isDryRun() ? 1 : 0)',
@@ -34,8 +34,8 @@ describe(sectionTitle('isDryRun():'), () => {
     assert.strictEqual(result.status, 1);
   });
 
-  test('returns false when ECC_DRY_RUN=0', () => {
-    const env = { ...process.env, ECC_DRY_RUN: '0' };
+  test('returns false when YUS_DRY_RUN=0', () => {
+    const env = { ...process.env, YUS_DRY_RUN: '0' };
     const result = spawnSync(process.execPath, [
       '-e',
       'const { isDryRun } = require("./scripts/lib/hook-flags"); process.exit(isDryRun() ? 1 : 0)',
@@ -45,7 +45,7 @@ describe(sectionTitle('isDryRun():'), () => {
 });
 
 describe(sectionTitle('\nrun-with-flags.js dry-run gating:'), () => {
-  test('skips hook execution and logs preview when ECC_DRY_RUN=1', () => {
+  test('skips hook execution and logs preview when YUS_DRY_RUN=1', () => {
     const runWithFlags = path.resolve(__dirname, '..', '..', 'scripts', 'hooks', 'run-with-flags.js');
     const hookScript = 'scripts/hooks/doc-file-warning.js';
     const input = JSON.stringify({ tool: 'Write', tool_input: { file_path: '/tmp/test.md' } });
@@ -58,7 +58,7 @@ describe(sectionTitle('\nrun-with-flags.js dry-run gating:'), () => {
     ], {
       input,
       encoding: 'utf8',
-      env: { ...process.env, ECC_DRY_RUN: '1' },
+      env: { ...process.env, YUS_DRY_RUN: '1' },
       cwd: path.resolve(__dirname, '..', '..'),
     });
 
@@ -97,7 +97,7 @@ describe(sectionTitle('\nrun-with-flags.js dry-run gating:'), () => {
     ], {
       input,
       encoding: 'utf8',
-      env: { ...process.env, ECC_DRY_RUN: '1' },
+      env: { ...process.env, YUS_DRY_RUN: '1' },
       cwd: path.resolve(__dirname, '..', '..'),
       maxBuffer: 4 * 1024 * 1024,
     });
@@ -123,7 +123,7 @@ describe(sectionTitle('\nrun-with-flags.js dry-run gating:'), () => {
     ], {
       input,
       encoding: 'utf8',
-      env: { ...process.env, ECC_DRY_RUN: '1' },
+      env: { ...process.env, YUS_DRY_RUN: '1' },
       cwd: path.resolve(__dirname, '..', '..'),
     });
 
@@ -152,7 +152,7 @@ describe(sectionTitle('\nrun-with-flags.js dry-run gating:'), () => {
     ], {
       input,
       encoding: 'utf8',
-      env: { ...process.env, ECC_DRY_RUN: '1' },
+      env: { ...process.env, YUS_DRY_RUN: '1' },
       cwd: path.resolve(__dirname, '..', '..'),
     });
 
@@ -180,7 +180,7 @@ describe(sectionTitle('\nrun-with-flags.js dry-run gating:'), () => {
     ], {
       input: '',
       encoding: 'utf8',
-      env: { ...process.env, ECC_DRY_RUN: '1' },
+      env: { ...process.env, YUS_DRY_RUN: '1' },
       cwd: path.resolve(__dirname, '..', '..'),
     });
 
@@ -195,13 +195,13 @@ describe(sectionTitle('\nrun-with-flags.js dry-run gating:'), () => {
     );
   });
 
-  test('executes hook normally when ECC_DRY_RUN is not set', () => {
+  test('executes hook normally when YUS_DRY_RUN is not set', () => {
     const runWithFlags = path.resolve(__dirname, '..', '..', 'scripts', 'hooks', 'run-with-flags.js');
     const hookScript = 'scripts/hooks/doc-file-warning.js';
     const input = JSON.stringify({ tool: 'Write', tool_input: { file_path: '/tmp/test.txt' } });
 
     const env = { ...process.env };
-    delete env.ECC_DRY_RUN;
+    delete env.YUS_DRY_RUN;
 
     const result = spawnSync(process.execPath, [
       runWithFlags,
@@ -223,10 +223,10 @@ describe(sectionTitle('\nrun-with-flags.js dry-run gating:'), () => {
   });
 });
 
-describe(sectionTitle('\necc.js --dry-run flag parsing:'), () => {
-  test('--dry-run sets ECC_DRY_RUN env var for child commands', () => {
-    const eccJs = path.resolve(__dirname, '..', '..', 'scripts', 'ecc.js');
-    const result = spawnSync(process.execPath, [eccJs, '--dry-run', '--help'], {
+describe(sectionTitle('\nyus.js --dry-run flag parsing:'), () => {
+  test('--dry-run sets YUS_DRY_RUN env var for child commands', () => {
+    const yusJs = path.resolve(__dirname, '..', '..', 'scripts', 'yus.js');
+    const result = spawnSync(process.execPath, [yusJs, '--dry-run', '--help'], {
       encoding: 'utf8',
       env: { ...process.env },
     });
@@ -235,8 +235,8 @@ describe(sectionTitle('\necc.js --dry-run flag parsing:'), () => {
   });
 
   test('--dry-run is stripped from args so command routing works', () => {
-    const eccJs = path.resolve(__dirname, '..', '..', 'scripts', 'ecc.js');
-    const result = spawnSync(process.execPath, [eccJs, '--dry-run', 'doctor'], {
+    const yusJs = path.resolve(__dirname, '..', '..', 'scripts', 'yus.js');
+    const result = spawnSync(process.execPath, [yusJs, '--dry-run', 'doctor'], {
       encoding: 'utf8',
       env: { ...process.env },
     });
@@ -247,10 +247,10 @@ describe(sectionTitle('\necc.js --dry-run flag parsing:'), () => {
   });
 
   test('--dry-run works with implicit install routing', () => {
-    const eccJs = path.resolve(__dirname, '..', '..', 'scripts', 'ecc.js');
-    const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-dry-run-home-'));
+    const yusJs = path.resolve(__dirname, '..', '..', 'scripts', 'yus.js');
+    const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-dry-run-home-'));
     try {
-      const result = spawnSync(process.execPath, [eccJs, '--dry-run', '--json', 'typescript'], {
+      const result = spawnSync(process.execPath, [yusJs, '--dry-run', '--json', 'typescript'], {
         encoding: 'utf8',
         env: {
           ...process.env,

@@ -52,7 +52,7 @@ async function discover(command) {
   });
   const timer = setTimeout(fail, 25000);
   try {
-    await request('initialize', { clientInfo: { name: 'ecc-native-profile', version: '1.0.0' },
+    await request('initialize', { clientInfo: { name: 'yus-native-profile', version: '1.0.0' },
       capabilities: { experimentalApi: true } });
     child.stdin.write(`${JSON.stringify({ method: 'initialized' })}\n`);
     return await request('skills/list', { cwds: [process.cwd()], forceReload: true });

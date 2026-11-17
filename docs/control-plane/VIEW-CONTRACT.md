@@ -1,12 +1,12 @@
-# ECC control-plane live view: `ecc.control-plane.view.v1`
+# yus control-plane live view: `yus.control-plane.view.v1`
 
 Status: shipped with the control pane (`scripts/lib/control-pane/control-plane-view.js`). Read-only. Advisory only.
 
-The view joins three things the repo already computes separately and serves them as one JSON document shaped as tasks, lanes and events, so another control plane (the Ito ops board, a Hermes or Codex reader, a hook) can consume it without knowing ECC internals.
+The view joins three things the repo already computes separately and serves them as one JSON document shaped as tasks, lanes and events, so another control plane (the Ito ops board, a Hermes or Codex reader, a hook) can consume it without knowing yus internals.
 
 | Input | Where it comes from |
 |---|---|
-| Sessions | `scripts/lib/control-pane/state.js`, the ECC2 `sessions` table |
+| Sessions | `scripts/lib/control-pane/state.js`, the yus2 `sessions` table |
 | Pairwise proximity | `scripts/lib/agent-proximity/` (noisy-OR over `x_tree`, `x_overlap`, `x_dep`) via `scripts/lib/control-pane/proximity.js` |
 | 2D projection | `scripts/lib/agent-proximity/projection.js` (rolling z-score, tails clipped at 2.5 / 97.5, PCA) |
 | Coordination inventory | `scripts/lib/coordination-inventory.js` (PR #3028): declared tasks and sessions, heartbeat freshness, lease conflicts |
@@ -27,9 +27,9 @@ The server keeps one projection window per process. Both API routes share a snap
 
 ```json
 {
-  "schemaVersion": "ecc.control-plane.view.v1",
+  "schemaVersion": "yus.control-plane.view.v1",
   "generatedAt": "2026-09-11T20:01:00.000Z",
-  "source": { "snapshotSchema": "ecc.control-pane.snapshot.v1", "repoRoot": "...", "dbPath": "..." },
+  "source": { "snapshotSchema": "yus.control-pane.snapshot.v1", "repoRoot": "...", "dbPath": "..." },
   "thresholds": { "ta": 0.35, "ra": 0.7, "source": "static" },
   "lanes": [ { "id": "harness:codex", "label": "codex", "kind": "harness", "taskIds": ["session-a"] } ],
   "tasks": [ { "...": "see Task" } ],
@@ -132,7 +132,7 @@ The shape to copy is `task`, `lane`, `event`:
 - a **lane** is a named group with ordered `taskIds`;
 - an **event** has a stable `id`, a `kind`, a `level`, a `severity`, an `at`, a `subject`, an `action` with a `type`, and a human `message`.
 
-Nothing in the shape is ECC-specific except the event kinds. An ops board that renders lanes of tasks and a feed of events can render this document as-is, and can emit its own kinds (`deal.stalled`, `bridge.down`) into the same feed.
+Nothing in the shape is yus-specific except the event kinds. An ops board that renders lanes of tasks and a feed of events can render this document as-is, and can emit its own kinds (`deal.stalled`, `bridge.down`) into the same feed.
 
 ## What this does not do
 

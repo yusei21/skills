@@ -56,7 +56,7 @@ deployment, inspect a real **Issue Submission Guard** run and its job summary.
 For a live read-only replay, supply `GITHUB_TOKEN` securely and run:
 
 ```sh
-GITHUB_REPOSITORY=affaan-m/ECC node scripts/ci/issue-submission-guard.js --dry-run --issue <NUMBER>
+GITHUB_REPOSITORY=yusei21/yus node scripts/ci/issue-submission-guard.js --dry-run --issue <NUMBER>
 ```
 
 The dry run reads GitHub but does not close, lock, comment, alert, or block.
@@ -64,5 +64,5 @@ To roll back, disable **Issue Submission Guard** in Actions. To restore an
 Issue, unlock and reopen it after adjusting policy or resolving the author's
 open count. The repository owner must remove any account block separately.
 
-This advances ECC 2.2 maintenance reliability. It does not change runtime
+This advances yus 2.2 maintenance reliability. It does not change runtime
 sandboxing, ExecutionCapsule contracts, Fleet, or release publication.

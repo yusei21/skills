@@ -2,10 +2,10 @@
 /**
  * Where curated skills live on disk.
  *
- * ECC groups skills by department: skills/<department>/<skill>/SKILL.md (see
+ * yus groups skills by department: skills/<department>/<skill>/SKILL.md (see
  * manifests/skill-departments.json). Claude Code does not recurse into
- * skills/, which is what lets the root `ecc` plugin load only the core
- * department while `ecc-<department>` plugins add the rest.
+ * skills/, which is what lets the root `yus` plugin load only the core
+ * department while `yus-<department>` plugins add the rest.
  *
  * Every script that needs "all skills" or "the directory of skill X" goes
  * through this module instead of reading skills/ one level deep. A flat

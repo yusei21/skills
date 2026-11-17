@@ -23,4 +23,4 @@ try {
 } catch (_) {
   checks = [false, false, false];
 }
-console.log(`ECC_EVAL_SCORE ${JSON.stringify({ score: checks.filter(Boolean).length / 3 })}`);
+console.log(`YUS_EVAL_SCORE ${JSON.stringify({ score: checks.filter(Boolean).length / 3 })}`);

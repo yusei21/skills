@@ -3,7 +3,7 @@
 // Regression test for #3595: the multi-* commands ship codeagent-wrapper
 // calls copied from ccg-workflow templates. ccg-workflow's installer
 // substitutes {{LITE_MODE_FLAG}} and {{GEMINI_MODEL_FLAG}} at install time;
-// ECC has no such step, so an unrendered token reaches bash as a literal
+// yus has no such step, so an unrendered token reaches bash as a literal
 // argument and the wrapper exits 1 on every call.
 
 const assert = require('assert');

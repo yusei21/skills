@@ -16,7 +16,7 @@ assert.strictEqual(build.status, 0, build.stderr || build.stdout);
 let passed = 0;
 let failed = 0;
 function test(name, fn) {
-  const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-opencode-boundary-')));
+  const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-opencode-boundary-')));
   const home = path.join(dir, 'home');
   const project = path.join(dir, 'project');
   fs.mkdirSync(home);

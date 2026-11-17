@@ -30,7 +30,7 @@ const fs = require('fs');
 const responses = ${JSON.stringify(responses)};
 const args = process.argv.slice(2);
 const key = args.join(' ');
-const logPath = process.env.ECC_GH_SHIM_LOG;
+const logPath = process.env.YUS_GH_SHIM_LOG;
 if (logPath) {
   fs.appendFileSync(logPath, JSON.stringify({ args }, null, 0) + '\\n');
 }
@@ -126,21 +126,21 @@ async function runTests() {
           number: 12,
           title: 'Ship GitHub-native coordination',
           body: epicBody,
-          url: 'https://github.com/affaan-m/ECC/issues/12',
+          url: 'https://github.com/yusei21/yus/issues/12',
           state: 'OPEN',
           labels: [{ name: 'epic' }],
           author: { login: 'maintainer' },
           updatedAt: '2026-06-01T12:00:00Z'
         };
         const shim = writeGhShim(rootDir, {
-          'issue view 12 --repo affaan-m/ECC --json number,title,body,url,state,labels,author,updatedAt,assignees': issueView
+          'issue view 12 --repo yusei21/yus --json number,title,body,url,state,labels,author,updatedAt,assignees': issueView
         });
 
-        const result = run(['claim', '12', '--repo', 'affaan-m/ECC', '--actor', 'codex', '--db', dbPath, '--json'], {
+        const result = run(['claim', '12', '--repo', 'yusei21/yus', '--actor', 'codex', '--db', dbPath, '--json'], {
           cwd: rootDir,
           env: {
-            ECC_GH_SHIM: shim.shimPath,
-            ECC_GH_SHIM_LOG: shim.logPath
+            YUS_GH_SHIM: shim.shimPath,
+            YUS_GH_SHIM_LOG: shim.logPath
           }
         });
         assert.strictEqual(result.status, 0, result.stderr);
@@ -182,11 +182,11 @@ async function runTests() {
           '',
           'Dependencies: #2',
           '',
-          '<!-- ecc-coordination:start -->',
+          '<!-- yus-coordination:start -->',
           '```json',
           JSON.stringify(
             {
-              schemaVersion: 'ecc.github.coordination.v1',
+              schemaVersion: 'yus.github.coordination.v1',
               kind: 'epic',
               status: 'blocked',
               owner: 'codex',
@@ -206,13 +206,13 @@ async function runTests() {
             2
           ),
           '```',
-          '<!-- ecc-coordination:end -->'
+          '<!-- yus-coordination:end -->'
         ].join('\n');
         const openIssue = {
           number: 1,
           title: 'Release readiness',
           body: blockedBody,
-          url: 'https://github.com/affaan-m/ECC/issues/1',
+          url: 'https://github.com/yusei21/yus/issues/1',
           state: 'OPEN',
           labels: [{ name: 'epic' }, { name: 'coordination:blocked' }],
           author: { login: 'codex' },
@@ -222,22 +222,22 @@ async function runTests() {
           number: 2,
           title: 'Release prerequisite',
           body: '# Release prerequisite',
-          url: 'https://github.com/affaan-m/ECC/issues/2',
+          url: 'https://github.com/yusei21/yus/issues/2',
           state: 'CLOSED',
           labels: [{ name: 'blocked-by-release' }],
           author: { login: 'maintainer' },
           updatedAt: '2026-06-01T10:00:00Z'
         };
         const shim = writeGhShim(rootDir, {
-          'issue list --repo affaan-m/ECC --state all --limit 100 --json number,title,body,url,state,labels,author,updatedAt,assignees': [openIssue, closedDependency],
-          'issue view 1 --repo affaan-m/ECC --json number,title,body,url,state,labels,author,updatedAt,assignees': openIssue
+          'issue list --repo yusei21/yus --state all --limit 100 --json number,title,body,url,state,labels,author,updatedAt,assignees': [openIssue, closedDependency],
+          'issue view 1 --repo yusei21/yus --json number,title,body,url,state,labels,author,updatedAt,assignees': openIssue
         });
 
-        const result = run(['unblock', '--repo', 'affaan-m/ECC', '--db', dbPath, '--json'], {
+        const result = run(['unblock', '--repo', 'yusei21/yus', '--db', dbPath, '--json'], {
           cwd: rootDir,
           env: {
-            ECC_GH_SHIM: shim.shimPath,
-            ECC_GH_SHIM_LOG: shim.logPath
+            YUS_GH_SHIM: shim.shimPath,
+            YUS_GH_SHIM_LOG: shim.logPath
           }
         });
         assert.strictEqual(result.status, 0, result.stderr);
@@ -275,22 +275,22 @@ async function runTests() {
           number: 12,
           title: 'Ship GitHub-native coordination',
           body: '# Ship GitHub-native coordination',
-          url: 'https://github.com/affaan-m/ECC/issues/12',
+          url: 'https://github.com/yusei21/yus/issues/12',
           state: 'OPEN',
           labels: [{ name: 'epic' }],
           author: { login: 'maintainer' },
           updatedAt: '2026-06-01T12:00:00Z'
         };
         const shim = writeGhShim(rootDir, {
-          'issue list --repo affaan-m/ECC --state all --limit 100 --label epic --json number,title,body,url,state,labels,author,updatedAt,assignees': [epicIssue],
-          'issue list --repo affaan-m/ECC --state all --limit 100 --search in:body "ecc-coordination:start" --json number,title,body,url,state,labels,author,updatedAt,assignees': []
+          'issue list --repo yusei21/yus --state all --limit 100 --label epic --json number,title,body,url,state,labels,author,updatedAt,assignees': [epicIssue],
+          'issue list --repo yusei21/yus --state all --limit 100 --search in:body "yus-coordination:start" --json number,title,body,url,state,labels,author,updatedAt,assignees': []
         });
 
-        const result = run(['sync', '--repo', 'affaan-m/ECC', '--db', dbPath, '--dry-run', '--json'], {
+        const result = run(['sync', '--repo', 'yusei21/yus', '--db', dbPath, '--dry-run', '--json'], {
           cwd: rootDir,
           env: {
-            ECC_GH_SHIM: shim.shimPath,
-            ECC_GH_SHIM_LOG: shim.logPath
+            YUS_GH_SHIM: shim.shimPath,
+            YUS_GH_SHIM_LOG: shim.logPath
           }
         });
         assert.strictEqual(result.status, 0, result.stderr);
@@ -314,23 +314,23 @@ async function runTests() {
         const driftedIssue = {
           number: 13,
           title: 'Recover label drift',
-          body: '<!-- ecc-coordination:start -->\n```json\n{}\n```\n<!-- ecc-coordination:end -->',
-          url: 'https://github.com/affaan-m/ECC/issues/13',
+          body: '<!-- yus-coordination:start -->\n```json\n{}\n```\n<!-- yus-coordination:end -->',
+          url: 'https://github.com/yusei21/yus/issues/13',
           state: 'OPEN',
           labels: [{ name: 'coordination:synced' }],
           author: { login: 'maintainer' },
           updatedAt: '2026-06-01T12:00:00Z'
         };
         const shim = writeGhShim(rootDir, {
-          'issue list --repo affaan-m/ECC --state all --limit 100 --label epic --json number,title,body,url,state,labels,author,updatedAt,assignees': [],
-          'issue list --repo affaan-m/ECC --state all --limit 100 --search in:body "ecc-coordination:start" --json number,title,body,url,state,labels,author,updatedAt,assignees': [driftedIssue]
+          'issue list --repo yusei21/yus --state all --limit 100 --label epic --json number,title,body,url,state,labels,author,updatedAt,assignees': [],
+          'issue list --repo yusei21/yus --state all --limit 100 --search in:body "yus-coordination:start" --json number,title,body,url,state,labels,author,updatedAt,assignees': [driftedIssue]
         });
 
-        const result = run(['sync', '--repo', 'affaan-m/ECC', '--db', dbPath, '--dry-run', '--json'], {
+        const result = run(['sync', '--repo', 'yusei21/yus', '--db', dbPath, '--dry-run', '--json'], {
           cwd: rootDir,
           env: {
-            ECC_GH_SHIM: shim.shimPath,
-            ECC_GH_SHIM_LOG: shim.logPath
+            YUS_GH_SHIM: shim.shimPath,
+            YUS_GH_SHIM_LOG: shim.logPath
           }
         });
         assert.strictEqual(result.status, 0, result.stderr);

@@ -46,8 +46,8 @@ assert.match(productionReadme, /H264 proof renders do not contain alpha/);
 assert.match(productionReadme, /provenance.json/);
 console.log("Approved production source hashes and documented limits passed.");
 
-if (process.env.ECC_TEST_NPM_PACK === "1") {
-  const temp = fs.mkdtempSync(path.join(os.tmpdir(), "ecc-fusion-pack-"));
+if (process.env.YUS_TEST_NPM_PACK === "1") {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), "yus-fusion-pack-"));
   try {
     const packed = spawnSync("npm", ["pack", "--ignore-scripts", "--json", "--pack-destination", temp], {
       cwd: root, encoding: "utf8", timeout: 120000,

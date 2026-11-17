@@ -1,5 +1,5 @@
 {
-  "schema_version": "ecc.evaluator-rag.scenario.v1",
+  "schema_version": "yus.evaluator-rag.scenario.v1",
   "scenario_id": "prepared-verifier-effect-state",
   "title": "Correct a prepared verifier without replaying an accepted effect",
   "mode": "read_only_prototype",
@@ -7,11 +7,11 @@
   "sources": [
     {
       "kind": "public_feedback",
-      "url": "https://github.com/affaan-m/ECC/issues/3699",
+      "url": "https://github.com/yusei21/yus/issues/3699",
       "purpose": "Reported Docker/YAML examples and distinct Zabbix/RouterOS follow-ups"
     }
   ],
-  "evidence_limits": "The reporter read source accounts, not original command bytes, logs or current device state. Corrections are source-reported; ECC activation/version and causal contribution are unknown. Separate mechanisms must not be assigned one root cause.",
+  "evidence_limits": "The reporter read source accounts, not original command bytes, logs or current device state. Corrections are source-reported; yus activation/version and causal contribution are unknown. Separate mechanisms must not be assigned one root cause.",
   "inputs": {
     "effect": {
       "operation_id": "OP_A",

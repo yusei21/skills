@@ -12,19 +12,19 @@ const splitPatterns = value => (value || '')
   .split(',')
   .map(s => s.trim())
   .filter(Boolean);
-// ECC_TEST_SKIP drops files whose path contains any pattern; ECC_TEST_ONLY keeps
+// YUS_TEST_SKIP drops files whose path contains any pattern; YUS_TEST_ONLY keeps
 // just the files whose path contains one. CI's package-manager lanes use ONLY to
 // run the handful of suites that read CLAUDE_CODE_PACKAGE_MANAGER.
-const skipPatterns = splitPatterns(process.env.ECC_TEST_SKIP);
-const onlyPatterns = splitPatterns(process.env.ECC_TEST_ONLY);
-// ECC_TEST_SERIAL names suites that mutate the shared checkout (for example
+const skipPatterns = splitPatterns(process.env.YUS_TEST_SKIP);
+const onlyPatterns = splitPatterns(process.env.YUS_TEST_ONLY);
+// YUS_TEST_SERIAL names suites that mutate the shared checkout (for example
 // the opencode dist build and the installers that copy from it). The pool
 // holds them back and runs them one at a time after every other file.
-const serialPatterns = splitPatterns(process.env.ECC_TEST_SERIAL);
-// ECC_TEST_JOBS above 1 runs files through a worker pool of that many
+const serialPatterns = splitPatterns(process.env.YUS_TEST_SERIAL);
+// YUS_TEST_JOBS above 1 runs files through a worker pool of that many
 // processes. The default is 1: the original synchronous loop, unchanged.
 // Output stays grouped per file whatever the pool size.
-const jobs = Math.max(1, Math.floor(Number(process.env.ECC_TEST_JOBS)) || 1);
+const jobs = Math.max(1, Math.floor(Number(process.env.YUS_TEST_JOBS)) || 1);
 
 function matchesTestGlob(relativePath) {
   const normalized = relativePath.split(path.sep).join('/');
@@ -133,7 +133,7 @@ const BOX_W = 58;
 const boxLine = s => `║${s.padEnd(BOX_W)}║`;
 
 console.log('╔' + '═'.repeat(BOX_W) + '╗');
-console.log(boxLine('           ECC - Test Suite'));
+console.log(boxLine('           yus - Test Suite'));
 console.log('╚' + '═'.repeat(BOX_W) + '╝');
 console.log();
 
@@ -165,7 +165,7 @@ function childEnvFor() {
   const childEnv = { ...process.env };
   // Git context would leak into fixtures; ONLY and JOBS are runner controls and
   // must not reach suites that spawn the runner themselves.
-  for (const key of ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'GIT_COMMON_DIR', 'GIT_PREFIX', 'ECC_TEST_ONLY', 'ECC_TEST_JOBS', 'ECC_TEST_SERIAL']) {
+  for (const key of ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'GIT_COMMON_DIR', 'GIT_PREFIX', 'YUS_TEST_ONLY', 'YUS_TEST_JOBS', 'YUS_TEST_SERIAL']) {
     delete childEnv[key];
   }
   return childEnv;

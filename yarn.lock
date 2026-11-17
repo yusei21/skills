@@ -1000,9 +1000,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ecc-universal@workspace:.":
+"yus-universal@workspace:.":
   version: 0.0.0-use.local
-  resolution: "ecc-universal@workspace:."
+  resolution: "yus-universal@workspace:."
   dependencies:
     "@eslint/js": "npm:10.0.1"
     "@iarna/toml": "npm:2.2.5"
@@ -1023,12 +1023,12 @@ __metadata:
     typescript: "npm:7.0.2"
     zod: "npm:4.6.7"
   bin:
-    ecc: scripts/ecc.js
-    ecc-control-pane: scripts/control-pane.js
-    ecc-install: scripts/install-apply.js
-    ecc-memory-mcp: scripts/memory-mcp.mjs
-    ecc-plan-canvas: scripts/plan-canvas.js
-    ecc-universal: scripts/ecc.js
+    yus: scripts/yus.js
+    yus-control-pane: scripts/control-pane.js
+    yus-install: scripts/install-apply.js
+    yus-memory-mcp: scripts/memory-mcp.mjs
+    yus-plan-canvas: scripts/plan-canvas.js
+    yus-universal: scripts/yus.js
   languageName: unknown
   linkType: soft
 

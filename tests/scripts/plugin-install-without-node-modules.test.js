@@ -1,7 +1,7 @@
 /**
- * Regression test for https://github.com/affaan-m/ECC/issues/2822
+ * Regression test for https://github.com/yusei21/yus/issues/2822
  *
- * When ECC is installed through the Claude Code plugin marketplace, the
+ * When yus is installed through the Claude Code plugin marketplace, the
  * marketplace directory is a plain git clone: `npm install` never runs, so
  * node_modules never exists. This copies just the runtime files (scripts/,
  * schemas/, manifests/) into a temp directory with no node_modules anywhere
@@ -80,7 +80,7 @@ function runTests() {
 
   // No node_modules exists anywhere above os.tmpdir(), so this faithfully
   // reproduces a plugin-marketplace git clone with no dependencies installed.
-  const pluginDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-plugin-install-'));
+  const pluginDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-plugin-install-'));
 
   try {
     if (test('fixture has no node_modules anywhere in its ancestor chain', () => {
@@ -112,7 +112,7 @@ function runTests() {
     if (test('session-start.js runs without js-yaml installed', () => {
       // The SessionStart hook loads scripts/lib/project-detect.js, so a
       // top-level require of an npm package there fails every session start.
-      const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-session-start-'));
+      const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-session-start-'));
       try {
         const project = path.join(sandbox, 'project');
         const home = path.join(sandbox, 'home');
@@ -123,10 +123,10 @@ function runTests() {
 
         // A NODE_PATH that exposes js-yaml would hide the missing dependency.
         const { NODE_PATH: _nodePath, ...inheritedEnv } = process.env;
-        const env = { ...inheritedEnv, HOME: home, USERPROFILE: home, ECC_AGENT_DATA_HOME: data,
+        const env = { ...inheritedEnv, HOME: home, USERPROFILE: home, YUS_AGENT_DATA_HOME: data,
           CLAUDE_CONFIG_DIR: data, CLAUDE_PROJECT_DIR: project, XDG_DATA_HOME: path.join(home, '.local', 'share'),
-          ECC_HOMUNCULUS_DIR: path.join(data, 'homunculus'), ECC_SESSION_START_CONTEXT: 'true',
-          ECC_SESSION_START_MAX_CHARS: '8000' };
+          YUS_HOMUNCULUS_DIR: path.join(data, 'homunculus'), YUS_SESSION_START_CONTEXT: 'true',
+          YUS_SESSION_START_MAX_CHARS: '8000' };
 
         const result = spawnSync(process.execPath, [path.join(pluginDir, 'scripts', 'hooks', 'session-start.js')], {
           cwd: project,
@@ -146,7 +146,7 @@ function runTests() {
     })) passed++; else failed++;
 
     if (test('install-plan.js --config gives an actionable error when ajv is genuinely missing', () => {
-      const configPath = path.join(pluginDir, 'ecc-install.json');
+      const configPath = path.join(pluginDir, 'yus-install.json');
       fs.writeFileSync(configPath, JSON.stringify({ version: 1, profile: 'minimal' }));
 
       const result = run('scripts/install-plan.js', ['--config', configPath], pluginDir);

@@ -103,7 +103,7 @@ test('retired effect preload refuses before any supplied code runs', () => {
     const result = spawnSync(process.execPath, ['--require', replay.EFFECT_FENCE_PRELOAD, '-e',
       `require('fs').writeFileSync(${JSON.stringify(canary)}, 'executed');`], {
       cwd: dir, encoding: 'utf8', timeout: 2000,
-      env: { ECC_EFFECT_FENCE_ROOT: dir },
+      env: { YUS_EFFECT_FENCE_ROOT: dir },
     });
     assert.notStrictEqual(result.status, 0);
     assert.match(result.stderr, /gate.isolation_required/);

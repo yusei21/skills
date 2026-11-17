@@ -143,10 +143,10 @@ function runProcess(args = [], options = {}) {
     const projectRoot = createTempDir('harness-audit-project-gh-');
 
     try {
-      fs.mkdirSync(path.join(homeDir, '.claude', 'plugins', 'ecc', '.claude-plugin'), { recursive: true });
+      fs.mkdirSync(path.join(homeDir, '.claude', 'plugins', 'yus', '.claude-plugin'), { recursive: true });
       fs.writeFileSync(
-        path.join(homeDir, '.claude', 'plugins', 'ecc', '.claude-plugin', 'plugin.json'),
-        JSON.stringify({ name: 'ecc' }, null, 2)
+        path.join(homeDir, '.claude', 'plugins', 'yus', '.claude-plugin', 'plugin.json'),
+        JSON.stringify({ name: 'yus' }, null, 2)
       );
 
       fs.mkdirSync(path.join(projectRoot, '.github', 'workflows'), { recursive: true });
@@ -176,10 +176,10 @@ function runProcess(args = [], options = {}) {
     const projectRoot = createTempDir('harness-audit-project-no-provider-');
 
     try {
-      fs.mkdirSync(path.join(homeDir, '.claude', 'plugins', 'ecc', '.claude-plugin'), { recursive: true });
+      fs.mkdirSync(path.join(homeDir, '.claude', 'plugins', 'yus', '.claude-plugin'), { recursive: true });
       fs.writeFileSync(
-        path.join(homeDir, '.claude', 'plugins', 'ecc', '.claude-plugin', 'plugin.json'),
-        JSON.stringify({ name: 'ecc' }, null, 2)
+        path.join(homeDir, '.claude', 'plugins', 'yus', '.claude-plugin', 'plugin.json'),
+        JSON.stringify({ name: 'yus' }, null, 2)
       );
       fs.writeFileSync(path.join(projectRoot, 'package.json'), JSON.stringify({ name: 'p' }));
 
@@ -199,10 +199,10 @@ function runProcess(args = [], options = {}) {
     const projectRoot = createTempDir('harness-audit-project-vercel-');
 
     try {
-      fs.mkdirSync(path.join(homeDir, '.claude', 'plugins', 'ecc', '.claude-plugin'), { recursive: true });
+      fs.mkdirSync(path.join(homeDir, '.claude', 'plugins', 'yus', '.claude-plugin'), { recursive: true });
       fs.writeFileSync(
-        path.join(homeDir, '.claude', 'plugins', 'ecc', '.claude-plugin', 'plugin.json'),
-        JSON.stringify({ name: 'ecc' }, null, 2)
+        path.join(homeDir, '.claude', 'plugins', 'yus', '.claude-plugin', 'plugin.json'),
+        JSON.stringify({ name: 'yus' }, null, 2)
       );
 
       fs.mkdirSync(path.join(projectRoot, '.github', 'workflows'), { recursive: true });
@@ -246,10 +246,10 @@ function runProcess(args = [], options = {}) {
     }
 
     try {
-      fs.mkdirSync(path.join(homeDir, '.claude', 'plugins', 'ecc', '.claude-plugin'), { recursive: true });
+      fs.mkdirSync(path.join(homeDir, '.claude', 'plugins', 'yus', '.claude-plugin'), { recursive: true });
       fs.writeFileSync(
-        path.join(homeDir, '.claude', 'plugins', 'ecc', '.claude-plugin', 'plugin.json'),
-        JSON.stringify({ name: 'ecc' }, null, 2)
+        path.join(homeDir, '.claude', 'plugins', 'yus', '.claude-plugin', 'plugin.json'),
+        JSON.stringify({ name: 'yus' }, null, 2)
       );
 
       probe('netlify.toml', '[build]\n', 'Netlify Integration');
@@ -266,10 +266,10 @@ function runProcess(args = [], options = {}) {
     const withVercel = createTempDir('harness-audit-project-max-vercel-');
 
     try {
-      fs.mkdirSync(path.join(homeDir, '.claude', 'plugins', 'ecc', '.claude-plugin'), { recursive: true });
+      fs.mkdirSync(path.join(homeDir, '.claude', 'plugins', 'yus', '.claude-plugin'), { recursive: true });
       fs.writeFileSync(
-        path.join(homeDir, '.claude', 'plugins', 'ecc', '.claude-plugin', 'plugin.json'),
-        JSON.stringify({ name: 'ecc' }, null, 2)
+        path.join(homeDir, '.claude', 'plugins', 'yus', '.claude-plugin', 'plugin.json'),
+        JSON.stringify({ name: 'yus' }, null, 2)
       );
 
       fs.writeFileSync(path.join(noVercel, 'package.json'), JSON.stringify({ name: 'p' }));
@@ -295,10 +295,10 @@ function runProcess(args = [], options = {}) {
     const bare = createTempDir('harness-audit-project-bare-');
 
     try {
-      fs.mkdirSync(path.join(homeDir, '.claude', 'plugins', 'ecc', '.claude-plugin'), { recursive: true });
+      fs.mkdirSync(path.join(homeDir, '.claude', 'plugins', 'yus', '.claude-plugin'), { recursive: true });
       fs.writeFileSync(
-        path.join(homeDir, '.claude', 'plugins', 'ecc', '.claude-plugin', 'plugin.json'),
-        JSON.stringify({ name: 'ecc' }, null, 2)
+        path.join(homeDir, '.claude', 'plugins', 'yus', '.claude-plugin', 'plugin.json'),
+        JSON.stringify({ name: 'yus' }, null, 2)
       );
       fs.writeFileSync(path.join(bare, 'package.json'), JSON.stringify({ name: 'p' }));
 
@@ -337,7 +337,7 @@ function runProcess(args = [], options = {}) {
       fs.mkdirSync(path.join(projectRoot, 'agents'), { recursive: true });
       fs.mkdirSync(path.join(projectRoot, 'skills'), { recursive: true });
       fs.writeFileSync(path.join(projectRoot, 'scripts', 'harness-audit.js'), '#!/usr/bin/env node\n');
-      fs.writeFileSync(path.join(projectRoot, '.claude-plugin', 'plugin.json'), JSON.stringify({ name: 'ecc' }, null, 2));
+      fs.writeFileSync(path.join(projectRoot, '.claude-plugin', 'plugin.json'), JSON.stringify({ name: 'yus' }, null, 2));
       fs.writeFileSync(
         path.join(projectRoot, 'package.json'),
         JSON.stringify({ name: 'forked-harness', scripts: { test: 'node scripts/validate-commands.js && node tests/run-all.js' } }, null, 2)
@@ -351,15 +351,15 @@ function runProcess(args = [], options = {}) {
     }
   });
 
-  test('audits consumer projects from cwd instead of the ECC repo root', () => {
+  test('audits consumer projects from cwd instead of the yus repo root', () => {
     const homeDir = createTempDir('harness-audit-home-');
     const projectRoot = createTempDir('harness-audit-project-');
 
     try {
-      fs.mkdirSync(path.join(homeDir, '.claude', 'plugins', 'ecc', '.claude-plugin'), { recursive: true });
+      fs.mkdirSync(path.join(homeDir, '.claude', 'plugins', 'yus', '.claude-plugin'), { recursive: true });
       fs.writeFileSync(
-        path.join(homeDir, '.claude', 'plugins', 'ecc', '.claude-plugin', 'plugin.json'),
-        JSON.stringify({ name: 'ecc' }, null, 2)
+        path.join(homeDir, '.claude', 'plugins', 'yus', '.claude-plugin', 'plugin.json'),
+        JSON.stringify({ name: 'yus' }, null, 2)
       );
 
       fs.mkdirSync(path.join(projectRoot, '.github', 'workflows'), { recursive: true });
@@ -711,10 +711,10 @@ function runProcess(args = [], options = {}) {
     const projectRoot = createTempDir('harness-audit-passing-project-');
 
     try {
-      fs.mkdirSync(path.join(projectRoot, '.claude', 'plugins', 'ecc@ecc'), { recursive: true });
+      fs.mkdirSync(path.join(projectRoot, '.claude', 'plugins', 'yus@yus'), { recursive: true });
       fs.writeFileSync(
-        path.join(projectRoot, '.claude', 'plugins', 'ecc@ecc', 'plugin.json'),
-        JSON.stringify({ name: 'ecc' }, null, 2)
+        path.join(projectRoot, '.claude', 'plugins', 'yus@yus', 'plugin.json'),
+        JSON.stringify({ name: 'yus' }, null, 2)
       );
       fs.mkdirSync(path.join(projectRoot, '.claude'), { recursive: true });
       fs.mkdirSync(path.join(projectRoot, '.github', 'workflows', 'nested'), { recursive: true });
@@ -864,20 +864,20 @@ function runProcess(args = [], options = {}) {
     const homeDir = createTempDir('harness-audit-manifest-home-');
     const projectRoot = createTempDir('harness-audit-manifest-project-');
     const pluginsDir = path.join(homeDir, '.claude', 'plugins');
-    const installRoot = path.join(pluginsDir, 'cache', 'everything-claude-code', 'ecc', '2.0.0');
+    const installRoot = path.join(pluginsDir, 'cache', 'everything-claude-code', 'yus', '2.0.0');
 
     try {
       fs.mkdirSync(path.join(installRoot, '.claude-plugin'), { recursive: true });
       fs.writeFileSync(
         path.join(installRoot, '.claude-plugin', 'plugin.json'),
-        JSON.stringify({ name: 'ecc', version: '2.0.0' }, null, 2)
+        JSON.stringify({ name: 'yus', version: '2.0.0' }, null, 2)
       );
       fs.writeFileSync(
         path.join(pluginsDir, 'installed_plugins.json'),
         JSON.stringify({
           plugins: {
-            'ecc@everything-claude-code': [
-              { installPath: path.join('cache', 'everything-claude-code', 'ecc', '2.0.0') },
+            'yus@everything-claude-code': [
+              { installPath: path.join('cache', 'everything-claude-code', 'yus', '2.0.0') },
             ],
           },
         }, null, 2)
@@ -888,7 +888,7 @@ function runProcess(args = [], options = {}) {
       try {
         const found = findPluginInstall(projectRoot);
         assert.ok(found);
-        assert.ok(found.includes(`${path.sep}cache${path.sep}everything-claude-code${path.sep}ecc${path.sep}2.0.0${path.sep}`));
+        assert.ok(found.includes(`${path.sep}cache${path.sep}everything-claude-code${path.sep}yus${path.sep}2.0.0${path.sep}`));
       } finally {
         if (originalHome === undefined) {
           delete process.env.HOME;
@@ -905,14 +905,14 @@ function runProcess(args = [], options = {}) {
   test('detects newest Claude plugin install from cache marketplace layout', () => {
     const homeDir = createTempDir('harness-audit-cache-home-');
     const projectRoot = createTempDir('harness-audit-cache-project-');
-    const pluginRoot = path.join(homeDir, '.claude', 'plugins', 'cache', 'everything-claude-code', 'ecc');
+    const pluginRoot = path.join(homeDir, '.claude', 'plugins', 'cache', 'everything-claude-code', 'yus');
 
     try {
       for (const version of ['1.8.0', '1.10.0']) {
         fs.mkdirSync(path.join(pluginRoot, version, '.claude-plugin'), { recursive: true });
         fs.writeFileSync(
           path.join(pluginRoot, version, '.claude-plugin', 'plugin.json'),
-          JSON.stringify({ name: 'ecc', version }, null, 2)
+          JSON.stringify({ name: 'yus', version }, null, 2)
         );
       }
 

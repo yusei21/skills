@@ -29,11 +29,11 @@ const SUBPROCESS_TIMEOUT_MS = process.platform === 'darwin' && process.env.CI ==
   ? 180_000
   : 60_000;
 
-const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-stop-stdout-')); // non-git cwd
-const dataHome = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-stop-data-'));
+const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-stop-stdout-')); // non-git cwd
+const dataHome = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-stop-data-'));
 // Stop hooks also write learned skills under the home directory; give them
 // an empty one instead of the developer's real one.
-const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-stop-home-'));
+const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-stop-home-'));
 
 function test(name, fn) {
   try {
@@ -63,13 +63,13 @@ function hookEnv() {
     ...process.env,
     HOME: homeDir,
     USERPROFILE: homeDir,
-    ECC_HOOK_PROFILE: 'standard',
-    ECC_AGENT_DATA_HOME: dataHome,
+    YUS_HOOK_PROFILE: 'standard',
+    YUS_AGENT_DATA_HOME: dataHome,
     CLAUDE_SESSION_ID: `stop-stdout-test-${process.pid}`
   };
-  delete env.ECC_GATEGUARD;
-  delete env.ECC_DISABLED_HOOKS;
-  delete env.ECC_DRY_RUN;
+  delete env.YUS_GATEGUARD;
+  delete env.YUS_DISABLED_HOOKS;
+  delete env.YUS_DRY_RUN;
   return env;
 }
 
@@ -101,7 +101,7 @@ function runRegisteredStopHook(entry, input, envOverrides = {}) {
   const env = {
     ...hookEnv(),
     CLAUDE_PLUGIN_ROOT: repoRoot,
-    ECC_DISABLED_HOOKS: entry.id,
+    YUS_DISABLED_HOOKS: entry.id,
     ...envOverrides
   };
 
@@ -118,7 +118,7 @@ function runRegisteredStopHook(entry, input, envOverrides = {}) {
 }
 
 function runRegisteredStopHookWithMissingRoot(entry, input) {
-  const missingRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-missing-root-'));
+  const missingRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-missing-root-'));
   fs.rmSync(missingRoot, { recursive: true, force: true });
   return spawnSync(entry.hooks[0].command, {
     input,
@@ -127,7 +127,7 @@ function runRegisteredStopHookWithMissingRoot(entry, input) {
     env: {
       ...hookEnv(),
       CLAUDE_PLUGIN_ROOT: missingRoot,
-      ECC_PLUGIN_ROOT: missingRoot
+      YUS_PLUGIN_ROOT: missingRoot
     },
     shell: true,
     timeout: SUBPROCESS_TIMEOUT_MS,
@@ -234,7 +234,7 @@ const consoleLogStopEntry = hooksConfig.hooks.Stop.find(
 if (
   test('enabled registered Stop wrapper suppresses legacy raw-input passthrough', () => {
     const result = runRegisteredStopHook(consoleLogStopEntry, realisticPayload, {
-      ECC_DISABLED_HOOKS: ''
+      YUS_DISABLED_HOOKS: ''
     });
     assert.strictEqual(result.status, 0, `expected exit 0, got ${result.status}: ${result.stderr}`);
     assert.strictEqual(result.stdout, '', 'registered Stop boundary must suppress raw-input output');
@@ -246,7 +246,7 @@ else failed++;
 if (
   test('registered Stop wrapper applies a configured byte cap', () => {
     const result = runRegisteredStopHook(representativeStopEntry, realisticPayload, {
-      ECC_HOOK_INPUT_MAX_BYTES: '64'
+      YUS_HOOK_INPUT_MAX_BYTES: '64'
     });
     assert.strictEqual(result.status, 0, result.stderr);
     assert.strictEqual(result.stdout, '');
@@ -258,7 +258,7 @@ else failed++;
 
 if (
   test('registered Plan Canvas Stop wrapper preserves an explicit block decision', () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-plan-canvas-stop-'));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-plan-canvas-stop-'));
     const artifact = path.join(workDir, 'feature.plan.md');
     const timestamp = '2026-01-01T00:00:00.000Z';
     const state = {
@@ -282,8 +282,8 @@ if (
       const entry = hooksConfig.hooks.Stop.find(candidate => candidate.id === 'stop:plan-canvas-pending');
       const input = JSON.stringify({ cwd: workDir, hook_event_name: 'Stop', stop_hook_active: false });
       const result = runRegisteredStopHook(entry, input, {
-        ECC_DISABLED_HOOKS: '',
-        ECC_PLAN_CANVAS_STATE_DIR: stateDir
+        YUS_DISABLED_HOOKS: '',
+        YUS_PLAN_CANVAS_STATE_DIR: stateDir
       });
       assert.strictEqual(result.status, 0, result.stderr);
       const output = JSON.parse(result.stdout);
@@ -316,8 +316,8 @@ else failed++;
 if (
   test('registered Stop wrapper stays silent for a 100KB dry-run payload', () => {
     const result = runRegisteredStopHook(representativeStopEntry, realisticPayload, {
-      ECC_DISABLED_HOOKS: '',
-      ECC_DRY_RUN: '1'
+      YUS_DISABLED_HOOKS: '',
+      YUS_DRY_RUN: '1'
     });
     assert.strictEqual(result.status, 0, `expected exit 0, got ${result.status}: ${result.stderr}`);
     assert.strictEqual(result.stdout, '', 'dry-run wrapper must stay silent');
@@ -364,8 +364,8 @@ const oversizedPayload = stopPayload(MAX_STDIN + 64 * 1024);
 if (
   test('registered Stop wrapper suppresses a >1MB dry-run payload', () => {
     const result = runRegisteredStopHook(representativeStopEntry, oversizedPayload, {
-      ECC_DISABLED_HOOKS: '',
-      ECC_DRY_RUN: '1'
+      YUS_DISABLED_HOOKS: '',
+      YUS_DRY_RUN: '1'
     });
     assert.strictEqual(result.status, 0, `expected exit 0, got ${result.status}: ${result.stderr}`);
     assert.strictEqual(

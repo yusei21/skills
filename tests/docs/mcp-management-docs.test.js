@@ -27,7 +27,7 @@ function read(relativePath) {
 
 console.log('\n=== Testing MCP management docs ===\n');
 
-test('token optimization guide separates Claude MCP disables from ECC config filters', () => {
+test('token optimization guide separates Claude MCP disables from yus config filters', () => {
   const source = read('docs/token-optimization.md');
 
   assert.ok(
@@ -39,8 +39,8 @@ test('token optimization guide separates Claude MCP disables from ECC config fil
     'Token guide should name ~/.claude.json as the observed runtime disable store'
   );
   assert.ok(
-    source.includes('`ECC_DISABLED_MCPS` only affects ECC-generated MCP config output'),
-    'Token guide should scope ECC_DISABLED_MCPS to config generation'
+    source.includes('`YUS_DISABLED_MCPS` only affects yus-generated MCP config output'),
+    'Token guide should scope YUS_DISABLED_MCPS to config generation'
   );
   assert.ok(
     !source.includes('Use `disabledMcpServers` in project config to disable servers per-project'),

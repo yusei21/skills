@@ -59,11 +59,11 @@ readStdin({ includeMetadata: true })
         !process.env.TMUX &&
         /(npm (install|test)|pnpm (install|test)|yarn (install|test)?|bun (install|test)|cargo build|make\b|docker\b|pytest|vitest|playwright)/.test(cmd)
       ) {
-        console.error('[ECC] Consider running in tmux for session persistence');
+        console.error('[yus] Consider running in tmux for session persistence');
       }
 
       if (hookEnabled('pre:bash:git-push-reminder', ['strict']) && /\bgit\s+push\b/.test(cmd)) {
-        console.error('[ECC] Review changes before push: git diff origin/main...HEAD');
+        console.error('[yus] Review changes before push: git diff origin/main...HEAD');
       }
     } catch {
       // noop

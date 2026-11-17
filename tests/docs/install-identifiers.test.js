@@ -35,7 +35,7 @@ for (const relativePath of publicInstallDocs) {
   });
 
   test(`${relativePath} documents the short marketplace plugin identifier`, () => {
-    assert.ok(content.includes('ecc@ecc'));
+    assert.ok(content.includes('yus@yus'));
   });
 }
 
@@ -64,7 +64,7 @@ function executableLegacyInstallerLines(content) {
 
   for (const codeBlock of codeBlocks) {
     for (const line of codeBlock[1].split('\n')) {
-      if (/^\s*(?:(?:\$|PS>)\s*)?npx\s+ecc-install(?:\s|$)/i.test(line)) {
+      if (/^\s*(?:(?:\$|PS>)\s*)?npx\s+yus-install(?:\s|$)/i.test(line)) {
         executableLines.push(line.trim());
       }
     }
@@ -76,7 +76,7 @@ function executableLegacyInstallerLines(content) {
 function unrelatedEccPackageLines(content) {
   return content
     .split('\n')
-    .filter(line => /\bnpx\s+ecc(?=\s|$)/i.test(line))
+    .filter(line => /\bnpx\s+yus(?=\s|$)/i.test(line))
     .map(line => line.trim());
 }
 
@@ -100,28 +100,28 @@ function trackedMarkdownFiles(directoryPath) {
 for (const relativePath of publicUniversalInstallDocs) {
   const content = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 
-  test(`${relativePath} does not invoke the unpublished ecc-install package`, () => {
+  test(`${relativePath} does not invoke the unpublished yus-install package`, () => {
     const executableLines = executableLegacyInstallerLines(content);
 
     assert.deepStrictEqual(
       executableLines,
       [],
-      `Replace executable npx ecc-install commands with npx ecc-universal install: ${executableLines.join(', ')}`
+      `Replace executable npx yus-install commands with npx yus-universal install: ${executableLines.join(', ')}`
     );
   });
 
-  test(`${relativePath} does not invoke the unrelated ecc package`, () => {
+  test(`${relativePath} does not invoke the unrelated yus package`, () => {
     const executableLines = unrelatedEccPackageLines(content);
 
     assert.deepStrictEqual(
       executableLines,
       [],
-      `Replace npx ecc commands with npx ecc-universal: ${executableLines.join(', ')}`
+      `Replace npx yus commands with npx yus-universal: ${executableLines.join(', ')}`
     );
   });
 }
 
-test('repository Markdown does not invoke the unrelated ecc package', () => {
+test('repository Markdown does not invoke the unrelated yus package', () => {
   const offenders = [];
 
   for (const filePath of trackedMarkdownFiles(repoRoot)) {
@@ -134,11 +134,11 @@ test('repository Markdown does not invoke the unrelated ecc package', () => {
   assert.deepStrictEqual(
     offenders,
     [],
-    `Replace npx ecc commands with npx ecc-universal: ${offenders.join(', ')}`
+    `Replace npx yus commands with npx yus-universal: ${offenders.join(', ')}`
   );
 });
 
-test('repository Markdown does not execute the unpublished ecc-install package', () => {
+test('repository Markdown does not execute the unpublished yus-install package', () => {
   const offenders = [];
 
   for (const filePath of trackedMarkdownFiles(repoRoot)) {
@@ -151,7 +151,7 @@ test('repository Markdown does not execute the unpublished ecc-install package',
   assert.deepStrictEqual(
     offenders,
     [],
-    `Replace executable npx ecc-install commands with npx ecc-universal install: ${offenders.join(', ')}`
+    `Replace executable npx yus-install commands with npx yus-universal install: ${offenders.join(', ')}`
   );
 });
 
@@ -184,7 +184,7 @@ for (const relativePath of publicCommandNamespaceDocs) {
       'Expected docs not to advertise the overlong legacy plugin command namespace'
     );
     assert.ok(
-      content.includes('/ecc:plan'),
+      content.includes('/yus:plan'),
       'Expected docs to show the short plugin command namespace'
     );
   });
@@ -195,8 +195,8 @@ for (const relativePath of manualClaudeSkillInstallDocs) {
 
   test(`${relativePath} keeps manual Claude skill installs top-level`, () => {
     assert.ok(
-      !/^\s*#?\s*(mkdir\s+-p|md\s+.*|cp\s+.*|copy\s+.*|cpi\s+.*|New-Item\s+.*|Copy-Item\s+.*)\s+.*(~|\$HOME)[\\/]\.claude[\\/]skills[\\/]ecc([\\/]|\b)/mi.test(content),
-      'Claude Code does not discover skills installed by commands targeting ~/.claude/skills/ecc'
+      !/^\s*#?\s*(mkdir\s+-p|md\s+.*|cp\s+.*|copy\s+.*|cpi\s+.*|New-Item\s+.*|Copy-Item\s+.*)\s+.*(~|\$HOME)[\\/]\.claude[\\/]skills[\\/]yus([\\/]|\b)/mi.test(content),
+      'Claude Code does not discover skills installed by commands targeting ~/.claude/skills/yus'
     );
     assert.ok(
       content.includes('~/.claude/skills/'),

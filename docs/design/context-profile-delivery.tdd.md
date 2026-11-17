@@ -1,6 +1,6 @@
-# ECC-029 verification ledger
+# yus-029 verification ledger
 
-September 13 baseline branch: `feat/ecc-029-profile-delivery`, incorporating upstream main `8321021c` and the previous carrier branch. The September 21 continuation is recorded below. This report describes local development and packed evidence, not a public release.
+September 13 baseline branch: `feat/yus-029-profile-delivery`, incorporating upstream main `8321021c` and the previous carrier branch. The September 21 continuation is recorded below. This report describes local development and packed evidence, not a public release.
 
 ## Reproduced failures and fixes
 
@@ -47,7 +47,7 @@ Linux arm64, Node 22.23.1, Codex 0.154.0. Normal packed installation completed d
 - The packed managed CLI verifies Full to Lean to rollback Full, revision checks, idempotency, exclusions, Auto loading, suggest/manual/dry-run boundaries, receipt reuse and no-workflow reset.
 - Packed `prepare-native`, `native-status` and `native-recover` pass. Isolated launch dry-run uses the pinned executable even with no provider on PATH.
 - Native Codex discovery matches Lean, Lean plus Angular and Full excluding Python patterns. Resource digests survive marketplace carrier source removal. Six provider-owned system skills are reported separately.
-- Actual managed/native product APIs switch 291 ECC skills to three and roll back to 291, preserving the Full exclusion and unrelated prior-home bytes. Every native preparation and rollback uses a fresh app-server and verifies discovery before pointer publication.
+- Actual managed/native product APIs switch 291 yus skills to three and roll back to 291, preserving the Full exclusion and unrelated prior-home bytes. Every native preparation and rollback uses a fresh app-server and verifies discovery before pointer publication.
 - Earlier isolated Claude Code 2.1.247 conformance validates and lists exact Lean/Full-with-exclusion inventory with zero hooks, agents, MCP and LSP components. Its projected token counter is not provider usage.
 
 ## Evidence boundaries
@@ -60,7 +60,7 @@ The store recovers actual process exits at five durable boundaries. Initial crea
 
 ## September 21 production-acceptance continuation
 
-Branch: `feat/ecc-029-production-acceptance`, with the working integration snapshot updated to upstream main `43b3a01e`. The writer session stopped at its provider usage limit after integrating the interactive and evaluation slices. A replacement session recovered the exact tmux transcript, process state, task log and worktree before continuing. No test process was still running and no conflicting writer remained active.
+Branch: `feat/yus-029-production-acceptance`, with the working integration snapshot updated to upstream main `43b3a01e`. The writer session stopped at its provider usage limit after integrating the interactive and evaluation slices. A replacement session recovered the exact tmux transcript, process state, task log and worktree before continuing. No test process was still running and no conflicting writer remained active.
 
 Additional RED/GREEN cases cover gaps found during review:
 
@@ -82,8 +82,8 @@ Current combined verification after recovery:
 - The final focused `node:test` run passes 182/182. Claude migration and setup compatibility suites pass 16/16 and 30/30. The complete repository runner passes 4,940/4,940; lint, diff checks and the production dependency audit all pass with zero vulnerabilities.
 - The integration snapshot is current with upstream main `43b3a01e`. The latest-main Claude setup change removed obsolete install flags; migration dry-run and setup expectations now match the shipped command while retaining separate settings preservation.
 - Clean commit `cda9c4bf` produced package SHA-256 `2ebc804ffc4f4c89fcf4b5ea0a9f644613618c1508292ef9199928157aa228d1`; both final driver receipts record that exact revision with `sourceDirty: false`.
-- Real Tier 1 run `ecc-profile-tier1-89ead327-f193-4959-aff4-67cf8d381df3` passes on rootless Podman with a validated final smoke payload, a complete 10,758-added/4-changed layer diff, no credentials and exact cleanup.
-- Real Tier 2 run `ecc-profile-tier2-fd4654a2-18b2-45f4-ba87-b8d0cd8bc488` passes on a disposable native macOS arm64 Lume clone with the same package digest. It validates all ten layouts, isolated Codex discovery, no credential transfer, stopped-guest cleanup and artifact-server cleanup. Lume v1 reports a bounded path scan with 49 added and nine changed files; it explicitly does not claim a complete disk diff.
+- Real Tier 1 run `yus-profile-tier1-89ead327-f193-4959-aff4-67cf8d381df3` passes on rootless Podman with a validated final smoke payload, a complete 10,758-added/4-changed layer diff, no credentials and exact cleanup.
+- Real Tier 2 run `yus-profile-tier2-fd4654a2-18b2-45f4-ba87-b8d0cd8bc488` passes on a disposable native macOS arm64 Lume clone with the same package digest. It validates all ten layouts, isolated Codex discovery, no credential transfer, stopped-guest cleanup and artifact-server cleanup. Lume v1 reports a bounded path scan with 49 added and nine changed files; it explicitly does not claim a complete disk diff.
 - The initial Tier 2 attempt exposed `/tmp` as the standard macOS symlink to `/private/tmp`. The acceptance verifier now canonicalizes its newly created private directory while the production managed-store guard continues to reject symlinked roots. A second guest run proved the corrected path.
 - The default sandbox checkout's 5,000-path capture limit truncated a real Tier 1 install diff and failed closed. The reviewed ECC-029 sandbox implementation raises the bounded cap to 50,000, passes its 26-case boundary suite, and produced both final reports. The driver receipt binds its 51-file implementation digest `a84e09ab848b8cd05f33792c13734f7aabe16bfe16d50d8f8292eb5261a93c3a`.
 - No real AI outcome call ran because `CODEX_API_KEY` was absent. Host ChatGPT authentication was neither copied nor exposed to the disposable evaluator.
@@ -122,14 +122,14 @@ The suggest-only prompt hook from #2945 now reads a generation-bound metadata in
 Review follow-up, October 8:
 
 - RED (15 index, hook and selection cases fail): a rollback to an indexed generation threw instead of reporting the index missing; digest-consistent entries with a non-string ID, name, description, owner or trigger, or a non-skill ID, were accepted; an oversized index was read in full; an anchored skill ranked fourth was hidden behind three unanchored matches; a skill edited mid-build was published under the stored generation; manual mode read the index before going silent; suggest mode advertised `resolve --load`, which returns no bodies there; admission denials were matched by message text, so a non-UTF-8 skill silently left the index.
-- GREEN: a valid pointer for an earlier receipt is retired (`missing`) and the SessionStart builder rebuilds it; entries are validated against a closed key set before decoding and returned as new objects; pointer and index reads are bounded at 4 KiB, 4 MiB and 2,048 entries; suggestions filter for anchors before trimming to three; a build refuses plan or registry digests that differ from the checked carrier; the hook reads only the state binding before its manual-mode exit; suggest mode prints `ecc profile mode auto` with the current revision; denials carry `ECC_CONTEXT_*` codes and everything else propagates.
+- GREEN: a valid pointer for an earlier receipt is retired (`missing`) and the SessionStart builder rebuilds it; entries are validated against a closed key set before decoding and returned as new objects; pointer and index reads are bounded at 4 KiB, 4 MiB and 2,048 entries; suggestions filter for anchors before trimming to three; a build refuses plan or registry digests that differ from the checked carrier; the hook reads only the state binding before its manual-mode exit; suggest mode prints `yus profile mode auto` with the current revision; denials carry `YUS_CONTEXT_*` codes and everything else propagates.
 - Budget: a worker thread would make the 150 ms budget a hard bound but measured 135 to 150 ms for the same work (about 85 ms in process), so it would suppress most suggestions. The hook keeps in-process checks between steps, the read bounds cap the work at a real registry's size, and the documented snippet sets Claude Code's `timeout` as the outer bound.
 - Full Claude index, auto mode, Linux x64 Node 22.22.0: wrapper invocations 108 to 122 ms against 29 to 45 ms with the hook disabled.
 
 Review follow-up, October 9:
 
 - RED (1 case fails): a build interrupted while writing the entries file left partial bytes under its digest name, and every later build refused them, so the index could not be restored. GREEN writes the file through the store's temporary-file-and-rename path and replaces a digest-named file whose bytes do not hash to its name.
-- Sources edited after the entries are read: a new case pins that the published index still matches the stored generation and that the next build reports the generation stale. A final source recheck before the pointer would only discard a correct index. The triggers manifest, though, is not bound to the generation: an edit to it after `ecc profile set` reaches the next index unnoticed. Binding it is a store change, left open.
+- Sources edited after the entries are read: a new case pins that the published index still matches the stored generation and that the next build reports the generation stale. A final source recheck before the pointer would only discard a correct index. The triggers manifest, though, is not bound to the generation: an edit to it after `yus profile set` reaches the next index unnoticed. Binding it is a store change, left open.
 - Schema validation stays manual on the read path. On Windows x64, Node 24, loading Ajv took about 44 ms and compiling an index schema about 20 ms in a fresh process, against 22 ms for loading the whole routing module. That would cost the prompt-time read about 64 ms of its 150 ms budget, so Ajv stays off the prompt path, as `validateSchema` already documents.
 - Budget: the October 8 decision stands. On the same Windows machine a prototype worker measured 64 to 77 ms against about 55 ms in process, and stopped a simulated 600 ms read at 152 ms. That gap is smaller than the Linux measurement above, so the trade-off may be worth revisiting with numbers from both platforms.
 

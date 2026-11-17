@@ -18,10 +18,10 @@ const { prepareNativeProfile, getNativeProfileStatus } = require(path.join(LIB, 
 const { DEFAULT_REPO_ROOT, digestObject, createSourceReader } = require(path.join(LIB, 'context-profile-support'));
 const io = require(path.join(LIB, 'context-profile-store-fs'));
 
-const ARMS = Object.freeze(['full', 'manual-lean', 'auto-lean', 'ecc-legacy', 'baseline']);
+const ARMS = Object.freeze(['full', 'manual-lean', 'auto-lean', 'yus-legacy', 'baseline']);
 const CORPUS_PATH = path.join(__dirname, 'ai-corpus.json');
 const LEGACY_PIN_PATH = path.join(__dirname, 'legacy-source.json');
-const CHECK_FILE = '.ecc-eval-check.cjs';
+const CHECK_FILE = '.yus-eval-check.cjs';
 const IMPLEMENTATION = ['docker/context-profiles/ai-eval-lib.js', 'docker/context-profiles/ai-eval.js',
   'docker/context-profiles/legacy-source.json',
   'manifests/context-packs/skill-triggers@1.json',
@@ -47,8 +47,8 @@ function safeRelative(file) {
 }
 
 function validateCorpus(corpus) {
-  if (corpus?.schemaVersion === 'ecc.context-eval-complex-corpus.v1') return validateComplexCorpus(corpus);
-  if (corpus?.schemaVersion !== 'ecc.context-eval-corpus.v2'
+  if (corpus?.schemaVersion === 'yus.context-eval-complex-corpus.v1') return validateComplexCorpus(corpus);
+  if (corpus?.schemaVersion !== 'yus.context-eval-corpus.v2'
     || !Array.isArray(corpus.selection) || !Array.isArray(corpus.tasks)
     || !bounded(corpus.selection.length, 1, 200) || !bounded(corpus.tasks.length, 1, 200)
     || corpus.minimumDistinctTasks !== 30 || corpus.nonInferiorityMargin !== 0.05) {
@@ -164,12 +164,12 @@ function preregister({ repoRoot = DEFAULT_REPO_ROOT, corpus = loadCorpus(), repe
   if (!Array.isArray(armList) || !armList.length || new Set(armList).size !== armList.length
     || armList.some(arm => !ARMS.includes(arm))) throw new Error('Invalid arm subset');
   const source = sourceSnapshot(repoRoot);
-  const value = { schemaVersion: 'ecc.context-eval-registration.v2', corpusDigest: digestObject(corpus),
+  const value = { schemaVersion: 'yus.context-eval-registration.v2', corpusDigest: digestObject(corpus),
     sourceDigest: source.sourceDigest, registryDigest: source.registry.registryDigest,
     providerPin: providerPin(model, executable, effort), runtime: source.runtime,
     arms: armList, repeats, minimumDistinctTasks: corpus.minimumDistinctTasks, nonInferiorityMargin: 0.05,
     confidence: 0.95, sampling: 'fixed-purposive-pilot',
-    design: corpus.schemaVersion === 'ecc.context-eval-complex-corpus.v1'
+    design: corpus.schemaVersion === 'yus.context-eval-complex-corpus.v1'
       ? 'paired-native-installs-hidden-scored-complex-tasks'
       : 'paired-native-installs-hidden-graded-coding-tasks',
     order: corpus.tasks.flatMap((task, index) => Array.from({ length: repeats }, (_, repeat) => ({
@@ -398,7 +398,7 @@ function prepareEnvironments({ repoRoot, executable, root }) {
         if (!ready) fail('environment-drift');
       } };
   }
-  // Baseline arm: an empty native home with no ECC install, for provider-overhead subtraction.
+  // Baseline arm: an empty native home with no yus install, for provider-overhead subtraction.
   const home = path.join(root, 'baseline', 'home');
   fs.mkdirSync(path.join(home, '.codex'), { recursive: true, mode: 0o700 });
   environments.baseline = { profileId: null, skills: 0, restore() {},
@@ -431,7 +431,7 @@ function claudeEnvironment({ name, binary, home, config, installed, profileId, s
     } }];
 }
 
-/** The pre-scoping ECC source, pinned by commit so the ecc-legacy arm is reproducible. */
+/** The pre-scoping yus source, pinned by commit so the yus-legacy arm is reproducible. */
 function exportLegacySource({ repoRoot = DEFAULT_REPO_ROOT, destination,
   pin = JSON.parse(fs.readFileSync(LEGACY_PIN_PATH, 'utf8')) } = {}) {
   if (!/^[a-f0-9]{40}$/.test(pin?.sha || '')) throw new Error('Invalid legacy source pin');
@@ -471,15 +471,15 @@ function prepareClaudeEnvironments({ repoRoot, executable, root, legacySource = 
     environments[key] = env;
   }
   if (legacySource) {
-    // ecc-legacy: the typical pre-scoping install — the full skill library from the pinned
-    // pre-ECC-029 commit, launched bare with no ECC context block.
-    const home = path.join(root, 'ecc-legacy', 'home');
+    // yus-legacy: the typical pre-scoping install — the full skill library from the pinned
+    // pre-yus-029 commit, launched bare with no yus context block.
+    const home = path.join(root, 'yus-legacy', 'home');
     const { config, installed } = installClaudeSkills({ payload: path.join(legacySource.root, 'skills'), home });
-    const [key, env] = claudeEnvironment({ name: 'ecc-legacy', binary, home, config, installed,
+    const [key, env] = claudeEnvironment({ name: 'yus-legacy', binary, home, config, installed,
       profileId: null, skills: fs.readdirSync(installed).length, sourceSha: legacySource.sha });
     environments[key] = env;
   }
-  // Baseline arm: an empty config home with no ECC install, for provider-overhead subtraction.
+  // Baseline arm: an empty config home with no yus install, for provider-overhead subtraction.
   const baselineHome = path.join(root, 'baseline', 'home');
   const baselineConfig = path.join(baselineHome, '.claude');
   fs.mkdirSync(baselineConfig, { recursive: true, mode: 0o700 });
@@ -491,10 +491,10 @@ function prepareClaudeEnvironments({ repoRoot, executable, root, legacySource = 
 
 function syntheticEnvironments(root) {
   const executable = resolveExecutable(process.execPath);
-  return Object.fromEntries(['full', 'lean', 'ecc-legacy', 'baseline'].map(name => {
+  return Object.fromEntries(['full', 'lean', 'yus-legacy', 'baseline'].map(name => {
     const home = path.join(root, name, 'home');
     fs.mkdirSync(path.join(home, '.codex'), { recursive: true, mode: 0o700 });
-    return [name, { profileId: ['baseline', 'ecc-legacy'].includes(name) ? null : `${name}@1`, skills: null, sourceSha: null,
+    return [name, { profileId: ['baseline', 'yus-legacy'].includes(name) ? null : `${name}@1`, skills: null, sourceSha: null,
       verify() {}, restore() {},
       launch: { home, codexHome: path.join(home, '.codex'), codexPath: executable.path, executableDigest: executable.digest } }];
   }));
@@ -511,12 +511,12 @@ function checkArguments(cwd, file = CHECK_FILE, writable = false) {
 }
 
 // The hidden grader enters the workspace only after the agent exits, and runs read-only where Node supports it.
-// A grader may print one `ECC_EVAL_SCORE {"score":0..1}` line for partial credit; without it the exit
+// A grader may print one `YUS_EVAL_SCORE {"score":0..1}` line for partial credit; without it the exit
 // status alone decides (exit 0 scores 1). Outcome success still requires a full score. Stepped tasks
 // grade each step with a distinct grader file so earlier graders stay readable in the workspace.
-const SCORE_LINE = /^\s*ECC_EVAL_SCORE\s+(\{[^\n]*\})\s*$/m;
+const SCORE_LINE = /^\s*YUS_EVAL_SCORE\s+(\{[^\n]*\})\s*$/m;
 function runScoredCheck(cwd, source, timeoutMs = 10000, step = null) {
-  const name = step === null ? CHECK_FILE : `.ecc-eval-check-${step}.cjs`;
+  const name = step === null ? CHECK_FILE : `.yus-eval-check-${step}.cjs`;
   const file = path.join(cwd, name);
   if (exists(file)) return { passed: false, score: 0 };
   fs.writeFileSync(file, source, { flag: 'wx' });
@@ -528,11 +528,11 @@ function runScoredCheck(cwd, source, timeoutMs = 10000, step = null) {
   const passed = result.status === 0 && !result.error;
   let score = passed ? 1 : 0;
   const match = SCORE_LINE.exec(result.stdout || '');
-  // A grader that advertises ECC_EVAL_SCORE but never printed it died mid-run (e.g. the graded
+  // A grader that advertises YUS_EVAL_SCORE but never printed it died mid-run (e.g. the graded
   // server crashed the process): that is a zero, never a silent pass. A printed but malformed
   // line keeps the exit-status score.
-  const graderDied = passed && !match && source.includes('ECC_EVAL_SCORE')
-    && !(result.stdout || '').includes('ECC_EVAL_SCORE');
+  const graderDied = passed && !match && source.includes('YUS_EVAL_SCORE')
+    && !(result.stdout || '').includes('YUS_EVAL_SCORE');
   if (passed && match) {
     try {
       const parsed = JSON.parse(match[1]);
@@ -591,7 +591,7 @@ function summarize(outcomes, arms = ARMS) {
 }
 
 function selectionTask(item) {
-  return { sessionId: 'ecc-eval', taskId: item.id, revision: 1, phase: 'evaluate', query: item.query,
+  return { sessionId: 'yus-eval', taskId: item.id, revision: 1, phase: 'evaluate', query: item.query,
     ...(item.noWorkflow === undefined ? {} : { noWorkflow: item.noWorkflow }),
     ...(item.explicitIds ? { explicitIds: item.explicitIds } : {}) };
 }
@@ -681,16 +681,16 @@ function selectionProbe(item, repoRoot, execute, environment, target) {
   }
 }
 
-// Full relies on native discovery of the whole install; the Lean arms receive ECC-selected skill bodies;
-// ecc-legacy runs bare against the pinned pre-scoping skill library; Baseline runs the bare task query.
+// Full relies on native discovery of the whole install; the Lean arms receive yus-selected skill bodies;
+// yus-legacy runs bare against the pinned pre-scoping skill library; Baseline runs the bare task query.
 // Stepped tasks run each ticket in the same accumulating workspace, grading after every step.
 // `trial` carries repoRoot, execute, cwd, environment, target, harvest (or null)
 // and metrics (or null) for one task trial.
 function launchTrialStep(item, arm, trial, query, manualIds) {
-  const task = { sessionId: 'ecc-eval', taskId: item.id, revision: 1, phase: 'evaluate', query };
+  const task = { sessionId: 'yus-eval', taskId: item.id, revision: 1, phase: 'evaluate', query };
   return launchTaskContext({ repoRoot: trial.repoRoot, execute: trial.execute,
     nativeEnvironment: trial.environment.launch, target: trial.target,
-    bare: arm === 'baseline' || arm === 'ecc-legacy',
+    bare: arm === 'baseline' || arm === 'yus-legacy',
     task: { ...task, ...(arm === 'manual-lean' && manualIds?.length ? { explicitIds: manualIds } : {}) },
     profileId: arm === 'full' ? 'full@1' : 'lean@1', selectionMode: arm === 'auto-lean' ? 'auto' : 'manual' });
 }
@@ -810,8 +810,8 @@ function resolveEvaluationFamily(options) {
 function pinEvaluation(options, resolvedFamily) {
   const { repoRoot, corpus, repeats, model, executable, effort, arms, provider, registration } = options;
   const pin = preregister({ repoRoot, corpus, repeats, model, executable, effort, arms });
-  if (!provider && resolvedFamily === 'codex' && pin.arms.includes('ecc-legacy')) {
-    throw new Error('Codex real evaluation requires --arms without ecc-legacy; the pinned legacy skills arm is Claude-only');
+  if (!provider && resolvedFamily === 'codex' && pin.arms.includes('yus-legacy')) {
+    throw new Error('Codex real evaluation requires --arms without yus-legacy; the pinned legacy skills arm is Claude-only');
   }
   if (registration && !isDeepStrictEqual(registration, pin)) throw new Error('Registration pin mismatch');
   return pin;
@@ -851,7 +851,7 @@ function prepareEvaluationEnvironments(options, plan, installRoot) {
   if (injected) return syntheticEnvironments(installRoot);
   if (resolvedFamily !== 'claude') return prepareEnvironments({ repoRoot, executable, root: installRoot });
   return prepareClaudeEnvironments({ repoRoot, executable, root: installRoot,
-    ...(pin.arms.includes('ecc-legacy')
+    ...(pin.arms.includes('yus-legacy')
       ? { legacySource: exportLegacySource({ repoRoot, destination: path.join(installRoot, 'legacy-source') }) }
       : {}) });
 }
@@ -878,7 +878,7 @@ function runOutcomeTrials(run, outcomes) {
     const item = corpus.tasks.find(c => c.id === scheduled.id);
     for (const arm of scheduled.arms) {
       const cwd = path.join(temp, `${item.id}--${arm}--${scheduled.repeat}`);
-      const environment = envs[['full', 'baseline', 'ecc-legacy'].includes(arm) ? arm : 'lean'];
+      const environment = envs[['full', 'baseline', 'yus-legacy'].includes(arm) ? arm : 'lean'];
       fs.mkdirSync(cwd);
       writeWorkspace(cwd, item.files);
       const start = state.metrics.length;
@@ -895,7 +895,7 @@ function runOutcomeTrials(run, outcomes) {
 function executeEvaluation(options, plan) {
   const { repoRoot, corpus, environments, artifactDir } = options;
   const { resolvedFamily, pin, injected, state } = plan;
-  const temp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-ai-eval-')));
+  const temp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-ai-eval-')));
   const selection = [];
   const outcomes = [];
   let installs;
@@ -930,7 +930,7 @@ function buildEvaluationReport(options, plan, run) {
   const { selection, outcomes, installs, harvester } = run;
   const summary = summarize(outcomes, pin.arms);
   const insufficient = summary.distinctTasks < pin.minimumDistinctTasks || selection.length < pin.minimumDistinctTasks;
-  return { schemaVersion: 'ecc.context-eval.v2', registration: pin,
+  return { schemaVersion: 'yus.context-eval.v2', registration: pin,
     evidence: injected ? 'injected-provider' : resolvedFamily === 'claude' ? 'claude-json' : 'codex-jsonl', installs,
     authentication: injected ? 'injected' : liveProvider.authentication, credentialsRetained: false,
     calls: state.calls, bounds: { maxCalls, deadlineMs, callTimeoutMs }, selection, outcomes, summary,

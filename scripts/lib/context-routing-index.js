@@ -10,8 +10,8 @@ const { buildRetrievalIndex, searchRetrieval, sparseDense } = require('./context
 const { hasSuggestionEvidence } = require('./context-selection');
 const { DEFAULT_REPO_ROOT, digestObject, stableStringify } = require('./context-profile-support');
 
-const SCHEMA = 'ecc.context-routing-index.v1';
-const POINTER_SCHEMA = 'ecc.context-routing-pointer.v1';
+const SCHEMA = 'yus.context-routing-index.v1';
+const POINTER_SCHEMA = 'yus.context-routing-pointer.v1';
 const DIGEST = /^[a-f0-9]{64}$/;
 const MAX_SUGGESTIONS = 3;
 const MAX_DESCRIPTION = 120;
@@ -34,18 +34,18 @@ function checkedRoot(stateRoot) {
 // bind an index to the current generation without rehashing the payload.
 function readBinding(stateRoot) {
   const root = checkedRoot(stateRoot);
-  const marker = { schemaVersion: 'ecc.context-store.v1', destinationDigest: digestObject({ root }) };
+  const marker = { schemaVersion: 'yus.context-store.v1', destinationDigest: digestObject({ root }) };
   const markerFile = path.join(root, 'store.json');
   if (!io.inspect(markerFile, true).stat || stableStringify(io.readJson(markerFile)) !== stableStringify(marker)) {
-    throw new Error('Directory is not an owned ECC managed store');
+    throw new Error('Directory is not an owned yus managed store');
   }
   const state = io.readJson(path.join(root, 'state.json'));
-  if (state.schemaVersion !== 'ecc.context-store-state.v1' || !DIGEST.test(state.receiptDigest) || !DIGEST.test(state.generationDigest)
+  if (state.schemaVersion !== 'yus.context-store-state.v1' || !DIGEST.test(state.receiptDigest) || !DIGEST.test(state.generationDigest)
     || !Number.isSafeInteger(state.revision) || state.revision < 1) {
     throw new Error('Managed state integrity mismatch');
   }
   const receipt = io.readJson(path.join(root, 'receipts', `${state.receiptDigest}.json`));
-  if (receipt.schemaVersion !== 'ecc.context-store-receipt.v1' || digestObject(receipt) !== state.receiptDigest
+  if (receipt.schemaVersion !== 'yus.context-store-receipt.v1' || digestObject(receipt) !== state.receiptDigest
     || receipt.generationDigest !== state.generationDigest || receipt.destinationDigest !== marker.destinationDigest
     || !Number.isSafeInteger(receipt.revision) || receipt.revision < 1 || receipt.revision !== state.revision
     || !['auto', 'manual', 'suggest'].includes(receipt.selection?.selectionMode)
@@ -136,7 +136,7 @@ function readRoutingIndex(stateRoot, binding = readBinding(stateRoot)) {
   if (binding.root !== checkedRoot(stateRoot)) throw new Error('Routing binding belongs to a different store');
   const file = pointerPath(binding.root, binding.generationDigest);
   if (!io.inspect(path.dirname(file), true).stat || !io.inspect(file, true).stat) return null;
-  const invalid = () => new Error('Routing index integrity mismatch; rebuild it with ecc profile routing-index');
+  const invalid = () => new Error('Routing index integrity mismatch; rebuild it with yus profile routing-index');
   if (io.inspect(file).stat.size > MAX_POINTER_BYTES) throw invalid();
   const pointerBytes = io.read(file);
   if (pointerBytes.length > MAX_POINTER_BYTES) throw invalid();

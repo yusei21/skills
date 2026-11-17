@@ -1,6 +1,6 @@
 const AGENT_COUNT = require('fs').readdirSync(require('path').join(__dirname,'../../agents')).filter(f => f.endsWith('.md')).length;
 /**
- * Tests for the ECC Agent IR → Pi emitter (scripts/lib/agent-emit-pi.js).
+ * Tests for the yus Agent IR → Pi emitter (scripts/lib/agent-emit-pi.js).
  *
  * Verifies that every IR object becomes a valid Pi subagent definition against
  * the verified `@tintinweb/pi-subagents@0.19.0` surface: `name` / `description`

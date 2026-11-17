@@ -1,4 +1,4 @@
-"""Compatibility import for the canonical ECC Resolve adapter.
+"""Compatibility import for the canonical yus Resolve adapter.
 
 Alias the module itself so integrations that patch this import path continue
 patching the globals used by the canonical implementation.

@@ -4,10 +4,10 @@
  * Read hooks/hooks.json together with its sibling hooks/hooks.metadata.json.
  *
  * Claude Code validates a plugin's hooks.json against its own schema and warns
- * about every key it does not recognise, so ECC's stable matcher ids and
+ * about every key it does not recognise, so yus's stable matcher ids and
  * human-readable descriptions cannot live in that file. They are kept in a
  * sidecar keyed by event name and aligned with hooks.json entry order, and
- * merged back here so the rest of ECC keeps seeing one object with `id` and
+ * merged back here so the rest of yus keeps seeing one object with `id` and
  * `description` on each matcher entry.
  *
  * Index alignment alone cannot tell a reordered hooks.json from a correct one,

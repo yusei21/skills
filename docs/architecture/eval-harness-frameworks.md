@@ -14,7 +14,7 @@ node scripts/eval-harness.js example
 ## Why these five
 
 The harness engineering plan v2 (August 2026) describes a twelve-layer stack.
-The part that belongs in the portable ECC package is the contract surface any
+The part that belongs in the portable yus package is the contract surface any
 harness can install and exercise: record what happened, prove it was not
 altered, gate a proposed change behind an external checker, replay tool calls
 without re-firing effects, and hand a verifier something it can check without
@@ -61,10 +61,10 @@ first entry links to sixty-four zeros; every later entry links to the previous
 
 ```js
 const { capsule } = require('./scripts/lib/eval-harness');
-const c = capsule.Capsule.create('.ecc/capsules/run-42', { task_family: 'slugify' });
+const c = capsule.Capsule.create('.yus/capsules/run-42', { task_family: 'slugify' });
 c.append('plan', 'inspection.start', { task_id: 't01' });
 c.append('attempt', 'gate.unavailable', { status: 'blocked', reason: 'gate.isolation_required' });
-capsule.verify('.ecc/capsules/run-42');   // { ok, code, failed_at, root_hash }
+capsule.verify('.yus/capsules/run-42');   // { ok, code, failed_at, root_hash }
 ```
 
 `verify` returns `ok: false` with a stable code and the exact failing index for
@@ -189,12 +189,12 @@ opt-in layer outside this package.
 Select 1 to 100 existing capsule directories from one task family:
 
 ```sh
-node scripts/eval-harness.js capsule group .ecc/capsules/run-41 .ecc/capsules/run-42
+node scripts/eval-harness.js capsule group .yus/capsules/run-41 .yus/capsules/run-42
 ```
 
 ```js
 const { retrospective } = require('./scripts/lib/eval-harness');
-const report = retrospective.groupCapsules(['.ecc/capsules/run-41', '.ecc/capsules/run-42']);
+const report = retrospective.groupCapsules(['.yus/capsules/run-41', '.yus/capsules/run-42']);
 ```
 
 This read-only utility recomputes each projection from the verified metadata and
@@ -295,7 +295,7 @@ verified OS backend. Existing manifest/config fixtures are preserved as data.
 
 ```js
 const { replay } = require('./scripts/lib/eval-harness');
-const store = new replay.FixtureStore('.ecc/fixtures');
+const store = new replay.FixtureStore('.yus/fixtures');
 const tools = {
   read_inventory: { effect_class: 'SE0', determinism: 'deterministic', impl: liveRead },
   place_order: { effect_class: 'SE4', determinism: 'nondeterministic', impl: livePlace },
@@ -316,7 +316,7 @@ It no longer attempts JavaScript interception.
 ## Offline receipts
 
 ```sh
-node scripts/eval-harness.js receipt build .ecc/capsules/run-42 \
+node scripts/eval-harness.js receipt build .yus/capsules/run-42 \
   --artifact skills/my-skill/SKILL.md --out run-42.receipt.json
 node scripts/eval-harness.js receipt verify run-42.receipt.json exported-bundle/ \
   --artifact skills/my-skill/SKILL.md
@@ -373,7 +373,7 @@ and does not validate normal prepack or clear a release.
 - The `harness-optimizer` agent and `/harness-audit` command must report the gate
   unavailable until a reviewed OS backend exists. They cannot emit new gate
   receipts using this implementation.
-- The Rust `ecc2/src/harness_eval.rs` bounded evaluation loop is a separate,
+- The Rust `yus2/src/harness_eval.rs` bounded evaluation loop is a separate,
   earlier experiment. The Node frameworks are the portable surface.
 
 ## Tests

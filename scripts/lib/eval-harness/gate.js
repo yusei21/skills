@@ -38,8 +38,8 @@ const DEFAULT_TRIPWIRES = Object.freeze([
   { rule: 'hidden_network', pattern: /require\(\s*['"](?:node:)?(?:http|https|net|tls|dgram|dns|http2)['"]\s*\)/ },
   { rule: 'hidden_network', pattern: /\bfetch\s*\(/ },
   { rule: 'process_spawn', pattern: /require\(\s*['"](?:node:)?child_process['"]\s*\)/ },
-  { rule: 'sandbox_weakening', pattern: /Module\._load|--no-sandbox|NODE_OPTIONS|effect-fence|ECC_EFFECT_FENCE/ },
-  { rule: 'checker_probe', pattern: /taskset|expected_output|\.gate-marker|gate-receipt|ECC_GATE_/ },
+  { rule: 'sandbox_weakening', pattern: /Module\._load|--no-sandbox|NODE_OPTIONS|effect-fence|YUS_EFFECT_FENCE/ },
+  { rule: 'checker_probe', pattern: /taskset|expected_output|\.gate-marker|gate-receipt|YUS_GATE_/ },
   { rule: 'parent_escape', pattern: /(?:^|[^.\w])\.\.(?:[\\/]|['"`])/ },
 ]);
 

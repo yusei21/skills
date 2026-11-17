@@ -21,7 +21,7 @@ function test(name, fn) {
 }
 
 function tempDir(prefix) {
-  return fs.mkdtempSync(path.join(os.tmpdir(), `ecc-eval-harness-${prefix}-`));
+  return fs.mkdtempSync(path.join(os.tmpdir(), `yus-eval-harness-${prefix}-`));
 }
 
 function cleanup(dir) {

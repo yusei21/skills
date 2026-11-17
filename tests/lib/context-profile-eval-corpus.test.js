@@ -32,19 +32,19 @@ function writeTree(dir, files) {
 }
 
 function runCheck(task, overlay) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), `ecc-eval-${task.id}-`));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), `yus-eval-${task.id}-`));
   try {
     writeTree(dir, task.files);
     if (overlay) writeTree(dir, overlay);
-    fs.writeFileSync(path.join(dir, '.ecc-eval-check.cjs'), task.check);
-    return spawnSync(process.execPath, ['.ecc-eval-check.cjs'], { cwd: dir, timeout: 10000, encoding: 'utf8' });
+    fs.writeFileSync(path.join(dir, '.yus-eval-check.cjs'), task.check);
+    return spawnSync(process.execPath, ['.yus-eval-check.cjs'], { cwd: dir, timeout: 10000, encoding: 'utf8' });
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 }
 
 test('corpus v2 header, ids and probe shapes are valid', () => {
-  assert.equal(corpus.schemaVersion, 'ecc.context-eval-corpus.v2');
+  assert.equal(corpus.schemaVersion, 'yus.context-eval-corpus.v2');
   assert.equal(corpus.id, 'coding-tasks@1');
   assert.equal(typeof corpus.sampling, 'string');
   assert.ok(corpus.sampling.length > 0);
@@ -98,7 +98,7 @@ test('tasks respect shape, size and path-safety limits', () => {
     if (task.noWorkflow !== undefined) assert.equal(task.noWorkflow, true, task.id);
     assert.ok(bytes(task.query) > 0 && bytes(task.query) <= 1500, `${task.id} query is ${bytes(task.query)} bytes`);
     assert.ok(/dependenc/i.test(task.query), `${task.id} query must forbid new dependencies`);
-    assert.ok(!/ecc-eval-check|hidden check/i.test(task.query), task.id);
+    assert.ok(!/yus-eval-check|hidden check/i.test(task.query), task.id);
     const files = Object.entries(task.files);
     assert.ok(files.length >= 1 && files.length <= 4, `${task.id} has ${files.length} files`);
     let total = 0;

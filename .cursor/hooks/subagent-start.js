@@ -8,7 +8,7 @@ readStdin().then(raw => {
   try {
     const input = JSON.parse(raw);
     const agent = input.agent_name || input.agent || 'unknown';
-    console.error(`[ECC] Agent spawned: ${agent}`);
+    console.error(`[yus] Agent spawned: ${agent}`);
   } catch {
     // Audit-only hook: malformed payloads must not interrupt the agent loop.
   }

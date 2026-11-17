@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * ECC CodeBuddy Installer (Cross-platform Node.js version)
- * Installs ECC workflows into a CodeBuddy project.
+ * yus CodeBuddy Installer (Cross-platform Node.js version)
+ * Installs yus workflows into a CodeBuddy project.
  *
  * Usage:
  *   node install.js              # Install to current directory
@@ -170,7 +170,7 @@ function doInstall() {
     codebuddyFullPath = path.join(targetDir, codebuddyDirName);
   }
 
-  console.log('ECC CodeBuddy Installer');
+  console.log('yus CodeBuddy Installer');
   console.log('=======================');
   console.log('');
   console.log(`Source:  ${repoRoot}`);
@@ -184,7 +184,7 @@ function doInstall() {
   }
 
   // Manifest file
-  const manifest = path.join(codebuddyFullPath, '.ecc-manifest');
+  const manifest = path.join(codebuddyFullPath, '.yus-manifest');
   ensureDir(path.dirname(manifest));
 
   // Counters
@@ -289,7 +289,7 @@ function doInstall() {
   }
 
   // Add manifest itself
-  ensureManifestEntry(manifest, '.ecc-manifest');
+  ensureManifestEntry(manifest, '.yus-manifest');
 
   // Print summary
   console.log('Installation complete!');
@@ -305,7 +305,7 @@ function doInstall() {
   console.log('Next steps:');
   console.log('  1. Open your project in CodeBuddy');
   console.log('  2. Type / to see available commands');
-  console.log('  3. Enjoy the ECC workflows!');
+  console.log('  3. Enjoy the yus workflows!');
   console.log('');
   console.log('To uninstall later:');
   console.log(`  cd ${codebuddyFullPath}`);

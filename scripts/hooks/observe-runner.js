@@ -22,8 +22,8 @@ function getPluginRoot(options = {}) {
   if (process.env.CLAUDE_PLUGIN_ROOT && process.env.CLAUDE_PLUGIN_ROOT.trim()) {
     return process.env.CLAUDE_PLUGIN_ROOT.trim();
   }
-  if (process.env.ECC_PLUGIN_ROOT && process.env.ECC_PLUGIN_ROOT.trim()) {
-    return process.env.ECC_PLUGIN_ROOT.trim();
+  if (process.env.YUS_PLUGIN_ROOT && process.env.YUS_PLUGIN_ROOT.trim()) {
+    return process.env.YUS_PLUGIN_ROOT.trim();
   }
   return path.resolve(__dirname, '..', '..');
 }
@@ -82,12 +82,12 @@ function findShellBinary() {
 }
 
 function getPhaseFromHookId(hookId) {
-  const prefix = String(hookId || process.env.ECC_HOOK_ID || '').split(':')[0];
+  const prefix = String(hookId || process.env.YUS_HOOK_ID || '').split(':')[0];
   return prefix === 'pre' || prefix === 'post' ? prefix : null;
 }
 
 function getTimeoutMs() {
-  const parsed = Number.parseInt(process.env.ECC_OBSERVE_RUNNER_TIMEOUT_MS || '', 10);
+  const parsed = Number.parseInt(process.env.YUS_OBSERVE_RUNNER_TIMEOUT_MS || '', 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_TIMEOUT_MS;
 }
 
@@ -141,7 +141,7 @@ function run(raw, options = {}) {
     env: {
       ...process.env,
       CLAUDE_PLUGIN_ROOT: pluginRoot,
-      ECC_PLUGIN_ROOT: pluginRoot
+      YUS_PLUGIN_ROOT: pluginRoot
     },
     cwd: process.cwd(),
     timeout: getTimeoutMs(),
@@ -196,7 +196,7 @@ if (require.main === module) {
   } catch (_error) {
     raw = '';
   }
-  const output = run(raw, { hookId: process.argv[2] || process.env.ECC_HOOK_ID });
+  const output = run(raw, { hookId: process.argv[2] || process.env.YUS_HOOK_ID });
   process.exit(emitHookResult(raw, output));
 }
 

@@ -261,7 +261,7 @@ function resolveCommand(command) {
 
 const LINTER_TIMEOUT_MS = 30000;
 const UNSAFE_CMD_TOKEN = /["\0\r\n]/;
-const CMD_TOKEN_ENV_PREFIX = 'ECC_LINTER_TOKEN_';
+const CMD_TOKEN_ENV_PREFIX = 'YUS_LINTER_TOKEN_';
 
 function validateCmdToken(value) {
   const token = String(value);

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "ECC Hooks Metadata",
+  "title": "yus Hooks Metadata",
   "description": "Stable ids and human-readable descriptions for the matcher entries in hooks/hooks.json. Kept in a sidecar because Claude Code reports any key outside its own hooks schema as an unknown key when the plugin loads.",
   "type": "object",
   "required": [

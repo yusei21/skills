@@ -18,13 +18,13 @@
  *                            Claude must verify the diff, run tests, and re-review
  *
  * Options:
- *   --model <slug>           default: gpt-6-astra (or ECC_ASTRA_MODEL)
+ *   --model <slug>           default: gpt-6-astra (or YUS_ASTRA_MODEL)
  *   --timeout-seconds <n>    30-900, default 300
  *   --instructions <text>    extra reviewer instructions
  *   --output <file>          also write the JSON verdict to <file>
  *   --json                   print JSON instead of the markdown report
  *   --dry-run                print the prompt and exit without calling Codex
- *   --consent-to-openai      required (or ECC_ASTRA_CONSENT=1); code leaves the machine
+ *   --consent-to-openai      required (or YUS_ASTRA_CONSENT=1); code leaves the machine
  *
  * Exit codes: 0 PASS or nothing to review, 1 FAIL, 2 usage/runtime error.
  */
@@ -93,13 +93,13 @@ function takeValue(argv, index, flag) {
 function parseArgs(argv, env = process.env) {
   let options = {
     base: null, commit: null, files: [], filesFromCommit: null, fixFindings: null,
-    model: env.ECC_ASTRA_MODEL || codex.DEFAULT_MODEL,
+    model: env.YUS_ASTRA_MODEL || codex.DEFAULT_MODEL,
     timeoutMs: codex.DEFAULT_TIMEOUT_MS,
     instructions: '',
     output: null,
     json: false,
     dryRun: false,
-    consent: env.ECC_ASTRA_CONSENT === '1',
+    consent: env.YUS_ASTRA_CONSENT === '1',
     help: false,
   };
 
@@ -148,7 +148,7 @@ function parseArgs(argv, env = process.env) {
 
 function refuseWithoutConsent(options, stderr) {
   if (options.consent) return false;
-  stderr.write('Refusing to send code to OpenAI without --consent-to-openai (or ECC_ASTRA_CONSENT=1).\n');
+  stderr.write('Refusing to send code to OpenAI without --consent-to-openai (or YUS_ASTRA_CONSENT=1).\n');
   return true;
 }
 

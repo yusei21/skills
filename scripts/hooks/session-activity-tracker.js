@@ -3,7 +3,7 @@
  * Session Activity Tracker Hook
  *
  * PostToolUse hook that records sanitized per-tool activity to
- * ~/.claude/metrics/tool-usage.jsonl for ECC2 metric sync.
+ * ~/.claude/metrics/tool-usage.jsonl for yus2 metric sync.
  */
 
 'use strict';
@@ -574,12 +574,12 @@ function buildActivityRow(input, env = process.env) {
   const toolName = String(input?.tool_name || '').trim();
   // The payload identifies the actual harness conversation. Preserve it ahead
   // of inherited environment IDs, which may belong to a parent or concurrent
-  // session. Correlating that conversation with a native ECC session requires
+  // session. Correlating that conversation with a native yus session requires
   // an explicit binding, not an ownership guess from the environment.
   // Sanitize candidates separately so invalid values retain safe fallbacks.
   const sessionId =
     sanitizeSessionId(input?.session_id) ||
-    sanitizeSessionId(env.ECC_SESSION_ID) ||
+    sanitizeSessionId(env.YUS_SESSION_ID) ||
     sanitizeSessionId(env.CLAUDE_SESSION_ID) ||
     '';
   if (!toolName || !sessionId) {

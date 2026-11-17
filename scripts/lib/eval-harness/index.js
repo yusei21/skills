@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * ECC eval-harness frameworks.
+ * yus eval-harness frameworks.
  *
  * envelope  capsule-envelope/v1 contract, redaction, secret canaries
  * capsule   append-only hash-linked journal with five lineages

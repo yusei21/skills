@@ -1,16 +1,16 @@
-# ECC 2.2.3
+# yus 2.2.3
 
-ECC 2.2.3 is a naming and release-reliability update. The project is called ECC
+yus 2.2.3 is a naming and release-reliability update. The project is called yus
 everywhere it ships, starting with the `pi/core` profile, and the release
 workflow now waits long enough for npm to serve a freshly published version.
 
 ## Naming
 
 - `pi/core` no longer expands the project name: its README and the bundled
-  `blueprint` skill refer to ECC only. The profile contents are otherwise
+  `blueprint` skill refer to yus only. The profile contents are otherwise
   unchanged: 123 curated skills and 24 prompt commands, 35,006 characters of
   skill description text.
-- Downstream packagers need no changes. The package is still `ecc-pi-core`, the
+- Downstream packagers need no changes. The package is still `yus-pi-core`, the
   directory is still `pi/core/`, and existing install paths keep working.
 
 ## Release workflow

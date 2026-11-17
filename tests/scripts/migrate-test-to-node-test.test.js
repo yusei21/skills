@@ -66,7 +66,7 @@ runTests();
 `;
 
 function runMigrated(source) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-codemod-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-codemod-'));
   try {
     const file = path.join(dir, 'sample.test.js');
     fs.writeFileSync(file, source);

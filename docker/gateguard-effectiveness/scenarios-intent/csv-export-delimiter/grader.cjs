@@ -42,4 +42,4 @@ try {
 } catch (_) {
   checks = new Array(CHECKS).fill(false);
 }
-console.log(`ECC_EVAL_SCORE ${JSON.stringify({ score: checks.filter(Boolean).length / CHECKS })}`);
+console.log(`YUS_EVAL_SCORE ${JSON.stringify({ score: checks.filter(Boolean).length / CHECKS })}`);

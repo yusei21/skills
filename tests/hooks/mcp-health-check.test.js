@@ -39,7 +39,7 @@ async function asyncTest(name, fn) {
 }
 
 function createTempDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-mcp-health-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'yus-mcp-health-'));
 }
 
 function cleanupTempDir(dirPath) {
@@ -76,7 +76,7 @@ function createCommandConfig(scriptPath) {
 function buildHookEnv(env = {}) {
   const merged = {
     ...process.env,
-    ECC_HOOK_PROFILE: 'standard'
+    YUS_HOOK_PROFILE: 'standard'
   };
 
   for (const [key, value] of Object.entries(env)) {
@@ -198,8 +198,8 @@ async function runTests() {
     const rawInput = JSON.stringify({ tool_name: 'mcp__flaky__search', tool_input: {} });
     const result = runRawHook(rawInput, {
       CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-      ECC_HOOK_INPUT_TRUNCATED: '1',
-      ECC_HOOK_INPUT_MAX_BYTES: '512'
+      YUS_HOOK_INPUT_TRUNCATED: '1',
+      YUS_HOOK_INPUT_MAX_BYTES: '512'
     });
 
     assert.strictEqual(result.code, 2, 'Expected truncated MCP input to block by default');
@@ -212,9 +212,9 @@ async function runTests() {
     const rawInput = JSON.stringify({ tool_name: 'mcp__flaky__search', tool_input: {} });
     const result = runRawHook(rawInput, {
       CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-      ECC_HOOK_INPUT_TRUNCATED: 'true',
-      ECC_HOOK_INPUT_MAX_BYTES: '256',
-      ECC_MCP_HEALTH_FAIL_OPEN: 'yes'
+      YUS_HOOK_INPUT_TRUNCATED: 'true',
+      YUS_HOOK_INPUT_MAX_BYTES: '256',
+      YUS_MCP_HEALTH_FAIL_OPEN: 'yes'
     });
 
     assert.strictEqual(result.code, 0, 'Expected fail-open mode to allow truncated MCP input');
@@ -246,12 +246,12 @@ async function runTests() {
         input,
         {
           CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-          ECC_MCP_CONFIG_PATH: null,
-          ECC_MCP_HEALTH_STATE_PATH: null,
-          ECC_MCP_HEALTH_TIMEOUT_MS: '100',
+          YUS_MCP_CONFIG_PATH: null,
+          YUS_MCP_HEALTH_STATE_PATH: null,
+          YUS_MCP_HEALTH_TIMEOUT_MS: '100',
           // Workspace configs are untrusted by default; this test uses a
           // temp dir it created itself, so opt in explicitly.
-          ECC_MCP_ALLOW_WORKSPACE_PROBE: '1',
+          YUS_MCP_ALLOW_WORKSPACE_PROBE: '1',
           HOME: homeDir,
           USERPROFILE: homeDir
         },
@@ -310,16 +310,16 @@ async function runTests() {
         { tool_name: 'mcp__cached__list', tool_input: {} },
         {
           CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-          ECC_MCP_CONFIG_PATH: path.join(tempDir, 'missing.json'),
-          ECC_MCP_HEALTH_STATE_PATH: healthyStatePath
+          YUS_MCP_CONFIG_PATH: path.join(tempDir, 'missing.json'),
+          YUS_MCP_HEALTH_STATE_PATH: healthyStatePath
         }
       );
       const unhealthy = runHook(
         { tool_name: 'mcp__blocked__query', tool_input: {} },
         {
           CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-          ECC_MCP_CONFIG_PATH: path.join(tempDir, 'missing.json'),
-          ECC_MCP_HEALTH_STATE_PATH: unhealthyStatePath
+          YUS_MCP_CONFIG_PATH: path.join(tempDir, 'missing.json'),
+          YUS_MCP_HEALTH_STATE_PATH: unhealthyStatePath
         }
       );
 
@@ -348,8 +348,8 @@ async function runTests() {
         },
         {
           CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-          ECC_MCP_CONFIG_PATH: path.join(tempDir, 'missing.json'),
-          ECC_MCP_HEALTH_STATE_PATH: statePath
+          YUS_MCP_CONFIG_PATH: path.join(tempDir, 'missing.json'),
+          YUS_MCP_HEALTH_STATE_PATH: statePath
         }
       );
 
@@ -383,9 +383,9 @@ async function runTests() {
       };
       const result = runHook(input, {
         CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-        ECC_MCP_CONFIG_PATH: configPath,
-        ECC_MCP_HEALTH_STATE_PATH: statePath,
-        ECC_MCP_HEALTH_TIMEOUT_MS: '100'
+        YUS_MCP_CONFIG_PATH: configPath,
+        YUS_MCP_HEALTH_STATE_PATH: statePath,
+        YUS_MCP_HEALTH_TIMEOUT_MS: '100'
       });
 
       assert.strictEqual(result.code, 0, `Expected explicit MCP target to pass, got ${result.code}: ${result.stderr}`);
@@ -413,9 +413,9 @@ async function runTests() {
       const input = { tool_name: 'mcp__mock__list_items', tool_input: {} };
       const result = runHook(input, {
         CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-        ECC_MCP_CONFIG_PATH: configPath,
-        ECC_MCP_HEALTH_STATE_PATH: statePath,
-        ECC_MCP_HEALTH_TIMEOUT_MS: '100'
+        YUS_MCP_CONFIG_PATH: configPath,
+        YUS_MCP_HEALTH_STATE_PATH: statePath,
+        YUS_MCP_HEALTH_TIMEOUT_MS: '100'
       });
 
       assert.strictEqual(result.code, 0, `Expected healthy server to pass, got ${result.code}`);
@@ -446,9 +446,9 @@ async function runTests() {
         { tool_name: 'mcp__flaky__search', tool_input: {} },
         {
           CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-          ECC_MCP_CONFIG_PATH: configPath,
-          ECC_MCP_HEALTH_STATE_PATH: statePath,
-          ECC_MCP_HEALTH_TIMEOUT_MS: '1000'
+          YUS_MCP_CONFIG_PATH: configPath,
+          YUS_MCP_HEALTH_STATE_PATH: statePath,
+          YUS_MCP_HEALTH_TIMEOUT_MS: '1000'
         }
       );
 
@@ -481,10 +481,10 @@ async function runTests() {
         { tool_name: 'mcp__relaxed__list', tool_input: {} },
         {
           CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-          ECC_MCP_CONFIG_PATH: configPath,
-          ECC_MCP_HEALTH_STATE_PATH: statePath,
-          ECC_MCP_HEALTH_FAIL_OPEN: '1',
-          ECC_MCP_HEALTH_TIMEOUT_MS: '1000'
+          YUS_MCP_CONFIG_PATH: configPath,
+          YUS_MCP_HEALTH_STATE_PATH: statePath,
+          YUS_MCP_HEALTH_FAIL_OPEN: '1',
+          YUS_MCP_HEALTH_TIMEOUT_MS: '1000'
         }
       );
 
@@ -514,18 +514,18 @@ async function runTests() {
         { tool_name: 'mcp__unsupported__search', tool_input: {} },
         {
           CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-          ECC_MCP_CONFIG_PATH: configPath,
-          ECC_MCP_HEALTH_STATE_PATH: statePath,
-          ECC_MCP_HEALTH_TIMEOUT_MS: '1000'
+          YUS_MCP_CONFIG_PATH: configPath,
+          YUS_MCP_HEALTH_STATE_PATH: statePath,
+          YUS_MCP_HEALTH_TIMEOUT_MS: '1000'
         }
       );
       const missingCommand = runHook(
         { tool_name: 'mcp__missingcmd__search', tool_input: {} },
         {
           CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-          ECC_MCP_CONFIG_PATH: configPath,
-          ECC_MCP_HEALTH_STATE_PATH: statePath,
-          ECC_MCP_HEALTH_TIMEOUT_MS: '1000'
+          YUS_MCP_CONFIG_PATH: configPath,
+          YUS_MCP_HEALTH_STATE_PATH: statePath,
+          YUS_MCP_HEALTH_TIMEOUT_MS: '1000'
         }
       );
 
@@ -551,7 +551,7 @@ async function runTests() {
     try {
       fs.writeFileSync(
         serverScript,
-        "console.error(`probe failed with ${process.env.ECC_MCP_TEST_MARKER}`); process.exit(1);\n"
+        "console.error(`probe failed with ${process.env.YUS_MCP_TEST_MARKER}`); process.exit(1);\n"
       );
       writeConfig(configPath, {
         mcpServers: {
@@ -559,7 +559,7 @@ async function runTests() {
             command: process.execPath,
             args: [serverScript],
             env: {
-              ECC_MCP_TEST_MARKER: 'marker-from-config'
+              YUS_MCP_TEST_MARKER: 'marker-from-config'
             }
           }
         }
@@ -569,9 +569,9 @@ async function runTests() {
         { tool_name: 'mcp__stderrprobe__search', tool_input: {} },
         {
           CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-          ECC_MCP_CONFIG_PATH: configPath,
-          ECC_MCP_HEALTH_STATE_PATH: statePath,
-          ECC_MCP_HEALTH_TIMEOUT_MS: '1000'
+          YUS_MCP_CONFIG_PATH: configPath,
+          YUS_MCP_HEALTH_STATE_PATH: statePath,
+          YUS_MCP_HEALTH_TIMEOUT_MS: '1000'
         }
       );
 
@@ -620,12 +620,12 @@ async function runTests() {
         { tool_name: 'mcp__sticky__search', tool_input: {} },
         {
           CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-          ECC_MCP_CONFIG_PATH: configPath,
-          ECC_MCP_HEALTH_STATE_PATH: statePath,
-          ECC_MCP_RECONNECT_ALLOW: '1',
-          ECC_MCP_RECONNECT_COMMAND: `${JSON.stringify(process.execPath)} ${JSON.stringify(reconnectScript)}`,
-          ECC_MCP_HEALTH_TIMEOUT_MS: '1000',
-          ECC_MCP_HEALTH_BACKOFF_MS: '10'
+          YUS_MCP_CONFIG_PATH: configPath,
+          YUS_MCP_HEALTH_STATE_PATH: statePath,
+          YUS_MCP_RECONNECT_ALLOW: '1',
+          YUS_MCP_RECONNECT_COMMAND: `${JSON.stringify(process.execPath)} ${JSON.stringify(reconnectScript)}`,
+          YUS_MCP_HEALTH_TIMEOUT_MS: '1000',
+          YUS_MCP_HEALTH_BACKOFF_MS: '10'
         }
       );
 
@@ -684,11 +684,11 @@ async function runTests() {
         },
         {
           CLAUDE_HOOK_EVENT_NAME: 'PostToolUseFailure',
-          ECC_MCP_CONFIG_PATH: configPath,
-          ECC_MCP_HEALTH_STATE_PATH: statePath,
-          ECC_MCP_RECONNECT_ALLOW: '1',
-          ECC_MCP_RECONNECT_COMMAND: `node ${JSON.stringify(reconnectScript)}`,
-          ECC_MCP_HEALTH_TIMEOUT_MS: '1000'
+          YUS_MCP_CONFIG_PATH: configPath,
+          YUS_MCP_HEALTH_STATE_PATH: statePath,
+          YUS_MCP_RECONNECT_ALLOW: '1',
+          YUS_MCP_RECONNECT_COMMAND: `node ${JSON.stringify(reconnectScript)}`,
+          YUS_MCP_HEALTH_TIMEOUT_MS: '1000'
         }
       );
 
@@ -717,7 +717,7 @@ async function runTests() {
         },
         {
           CLAUDE_HOOK_EVENT_NAME: 'PostToolUseFailure',
-          ECC_MCP_HEALTH_STATE_PATH: statePath
+          YUS_MCP_HEALTH_STATE_PATH: statePath
         }
       );
 
@@ -744,8 +744,8 @@ async function runTests() {
         },
         {
           CLAUDE_HOOK_EVENT_NAME: 'PostToolUseFailure',
-          ECC_MCP_HEALTH_STATE_PATH: statePath,
-          ECC_MCP_RECONNECT_COMMAND: null
+          YUS_MCP_HEALTH_STATE_PATH: statePath,
+          YUS_MCP_RECONNECT_COMMAND: null
         }
       );
 
@@ -777,9 +777,9 @@ async function runTests() {
         },
         {
           CLAUDE_HOOK_EVENT_NAME: 'PostToolUseFailure',
-          ECC_MCP_HEALTH_STATE_PATH: statePath,
-          ECC_MCP_RECONNECT_ALLOW: '1',
-          ECC_MCP_RECONNECT_COMMAND: `${JSON.stringify(process.execPath)} ${JSON.stringify(reconnectScript)}`
+          YUS_MCP_HEALTH_STATE_PATH: statePath,
+          YUS_MCP_RECONNECT_ALLOW: '1',
+          YUS_MCP_RECONNECT_COMMAND: `${JSON.stringify(process.execPath)} ${JSON.stringify(reconnectScript)}`
         }
       );
 
@@ -814,11 +814,11 @@ async function runTests() {
         },
         {
           CLAUDE_HOOK_EVENT_NAME: 'PostToolUseFailure',
-          ECC_MCP_HEALTH_STATE_PATH: statePath,
-          ECC_MCP_CONFIG_PATH: path.join(tempDir, 'missing.json'),
-          ECC_MCP_RECONNECT_ALLOW: '1',
-          ECC_MCP_RECONNECT_COMMAND: null,
-          ECC_MCP_RECONNECT_FOO_BAR: `${JSON.stringify(process.execPath)} ${JSON.stringify(reconnectScript)} ${JSON.stringify(markerFile)} {server}`
+          YUS_MCP_HEALTH_STATE_PATH: statePath,
+          YUS_MCP_CONFIG_PATH: path.join(tempDir, 'missing.json'),
+          YUS_MCP_RECONNECT_ALLOW: '1',
+          YUS_MCP_RECONNECT_COMMAND: null,
+          YUS_MCP_RECONNECT_FOO_BAR: `${JSON.stringify(process.execPath)} ${JSON.stringify(reconnectScript)} ${JSON.stringify(markerFile)} {server}`
         }
       );
 
@@ -875,9 +875,9 @@ async function runTests() {
       const input = { tool_name: 'mcp__http400__search_repositories', tool_input: {} };
       const result = runHook(input, {
         CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-        ECC_MCP_CONFIG_PATH: configPath,
-        ECC_MCP_HEALTH_STATE_PATH: statePath,
-        ECC_MCP_HEALTH_TIMEOUT_MS: '2000'
+        YUS_MCP_CONFIG_PATH: configPath,
+        YUS_MCP_HEALTH_STATE_PATH: statePath,
+        YUS_MCP_HEALTH_TIMEOUT_MS: '2000'
       });
 
       assert.strictEqual(
@@ -946,9 +946,9 @@ async function runTests() {
       const input = { tool_name: 'mcp__http404__get_guide', tool_input: {} };
       const result = runHook(input, {
         CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-        ECC_MCP_CONFIG_PATH: configPath,
-        ECC_MCP_HEALTH_STATE_PATH: statePath,
-        ECC_MCP_HEALTH_TIMEOUT_MS: '2000'
+        YUS_MCP_CONFIG_PATH: configPath,
+        YUS_MCP_HEALTH_STATE_PATH: statePath,
+        YUS_MCP_HEALTH_TIMEOUT_MS: '2000'
       });
 
       assert.strictEqual(
@@ -1013,9 +1013,9 @@ async function runTests() {
       const input = { tool_name: 'mcp__atlassian__search', tool_input: {} };
       const result = runHook(input, {
         CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-        ECC_MCP_CONFIG_PATH: configPath,
-        ECC_MCP_HEALTH_STATE_PATH: statePath,
-        ECC_MCP_HEALTH_TIMEOUT_MS: '2000'
+        YUS_MCP_CONFIG_PATH: configPath,
+        YUS_MCP_HEALTH_STATE_PATH: statePath,
+        YUS_MCP_HEALTH_TIMEOUT_MS: '2000'
       });
 
       assert.strictEqual(
@@ -1082,9 +1082,9 @@ async function runTests() {
       const input = { tool_name: 'mcp__streamable__initialize', tool_input: {} };
       const result = runHook(input, {
         CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-        ECC_MCP_CONFIG_PATH: configPath,
-        ECC_MCP_HEALTH_STATE_PATH: statePath,
-        ECC_MCP_HEALTH_TIMEOUT_MS: '2000'
+        YUS_MCP_CONFIG_PATH: configPath,
+        YUS_MCP_HEALTH_STATE_PATH: statePath,
+        YUS_MCP_HEALTH_TIMEOUT_MS: '2000'
       });
 
       assert.strictEqual(
@@ -1135,9 +1135,9 @@ async function runTests() {
         const input = { tool_name: 'mcp__winfallback__list', tool_input: {} };
         const result = runHook(input, {
           CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-          ECC_MCP_CONFIG_PATH: configPath,
-          ECC_MCP_HEALTH_STATE_PATH: statePath,
-          ECC_MCP_HEALTH_TIMEOUT_MS: '500',
+          YUS_MCP_CONFIG_PATH: configPath,
+          YUS_MCP_HEALTH_STATE_PATH: statePath,
+          YUS_MCP_HEALTH_TIMEOUT_MS: '500',
           PATH: `${binDir}${path.delimiter}${process.env.PATH || ''}`
         });
 
@@ -1185,9 +1185,9 @@ async function runTests() {
       const input = { tool_name: 'mcp__shelltest__ping', tool_input: {} };
       const result = runHook(input, {
         CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-        ECC_MCP_CONFIG_PATH: configPath,
-        ECC_MCP_HEALTH_STATE_PATH: statePath,
-        ECC_MCP_HEALTH_TIMEOUT_MS: '100'
+        YUS_MCP_CONFIG_PATH: configPath,
+        YUS_MCP_HEALTH_STATE_PATH: statePath,
+        YUS_MCP_HEALTH_TIMEOUT_MS: '100'
       });
 
       assert.strictEqual(result.code, 0, `Expected non-absolute command to resolve via PATH, got ${result.code}`);
@@ -1236,9 +1236,9 @@ async function runTests() {
         const input = { tool_name: 'mcp__spacedarg__ping', tool_input: {} };
         const result = runHook(input, {
           CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-          ECC_MCP_CONFIG_PATH: configPath,
-          ECC_MCP_HEALTH_STATE_PATH: statePath,
-          ECC_MCP_HEALTH_TIMEOUT_MS: '800',
+          YUS_MCP_CONFIG_PATH: configPath,
+          YUS_MCP_HEALTH_STATE_PATH: statePath,
+          YUS_MCP_HEALTH_TIMEOUT_MS: '800',
           PATH: `${binDir}${path.delimiter}${process.env.PATH || ''}`
         });
 

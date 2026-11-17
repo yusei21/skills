@@ -224,10 +224,10 @@ test('rule transform keeps fenced code examples unchanged', () => {
   assert.ok(adapted.includes('~~~\n[tildes](../common/patterns.md)\n~~~'));
 });
 
-test('rules are planned into .github/instructions/ecc as renamed instructions files', () => {
+test('rules are planned into .github/instructions/yus as renamed instructions files', () => {
   const operations = planForRepo([{ id: 'rules-core', paths: ['rules'] }]);
   assert.ok(operations.length > 100);
-  const root = path.join('/project', '.github', 'instructions', 'ecc');
+  const root = path.join('/project', '.github', 'instructions', 'yus');
   for (const operation of operations) {
     assert.strictEqual(operation.contentTransform, 'copilot-rule-frontmatter');
     assert.ok(operation.destinationPath.endsWith('.instructions.md'), operation.destinationPath);
@@ -241,11 +241,11 @@ test('rules are planned into .github/instructions/ecc as renamed instructions fi
   )));
 });
 
-test('a rules subdirectory keeps its namespace under instructions/ecc', () => {
+test('a rules subdirectory keeps its namespace under instructions/yus', () => {
   const operations = planForRepo([{ id: 'rules-core', paths: ['rules/angular'] }]);
   assert.ok(operations.length > 0);
   for (const operation of operations) {
-    const relative = path.relative(path.join('/project', '.github', 'instructions', 'ecc', 'angular'), operation.destinationPath);
+    const relative = path.relative(path.join('/project', '.github', 'instructions', 'yus', 'angular'), operation.destinationPath);
     assert.ok(relative && !relative.startsWith('..') && !path.isAbsolute(relative), operation.destinationPath);
   }
 });
@@ -256,8 +256,8 @@ test('single rule files retain language namespaces and distinct managed destinat
   ] }]);
   assert.strictEqual(operations.length, 2);
   assert.deepStrictEqual(operations.map(operation => operation.destinationPath), [
-    path.join('/project', '.github', 'instructions', 'ecc', 'angular', 'coding-style.instructions.md'),
-    path.join('/project', '.github', 'instructions', 'ecc', 'typescript', 'coding-style.instructions.md')
+    path.join('/project', '.github', 'instructions', 'yus', 'angular', 'coding-style.instructions.md'),
+    path.join('/project', '.github', 'instructions', 'yus', 'typescript', 'coding-style.instructions.md')
   ]);
 });
 
@@ -326,7 +326,7 @@ test('repair and uninstall preserve user-owned agents across project adapters', 
   const { createManifestInstallPlan, applyInstallPlan } = require('../../scripts/lib/install-executor');
   const { repairInstalledStates, uninstallInstalledStates } = require('../../scripts/lib/install-lifecycle');
   for (const [target, segments] of [['copilot', ['.github', 'agents']], ['antigravity', ['.agents', 'agents']]]) {
-    const project = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agent-ownership-'));
+    const project = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-agent-ownership-'));
     try {
       const agent = path.join(project, ...segments, 'architect.md');
       fs.mkdirSync(path.dirname(agent), { recursive: true });
@@ -356,9 +356,9 @@ test('normal installed Copilot TDD command runs from the project with a complete
   const { spawnSync } = require('child_process');
   const { createManifestInstallPlan, applyInstallPlan } = require('../../scripts/lib/install-executor');
   const { repairInstalledStates, uninstallInstalledStates } = require('../../scripts/lib/install-lifecycle');
-  const project = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-copilot-workflow-'));
+  const project = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-copilot-workflow-'));
   try {
-    const env = { ...process.env, ECC_AGENT_DATA_HOME: path.join(project, 'data') };
+    const env = { ...process.env, YUS_AGENT_DATA_HOME: path.join(project, 'data') };
     const homeDir = path.join(project, 'home');
     fs.mkdirSync(path.join(project, 'scripts'));
     fs.writeFileSync(path.join(project, 'scripts', 'setup-package-manager.js'), 'USER PROJECT SENTINEL\n');
@@ -366,13 +366,13 @@ test('normal installed Copilot TDD command runs from the project with a complete
     const plan = createManifestInstallPlan({ target: 'copilot', moduleIds: ['workflow-quality'], projectRoot: project, homeDir, env });
     applyInstallPlan(plan);
     const skill = fs.readFileSync(path.join(project, '.github', 'skills', 'tdd-workflow', 'SKILL.md'), 'utf8');
-    assert.match(skill, /This Copilot projection runs the detector from the managed \.github\/ecc\/scripts\/ closure/);
+    assert.match(skill, /This Copilot projection runs the detector from the managed \.github\/yus\/scripts\/ closure/);
     assert.doesNotMatch(skill, /The resolution lines (?:locate|use)/, 'installed prose must describe the projected command');
     const command = skill.match(/node (\S*setup-package-manager\.js) --detect/);
     assert.ok(command, 'installed skill must give an executable detection command');
-    assert.strictEqual(command[1], '.github/ecc/scripts/setup-package-manager.js');
+    assert.strictEqual(command[1], '.github/yus/scripts/setup-package-manager.js');
     for (const helper of ['package-manager', 'utils', 'agent-data-home', 'path-safety']) {
-      assert.ok(fs.existsSync(path.join(project, '.github', 'ecc', 'scripts', 'lib', `${helper}.js`)), helper);
+      assert.ok(fs.existsSync(path.join(project, '.github', 'yus', 'scripts', 'lib', `${helper}.js`)), helper);
     }
     const detected = spawnSync(process.execPath, [command[1], '--detect'], { cwd: project, env, encoding: 'utf8', timeout: 15000 });
     assert.strictEqual(detected.status, 0, detected.stderr);
@@ -381,7 +381,7 @@ test('normal installed Copilot TDD command runs from the project with a complete
       const detectorBlock = [...skill.matchAll(/```bash\r?\n([\s\S]*?)```/g)]
         .map(match => match[1]).find(block => block.includes('setup-package-manager.js'));
       assert.ok(detectorBlock, 'installed skill must retain its executable Bash example');
-      assert.doesNotMatch(detectorBlock, /ECC_ROOT|CLAUDE_PLUGIN_ROOT/,
+      assert.doesNotMatch(detectorBlock, /YUS_ROOT|CLAUDE_PLUGIN_ROOT/,
         'Copilot must use its managed project helper instead of a Claude resolver');
       const actualRecipe = spawnSync('bash', ['-c', detectorBlock], {
         cwd: project, encoding: 'utf8', timeout: 15000,
@@ -394,17 +394,17 @@ test('normal installed Copilot TDD command runs from the project with a complete
     }
 
     assert.ok(!plan.operations.some(operation => operation.kind === 'update-claude-settings'
-      || /[\\/]\.github[\\/]hooks[\\/]|[\\/]ecc[\\/]scripts[\\/]hooks[\\/]|settings\.json$|hooks\.json$/.test(operation.destinationPath)), 'Copilot must not register hooks');
+      || /[\\/]\.github[\\/]hooks[\\/]|[\\/]yus[\\/]scripts[\\/]hooks[\\/]|settings\.json$|hooks\.json$/.test(operation.destinationPath)), 'Copilot must not register hooks');
     assert.strictEqual(fs.readFileSync(path.join(project, 'scripts', 'setup-package-manager.js'), 'utf8'), 'USER PROJECT SENTINEL\n');
     const options = { repoRoot: REPO_ROOT, projectRoot: project, homeDir, targets: ['copilot'], env };
     const repair = repairInstalledStates(options);
     assert.strictEqual(repair.summary.errorCount, 0, JSON.stringify(repair));
     const uninstall = uninstallInstalledStates(options);
     assert.strictEqual(uninstall.summary.errorCount, 0, JSON.stringify(uninstall));
-    assert.ok(!fs.existsSync(path.join(project, '.github', 'ecc', 'scripts', 'lib', 'package-manager.js')));
+    assert.ok(!fs.existsSync(path.join(project, '.github', 'yus', 'scripts', 'lib', 'package-manager.js')));
 
     const userProject = path.join(project, 'user-project');
-    const userHelper = path.join(userProject, '.github', 'ecc', 'scripts', 'setup-package-manager.js');
+    const userHelper = path.join(userProject, '.github', 'yus', 'scripts', 'setup-package-manager.js');
     fs.mkdirSync(path.dirname(userHelper), { recursive: true });
     fs.writeFileSync(userHelper, 'USER OWNED HELPER SENTINEL\n');
     const userPlan = createManifestInstallPlan({ target: 'copilot', moduleIds: ['workflow-quality'], projectRoot: userProject, homeDir, env });
@@ -427,8 +427,8 @@ test('normal installed Copilot TDD command runs from the project with a complete
 test('Copilot preserves unrelated workflow shell steps around a detector call', () => {
   const { transformInstallContent } = require('../../scripts/lib/install/content-transform');
   const content = [
-    '```bash', 'ECC_ROOT="/custom/tool"', 'printf before',
-    'node "$ECC_ROOT/scripts/setup-package-manager.js" --detect',
+    '```bash', 'YUS_ROOT="/custom/tool"', 'printf before',
+    'node "$YUS_ROOT/scripts/setup-package-manager.js" --detect',
     'printf after', '```', ''
   ].join('\n');
   const actual = transformInstallContent({
@@ -441,7 +441,7 @@ test('Copilot rewrites Markdown commands while preserving binary skill assets an
   const fs = require('fs');
   const os = require('os');
   const { createManifestInstallPlan, applyInstallPlan } = require('../../scripts/lib/install-executor');
-  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-copilot-assets-'));
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-copilot-assets-'));
   try {
     const sourceRoot = path.join(temp, 'source');
     fs.mkdirSync(path.join(sourceRoot, 'manifests'), { recursive: true });
@@ -458,7 +458,7 @@ test('Copilot rewrites Markdown commands while preserving binary skill assets an
     const plan = createManifestInstallPlan({ sourceRoot, target: 'copilot', moduleIds: ['fixture'], projectRoot: path.join(temp, 'project'), homeDir: path.join(temp, 'home'), env: {} });
     applyInstallPlan(plan);
     const installed = path.join(plan.targetRoot, 'skills', 'fixture');
-    assert.strictEqual(fs.readFileSync(path.join(installed, 'SKILL.md'), 'utf8'), original.replace('node scripts/', 'node .github/ecc/scripts/'));
+    assert.strictEqual(fs.readFileSync(path.join(installed, 'SKILL.md'), 'utf8'), original.replace('node scripts/', 'node .github/yus/scripts/'));
     assert.deepStrictEqual(fs.readFileSync(path.join(installed, 'asset.png')), binary);
     assert.strictEqual(fs.readFileSync(path.join(skillRoot, 'SKILL.md'), 'utf8'), original);
     assert.ok(!plan.operations.find(operation => operation.sourceRelativePath.endsWith('asset.png')).contentTransform);
@@ -471,7 +471,7 @@ test('Copilot installs non-Markdown agent assets byte-for-byte while adapting Ma
   const fs = require('fs');
   const os = require('os');
   const { createManifestInstallPlan, applyInstallPlan } = require('../../scripts/lib/install-executor');
-  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-copilot-agent-assets-'));
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-copilot-agent-assets-'));
   try {
     const sourceRoot = path.join(temp, 'source');
     fs.mkdirSync(path.join(sourceRoot, 'manifests'), { recursive: true });
@@ -507,12 +507,12 @@ test('Copilot installs rules as instructions and uninstall removes them', () => 
   const os = require('os');
   const { createManifestInstallPlan, applyInstallPlan } = require('../../scripts/lib/install-executor');
   const { uninstallInstalledStates } = require('../../scripts/lib/install-lifecycle');
-  const project = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-copilot-rules-'));
+  const project = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-copilot-rules-'));
   try {
     const homeDir = path.join(project, 'home');
     const plan = createManifestInstallPlan({ target: 'copilot', moduleIds: ['rules-core'], projectRoot: project, homeDir, env: {} });
     applyInstallPlan(plan);
-    const instructionsRoot = path.join(project, '.github', 'instructions', 'ecc');
+    const instructionsRoot = path.join(project, '.github', 'instructions', 'yus');
     const angular = fs.readFileSync(path.join(instructionsRoot, 'angular', 'coding-style.instructions.md'), 'utf8');
     assert.match(angular, /^---\napplyTo: ["']\*\*\/\*\.component\.ts/);
     assert.doesNotMatch(angular, /^paths:/m);
@@ -535,7 +535,7 @@ test('single-file rules survive install and repair without colliding or claiming
   const os = require('os');
   const { createManifestInstallPlan, applyInstallPlan } = require('../../scripts/lib/install-executor');
   const { repairInstalledStates, uninstallInstalledStates } = require('../../scripts/lib/install-lifecycle');
-  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-copilot-rule-files-'));
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-copilot-rule-files-'));
   try {
     const sourceRoot = path.join(temp, 'source');
     const projectRoot = path.join(temp, 'project');
@@ -552,7 +552,7 @@ test('single-file rules survive install and repair without colliding or claiming
       fs.mkdirSync(path.dirname(file), { recursive: true });
       fs.writeFileSync(file, `# ${language}\n`);
     }
-    const instruction = language => path.join(projectRoot, '.github', 'instructions', 'ecc', language, 'coding-style.instructions.md');
+    const instruction = language => path.join(projectRoot, '.github', 'instructions', 'yus', language, 'coding-style.instructions.md');
     fs.mkdirSync(path.dirname(instruction('python')), { recursive: true });
     fs.writeFileSync(instruction('python'), 'USER INSTRUCTION\n');
     const plan = createManifestInstallPlan({ sourceRoot, target: 'copilot', moduleIds: ['fixture'], projectRoot, homeDir, env: {} });

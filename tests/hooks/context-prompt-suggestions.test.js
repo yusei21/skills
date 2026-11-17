@@ -15,12 +15,12 @@ const PROMPT = JSON.stringify({ hook_event_name: 'UserPromptSubmit', prompt: 'he
 
 function fixture(callback, { mode = 'auto', index = true } = {}) {
   return withFixture(repoRoot => {
-    const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'ecc-prompt-suggest-'));
+    const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'yus-prompt-suggest-'));
     const stateRoot = path.join(parent, 'managed');
     try {
       store.applyStore({ repoRoot, stateRoot, target: 'claude', selectionMode: mode });
       if (index) routing.writeRoutingIndex({ repoRoot, stateRoot });
-      return callback({ stateRoot, env: { ECC_CONTEXT_STATE_ROOT: stateRoot } });
+      return callback({ stateRoot, env: { YUS_CONTEXT_STATE_ROOT: stateRoot } });
     } finally { fs.rmSync(parent, { recursive: true, force: true }); }
   });
 }
@@ -29,7 +29,7 @@ const stdout = result => (typeof result === 'string' ? result : result.stdout);
 
 test('the hook is silent unless a managed store is explicitly configured', () => fixture(() => {
   assert.equal(stdout(hook.run(PROMPT, {}, {})), '');
-  assert.equal(stdout(hook.run(PROMPT, {}, { ECC_CONTEXT_STATE_ROOT: 'relative/store' })), '');
+  assert.equal(stdout(hook.run(PROMPT, {}, { YUS_CONTEXT_STATE_ROOT: 'relative/store' })), '');
 }));
 
 test('suggestions are advisory IDs with bounded descriptions and the resolve command', () => fixture(({ stateRoot, env }) => {
@@ -60,10 +60,10 @@ test('a missing index is a diagnostic, never an error or a rebuild', () => fixtu
 }, { index: false }));
 
 test('a tampered index or exhausted budget fails open to no suggestion', () => fixture(({ stateRoot, env }) => {
-  assert.equal(stdout(hook.run(PROMPT, {}, { ...env, ECC_CONTEXT_SUGGEST_BUDGET_MS: '0' })), '');
+  assert.equal(stdout(hook.run(PROMPT, {}, { ...env, YUS_CONTEXT_SUGGEST_BUDGET_MS: '0' })), '');
   const directory = path.join(stateRoot, 'routing');
   const file = path.join(directory, fs.readdirSync(directory).find(name => name.endsWith('.json')));
-  fs.writeFileSync(file, '{"schemaVersion":"ecc.context-routing-index.v1"}');
+  fs.writeFileSync(file, '{"schemaVersion":"yus.context-routing-index.v1"}');
   const result = hook.run(PROMPT, {}, env);
   assert.equal(stdout(result), '');
   assert.match(result.stderr, /integrity|index/);
@@ -79,12 +79,12 @@ test('the hook runs through run-with-flags and returns its text on stdout', () =
 
 test('the session-start builder indexes the current generation once and stays silent when disabled', () => {
   const builder = require('../../scripts/hooks/context-routing-index');
-  const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'ecc-routing-builder-'));
+  const parent = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'yus-routing-builder-'));
   const stateRoot = path.join(parent, 'managed');
   try {
     assert.equal(builder.run('{}', {}, {}), '');
     store.applyStore({ stateRoot, target: 'claude' });
-    const env = { ECC_CONTEXT_STATE_ROOT: stateRoot };
+    const env = { YUS_CONTEXT_STATE_ROOT: stateRoot };
     assert.match(builder.run('{}', {}, env).stderr, /built/);
     assert.equal(routing.routingIndexStatus(stateRoot).status, 'current');
     assert.equal(builder.run('{}', {}, env), '');
@@ -111,7 +111,7 @@ test('loading advice matches the saved mode', () => {
     assert.match(text, /skill:feature/);
     assert.doesNotMatch(text, /--load/);
     assert.match(text, /suggest mode/i);
-    assert.ok(text.includes(`ecc profile mode auto --state-root <store>`));
+    assert.ok(text.includes(`yus profile mode auto --state-root <store>`));
   }, { mode: 'suggest' });
 });
 
@@ -126,7 +126,7 @@ test('shell metacharacters in a store path remain data rather than executable ad
     routingModule.readBinding = () => ({ root, revision: 1, selectionMode: 'auto' });
     routingModule.readRoutingIndex = () => ({ entries: [] });
     routingModule.suggestContext = () => [{ id: 'skill:feature', description: 'Focused feature help.' }];
-    const text = stdout(hook.run(PROMPT, {}, { ECC_CONTEXT_STATE_ROOT: root }));
+    const text = stdout(hook.run(PROMPT, {}, { YUS_CONTEXT_STATE_ROOT: root }));
     assert.ok(text.includes(`Store path (data): ${JSON.stringify(root)}`));
     const commandLine = text.split('\n').find(line => line.startsWith('To load one'));
     assert.ok(commandLine.includes('--state-root <store>'));

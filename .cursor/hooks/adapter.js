@@ -86,17 +86,17 @@ function loadRuntimeModule(...segments) {
 }
 
 function fallbackHookEnabled(hookId, allowedProfiles) {
-  const enabled = String(process.env.ECC_HOOKS_ENABLED ?? 'true').trim().toLowerCase();
+  const enabled = String(process.env.YUS_HOOKS_ENABLED ?? 'true').trim().toLowerCase();
   if (['0', 'false', 'no', 'off'].includes(enabled)) {
     return false;
   }
 
-  const rawProfile = String(process.env.ECC_HOOK_PROFILE || 'standard').trim().toLowerCase();
+  const rawProfile = String(process.env.YUS_HOOK_PROFILE || 'standard').trim().toLowerCase();
   const profile = ['minimal', 'standard', 'strict'].includes(rawProfile)
     ? rawProfile
     : 'standard';
   const disabled = new Set(
-    String(process.env.ECC_DISABLED_HOOKS || '')
+    String(process.env.YUS_DISABLED_HOOKS || '')
       .split(',')
       .map(value => value.trim().toLowerCase())
       .filter(Boolean)
@@ -168,7 +168,7 @@ function createStopFormatTypecheckOptions(sessionEnv = {}) {
     forwardStderr: true,
     env: {
       ...sessionEnv,
-      ECC_STOP_FORMAT_TYPECHECK_BUDGET_MS: String(STOP_FORMAT_TYPECHECK_BUDGET_MS),
+      YUS_STOP_FORMAT_TYPECHECK_BUDGET_MS: String(STOP_FORMAT_TYPECHECK_BUDGET_MS),
     },
   };
 }

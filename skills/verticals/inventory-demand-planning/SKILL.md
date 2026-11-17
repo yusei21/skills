@@ -2,10 +2,10 @@
 name: inventory-demand-planning
 description: "Codified demand planning expertise for multi-location retailers: demand forecasting method selection, ABC/XYZ segmentation, safety stock and reorder-point optimization, promotional lift and post-promo dip estimation, and seasonal transition and markdown timing. Use when forecasting demand, setting safety stock, planning replenishment, managing promotions, or optimizing inventory levels."
 license: Apache-2.0
-homepage: https://github.com/affaan-m/ECC
+homepage: https://github.com/yusei21/yus
 metadata:
   version: 1.0.0
-  origin: ECC
+  origin: yus
   author: evos
   clawdbot:
     emoji: ""

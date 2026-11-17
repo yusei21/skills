@@ -33,7 +33,7 @@ function discoverPublishedSkills(packageRoot) {
 }
 
 function smoke(packageRoot, workspace) {
-  const cli = path.join(packageRoot, 'scripts/ecc.js');
+  const cli = path.join(packageRoot, 'scripts/yus.js');
   // macOS exposes /tmp as a system symlink to /private/tmp. Canonicalize the
   // newly created directory so the production store can keep rejecting
   // symlinked managed paths without rejecting this isolated acceptance root.
@@ -87,12 +87,12 @@ function smoke(packageRoot, workspace) {
 
   // Independent layout oracle: do not import the carrier generator or its tests.
   const allSkills = discoverPublishedSkills(packageRoot);
-  const kernel = new Set(['skill:configure-ecc', 'skill:context-budget', 'skill:ecc-guide']);
+  const kernel = new Set(['skill:configure-yus', 'skill:context-budget', 'skill:yus-guide']);
   const layouts = { claude: 'skills', codex: 'skills', pi: 'skills',
     opencode: '.opencode/skills', cursor: '.cursor/skills' };
-  const manifests = { claude: ['.claude-plugin/plugin.json', { name: 'ecc-context-carrier', skills: ['./skills/'] }],
-    codex: ['.codex-plugin/plugin.json', { name: 'ecc-context-carrier', skills: './skills/' }],
-    pi: ['package.json', { name: 'ecc-context-carrier', private: true, pi: { skills: ['./skills'] } }] };
+  const manifests = { claude: ['.claude-plugin/plugin.json', { name: 'yus-context-carrier', skills: ['./skills/'] }],
+    codex: ['.codex-plugin/plugin.json', { name: 'yus-context-carrier', skills: './skills/' }],
+    pi: ['package.json', { name: 'yus-context-carrier', private: true, pi: { skills: ['./skills'] } }] };
   const walk = (directory, prefix = '') => fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
     assert.equal(entry.isSymbolicLink(), false, 'Carrier resource must not be a symlink');
     const relative = path.posix.join(prefix, entry.name);
@@ -159,13 +159,13 @@ function smoke(packageRoot, workspace) {
 
   // A user edit inside managed content must block a switch, preserving bytes.
   const current = profile(['status']).store;
-  const ownedFile = path.join(current.generationRoot, 'skills/core/ecc-guide/SKILL.md');
+  const ownedFile = path.join(current.generationRoot, 'skills/core/yus-guide/SKILL.md');
   fs.appendFileSync(ownedFile, '\nUser customization\n');
   profile(['set', 'full'], 1);
   assert.match(fs.readFileSync(ownedFile, 'utf8'), /User customization/);
   assert.equal(fs.readFileSync(sentinel, 'utf8'), 'preserve unrelated user content\n');
   checks.push('modified-managed-and-unrelated-files-preserved');
-  return { schemaVersion: 'ecc.context-sandbox-smoke.v1', passed: true, os: process.platform,
+  return { schemaVersion: 'yus.context-sandbox-smoke.v1', passed: true, os: process.platform,
     arch: process.arch, node: process.version, packageVersion: require(path.join(packageRoot, 'package.json')).version,
     fullSkills: full.selectedIds.length, fullFiles, leanSkills: lean.selectedIds.length, leanFiles,
     nativeVersion: native.providerVersion, matrix, checks, authenticated: false, taskOutcomes: 'unobserved' };

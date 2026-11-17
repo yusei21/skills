@@ -62,12 +62,12 @@ function assertHonestComputeCopy(content) {
   assert.match(content, /run or self-host any open-source model/i);
   assert.match(content, /any GPU provider/i);
   assert.match(content, /sponsorship link is passive/i);
-  assert.match(content, /ecc ito find/i);
+  assert.match(content, /yus ito find/i);
   assert.match(content, /explicitly configured canonical Itô CLI/i);
   assert.match(content, /submits a live authenticated RFQ/i);
   assert.match(content, /does not reserve capacity/i);
   assert.match(content, /managed inference[^\n.]*not live/i);
-  assert.doesNotMatch(content, /ECC only (?:links|provides this link)/i);
+  assert.doesNotMatch(content, /yus only (?:links|provides this link)/i);
 }
 
 const README_SPONSOR_LABELS = {
@@ -292,8 +292,8 @@ function main() {
       );
     }],
     ['Kimi install stays inside its project root and passes doctor with native instruction surfaces', () => {
-      const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-kimi-home-'));
-      const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-kimi-project-'));
+      const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-kimi-home-'));
+      const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-kimi-project-'));
 
       try {
         const result = spawnSync(
@@ -412,7 +412,7 @@ function main() {
       assertHonestComputeCopy(read('.kimi/README.md'));
     }],
     ['integration record keeps the thesis and real client boundary honest', () => {
-      const record = read('docs/design/ecc-ito-compute-integration.md');
+      const record = read('docs/design/yus-ito-compute-integration.md');
       assert.match(record, /-> any open-source model/);
       assert.doesNotMatch(record, /public Kimi|Moonshot|video and sponsorship/i);
       assert.match(record, /Status: \*\*Implemented local CLI bridge/i);
@@ -423,10 +423,10 @@ function main() {
       assert.match(record, /unpublished/i);
       assert.match(record, /managed inference remains unavailable/i);
       assert.match(record, /version bump[\s\S]*intentionally deferred/i);
-      assert.doesNotMatch(record, /manual_copy|ito\.compute\.handoff|ecc ito rent/i);
+      assert.doesNotMatch(record, /manual_copy|ito\.compute\.handoff|yus ito rent/i);
     }],
     ['top-level CLI help exposes the provider-neutral compute route', () => {
-      const result = spawnSync('node', ['scripts/ecc.js', '--help'], {
+      const result = spawnSync('node', ['scripts/yus.js', '--help'], {
         cwd: REPO_ROOT,
         encoding: 'utf8',
       });

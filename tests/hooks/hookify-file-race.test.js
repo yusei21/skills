@@ -14,7 +14,7 @@ const MAX_BYTES = 64 * 1024;
 const ruleText = name => '---\nname: ' + name + '\nevent: bash\naction: block\npattern: BLOCK_ME\n---\nLocal policy.\n';
 
 function fixture(t, options = {}) {
-  const root = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'ecc-hookify-race-'));
+  const root = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'yus-hookify-race-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const directory = path.join(root, '.claude');
   fs.mkdirSync(directory);
@@ -98,7 +98,7 @@ for (const action of ['warn', 'block']) {
       assert.deepEqual(loaded.rules.map(rule => rule.name), ['trusted']);
       assert.deepEqual(loaded.diagnostics, []);
       const result = context.runtime.run({ hook_event_name: 'PreToolUse', tool_name: 'Bash', tool_input: { command: 'echo BLOCK_ME' } }, {
-        cwd: context.root, env: { CLAUDE_PROJECT_DIR: context.root, ECC_HOOKIFY_ALLOW_TRACKED: '1' },
+        cwd: context.root, env: { CLAUDE_PROJECT_DIR: context.root, YUS_HOOKIFY_ALLOW_TRACKED: '1' },
       });
       assert.equal(result.stderr, '');
       const output = JSON.parse(result.stdout).hookSpecificOutput;

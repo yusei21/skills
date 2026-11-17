@@ -11,10 +11,10 @@ const {
 // GitHub Copilot CLI discovers skills from `.github/skills/`, custom agents
 // from `.github/agents/`, and path-specific instructions from
 // `.github/instructions/**/*.instructions.md`. Rules are installed under
-// `instructions/ecc/` with their Claude-style `paths:` frontmatter converted
+// `instructions/yus/` with their Claude-style `paths:` frontmatter converted
 // to Copilot's `applyTo:` glob list. Explicitly declared package-manager
-// helpers live in `.github/ecc/scripts/`, outside Copilot's discovery roots.
-// ECC's hooks target Claude Code's event model, and commands rely on
+// helpers live in `.github/yus/scripts/`, outside Copilot's discovery roots.
+// yus's hooks target Claude Code's event model, and commands rely on
 // slash-command argument substitution Copilot does not provide, so neither is
 // installed here.
 const SUPPORTED_SOURCE_PREFIXES = ['agents', 'skills', 'rules'];
@@ -63,7 +63,7 @@ function planCopilotRuleOperations(module, normalizedSourcePath, targetRoot, rep
       destinationPath: path.join(
         targetRoot,
         'instructions',
-        'ecc',
+        'yus',
         relative.replace(/\.md$/i, '.instructions.md')
       ),
       contentTransform: 'copilot-rule-frontmatter',
@@ -108,7 +108,7 @@ function planSourcePathOperations(module, sourceRelativePath, targetRoot, repoRo
     return [createManagedOperation({
       moduleId: module.id,
       sourceRelativePath: normalizedSourcePath,
-      destinationPath: path.join(targetRoot, 'ecc', normalizedSourcePath),
+      destinationPath: path.join(targetRoot, 'yus', normalizedSourcePath),
     })];
   }
 
@@ -120,7 +120,7 @@ module.exports = createInstallTargetAdapter({
   target: 'copilot',
   kind: 'project',
   rootSegments: ['.github'],
-  installStatePathSegments: ['ecc-install-state.json'],
+  installStatePathSegments: ['yus-install-state.json'],
   supportsModule(module) {
     // Selection gating stays permissive so modules that only act as dependency
     // anchors (rules-core, commands-core, platform-configs) still resolve.

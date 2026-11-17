@@ -18,14 +18,14 @@ function importedId(type) {
 }
 
 async function test(name, fn) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-github-sync-'));
-  const previousShim = process.env.ECC_GH_SHIM;
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-github-sync-'));
+  const previousShim = process.env.YUS_GH_SHIM;
   let store;
   try {
     const fixture = path.join(dir, 'source.json');
     const shim = path.join(dir, 'gh.js');
     fs.writeFileSync(shim, `const data = require(${JSON.stringify(fixture)}); process.stdout.write(JSON.stringify(data[process.argv[2]]));`);
-    process.env.ECC_GH_SHIM = shim;
+    process.env.YUS_GH_SHIM = shim;
     store = await createStateStore({ dbPath: path.join(dir, 'state.db') });
     store.upsertSession({ id: 'session-1', adapterId: 'test', harness: 'test', state: 'active', startedAt: '2026-10-28T00:00:00Z' });
     const source = {
@@ -44,8 +44,8 @@ async function test(name, fn) {
     failed++;
   } finally {
     if (store) store.close();
-    if (previousShim === undefined) delete process.env.ECC_GH_SHIM;
-    else process.env.ECC_GH_SHIM = previousShim;
+    if (previousShim === undefined) delete process.env.YUS_GH_SHIM;
+    else process.env.YUS_GH_SHIM = previousShim;
     fs.rmSync(dir, { recursive: true, force: true });
   }
 }
@@ -163,7 +163,7 @@ async function run() {
 
   await test('legacy imports without ownership provenance are preserved', ({ store, source, sync }) => {
     const id = importedId('issue');
-    store.upsertWorkItem({ id, source: 'github-issue', sourceId: '8', title: 'Legacy', status: 'blocked', owner: 'worker', metadata: { repo: 'example/repo', syncedBy: 'ecc-work-items-sync-github' } });
+    store.upsertWorkItem({ id, source: 'github-issue', sourceId: '8', title: 'Legacy', status: 'blocked', owner: 'worker', metadata: { repo: 'example/repo', syncedBy: 'yus-work-items-sync-github' } });
     sync();
     source.issue = [];
     sync();

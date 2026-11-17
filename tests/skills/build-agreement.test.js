@@ -66,7 +66,7 @@ test('rejects unknown roles and missing required fields', () => {
 });
 
 test('explicit Markdown-only build writes draft without converter activity', () => {
-  const outDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-build-agreement-'));
+  const outDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-build-agreement-'));
   try {
     const result = builder.build(templatePath, specPath, outDir, { markdownOnly: true, pandoc: false, now: new Date('2030-01-01T00:00:00Z') });
     assert.ok(fs.existsSync(result.markdown));
@@ -91,7 +91,7 @@ test('main returns usage exit code without arguments', () => {
 });
 
 function withOutputFixture(fn) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-agreement-containment-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-agreement-containment-'));
   const artifacts = path.join(root, 'artifacts');
   const outDir = path.join(artifacts, 'nested', 'out');
   const input = path.join(root, 'spec.json');
@@ -157,7 +157,7 @@ function snapshot(directory) {
 }
 
 test('snapshot file reads stay on the opened file during path replacement', () => {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-snapshot-race-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-snapshot-race-'));
   const file = path.join(root, 'file.txt');
   const saved = path.join(root, 'saved.txt');
   fs.writeFileSync(file, 'original fixture');
@@ -389,7 +389,7 @@ test('encodes table syntax, normalizes line breaks and leaves input unchanged', 
   assert.strictEqual(JSON.stringify(adversarialSchedule), before);
 });
 
-const rendererPath = process.env.ECC_AGREEMENT_TEST_PANDOC;
+const rendererPath = process.env.YUS_AGREEMENT_TEST_PANDOC;
 if (rendererPath) {
   test('independent pandoc renderer preserves every displayed field in six-column rows', () => {
     const markdown = '| A | B | C | D | E | F |\n|---|---|---|---|---|---|\n' + builder.renderScheduleRows(adversarialSchedule);
@@ -415,7 +415,7 @@ if (rendererPath) {
     assert.deepStrictEqual(displayed, displayedSchedule);
   });
 } else {
-  console.log('  Independent renderer check not requested; set ECC_AGREEMENT_TEST_PANDOC to an installed pandoc.');
+  console.log('  Independent renderer check not requested; set YUS_AGREEMENT_TEST_PANDOC to an installed pandoc.');
 }
 
 console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);

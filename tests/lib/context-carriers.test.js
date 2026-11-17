@@ -59,13 +59,13 @@ function withRegistryView(context, transform, operation) {
 
 function changeSelectedEntry(registry, transform) {
   return { ...registry, entries: registry.entries.map(entry => (
-    entry.id === 'skill:ecc-guide' ? transform(entry) : entry
+    entry.id === 'skill:yus-guide' ? transform(entry) : entry
   )) };
 }
 
 test('Lean plans only the three selected whole skill trees and never activates a host', () => withFixture(root => {
   const carrier = plan({ repoRoot: root, target: 'codex', selectionMode: 'auto' });
-  assert.equal(carrier.schemaVersion, 'ecc.context-carrier.v1');
+  assert.equal(carrier.schemaVersion, 'yus.context-carrier.v1');
   assert.equal(carrier.status, 'planned');
   assert.equal(carrier.active, false);
   assert.equal(carrier.disposition, 'proposed');
@@ -98,9 +98,9 @@ test('generated provider manifests contain only explicitly allowed discovery fie
   write(root, '.codex-plugin/plugin.json', { name: 'source', hooks: './hooks.json', mcpServers: './mcp.json' });
   write(root, 'package.json', { scripts: { postinstall: 'exit 1' }, pi: { extensions: ['./extension.js'], prompts: ['./commands'] } });
   const expected = {
-    claude: { name: 'ecc-context-carrier', skills: ['./skills/'] },
-    codex: { name: 'ecc-context-carrier', skills: './skills/' },
-    pi: { name: 'ecc-context-carrier', private: true, pi: { skills: ['./skills'] } },
+    claude: { name: 'yus-context-carrier', skills: ['./skills/'] },
+    codex: { name: 'yus-context-carrier', skills: './skills/' },
+    pi: { name: 'yus-context-carrier', private: true, pi: { skills: ['./skills'] } },
   };
   for (const [target, manifest] of Object.entries(expected)) {
     const generated = plan({ repoRoot: root, target }).files.find(file => file.kind === 'generated');
@@ -226,9 +226,9 @@ test('registry drift between compilation and carrier inventory fails closed', co
 test('missing required-resource metadata or inventory members cannot become partial carriers', context => withFixture(root => {
   for (const transform of [
     ({ requiredResources: _, ...entry }) => entry,
-    entry => ({ ...entry, requiredResources: ['skills/core/ecc-guide/absent.md'] }),
+    entry => ({ ...entry, requiredResources: ['skills/core/yus-guide/absent.md'] }),
     entry => ({ ...entry, resources: [] }),
-    entry => ({ ...entry, sourcePath: 'skills/core/ecc-guide/absent.md' }),
+    entry => ({ ...entry, sourcePath: 'skills/core/yus-guide/absent.md' }),
   ]) {
     withRegistryView(context, registry => changeSelectedEntry(registry, transform), () => {
       assert.throws(() => plan({ repoRoot: root }), /resource|source.*(?:missing|inventory)/i);
@@ -237,11 +237,11 @@ test('missing required-resource metadata or inventory members cannot become part
 }));
 
 test('duplicate native names and case-colliding destination resources are rejected', context => withFixture(root => {
-  write(root, 'skills/feature/SKILL.md', '---\nname: ecc-guide\ndescription: Duplicate native name.\n---\n');
+  write(root, 'skills/feature/SKILL.md', '---\nname: yus-guide\ndescription: Duplicate native name.\n---\n');
   assert.throws(() => plan({ repoRoot: root, include: ['skill:feature'] }), /name|collision|duplicate/i);
   withRegistryView(context, registry => changeSelectedEntry(registry, entry => ({
     ...entry, resources: [...entry.resources, ...['details.md', 'DETAILS.md'].map(file => ({
-      path: `skills/core/ecc-guide/${file}`, digest: 'a'.repeat(64), bytes: 1,
+      path: `skills/core/yus-guide/${file}`, digest: 'a'.repeat(64), bytes: 1,
     }))],
   })), () => assert.throws(() => plan({ repoRoot: root }), /collision|duplicate/i));
 }));
@@ -249,7 +249,7 @@ test('duplicate native names and case-colliding destination resources are reject
 test('case-aliased ancestor directories with different child files are rejected', context => withFixture(root => (
   withRegistryView(context, registry => changeSelectedEntry(registry, entry => ({
     ...entry, resources: [...entry.resources, ...['Case/one.md', 'case/two.md'].map(file => ({
-      path: `skills/core/ecc-guide/${file}`, digest: 'a'.repeat(64), bytes: 1,
+      path: `skills/core/yus-guide/${file}`, digest: 'a'.repeat(64), bytes: 1,
     }))],
   })), () => assert.throws(() => plan({ repoRoot: root }), /collision|alias/i))
 )));
@@ -257,7 +257,7 @@ test('case-aliased ancestor directories with different child files are rejected'
 test('Unicode-normalization-aliased ancestors with different children are rejected', context => withFixture(root => (
   withRegistryView(context, registry => changeSelectedEntry(registry, entry => ({
     ...entry, resources: [...entry.resources, ...['caf\u00e9/one.md', 'cafe\u0301/two.md'].map(file => ({
-      path: `skills/core/ecc-guide/${file}`, digest: 'a'.repeat(64), bytes: 1,
+      path: `skills/core/yus-guide/${file}`, digest: 'a'.repeat(64), bytes: 1,
     }))],
   })), () => assert.throws(() => plan({ repoRoot: root }), /collision|alias/i))
 )));

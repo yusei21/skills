@@ -8,7 +8,7 @@ const IGNORED = new Set(['.env', '.git', 'node_modules']);
 
 function trackedFiles(dir, out = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (IGNORED.has(entry.name) || entry.name.startsWith('.ecc-eval-check')) continue;
+    if (IGNORED.has(entry.name) || entry.name.startsWith('.yus-eval-check')) continue;
     const file = path.join(dir, entry.name);
     if (entry.isDirectory()) trackedFiles(file, out);
     else if (entry.isFile()) out.push(file);
@@ -25,4 +25,4 @@ try {
 }
 
 const passed = checks.filter(Boolean).length;
-console.log(`ECC_EVAL_SCORE ${JSON.stringify({ score: passed / checks.length })}`);
+console.log(`YUS_EVAL_SCORE ${JSON.stringify({ score: passed / checks.length })}`);

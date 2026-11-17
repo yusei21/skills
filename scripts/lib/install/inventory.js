@@ -6,11 +6,11 @@ const path = require('path');
 const { isWithinRoot, realpathNearestExisting } = require('../path-safety');
 const { convertWindowsPathToWSL } = require('../install-targets/helpers');
 
-const CURRENT_PLUGIN_ID = 'ecc@ecc';
+const CURRENT_PLUGIN_ID = 'yus@yus';
 // Legacy plugin ids, kept so existing installs are still recognized.
 const LEGACY_PLUGIN_IDS = new Set([
   'everything-claude-code@everything-claude-code',
-  'everything-claude-code@ecc',
+  'everything-claude-code@yus',
 ]);
 
 function expandTilde(inputPath, homeDir) {
@@ -72,10 +72,10 @@ function findManualClaudePlugin(options = {}) {
   const { configDir } = resolveClaudePaths(options);
   const pluginsDir = path.join(configDir, 'plugins');
   const candidates = [
-    ['ecc', '.claude-plugin', 'plugin.json'],
-    ['ecc', 'plugin.json'],
-    ['ecc@ecc', '.claude-plugin', 'plugin.json'],
-    ['ecc@ecc', 'plugin.json'],
+    ['yus', '.claude-plugin', 'plugin.json'],
+    ['yus', 'plugin.json'],
+    ['yus@yus', '.claude-plugin', 'plugin.json'],
+    ['yus@yus', 'plugin.json'],
     // Legacy install dir, kept for existing installs.
     ['everything-claude-code', '.claude-plugin', 'plugin.json'],
     ['everything-claude-code', 'plugin.json'],
@@ -97,7 +97,7 @@ function validateManagedState(state, statePath, expectedRoot) {
   const selectedModules = state?.resolution?.selectedModules;
   const operations = state?.operations;
   if (
-    state?.schemaVersion !== 'ecc.install.v1'
+    state?.schemaVersion !== 'yus.install.v1'
     || !state.target
     || typeof state.target !== 'object'
     || Array.isArray(state.target)
@@ -135,11 +135,11 @@ function findManagedClaudeInstalls(options = {}) {
   const { configDir, projectRoot } = resolveClaudePaths(options);
   const candidates = [
     {
-      statePath: path.join(configDir, 'ecc', 'install-state.json'),
+      statePath: path.join(configDir, 'yus', 'install-state.json'),
       expectedRoot: configDir,
     },
     {
-      statePath: path.join(projectRoot, '.claude', 'ecc', 'install-state.json'),
+      statePath: path.join(projectRoot, '.claude', 'yus', 'install-state.json'),
       expectedRoot: path.join(projectRoot, '.claude'),
     },
   ];

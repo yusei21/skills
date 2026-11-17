@@ -7,7 +7,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const repo = path.resolve(__dirname, '../..');
-const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-startup-alias-read-')));
+const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-startup-alias-read-')));
 const project = path.join(root, 'project');
 const home = path.join(root, 'home');
 const data = path.join(home, '.claude');
@@ -21,10 +21,10 @@ fs.writeFileSync(path.join(learned, 'startup-skill.md'), '# Startup skill\n\n## 
 const aliasPath = path.join(data, 'session-aliases.json');
 const aliasBytes = JSON.stringify({ version: '1.0', aliases: { kept: { sessionPath: summary, createdAt: new Date().toISOString() } } });
 fs.writeFileSync(aliasPath, aliasBytes);
-const env = { ...process.env, HOME: home, USERPROFILE: home, ECC_AGENT_DATA_HOME: data,
+const env = { ...process.env, HOME: home, USERPROFILE: home, YUS_AGENT_DATA_HOME: data,
   CLAUDE_CONFIG_DIR: data, CLAUDE_PROJECT_DIR: project, CLAUDE_PACKAGE_MANAGER: '',
-  XDG_DATA_HOME: path.join(home, '.local/share'), ECC_HOMUNCULUS_DIR: path.join(data, 'homunculus'),
-  ECC_SESSION_START_CONTEXT: 'true', ECC_SESSION_START_MAX_CHARS: '8000', ECC_SESSION_RETENTION_DAYS: '30' };
+  XDG_DATA_HOME: path.join(home, '.local/share'), YUS_HOMUNCULUS_DIR: path.join(data, 'homunculus'),
+  YUS_SESSION_START_CONTEXT: 'true', YUS_SESSION_START_MAX_CHARS: '8000', YUS_SESSION_RETENTION_DAYS: '30' };
 let passed = 0;
 let failed = 0;
 try {
@@ -34,8 +34,8 @@ try {
     if (code) args.push('--require', path.join(repo, 'tests/fixtures/session-start-alias-read-preload.cjs'));
     try {
       const result = spawnSync(process.execPath, [...args, path.join(repo, 'scripts/hooks/session-start.js')], {
-        cwd: project, env: { ...env, ECC_TEST_ALIAS_PATH: aliasPath,
-          ECC_TEST_ALIAS_FAULT_COUNT: faultCount, ECC_TEST_ALIAS_READ_ERROR: code || '' }, input: JSON.stringify({ hook_event_name: 'SessionStart', source: 'startup', session_id: `startup-${code}`, cwd: project }),
+        cwd: project, env: { ...env, YUS_TEST_ALIAS_PATH: aliasPath,
+          YUS_TEST_ALIAS_FAULT_COUNT: faultCount, YUS_TEST_ALIAS_READ_ERROR: code || '' }, input: JSON.stringify({ hook_event_name: 'SessionStart', source: 'startup', session_id: `startup-${code}`, cwd: project }),
         encoding: 'utf8', timeout: 15000,
       });
       assert.ifError(result.error);

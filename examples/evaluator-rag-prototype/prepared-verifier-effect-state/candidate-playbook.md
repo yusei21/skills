@@ -4,7 +4,7 @@ Candidate id: `correct-read-preserve-effect`
 
 This synthetic, read-only example records expected rubric decisions. It does not
 execute commands, contact devices or reproduce the
-[reported incidents](https://github.com/affaan-m/ECC/issues/3699).
+[reported incidents](https://github.com/yusei21/yus/issues/3699).
 
 ## Worked State Comparison
 
@@ -36,7 +36,7 @@ Do not repeat load/recreate or initiate rollback merely to make a verifier green
 
 These mechanisms have separate source accounts. The reporter did not replay
 original commands or inspect original bytes, logs or current device state.
-Corrections and progress remain source-reported. Exact ECC activation, version
+Corrections and progress remain source-reported. Exact yus activation, version
 and causal contribution are unknown; no common technical root cause is asserted.
 
 ## Repository Validation

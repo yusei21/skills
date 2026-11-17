@@ -2,7 +2,7 @@
 // Hidden grader for event-stats-api: independent spec-conformant aggregation
 // over the deterministic event log, plus a measured 2,000-query performance
 // probe (threshold calibrated on the grading machine: shipped naive ~7.7s,
-// reference ~1.5s). Prints ECC_EVAL_SCORE and always exits 0.
+// reference ~1.5s). Prints YUS_EVAL_SCORE and always exits 0.
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -14,7 +14,7 @@ function finish() {
   finished = true;
   const ok = checks.filter(c => c.ok).length;
   for (const c of checks) console.log(`${c.ok ? 'ok' : 'not ok'} - ${c.name}`);
-  console.log(`ECC_EVAL_SCORE ${JSON.stringify({ score: ok / checks.length, passed: ok, total: checks.length })}`);
+  console.log(`YUS_EVAL_SCORE ${JSON.stringify({ score: ok / checks.length, passed: ok, total: checks.length })}`);
   process.exit(0);
 }
 setTimeout(finish, 110000).unref();

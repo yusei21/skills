@@ -1,26 +1,26 @@
 /**
- * Resolve ECC agent data home (memory persistence root) across harnesses.
+ * Resolve yus agent data home (memory persistence root) across harnesses.
  *
  * Docstring policy: public entry points here are documented; small internal
  * helpers (e.g. `expandHomePath`, `readProjectConfigAt`) are left undocumented on
- * purpose, consistent with ECC script modules elsewhere. Automated PR reviewers
+ * purpose, consistent with yus script modules elsewhere. Automated PR reviewers
  * (e.g. CodeRabbit) may still flag low JSDoc coverage against a high threshold on
  * the diff—that check is informational for this repo, not a bar every helper in
  * touched files must meet. Prefer clarity in code and tests over blanket JSDoc on
  * private helpers unless maintainers adopt a project-wide coverage rule.
  *
- * @see https://github.com/affaan-m/ECC/issues/2065
+ * @see https://github.com/yusei21/yus/issues/2065
  */
 
 const fs = require('fs');
 const path = require('path');
 const { assertWithinTrustedRoot } = require('./path-safety');
 
-const AGENT_DATA_HOME_ENV = 'ECC_AGENT_DATA_HOME';
+const AGENT_DATA_HOME_ENV = 'YUS_AGENT_DATA_HOME';
 const CLAUDE_CONFIG_DIR_ENV = 'CLAUDE_CONFIG_DIR';
 const DEFAULT_CLAUDE_DIR_NAME = '.claude';
-const DEFAULT_CURSOR_ECC_DIR_SEGMENTS = ['.cursor', 'ecc'];
-const PROJECT_CONFIG_RELATIVE = path.join('.cursor', 'ecc-agent-data.json');
+const DEFAULT_CURSOR_YUS_DIR_SEGMENTS = ['.cursor', 'yus'];
+const PROJECT_CONFIG_RELATIVE = path.join('.cursor', 'yus-agent-data.json');
 
 /**
  * Home directory for tilde expansion and default agent-data paths.
@@ -28,7 +28,7 @@ const PROJECT_CONFIG_RELATIVE = path.join('.cursor', 'ecc-agent-data.json');
  * Intentionally mirrors `getHomeDir()` in `scripts/lib/utils.js` (HOME/USERPROFILE,
  * then `os.homedir()`). Do not import `utils.getHomeDir` here: `utils.js` already
  * requires this module (`resolveAgentDataHome`), which would create a circular
- * dependency and risk divergent defaults for `~/.cursor/ecc` vs `~/.claude`.
+ * dependency and risk divergent defaults for `~/.cursor/yus` vs `~/.claude`.
  *
  * If consolidation is needed later, prefer one of:
  *
@@ -64,7 +64,7 @@ function expandHomePath(value, baseDir) {
 }
 
 /**
- * Project root for a config file under .cursor/ecc-agent-data.json.
+ * Project root for a config file under .cursor/yus-agent-data.json.
  */
 function resolveProjectRootFromConfigPath(configPath) {
   const configDir = path.dirname(path.resolve(configPath));
@@ -89,7 +89,7 @@ function isCursorHookRuntime() {
 }
 
 function getDefaultCursorAgentDataHome() {
-  return path.join(getHomeDirFromEnv(), ...DEFAULT_CURSOR_ECC_DIR_SEGMENTS);
+  return path.join(getHomeDirFromEnv(), ...DEFAULT_CURSOR_YUS_DIR_SEGMENTS);
 }
 
 function getDefaultClaudeAgentDataHome() {
@@ -102,9 +102,9 @@ function getDefaultClaudeAgentDataHome() {
 
 function warnUnsafeProjectConfig() {
   console.error(
-    '[ECC] Ignoring unsafe agent data project config: agentDataHome must stay ' +
+    '[yus] Ignoring unsafe agent data project config: agentDataHome must stay ' +
     'within the default Cursor or Claude data directories. Use ' +
-    'ECC_AGENT_DATA_HOME for an explicit trusted override.'
+    'YUS_AGENT_DATA_HOME for an explicit trusted override.'
   );
 }
 
@@ -144,7 +144,7 @@ function readProjectConfigAt(configPath) {
   try {
     const parsed = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null;
-    const candidate = parsed.agentDataHome || parsed.ECC_AGENT_DATA_HOME;
+    const candidate = parsed.agentDataHome || parsed.YUS_AGENT_DATA_HOME;
     if (typeof candidate !== 'string' || !candidate.trim()) return null;
     if (!isSafeProjectConfigSyntax(candidate)) {
       warnUnsafeProjectConfig();
@@ -160,7 +160,7 @@ function readProjectConfigAt(configPath) {
     return allowedHome;
   } catch (error) {
     console.error(
-      `[ECC] Failed to read or parse agent data config at ${configPath}: ${error.message}`
+      `[yus] Failed to read or parse agent data config at ${configPath}: ${error.message}`
     );
     return null;
   }
@@ -208,7 +208,7 @@ function resolveAgentDataHome(options = {}) {
 }
 
 /**
- * Set ECC_AGENT_DATA_HOME on the current process when unset (hook subprocess safety net).
+ * Set YUS_AGENT_DATA_HOME on the current process when unset (hook subprocess safety net).
  * @returns {string} Resolved agent data home
  */
 function ensureAgentDataHomeEnv(options = {}) {
@@ -229,7 +229,7 @@ function getCursorSessionEnvPayload(options = {}) {
   });
 
   return {
-    ECC_AGENT_DATA_HOME: agentDataHome,
+    YUS_AGENT_DATA_HOME: agentDataHome,
   };
 }
 
@@ -237,7 +237,7 @@ module.exports = {
   AGENT_DATA_HOME_ENV,
   CLAUDE_CONFIG_DIR_ENV,
   DEFAULT_CLAUDE_DIR_NAME,
-  DEFAULT_CURSOR_ECC_DIR_SEGMENTS,
+  DEFAULT_CURSOR_YUS_DIR_SEGMENTS,
   PROJECT_CONFIG_RELATIVE,
   expandHomePath,
   resolveProjectRootFromConfigPath,

@@ -26,9 +26,9 @@ function runWrapper(input, env = {}) {
     encoding: 'utf8',
     env: {
       ...process.env,
-      ECC_HOOKS_ENABLED: 'true',
-      ECC_HOOK_PROFILE: 'standard',
-      ECC_DISABLED_HOOKS: 'pre:bash:dev-server-block',
+      YUS_HOOKS_ENABLED: 'true',
+      YUS_HOOK_PROFILE: 'standard',
+      YUS_DISABLED_HOOKS: 'pre:bash:dev-server-block',
       ...env,
     },
     timeout: 15000,
@@ -141,12 +141,12 @@ if (test('blocks a bypass attempt supplied as a raw command string', () => {
   assert.ok(r.stderr.includes('BLOCKED'), `stderr should contain BLOCKED: ${r.stderr}`);
 })) passed++; else failed++;
 
-// --- Disable via ECC_DISABLED_HOOKS ---
+// --- Disable via YUS_DISABLED_HOOKS ---
 
-if (test('respects ECC_DISABLED_HOOKS=pre:bash:block-no-verify', () => {
+if (test('respects YUS_DISABLED_HOOKS=pre:bash:block-no-verify', () => {
   const r = runWrapper(
     { command: 'git commit --no-verify -m "msg"' },
-    { ECC_DISABLED_HOOKS: 'pre:bash:block-no-verify' }
+    { YUS_DISABLED_HOOKS: 'pre:bash:block-no-verify' }
   );
   // When the hook is disabled, the dispatcher should pass through (exit 0)
   // even on a real bypass attempt.

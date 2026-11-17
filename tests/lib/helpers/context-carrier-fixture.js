@@ -25,9 +25,9 @@ const LAYOUTS = {
   cursor: { id: 'cursor-project@1', skillRoot: '.cursor/skills', manifestPath: null },
 };
 const MANIFESTS = {
-  claude: { name: 'ecc-context-carrier', skills: ['./skills/'] },
-  codex: { name: 'ecc-context-carrier', skills: './skills/' },
-  pi: { name: 'ecc-context-carrier', private: true, pi: { skills: ['./skills'] } },
+  claude: { name: 'yus-context-carrier', skills: ['./skills/'] },
+  codex: { name: 'yus-context-carrier', skills: './skills/' },
+  pi: { name: 'yus-context-carrier', private: true, pi: { skills: ['./skills'] } },
 };
 
 function sha256(value) {
@@ -54,7 +54,7 @@ function schemaCheck(artifact) {
 
 function checkExpectedPlan(repoRoot, expectedPlan) {
   checkDigest(expectedPlan, 'planDigest', 'Expected plan');
-  assert.equal(expectedPlan.schemaVersion, 'ecc.context-plan.v1', 'Unexpected plan schema');
+  assert.equal(expectedPlan.schemaVersion, 'yus.context-plan.v1', 'Unexpected plan schema');
   assert.ok(Array.isArray(expectedPlan.entries), 'Expected plan entries are missing');
   // Derive explicit additions from the canonical plan reasons, then independently
   // compile. Dependency additions and redundant includes already selected by the
@@ -237,7 +237,7 @@ function createVerifier(root, container, containerIdentity, identity, prepared) 
     walk();
     checkRoot();
     assert.equal(observed.length, expected.size, 'Missing staged files');
-    return { schemaVersion: 'ecc.context-fixture-evidence.v1', status: 'verified', evidenceKind: 'structural',
+    return { schemaVersion: 'yus.context-fixture-evidence.v1', status: 'verified', evidenceKind: 'structural',
       nativeSupport: 'unobserved', activation: 'unobserved', carrierDigest, planDigest,
       fileCount: observed.length, files: observed.sort((left, right) => left.path < right.path ? -1 : left.path > right.path ? 1 : 0) };
   };
@@ -246,7 +246,7 @@ function createVerifier(root, container, containerIdentity, identity, prepared) 
 function withCarrierFixture(options, callback) {
   assert.equal(typeof callback, 'function', 'Fixture callback must be synchronous');
   const prepared = prepare(options);
-  const container = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-carrier-acceptance-'));
+  const container = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-carrier-acceptance-'));
   const containerIdentity = fs.lstatSync(container);
   const root = path.join(container, 'stage');
   try {

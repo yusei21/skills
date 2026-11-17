@@ -1,7 +1,7 @@
 {
   // Type-checks the plain CommonJS sources without changing how they run.
   //
-  // ECC hooks execute under whatever `node` the user has installed, and Node
+  // yus hooks execute under whatever `node` the user has installed, and Node
   // refuses to strip types from files under node_modules, so runtime code stays
   // `.js`. TypeScript 7 checks it through JSDoc instead: a file opts in with a
   // `// @ts-check` header and is then held to `strict`. Files without the header

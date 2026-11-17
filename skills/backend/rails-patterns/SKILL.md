@@ -6,7 +6,7 @@ origin: community
 
 # Rails Patterns
 
-Framework patterns for modern Ruby on Rails applications (Rails 7.1+ and 8.x). Rails is opinionated by design; these are the patterns the community has converged on for apps that stay maintainable past the 50-model mark. This skill is the "how." For the "what" and "when" (the decisions about which pattern to reach for), see the Ruby patterns rules — `rules/ruby/patterns.md` in this repository, installed as `rules/ecc/ruby/patterns.md`.
+Framework patterns for modern Ruby on Rails applications (Rails 7.1+ and 8.x). Rails is opinionated by design; these are the patterns the community has converged on for apps that stay maintainable past the 50-model mark. This skill is the "how." For the "what" and "when" (the decisions about which pattern to reach for), see the Ruby patterns rules — `rules/ruby/patterns.md` in this repository, installed as `rules/yus/ruby/patterns.md`.
 
 ## When to Activate
 
@@ -472,4 +472,4 @@ If the page is server-rendered with occasional interactivity, Hotwire ships fast
 ## Related Skills
 
 - `backend-patterns` — service boundaries and adapter patterns (referenced by the Ruby patterns rules)
-- Ruby patterns rules (`rules/ruby/patterns.md`, installed as `rules/ecc/ruby/patterns.md`) — the decisions and when-to-use guidance this skill implements
+- Ruby patterns rules (`rules/ruby/patterns.md`, installed as `rules/yus/ruby/patterns.md`) — the decisions and when-to-use guidance this skill implements

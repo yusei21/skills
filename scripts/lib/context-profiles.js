@@ -113,7 +113,7 @@ function compileContextPlan(registry, {
   const selected = resolveSelection(registry, profile, include, exclude);
   const ids = selection => selected.filter(entry => entry.selection === selection).map(entry => entry.id);
   const value = {
-    schemaVersion: 'ecc.context-plan.v1', profileId: profile.id, selectionMode, target,
+    schemaVersion: 'yus.context-plan.v1', profileId: profile.id, selectionMode, target,
     disposition: 'proposed', active: false,
     registryDigest: registry.registryDigest, profileDigest: profile.profileDigest,
     compilerDigest: compilerDigest(),

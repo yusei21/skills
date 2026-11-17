@@ -59,7 +59,7 @@ function getHomeDir() {
 }
 
 /**
- * ECC agent data root for memory persistence (see scripts/lib/agent-data-home.js).
+ * yus agent data root for memory persistence (see scripts/lib/agent-data-home.js).
  */
 function getAgentDataHome() {
   return resolveAgentDataHome();
@@ -81,7 +81,7 @@ function getSessionsDir() {
 }
 
 /**
- * Get the legacy sessions directory used by older ECC installs
+ * Get the legacy sessions directory used by older yus installs
  */
 function getLegacySessionsDir() {
   return path.join(getClaudeDir(), LEGACY_SESSIONS_DIR_NAME);

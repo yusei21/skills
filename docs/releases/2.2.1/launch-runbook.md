@@ -1,11 +1,11 @@
-# ECC 2.2.1 signed patch release runbook
+# yus 2.2.1 signed patch release runbook
 
 Only an authorized maintainer may create or push the `v2.2.1` tag, change npm
 dist-tags, or publish the GitHub Release.
 
 ## Availability model
 
-The default npm install remains `ecc-universal@2.2.0` until the final promotion
+The default npm install remains `yus-universal@2.2.0` until the final promotion
 step succeeds. The release workflow publishes `2.2.1` under the `staged` tag,
 reads its registry integrity back, compares those bytes with the exact archive
 that passed the three-platform lifecycle, and only then moves `latest` to
@@ -15,8 +15,8 @@ The native Claude marketplace install remains an independent install path
 throughout the npm rollout:
 
 ```text
-/plugin marketplace add https://github.com/affaan-m/ECC
-/plugin install ecc@ecc
+/plugin marketplace add https://github.com/yusei21/yus
+/plugin install yus@yus
 ```
 
 Never unpublish `2.2.0` or `2.2.1`. npm dist-tags provide the reversible
@@ -25,7 +25,7 @@ switch.
 ## Historical exception
 
 `v2.2.0` is already public and must stay immutable, even though
-`git tag -v v2.2.0` returns `error: no signature found`. ECC-031 closes that
+`git tag -v v2.2.0` returns `error: no signature found`. yus-031 closes that
 provenance gap by shipping a new signed patch release. Do not move, recreate, or
 reuse `v2.2.0`.
 
@@ -34,9 +34,9 @@ reuse `v2.2.0`.
 1. The `2.2.1` version-prep PR must be merged.
 2. CI and CodeQL on the exact merged `main` commit must be green.
 3. `HEAD`, `origin/main`, and the intended release commit must all match.
-4. `npm view ecc-universal@2.2.1 version` must return `E404`. Any other
+4. `npm view yus-universal@2.2.1 version` must return `E404`. Any other
    registry error blocks the release.
-5. `npm view ecc-universal dist-tags --json` must still show `latest: 2.2.0`.
+5. `npm view yus-universal dist-tags --json` must still show `latest: 2.2.0`.
 6. The release operator must have a locally available signing identity before
    creating the tag.
 
@@ -57,7 +57,7 @@ The commit IDs must match and `git status --short` must print nothing. The
 authorized maintainer then creates and verifies the signed release tag:
 
 ```bash
-git tag -s v2.2.1 -m "ECC 2.2.1" HEAD
+git tag -s v2.2.1 -m "yus 2.2.1" HEAD
 git tag -v v2.2.1
 git push origin refs/tags/v2.2.1
 ```
@@ -77,11 +77,11 @@ That tag push is the only release switch. The workflow then:
 After the workflow succeeds:
 
 ```bash
-npm view ecc-universal dist-tags --json
-npm view ecc-universal@2.2.1 version dist.integrity
-gh release view v2.2.1 --repo affaan-m/ECC
-npx --yes ecc-universal@2.2.1 setup --help
-npx --yes ecc-universal@latest setup --help
+npm view yus-universal dist-tags --json
+npm view yus-universal@2.2.1 version dist.integrity
+gh release view v2.2.1 --repo yusei21/yus
+npx --yes yus-universal@2.2.1 setup --help
+npx --yes yus-universal@latest setup --help
 ```
 
 Expected:
@@ -101,12 +101,12 @@ If `2.2.1` has an install-critical regression, an authorized npm owner restores
 the known installable fallback immediately:
 
 ```bash
-npm dist-tag add ecc-universal@2.2.0 latest
-npm view ecc-universal dist-tags --json
-ECC_ROLLBACK_ROOT=$(mktemp -d)
-npm install --ignore-scripts --prefix "$ECC_ROLLBACK_ROOT" ecc-universal@2.2.0
-node "$ECC_ROLLBACK_ROOT/node_modules/ecc-universal/scripts/ecc.js" --help
-gh release edit v2.2.0 --repo affaan-m/ECC --latest
+npm dist-tag add yus-universal@2.2.0 latest
+npm view yus-universal dist-tags --json
+YUS_ROLLBACK_ROOT=$(mktemp -d)
+npm install --ignore-scripts --prefix "$YUS_ROLLBACK_ROOT" yus-universal@2.2.0
+node "$YUS_ROLLBACK_ROOT/node_modules/yus-universal/scripts/yus.js" --help
+gh release edit v2.2.0 --repo yusei21/yus --latest
 ```
 
 Then open a release incident, state that `2.2.1` remains available only by

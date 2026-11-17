@@ -136,19 +136,19 @@
 
 ## CLI de memória entre ambientes
 
-Estes são comandos da CLI `ecc`, não comandos de barra. Eles usam um único
+Estes são comandos da CLI `yus`, não comandos de barra. Eles usam um único
 cofre em Markdown, que dá para inspecionar, compartilhado entre Claude, Codex,
 Hermes, OpenClaw, Kimi e outros ambientes.
 
 | Comando | O que faz |
 |---------|-----------|
-| `ecc memory init` | Cria as pastas do cofre do projeto, da equipe ou do usuário |
-| `ecc memory save` | Cria um contexto, decisão, fato, lição, nota, preferência ou runbook ainda não revisado |
-| `ecc memory handoff` | Transfere um estado de trabalho delimitado de um ambiente para outro |
-| `ecc memory search` | Busca memórias por texto, escopo, tipo ou ambiente de destino |
-| `ecc memory read` | Lê uma memória e seus backlinks pelo ID estável |
-| `ecc memory doctor` | Reporta arquivos malformados, IDs duplicados, links quebrados e symlinks ignorados |
-| `ecc-memory-mcp` | Inicia o servidor MCP local opcional via stdio |
+| `yus memory init` | Cria as pastas do cofre do projeto, da equipe ou do usuário |
+| `yus memory save` | Cria um contexto, decisão, fato, lição, nota, preferência ou runbook ainda não revisado |
+| `yus memory handoff` | Transfere um estado de trabalho delimitado de um ambiente para outro |
+| `yus memory search` | Busca memórias por texto, escopo, tipo ou ambiente de destino |
+| `yus memory read` | Lê uma memória e seus backlinks pelo ID estável |
+| `yus memory doctor` | Reporta arquivos malformados, IDs duplicados, links quebrados e symlinks ignorados |
+| `yus-memory-mcp` | Inicia o servidor MCP local opcional via stdio |
 
 Passe o conteúdo das memórias com `--stdin` ou `--body-file`; de propósito, ele
 não é aceito como valor na linha de comando. Memórias recuperadas são contexto
@@ -158,15 +158,15 @@ não confiável, não instruções executáveis nem política.
 
 ## CLI de saúde da instalação e feedback
 
-Estes comandos de ciclo de vida também estão disponíveis pela CLI `ecc`.
+Estes comandos de ciclo de vida também estão disponíveis pela CLI `yus`.
 
 | Comando | O que faz |
 |---------|-----------|
-| `ecc list-installed` | Mostra as instalações registradas no estado gerenciado do ECC |
-| `ecc doctor` | Diagnostica arquivos gerenciados ausentes ou alterados e aponta as falhas para o formulário curto de problemas |
-| `ecc repair` | Restaura arquivos gerenciados ausentes ou alterados |
-| `ecc uninstall` | Remove só os arquivos gerenciados pelo estado de instalação e, se quiser, mostra o caminho de feedback de saída de 20 segundos |
-| `ecc feedback` | Mostra os caminhos públicos de problema, feedback rápido e sugestão de funcionalidade, sem ler arquivos nem enviar diagnósticos |
+| `yus list-installed` | Mostra as instalações registradas no estado gerenciado do yus |
+| `yus doctor` | Diagnostica arquivos gerenciados ausentes ou alterados e aponta as falhas para o formulário curto de problemas |
+| `yus repair` | Restaura arquivos gerenciados ausentes ou alterados |
+| `yus uninstall` | Remove só os arquivos gerenciados pelo estado de instalação e, se quiser, mostra o caminho de feedback de saída de 20 segundos |
+| `yus feedback` | Mostra os caminhos públicos de problema, feedback rápido e sugestão de funcionalidade, sem ler arquivos nem enviar diagnósticos |
 
 ---
 
@@ -206,7 +206,7 @@ visual.
 
 | Comando | O que faz |
 |---------|-----------|
-| `/ecc-guide` | Navega pelos agentes, skills, comandos, hooks, perfis de instalação e documentação atuais do ECC a partir do repositório vivo |
+| `/yus-guide` | Navega pelos agentes, skills, comandos, hooks, perfis de instalação e documentação atuais do yus a partir do repositório vivo |
 | `/update-docs` | Sincroniza a documentação a partir das fontes da verdade, como scripts, schemas, rotas e exports |
 | `/update-codemaps` | Regenera os mapas de código do projeto |
 
@@ -228,12 +228,12 @@ visual.
 | Comando | O que faz |
 |---------|-----------|
 | `/projects` | Lista os projetos conhecidos e as estatísticas de instintos de cada um |
-| `/project-init` | Detecta a stack de um projeto e produz um plano de integração ao ECC em modo de simulação |
+| `/project-init` | Detecta a stack de um projeto e produz um plano de integração ao yus em modo de simulação |
 | `/harness-audit` | Audita a configuração do ambiente de agentes quanto a confiabilidade e custo |
 | `/model-route` | Encaminha uma tarefa para o modelo certo (Haiku / Sonnet / Opus) |
 | `/pm2` | Inicialização do gerenciador de processos PM2 |
 | `/setup-pm` | Configura o gerenciador de pacotes (npm / pnpm / yarn / bun) |
-| `/auto-update` | Baixa as últimas mudanças do repositório ECC e reinstala os destinos gerenciados atuais |
+| `/auto-update` | Baixa as últimas mudanças do repositório yus e reinstala os destinos gerenciados atuais |
 | `/cost-report` | Gera um relatório local de custo do Claude Code a partir de um banco SQLite do cost-tracker |
 | `/token-card` | Gera um cartão de estatísticas de uso de tokens a partir dos logs locais de sessão e faz commit dele no repositório |
 | `/security-scan` | Roda o AgentShield sobre agentes, hooks, MCP, permissões e segredos |

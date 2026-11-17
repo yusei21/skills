@@ -2,7 +2,7 @@
 
 [English](TROUBLESHOOTING.md) | **Português** | [中文](TROUBLESHOOTING.zh-CN.md)
 
-Problemas comuns do plugin ECC e como resolvê-los.
+Problemas comuns do plugin yus e como resolvê-los.
 
 ## Sumário
 
@@ -251,10 +251,10 @@ tmux attach -t dev
 
 **Soluções:**
 ```bash
-# Primeiro, veja o que o ECC ainda sabe sobre esta máquina
-ecc list-installed
-ecc doctor
-ecc repair
+# Primeiro, veja o que o yus ainda sabe sobre esta máquina
+yus list-installed
+yus doctor
+yus repair
 
 # Só reinstale se o doctor/repair não conseguir restaurar os arquivos
 
@@ -266,7 +266,7 @@ mv ~/.claude/plugins/cache ~/.claude/plugins/cache.backup.$(date +%Y%m%d-%H%M%S)
 mkdir -p ~/.claude/plugins/cache
 
 # Reinstale pelo marketplace
-# Claude Code → Extensions → ECC → Uninstall
+# Claude Code → Extensions → yus → Uninstall
 # Depois instale de novo pelo marketplace
 
 # Se o problema for de acesso ao marketplace ou à conta, recupere a conta pelo ECC Tools à parte; reinstalar não recupera conta
@@ -276,8 +276,8 @@ claude --version
 # Requer Claude Code 2.0+
 
 # Instalação manual (se o marketplace falhar)
-git clone https://github.com/affaan-m/ECC.git
-cp -r ECC ~/.claude/plugins/ecc
+git clone https://github.com/yusei21/yus.git
+cp -r yus ~/.claude/plugins/yus
 ```
 
 ### A detecção do gerenciador de pacotes falha
@@ -310,7 +310,7 @@ rm package-lock.json  # Se estiver usando pnpm/yarn/bun
 ### O OpenCode não inicia no Termux/Android
 
 **Sintoma:** o rastreamento de arquivos alterados para de funcionar em
-silêncio (um aviso único `[ECC] changed-files tracking disabled` aparece nos
+silêncio (um aviso único `[yus] changed-files tracking disabled` aparece nos
 logs do OpenCode) ou, em versões mais antigas, o `opencode` trava logo ao
 iniciar com um `ResolveMessage` do Bun, por exemplo:
 
@@ -323,8 +323,8 @@ ResolveMessage: Cannot find module '../plugins/lib/changed-files-store.js' from 
   Em geral `tools/` e `plugins/` existem, mas `plugins/lib/` não terminou de
   ser copiado (uma instalação interrompida, ou um problema de armazenamento
   ou permissão, mais comum no sistema de arquivos do Android). Tanto a
-  ferramenta `changed-files` quanto o plugin `ecc-hooks` dependem de
-  `plugins/lib/changed-files-store.js`. Como o `ecc-hooks.ts` é o ponto de
+  ferramenta `changed-files` quanto o plugin `yus-hooks` dependem de
+  `plugins/lib/changed-files-store.js`. Como o `yus-hooks.ts` é o ponto de
   entrada do plugin no OpenCode (carregado uma vez no início da sessão, antes
   do arquivo barrel `tools/index.ts`), uma dependência faltando ali derrubava
   a sessão inteira do OpenCode antes de qualquer hook carregar, e não só
@@ -332,19 +332,19 @@ ResolveMessage: Cannot find module '../plugins/lib/changed-files-store.js' from 
 
 **Soluções:**
 ```bash
-# No repositório do ECC, procure e repare arquivos gerenciados ausentes/incompletos
-ecc doctor --target opencode
-ecc repair --target opencode
+# No repositório do yus, procure e repare arquivos gerenciados ausentes/incompletos
+yus doctor --target opencode
+yus repair --target opencode
 
 # Se não houver diferenças, mas plugins/ continuar faltando no aparelho,
-# rode de novo o instalador do ECC para o destino opencode
+# rode de novo o instalador do yus para o destino opencode
 ```
 
 **Observação:** se você também estiver vendo
 `ProviderModelNotFoundError: Model not found: openai/gpt-5.5` com referência a
 `~/.config/opencode/oh-my-opencode-slim.json`, esse arquivo pertence ao plugin
 de terceiros [`oh-my-opencode-slim`](https://github.com/alvinunreal/oh-my-opencode-slim),
-não ao ECC; o ECC nunca escreve em `~/.config/opencode/`. Corrija ali o
+não ao yus; o yus nunca escreve em `~/.config/opencode/`. Corrija ali o
 prefixo do modelo (`opencode/...` em vez de `openai/...`) ou reporte no
 projeto dele.
 
@@ -424,11 +424,11 @@ chmod -R u+rwX,go+rX ~/.claude/homunculus
 ```bash
 # Instale as dependências do plugin
 # Troque <version> pela versão mostrada em `claude plugin list`, por exemplo 2.2.3
-cd "$HOME/.claude/plugins/cache/ecc/ecc/<version>"
+cd "$HOME/.claude/plugins/cache/yus/yus/<version>"
 npm install
 
 # Ou, na instalação manual
-cd ~/.claude/plugins/ecc
+cd ~/.claude/plugins/yus
 npm install
 ```
 
@@ -450,7 +450,7 @@ find ~/.claude/plugins -name "*.sh" -exec dos2unix {} \;
 
 Se o problema continuar:
 
-1. **Veja as issues no GitHub**: [github.com/affaan-m/ECC/issues](https://github.com/affaan-m/ECC/issues)
+1. **Veja as issues no GitHub**: [github.com/yusei21/yus/issues](https://github.com/yusei21/yus/issues)
 2. **Ative os logs de depuração**:
    ```bash
    export CLAUDE_DEBUG=1

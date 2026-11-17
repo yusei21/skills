@@ -38,7 +38,7 @@ let passed = 0;
 let failed = 0;
 
 // Keep accumulator fixtures private, including subprocess hook invocations.
-const accumulatorTempRoot = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-stop-fixtures-')));
+const accumulatorTempRoot = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-stop-fixtures-')));
 const originalTempEnv = Object.fromEntries(['TMPDIR', 'TMP', 'TEMP'].map(key => [key, process.env[key]]));
 for (const key of Object.keys(originalTempEnv)) process.env[key] = accumulatorTempRoot;
 process.on('exit', () => fs.rmSync(accumulatorTempRoot, { recursive: true, force: true }));
@@ -46,12 +46,12 @@ process.on('exit', () => fs.rmSync(accumulatorTempRoot, { recursive: true, force
 // Use a unique session ID for tests so we don't pollute real sessions
 const TEST_SESSION_ID = `test-${Date.now()}`;
 const origSessionId = process.env.CLAUDE_SESSION_ID;
-const origEccSessionId = process.env.ECC_SESSION_ID;
+const origEccSessionId = process.env.YUS_SESSION_ID;
 process.env.CLAUDE_SESSION_ID = TEST_SESSION_ID;
-delete process.env.ECC_SESSION_ID;
+delete process.env.YUS_SESSION_ID;
 
 function getAccumFile() {
-  return path.join(accumulatorTempRoot, `ecc-edited-${TEST_SESSION_ID}.txt`);
+  return path.join(accumulatorTempRoot, `yus-edited-${TEST_SESSION_ID}.txt`);
 }
 
 function cleanAccumFile() {
@@ -220,15 +220,15 @@ if (test('parseAccumulator ignores blank lines and trims whitespace', () => {
 
 if (test('getTotalBudgetMs honors a bounded dispatcher budget', () => {
   assert.strictEqual(
-    getTotalBudgetMs({ ECC_STOP_FORMAT_TYPECHECK_BUDGET_MS: '210000' }),
+    getTotalBudgetMs({ YUS_STOP_FORMAT_TYPECHECK_BUDGET_MS: '210000' }),
     210000
   );
   assert.strictEqual(
-    getTotalBudgetMs({ ECC_STOP_FORMAT_TYPECHECK_BUDGET_MS: '999999' }),
+    getTotalBudgetMs({ YUS_STOP_FORMAT_TYPECHECK_BUDGET_MS: '999999' }),
     270000
   );
   assert.strictEqual(
-    getTotalBudgetMs({ ECC_STOP_FORMAT_TYPECHECK_BUDGET_MS: 'invalid' }),
+    getTotalBudgetMs({ YUS_STOP_FORMAT_TYPECHECK_BUDGET_MS: 'invalid' }),
     270000
   );
 })) passed++; else failed++;
@@ -332,8 +332,8 @@ console.log('\nsession-scoped accumulator regression (#3460)');
 function withPayloadSessions(fn) {
   const sessionA = `${TEST_SESSION_ID}-payload-a`;
   const sessionB = `${TEST_SESSION_ID}-payload-b`;
-  const fileA = path.join(accumulatorTempRoot, `ecc-edited-${sessionA}.txt`);
-  const fileB = path.join(accumulatorTempRoot, `ecc-edited-${sessionB}.txt`);
+  const fileA = path.join(accumulatorTempRoot, `yus-edited-${sessionA}.txt`);
+  const fileB = path.join(accumulatorTempRoot, `yus-edited-${sessionB}.txt`);
   try {
     cleanAccumFile();
     fn({ sessionA, sessionB, fileA, fileB });
@@ -377,21 +377,21 @@ if (test('MultiEdit uses the same stdin session accumulator for every edit', () 
   });
 })) passed++; else failed++;
 
-if (test('ECC_SESSION_ID precedes CLAUDE_SESSION_ID while preserving legacy filenames', () => {
-  const rawId = `${TEST_SESSION_ID}/ecc.with spaces`;
+if (test('YUS_SESSION_ID precedes CLAUDE_SESSION_ID while preserving legacy filenames', () => {
+  const rawId = `${TEST_SESSION_ID}/yus.with spaces`;
   const safeId = rawId.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 64);
-  const file = path.join(accumulatorTempRoot, `ecc-edited-${safeId}.txt`);
-  process.env.ECC_SESSION_ID = rawId;
+  const file = path.join(accumulatorTempRoot, `yus-edited-${safeId}.txt`);
+  process.env.YUS_SESSION_ID = rawId;
   try {
     cleanAccumFile();
-    accumulator.run(JSON.stringify({ tool_input: { file_path: '/nonexistent/ecc.ts' } }));
-    assert.strictEqual(fs.readFileSync(file, 'utf8'), '/nonexistent/ecc.ts\n');
+    accumulator.run(JSON.stringify({ tool_input: { file_path: '/nonexistent/yus.ts' } }));
+    assert.strictEqual(fs.readFileSync(file, 'utf8'), '/nonexistent/yus.ts\n');
     assert.ok(!fs.existsSync(getAccumFile()));
     const stopHook = require('../../scripts/hooks/stop-format-typecheck');
     assert.strictEqual(stopHook.run('malformed JSON'), 'malformed JSON');
     assert.ok(!fs.existsSync(file), 'malformed Stop input must retain the environment fallback');
   } finally {
-    delete process.env.ECC_SESSION_ID;
+    delete process.env.YUS_SESSION_ID;
     fs.rmSync(file, { force: true });
     cleanAccumFile();
   }
@@ -400,7 +400,7 @@ if (test('ECC_SESSION_ID precedes CLAUDE_SESSION_ID while preserving legacy file
 if (test('stdin IDs keep the existing filename sanitizer and length limit', () => {
   const rawId = `${TEST_SESSION_ID}/../nested\\session ${'x'.repeat(100)}`;
   const safeId = rawId.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 64);
-  const file = path.join(accumulatorTempRoot, `ecc-edited-${safeId}.txt`);
+  const file = path.join(accumulatorTempRoot, `yus-edited-${safeId}.txt`);
   try {
     accumulator.run(JSON.stringify({ session_id: rawId, tool_input: { file_path: '/nonexistent/safe.ts' } }));
     assert.strictEqual(fs.readFileSync(file, 'utf8'), '/nonexistent/safe.ts\n');
@@ -465,9 +465,9 @@ if (origSessionId === undefined) {
   process.env.CLAUDE_SESSION_ID = origSessionId;
 }
 if (origEccSessionId === undefined) {
-  delete process.env.ECC_SESSION_ID;
+  delete process.env.YUS_SESSION_ID;
 } else {
-  process.env.ECC_SESSION_ID = origEccSessionId;
+  process.env.YUS_SESSION_ID = origEccSessionId;
 }
 
 console.log(`\n=== Test Results ===`);

@@ -3,7 +3,7 @@ name: delivery-gate
 description: Stop hook that blocks Claude from finishing until quality checks pass. Detects rationalization patterns (surface text heuristics), stale learning logs (filesystem mtime), and low disk space. Complements self-audit by mechanically enforcing learning capture habits. Use when Claude should be mechanically blocked from declaring work finished before quality checks and learning capture actually pass.
 metadata:
   version: 1.1.1
-  origin: ECC
+  origin: yus
 ---
 
 # Delivery Gate — Mechanical Quality Gate for Claude Code
@@ -38,7 +38,7 @@ Over many sessions of "ship and forget," the human hasn't grown. This hook enfor
 
 ## Install
 
-From the ECC repository root:
+From the yus repository root:
 
 ```bash
 mkdir -p ~/.claude/scripts

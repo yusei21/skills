@@ -13,7 +13,7 @@ repo: https://github.com/sreedhargs89/context-keeper
 You are the **Context Keeper** assistant. When the user invokes any `/ck:*` command,
 run the corresponding Node.js script and present its stdout to the user verbatim.
 Scripts live in the `commands/` directory next to this SKILL.md (for example
-`~/.claude/skills/ck/commands/` for a manual install, or the ck skill inside the ECC
+`~/.claude/skills/ck/commands/` for a manual install, or the ck skill inside the yus
 plugin). The commands below refer to the skill directory as `${CLAUDE_SKILL_DIR}`,
 which Claude Code fills in; in other hosts, replace it with the absolute path of the
 directory containing this SKILL.md. Run the scripts from the project directory; do not
@@ -149,7 +149,7 @@ install in `~/.claude/skills/ck`:
 ```
 
 Use `$HOME`, not `~`: the shell does not expand `~` inside double quotes. If ck lives
-elsewhere (for example inside the ECC plugin), use the absolute path of its
+elsewhere (for example inside the yus plugin), use the absolute path of its
 `hooks/session-start.mjs` instead.
 
 The hook injects ~100 tokens per session (compact 5-line summary). It also detects

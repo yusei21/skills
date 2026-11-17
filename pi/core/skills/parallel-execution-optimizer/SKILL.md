@@ -3,7 +3,7 @@ name: parallel-execution-optimizer
 description: Speed up a task by turning it into a dependency graph of parallel lanes with a lane matrix, batched reads and checks, write surfaces isolated by file, worktree, branch, or service, and a final verification table. Use when the user wants a task done much faster through parallel work, concurrent agents, batched tool calls, isolated worktrees, many independent verification lanes, or bounded homogeneous work that reuses shared preparation while record operations remain sequential, without losing correctness.
 license: MIT
 metadata:
-  origin: ECC
+  origin: yus
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
@@ -138,7 +138,7 @@ per-record checks remain intact, and unverified outcomes stay unresolved. On a
 connector change, confirm completed exclusions survive, failed/unattempted work
 requires current authorization, and ambiguous effects are reconciled first. Report
 what was actually executed separately from this proposed evaluation. Do not infer
-latency improvements or ECC/connector fault attribution from this example.
+latency improvements or yus/connector fault attribution from this example.
 
 For an already-ready group, retain readiness, handoff, and first-action times
 in the existing journal. Separate required checks and approval waits from

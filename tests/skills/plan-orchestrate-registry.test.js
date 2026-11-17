@@ -2,7 +2,7 @@
 /**
  * Registry fixtures for skills/ai-agents/plan-orchestrate/SKILL.md.
  *
- * The skill is a router over the current ECC command surface. These fixtures
+ * The skill is a router over the current yus command surface. These fixtures
  * validate the router's claims against the command registry itself — the
  * command files (frontmatter argument-hint / ## Usage sections, $ARGUMENTS
  * use) and the generated docs/COMMAND-REGISTRY.json:
@@ -139,11 +139,11 @@ function run() {
 
   // --- 2. No retired / legacy-shim command outside the prohibition ------
 
-  const PROHIBITION = 'no `legacy-command-shims/` command and no `/orchestrate` or `/ecc:orchestrate` appears in the rendered output';
+  const PROHIBITION = 'no `legacy-command-shims/` command and no `/orchestrate` or `/yus:orchestrate` appears in the rendered output';
   assert.ok(markdown.includes(PROHIBITION), 'the retired-command prohibition sentence must stay in the self-check');
   const withoutProhibition = markdown.replace(PROHIBITION, '');
   assert.ok(!/\/orchestrate\b/.test(withoutProhibition), 'skill must not reference /orchestrate outside the prohibition');
-  assert.ok(!/\/ecc:orchestrate/.test(withoutProhibition), 'skill must not reference /ecc:orchestrate outside the prohibition');
+  assert.ok(!/\/yus:orchestrate/.test(withoutProhibition), 'skill must not reference /yus:orchestrate outside the prohibition');
   for (const name of emitCommands) {
     assert.ok(!shimNames.has(name), `/${name} is a legacy-command-shim and must not be emitted`);
   }

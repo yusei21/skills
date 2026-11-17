@@ -2,7 +2,7 @@
 'use strict';
 
 /**
- * ECC Agent IR — tool and model mapping tables.
+ * yus Agent IR — tool and model mapping tables.
  *
  * The IR stores source (Claude) tool names verbatim. Each emitter maps those
  * names to its own harness primitives through a table. Unmapped tools are

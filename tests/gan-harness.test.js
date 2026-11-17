@@ -37,7 +37,7 @@ function test(name, fn) {
 }
 
 function withShellFixture(fn) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-gan-shell-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-gan-shell-'));
   try {
     const bin = path.join(root, 'bin');
     const home = path.join(root, 'home');
@@ -173,7 +173,7 @@ function extractScore(feedback) {
   const functionMatch = harnessSource.match(/extract_score\(\) \{[\s\S]*?\n\}/);
   assert.ok(functionMatch, 'expected scripts/gan-harness.sh to define extract_score');
 
-  const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-gan-harness-'));
+  const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-gan-harness-'));
   const feedbackPath = path.join(temporaryDirectory, 'feedback.md');
   fs.writeFileSync(feedbackPath, feedback, 'utf8');
 

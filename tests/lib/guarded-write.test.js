@@ -11,7 +11,7 @@ const digest = value => crypto.createHash('sha256').update(value).digest('hex');
 let passed = 0;
 let failed = 0;
 function test(name, callback) {
-  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-guarded-')));
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-guarded-')));
   const file = path.join(root, 'entry.js');
   const options = { action: 'replace activation', validateDestination: value => value };
   try { callback({ root, file, options }); passed++; console.log(`  PASS ${name}`); }

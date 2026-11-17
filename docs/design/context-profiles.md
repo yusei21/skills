@@ -2,14 +2,14 @@
 
 Status: accepted first development slice, P0/P1, September 8, 2026. This document describes the source implementation and its contributor contract. It does not announce a released runtime capability or a change to installation defaults.
 
-ECC context profiles separate the skill-discovery proposal from installation, runtime authority, and measurement. The first slice inventories canonical skills, validates versioned declarations, and produces deterministic read-only plans. It does not yet scope the complete host system prompt.
+yus context profiles separate the skill-discovery proposal from installation, runtime authority, and measurement. The first slice inventories canonical skills, validates versioned declarations, and produces deterministic read-only plans. It does not yet scope the complete host system prompt.
 
 ## Keep the controls separate
 
 | Control | Meaning | Compatibility rule |
 | --- | --- | --- |
 | Existing install `--profile` | Selects install modules using [install profiles](../../manifests/install-profiles.json) | `minimal`, `opencode`, `core`, `developer`, `security`, `research`, and `full` keep their existing meanings |
-| Context profile `lean@1` or `full@1` | Proposes which canonical skill metadata is selected for discovery | No automatic mapping from an install profile; `full@1` is a skill projection, not the complete ECC installation |
+| Context profile `lean@1` or `full@1` | Proposes which canonical skill metadata is selected for discovery | No automatic mapping from an install profile; `full@1` is a skill projection, not the complete yus installation |
 | Selection `manual`, `suggest`, or `auto` | Records selection intent in a proposed context plan | No task classifier, agent-directed switching, or automatic application exists in this slice |
 | Existing hook profile | Controls existing hook policy through [hook flags](../../scripts/lib/hook-flags.js) | `minimal`, `standard`, and `strict` remain separate; preview never changes hook consent |
 | Runtime and capabilities | Execution isolation, tool permissions, secrets, and side effects | A context selection grants no authority and chooses no sandbox |
@@ -18,26 +18,26 @@ There is no new `use`, `apply`, or `mode` mutation command. The existing install
 
 ## Inspect the proposal
 
-From a source checkout, use the existing [ECC dispatcher](../../scripts/ecc.js):
+From a source checkout, use the existing [yus dispatcher](../../scripts/yus.js):
 
 ```sh
-node scripts/ecc.js profile show --json
-node scripts/ecc.js profile show lean@1 --json
-node scripts/ecc.js profile preview lean@1 --target codex --selection auto --json
-node scripts/ecc.js profile preview full@1 --target claude --selection manual --json
-node scripts/ecc.js profile preview lean@1 --target codex --include skill:security-review --exclude skill:python-patterns --json
-node scripts/ecc.js profile explain skill:security-review --target codex --json
+node scripts/yus.js profile show --json
+node scripts/yus.js profile show lean@1 --json
+node scripts/yus.js profile preview lean@1 --target codex --selection auto --json
+node scripts/yus.js profile preview full@1 --target claude --selection manual --json
+node scripts/yus.js profile preview lean@1 --target codex --include skill:security-review --exclude skill:python-patterns --json
+node scripts/yus.js profile explain skill:security-review --target codex --json
 ```
 
-The packaged CLI uses the same `ecc profile ...` arguments. `show` reads profile definitions; `preview` compiles a proposal; `explain` looks up one exact canonical skill ID and reports its source, resources, ownership, and target declarations. These commands neither invoke skills nor write installed settings. The CLI reads its own package sources, independently of the caller's working directory.
+The packaged CLI uses the same `yus profile ...` arguments. `show` reads profile definitions; `preview` compiles a proposal; `explain` looks up one exact canonical skill ID and reports its source, resources, ownership, and target declarations. These commands neither invoke skills nor write installed settings. The CLI reads its own package sources, independently of the caller's working directory.
 
 CLI preview defaults are `lean@1`, target `codex`, and selection intent `auto`. These are preview defaults, not detected user preferences. The library compiler defaults selection intent to `manual`; consumers should pass the intended value explicitly. Both `lean` and `full` are accepted aliases for the versioned profile IDs.
 
-JSON responses use `ecc.profile-inspection.v1`, including `status`, `summary`, `activation`, `next_actions`, and `artifacts`. A successful preview deliberately reports `status: "warning"` with exit code 0 because runtime activation remains `unobserved`. Invalid requests return an error and exit code 1. A plan reports `active: false` and `disposition: "proposed"`; these fields must survive downstream presentation.
+JSON responses use `yus.profile-inspection.v1`, including `status`, `summary`, `activation`, `next_actions`, and `artifacts`. A successful preview deliberately reports `status: "warning"` with exit code 0 because runtime activation remains `unobserved`. Invalid requests return an error and exit code 1. A plan reports `active: false` and `disposition: "proposed"`; these fields must survive downstream presentation.
 
 ## Public sources and APIs
 
-The source manifests have numeric `schemaVersion: 1`. Generated registry and plan objects identify their output shapes as `ecc.context-registry.v1` and `ecc.context-plan.v1` respectively.
+The source manifests have numeric `schemaVersion: 1`. Generated registry and plan objects identify their output shapes as `yus.context-registry.v1` and `yus.context-plan.v1` respectively.
 
 | Source | Responsibility |
 | --- | --- |
@@ -72,7 +72,7 @@ The first two functions are exported by the registry library; the profile librar
 
 Each canonical `skills/<directory>/SKILL.md` becomes `skill:<directory>`. Its skill directory must have exactly one owner in [install modules](../../manifests/install-modules.json). The owning module supplies `ownerModuleId`, the initial `packId`, and `declaredInstallTargets`. This reuses existing ownership without treating installer module dependencies as skill workflow dependencies.
 
-Lean currently selects three required candidate entries: `skill:configure-ecc`, `skill:context-budget`, and `skill:ecc-guide`. Other canonical skills remain labeled `routed` unless explicitly included or excluded. Here, `routed` means available in the catalog for future discovery integration; it does not mean a router has run or a native host can already retrieve the skill.
+Lean currently selects three required candidate entries: `skill:configure-yus`, `skill:context-budget`, and `skill:yus-guide`. Other canonical skills remain labeled `routed` unless explicitly included or excluded. Here, `routed` means available in the catalog for future discovery integration; it does not mean a router has run or a native host can already retrieve the skill.
 
 Full derives `all` from the current canonical inventory. The September 8 baseline contains 286 skills, but 286 is a snapshot, not a hardcoded profile limit. Explicit exclusions can narrow a Full proposal, except for required entries and dependencies needed by retained selections.
 
@@ -135,12 +135,12 @@ These related PRs are integration inputs, not claims that their proposed behavio
 
 | Contribution | Intended integration | Boundary |
 | --- | --- | --- |
-| [#2788](https://github.com/affaan-m/ECC/pull/2788) | Native discovery carriers and associated ownership/receipt work | Consume this registry and plan; carrier generation and activation belong to later slices |
-| [#2844](https://github.com/affaan-m/ECC/pull/2844) | Catalog grouping, deterministic selection fixtures, and listing projection | Reuse canonical IDs and pack ownership instead of introducing competing profile authority |
-| [#2945](https://github.com/affaan-m/ECC/pull/2945) | Task routing and automatic-selection proposals | Future structured task resolver; `selectionMode: "auto"` alone implements none of this |
-| [#2740](https://github.com/affaan-m/ECC/pull/2740) | Native context counters and bounded diagnostics | Keep observed measurements separate from fixture estimates and scan assumptions |
-| [#3030](https://github.com/affaan-m/ECC/pull/3030) | Contributor skill-quality validation | Content-quality checks complement inventory validation; they do not prove runtime activation or workflow outcomes |
-| [#3032](https://github.com/affaan-m/ECC/pull/3032) | Existing js-yaml dependency security update | Verify contributor integration before release; retain both lockfiles and rerun dependency and regression checks |
+| [#2788](https://github.com/yusei21/yus/pull/2788) | Native discovery carriers and associated ownership/receipt work | Consume this registry and plan; carrier generation and activation belong to later slices |
+| [#2844](https://github.com/yusei21/yus/pull/2844) | Catalog grouping, deterministic selection fixtures, and listing projection | Reuse canonical IDs and pack ownership instead of introducing competing profile authority |
+| [#2945](https://github.com/yusei21/yus/pull/2945) | Task routing and automatic-selection proposals | Future structured task resolver; `selectionMode: "auto"` alone implements none of this |
+| [#2740](https://github.com/yusei21/yus/pull/2740) | Native context counters and bounded diagnostics | Keep observed measurements separate from fixture estimates and scan assumptions |
+| [#3030](https://github.com/yusei21/yus/pull/3030) | Contributor skill-quality validation | Content-quality checks complement inventory validation; they do not prove runtime activation or workflow outcomes |
+| [#3032](https://github.com/yusei21/yus/pull/3032) | Existing js-yaml dependency security update | Verify contributor integration before release; retain both lockfiles and rerun dependency and regression checks |
 
 The original September 8 dependency baseline pinned js-yaml 4.3.1, affected by [GHSA-2883-xcg3-v3hh](https://github.com/nodeca/js-yaml/security/advisories/GHSA-2883-xcg3-v3hh). PR preparation exposed that existing finding in hosted CI. This branch now includes Myles Agnew's exact 4.3.2 upgrade from #3032 as an attributed prerequisite commit, updating the runtime pin, overrides, resolutions, and both lockfiles. Runtime audit reports zero vulnerabilities after installation. The original contributor PR remains independently reviewable. This registry's `JSON_SCHEMA` excludes the advisory's merge behavior, but upgrading also protects existing default-schema parsers.
 

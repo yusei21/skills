@@ -62,7 +62,7 @@ export * from "./ecc-hooks"
 ];
 
 function fixture(callback, enabled = false) {
-  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-opencode-write-')));
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-opencode-write-')));
   const homeDir = path.join(root, 'home');
   const sourceRoot = path.join(root, 'source');
   const targetRoot = path.join(homeDir, '.config', 'opencode');
@@ -73,7 +73,7 @@ function fixture(callback, enabled = false) {
       fs.copyFileSync(path.join(REPO_ROOT, 'manifests', name), path.join(sourceRoot, 'manifests', name));
     }
     fs.copyFileSync(path.join(REPO_ROOT, 'package.json'), path.join(sourceRoot, 'package.json'));
-    const operations = ['opencode.json', 'plugins/ecc-hooks.ts'].map(relativePath => {
+    const operations = ['opencode.json', 'plugins/yus-hooks.ts'].map(relativePath => {
       const sourceRelativePath = `.opencode/${relativePath}`;
       const sourcePath = path.join(sourceRoot, sourceRelativePath);
       const destinationPath = path.join(targetRoot, relativePath);
@@ -92,7 +92,7 @@ function fixture(callback, enabled = false) {
     fs.mkdirSync(path.join(dist, 'plugins'), { recursive: true });
     fs.mkdirSync(path.join(dist, 'tools'), { recursive: true });
     fs.writeFileSync(path.join(dist, 'index.js'), 'module.exports = {};\n');
-    const installStatePath = path.join(targetRoot, 'ecc-install-state.json');
+    const installStatePath = path.join(targetRoot, 'yus-install-state.json');
     const state = createInstallState({
       adapter, targetRoot, installStatePath,
       request: { modules: ['platform-configs'], legacyMode: true,
@@ -194,7 +194,7 @@ function runTests() {
     const nativeOpen = fs.openSync;
     const nativeClose = fs.closeSync;
     const cachedApply = require.cache[require.resolve('../../scripts/lib/install/apply')];
-    const destination = path.join(value.targetRoot, 'plugins/ecc-hooks.ts');
+    const destination = path.join(value.targetRoot, 'plugins/yus-hooks.ts');
     withWritableOpenMutation(destination, () => {
       assert.strictEqual(fs.openSync, nativeOpen);
       assert.strictEqual(fs.closeSync, nativeClose);
@@ -203,7 +203,7 @@ function runTests() {
     assert.strictEqual(fs.closeSync, nativeClose);
     assert.strictEqual(require.cache[require.resolve('../../scripts/lib/install/apply')], cachedApply);
   }));
-  for (const relativePath of ['plugins/ecc-hooks.ts', 'opencode.json']) {
+  for (const relativePath of ['plugins/yus-hooks.ts', 'opencode.json']) {
     for (const mode of ['apply', 'repair']) {
       test(`${mode} preserves a same-inode ${relativePath} edit at writable open`, () => fixture(value => {
         const destination = path.join(value.targetRoot, relativePath);
@@ -226,7 +226,7 @@ function runTests() {
   }
   for (const mode of ['apply', 'repair']) {
     test(`${mode} preserves a file created after expected absence`, () => fixture(value => {
-      const destination = path.join(value.targetRoot, 'plugins/ecc-hooks.ts');
+      const destination = path.join(value.targetRoot, 'plugins/yus-hooks.ts');
       fs.unlinkSync(destination);
       const content = '// newly created user file\n';
       withWritableOpenMutation(destination, () => fs.writeFileSync(destination, content), () => {
@@ -297,16 +297,16 @@ function runTests() {
       beforeOperationWrite() {
         if (checked) return;
         checked = true;
-        assert.throws(() => applyInstallPlan(withHookConsent(value.basePlan, 'enabled')), /Another ECC process|OpenCode.*lock/i);
+        assert.throws(() => applyInstallPlan(withHookConsent(value.basePlan, 'enabled')), /Another yus process|OpenCode.*lock/i);
         assert.strictEqual(repair(value).results[0].status, 'error');
       },
     });
     assert.ok(checked);
-    assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+    assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
     assert.strictEqual(applyInstallPlan(value.declinePlan).applied, true);
   }));
   test('repair preserves ownership for a destination-classified activation with a recorded transform', () => fixture(value => {
-    const operation = value.state.operations.find(entry => entry.sourceRelativePath.endsWith('ecc-hooks.ts'));
+    const operation = value.state.operations.find(entry => entry.sourceRelativePath.endsWith('yus-hooks.ts'));
     const oldDestination = operation.destinationPath;
     operation.sourceRelativePath = '.opencode/tools/fixture.js';
     operation.contentTransform = 'opencode-disable-plugin-entrypoint';
@@ -329,44 +329,44 @@ function runTests() {
     const result = repair(value).results[0];
     assert.strictEqual(result.status, 'repaired', result.error);
     assert.strictEqual(result.stateRefreshed, true);
-    assert.strictEqual(fs.readFileSync(path.join(value.targetRoot, 'plugins/ecc-hooks.ts'), 'utf8'),
+    assert.strictEqual(fs.readFileSync(path.join(value.targetRoot, 'plugins/yus-hooks.ts'), 'utf8'),
       getDisabledOpenCodePluginContent());
     assert.deepStrictEqual(JSON.parse(fs.readFileSync(path.join(value.targetRoot, 'opencode.json'))),
       { plugin: [], userSetting: true });
-    assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+    assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
   }));
   for (const consent of [null, 'declined']) {
     for (const plugin of [undefined, ['user-plugin']]) {
       test(`fresh ${consent || 'default'} apply preserves inactive user config ${JSON.stringify(plugin)}`, () => fixture(value => {
         fs.unlinkSync(value.installStatePath);
-        fs.unlinkSync(path.join(value.targetRoot, 'plugins/ecc-hooks.ts'));
+        fs.unlinkSync(path.join(value.targetRoot, 'plugins/yus-hooks.ts'));
         const destination = path.join(value.targetRoot, 'opencode.json');
         const content = `${JSON.stringify({ userSetting: 'keep formatting', plugin }, null, 4)}\n`;
         fs.writeFileSync(destination, content);
         const result = applyInstallPlan(withHookConsent(value.basePlan, consent));
         assert.strictEqual(result.applied, true);
         assert.strictEqual(fs.readFileSync(destination, 'utf8'), content);
-        assert.ok(result.warnings.includes(`Skipped user-owned file ${destination}: the existing file is not recorded in ECC install-state.`));
+        assert.ok(result.warnings.includes(`Skipped user-owned file ${destination}: the existing file is not recorded in yus install-state.`));
         assert.ok(result.skippedOperations.some(operation => operation.destinationPath === destination));
         for (const operations of [result.operations, readInstallState(value.installStatePath).operations]) {
           assert.ok(!operations.some(operation => operation.destinationPath === destination), 'Do not adopt a user config');
         }
-        assert.strictEqual(fs.readFileSync(path.join(value.targetRoot, 'plugins/ecc-hooks.ts'), 'utf8'),
+        assert.strictEqual(fs.readFileSync(path.join(value.targetRoot, 'plugins/yus-hooks.ts'), 'utf8'),
           getDisabledOpenCodePluginContent());
-        assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+        assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
       }));
     }
     test('parseJsoncConfig tolerates comments and trailing commas without touching strings', () => {
       const config = parseJsoncConfig(`{
   // my note
   "plugin": [
-    "ecc-universal", /* inline */
+    "yus-universal", /* inline */
   ],
   "endpoint": "https://example.com/path", // URL survives
   "block": "/* not a comment */",
 }
 `, 'opencode.json');
-      assert.deepStrictEqual(config.plugin, ['ecc-universal']);
+      assert.deepStrictEqual(config.plugin, ['yus-universal']);
       assert.strictEqual(config.endpoint, 'https://example.com/path');
       assert.strictEqual(config.block, '/* not a comment */');
     });
@@ -382,7 +382,7 @@ function runTests() {
     });
     test(`fresh ${consent || 'default'} apply preserves inactive JSONC user config with comments`, () => fixture(value => {
       fs.unlinkSync(value.installStatePath);
-      fs.unlinkSync(path.join(value.targetRoot, 'plugins/ecc-hooks.ts'));
+      fs.unlinkSync(path.join(value.targetRoot, 'plugins/yus-hooks.ts'));
       const destination = path.join(value.targetRoot, 'opencode.json');
       // JSONC with a line comment, a block comment, trailing commas and a
       // URL string: OpenCode accepts this; the installer must not crash on
@@ -390,7 +390,7 @@ function runTests() {
       const content = `{
   // my note
   "plugin": [
-    "ecc-universal",
+    "yus-universal",
   ],
   "endpoint": "https://example.com/path", /* keep */
 }
@@ -401,33 +401,33 @@ function runTests() {
       assert.strictEqual(fs.readFileSync(destination, 'utf8'), content);
       assert.ok(result.warnings.some(warning => warning.includes(`Skipped user-owned file ${destination}`)));
       assert.ok(result.skippedOperations.some(operation => operation.destinationPath === destination));
-      assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+      assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
     }));
     test(`fresh ${consent || 'default'} apply rejects malformed user JSONC without adopting it`, () => fixture(value => {
       fs.unlinkSync(value.installStatePath);
-      fs.unlinkSync(path.join(value.targetRoot, 'plugins/ecc-hooks.ts'));
+      fs.unlinkSync(path.join(value.targetRoot, 'plugins/yus-hooks.ts'));
       const destination = path.join(value.targetRoot, 'opencode.json');
       const content = '{"plugin":[,]}';
       fs.writeFileSync(destination, content);
       assert.throws(() => applyInstallPlan(withHookConsent(value.basePlan, consent)), /Failed to parse .*opencode\.json/);
       assert.strictEqual(fs.readFileSync(destination, 'utf8'), content);
       assert.strictEqual(fs.existsSync(value.installStatePath), false);
-      assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+      assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
     }));
     test(`fresh ${consent || 'default'} apply still refuses active unrecorded config`, () => fixture(value => {
       fs.unlinkSync(value.installStatePath);
-      fs.unlinkSync(path.join(value.targetRoot, 'plugins/ecc-hooks.ts'));
+      fs.unlinkSync(path.join(value.targetRoot, 'plugins/yus-hooks.ts'));
       const destination = path.join(value.targetRoot, 'opencode.json');
       const content = fs.readFileSync(destination);
       assert.throws(() => applyInstallPlan(withHookConsent(value.basePlan, consent)), /Refusing OpenCode hook deactivation/);
       assert.deepStrictEqual(fs.readFileSync(destination), content);
-      assert.strictEqual(fs.existsSync(path.join(value.targetRoot, 'plugins/ecc-hooks.ts')), false);
+      assert.strictEqual(fs.existsSync(path.join(value.targetRoot, 'plugins/yus-hooks.ts')), false);
       assert.strictEqual(fs.existsSync(value.installStatePath), false);
-      assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+      assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
     }));
     test(`fresh ${consent || 'default'} apply rechecks skipped user config after writes`, () => fixture(value => {
       fs.unlinkSync(value.installStatePath);
-      const plugin = path.join(value.targetRoot, 'plugins/ecc-hooks.ts');
+      const plugin = path.join(value.targetRoot, 'plugins/yus-hooks.ts');
       fs.unlinkSync(plugin);
       const destination = path.join(value.targetRoot, 'opencode.json');
       fs.writeFileSync(destination, '{"userSetting":"initially inactive"}\n');
@@ -452,12 +452,12 @@ function runTests() {
       assert.deepStrictEqual(checkpoint.operations.map(operation => operation.destinationPath), [plugin]);
       assert.strictEqual(fs.readFileSync(plugin, 'utf8'), getDisabledOpenCodePluginContent());
       assert.strictEqual(checkpoint.operations[0].contentSha256, sha256(fs.readFileSync(plugin)));
-      assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+      assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
     }));
     test(`fresh ${consent || 'default'} apply preserves unrelated unrecorded plugin aliases`, () => fixture(value => {
       fs.unlinkSync(value.installStatePath);
       for (const operation of value.basePlan.operations) fs.unlinkSync(operation.destinationPath);
-      const aliases = ['index.ts', 'index.js', 'index.mjs', 'index.cjs', 'ecc-hooks.js'];
+      const aliases = ['index.ts', 'index.js', 'index.mjs', 'index.cjs', 'yus-hooks.js'];
       const content = 'export default async () => ({ "user.plugin": () => {} });\n';
       for (const alias of aliases) fs.writeFileSync(path.join(value.targetRoot, 'plugins', alias), content);
       const result = applyInstallPlan(withHookConsent(value.basePlan, consent));
@@ -480,13 +480,13 @@ function runTests() {
         writeInstallState(value.installStatePath, value.state);
       }
       const stateBefore = fs.readFileSync(value.installStatePath);
-      const plugin = path.join(value.targetRoot, 'plugins/ecc-hooks.ts');
+      const plugin = path.join(value.targetRoot, 'plugins/yus-hooks.ts');
       const pluginBefore = fs.readFileSync(plugin);
       assert.throws(() => applyInstallPlan(value.declinePlan), /Refusing OpenCode hook deactivation/);
       assert.strictEqual(fs.readFileSync(destination, 'utf8'), content);
       assert.deepStrictEqual(fs.readFileSync(value.installStatePath), stateBefore);
       assert.deepStrictEqual(fs.readFileSync(plugin), pluginBefore);
-      assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+      assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
     }));
   }
   for (const missing of ['profile', 'module']) {
@@ -515,7 +515,7 @@ function runTests() {
         }
         assert.strictEqual(buildCalls, 0);
         paths.forEach((file, index) => assert.deepStrictEqual(fs.readFileSync(file), before[index]));
-        assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+        assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
       }));
     }
   }
@@ -531,7 +531,7 @@ function runTests() {
     assert.deepStrictEqual(fs.readFileSync(value.installStatePath), before);
   }));
   for (const mode of ['doctor', 'repair']) {
-    test(`${mode} preserves an unrelated plugin without reporting ECC activation`, () => fixture(value => {
+    test(`${mode} preserves an unrelated plugin without reporting yus activation`, () => fixture(value => {
       applyInstallPlan(value.declinePlan);
       const destination = path.join(value.targetRoot, 'plugins', 'index.js');
       const content = 'export default async () => ({ "user.plugin": () => {} });\n';
@@ -556,7 +556,7 @@ function runTests() {
     for (const consent of [null, 'declined']) {
       test(`fresh ${consent || 'default'} apply refuses the unrecorded historical ${legacy.name}`, () => fixture(value => {
         assert.strictEqual(sha256(legacy.content), legacy.sha256, 'Preserve exact public-source fixture bytes');
-        assert.notStrictEqual(sha256(fs.readFileSync(path.join(value.sourceRoot, '.opencode/plugins/ecc-hooks.ts'))), legacy.sha256);
+        assert.notStrictEqual(sha256(fs.readFileSync(path.join(value.sourceRoot, '.opencode/plugins/yus-hooks.ts'))), legacy.sha256);
         assert.notStrictEqual(sha256(fs.readFileSync(path.join(REPO_ROOT, '.opencode/plugins/index.ts'))), legacy.sha256);
         fs.unlinkSync(value.installStatePath);
         for (const operation of value.basePlan.operations) fs.unlinkSync(operation.destinationPath);
@@ -567,7 +567,7 @@ function runTests() {
         assert.strictEqual(fs.readFileSync(alias, 'utf8'), legacy.content);
         assert.strictEqual(fs.existsSync(value.installStatePath), false, 'Do not adopt an unrecorded historical alias');
         for (const operation of value.basePlan.operations) assert.strictEqual(fs.existsSync(operation.destinationPath), false);
-        assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+        assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
       }));
     }
     for (const mode of ['doctor', 'repair']) {
@@ -593,13 +593,13 @@ function runTests() {
         assert.strictEqual(fs.readFileSync(alias, 'utf8'), legacy.content);
         assert.deepStrictEqual(fs.readFileSync(value.installStatePath), before);
         assert.deepStrictEqual(value.basePlan.operations.map(operation => fs.readFileSync(operation.destinationPath)), operationsBefore);
-        assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+        assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
       }));
     }
   }
   for (const mode of ['apply', 'repair']) {
     test(`${mode} refuses a historical alias inserted after preflight before state refresh`, () => fixture(value => {
-      const destination = path.join(value.targetRoot, 'plugins', 'ecc-hooks.ts');
+      const destination = path.join(value.targetRoot, 'plugins', 'yus-hooks.ts');
       const alias = path.join(value.targetRoot, 'plugins', 'index.js');
       const content = legacyPluginFixtures[0].content;
       withWritableOpenMutation(destination, () => fs.writeFileSync(alias, content), () => {
@@ -614,7 +614,7 @@ function runTests() {
         const state = readInstallState(value.installStatePath);
         assert.ok(!state.operations.some(operation => operation.destinationPath === alias));
         assert.strictEqual(state.request.hookConsent, value.state.request.hookConsent);
-        assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+        assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
       });
     }));
   }
@@ -666,13 +666,13 @@ function runTests() {
         assert.strictEqual(fs.readFileSync(alias, 'utf8'), legacy.content);
         assert.strictEqual(fs.existsSync(value.installStatePath), false);
         for (const operation of value.basePlan.operations) assert.strictEqual(fs.existsSync(operation.destinationPath), false);
-        assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+        assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
       }));
     }
   }
   for (const mode of ['doctor', 'repair']) {
     for (const historical of [true, false]) {
-      test(`${mode} with relative repoRoot ${historical ? 'refuses historical ECC' : 'preserves unrelated user'} aliases`, () => fixture(value => {
+      test(`${mode} with relative repoRoot ${historical ? 'refuses historical yus' : 'preserves unrelated user'} aliases`, () => fixture(value => {
         applyInstallPlan(value.declinePlan);
         const alias = path.join(value.targetRoot, 'plugins', 'index.js');
         const content = historical ? legacyPluginFixtures[0].content
@@ -705,7 +705,7 @@ function runTests() {
         }
         assert.ok(!readInstallState(value.installStatePath).operations.some(operation => operation.destinationPath === alias));
         assert.deepStrictEqual(value.basePlan.operations.map(operation => fs.readFileSync(operation.destinationPath)), operationsBefore);
-        assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+        assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
       }));
     }
   }
@@ -714,7 +714,7 @@ function runTests() {
       const alias = path.join(value.targetRoot, 'plugins', 'index.js');
       const content = legacyPluginFixtures[0].content;
       const repoRoot = path.relative(process.cwd(), value.sourceRoot);
-      withWritableOpenMutation(path.join(value.targetRoot, 'plugins', 'ecc-hooks.ts'),
+      withWritableOpenMutation(path.join(value.targetRoot, 'plugins', 'yus-hooks.ts'),
         () => fs.writeFileSync(alias, content), () => {
           if (mode === 'apply') {
             assert.throws(() => applyInstallPlan({ ...value.declinePlan, sourceRoot: repoRoot }),
@@ -729,7 +729,7 @@ function runTests() {
           const state = readInstallState(value.installStatePath);
           assert.ok(!state.operations.some(operation => operation.destinationPath === alias));
           assert.strictEqual(state.request.hookConsent, value.state.request.hookConsent);
-          assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+          assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
         });
     }));
   }
@@ -737,9 +737,9 @@ function runTests() {
     test(`relative repoRoot attributes only trusted current ${artifact} bytes in doctor and repair`, () => fixture(value => {
       applyInstallPlan(value.declinePlan);
       const source = artifact === 'source'
-        ? path.join(value.sourceRoot, '.opencode', 'plugins', 'ecc-hooks.ts')
+        ? path.join(value.sourceRoot, '.opencode', 'plugins', 'yus-hooks.ts')
         : path.join(value.sourceRoot, '.opencode', 'dist', 'plugins', 'index.js');
-      if (artifact === 'build') fs.writeFileSync(source, 'module.exports = { eccHook: true };\n');
+      if (artifact === 'build') fs.writeFileSync(source, 'module.exports = { yusHook: true };\n');
       const content = fs.readFileSync(source);
       const alias = path.join(value.targetRoot, 'plugins', 'index.js');
       fs.writeFileSync(alias, content);
@@ -757,7 +757,7 @@ function runTests() {
       assert.deepStrictEqual(fs.readFileSync(alias), content);
       assert.deepStrictEqual(fs.readFileSync(value.installStatePath), before);
       assert.deepStrictEqual(value.basePlan.operations.map(operation => fs.readFileSync(operation.destinationPath)), operationsBefore);
-      assert.strictEqual(fs.existsSync(`${value.installStatePath}.ecc.lock`), false);
+      assert.strictEqual(fs.existsSync(`${value.installStatePath}.yus.lock`), false);
     }));
   }
   for (const mode of ['doctor', 'repair']) {
@@ -772,12 +772,12 @@ function runTests() {
     }));
   }
   for (const artifact of ['source', 'build']) {
-    test(`unrecorded ${artifact}-identical ECC alias still fails closed`, () => fixture(value => {
+    test(`unrecorded ${artifact}-identical yus alias still fails closed`, () => fixture(value => {
       applyInstallPlan(value.declinePlan);
       const source = artifact === 'source'
-        ? path.join(value.sourceRoot, '.opencode', 'plugins', 'ecc-hooks.ts')
+        ? path.join(value.sourceRoot, '.opencode', 'plugins', 'yus-hooks.ts')
         : path.join(value.sourceRoot, '.opencode', 'dist', 'plugins', 'index.js');
-      if (artifact === 'build') fs.writeFileSync(source, 'module.exports = { eccHook: true };\n');
+      if (artifact === 'build') fs.writeFileSync(source, 'module.exports = { yusHook: true };\n');
       const content = fs.readFileSync(source);
       const alias = path.join(value.targetRoot, 'plugins', 'index.js');
       fs.writeFileSync(alias, content);
@@ -791,19 +791,19 @@ function runTests() {
       assert.deepStrictEqual(fs.readFileSync(value.installStatePath), before);
     }));
   }
-  test('an unrecorded collision at a planned ECC plugin destination still fails closed', () => fixture(value => {
+  test('an unrecorded collision at a planned yus plugin destination still fails closed', () => fixture(value => {
     fs.unlinkSync(value.installStatePath);
     fs.unlinkSync(path.join(value.targetRoot, 'opencode.json'));
-    const destination = path.join(value.targetRoot, 'plugins', 'ecc-hooks.ts');
-    const content = '// user-owned file at an ECC destination\n';
+    const destination = path.join(value.targetRoot, 'plugins', 'yus-hooks.ts');
+    const content = '// user-owned file at an yus destination\n';
     fs.writeFileSync(destination, content);
     assert.throws(() => applyInstallPlan(value.declinePlan), /user-owned|unverifiable/i);
     assert.strictEqual(fs.readFileSync(destination, 'utf8'), content);
     assert.strictEqual(fs.existsSync(value.installStatePath), false);
   }));
   for (const planned of [false, true]) {
-    test(`${planned ? 'planned ECC' : 'unrecorded user'} plugin read failures respect the attribution boundary`, () => fixture(value => {
-      const destination = path.join(value.targetRoot, 'plugins', planned ? 'ecc-hooks.ts' : 'index.js');
+    test(`${planned ? 'planned yus' : 'unrecorded user'} plugin read failures respect the attribution boundary`, () => fixture(value => {
+      const destination = path.join(value.targetRoot, 'plugins', planned ? 'yus-hooks.ts' : 'index.js');
       const content = planned ? fs.readFileSync(destination) : Buffer.from('// unreadable user plugin\n');
       if (!planned) fs.writeFileSync(destination, content);
       const originalOpen = fileSystem.openSync;
@@ -828,7 +828,7 @@ function runTests() {
   }
   test('repair preserves the primary failure and replacement lock when release also fails', () => fixture(value => {
     const destination = path.join(value.targetRoot, 'opencode.json');
-    const lock = `${value.installStatePath}.ecc.lock`;
+    const lock = `${value.installStatePath}.yus.lock`;
     withWritableOpenMutation(destination, () => {
       fs.writeFileSync(destination, '{"userEdit":true}');
       fs.renameSync(lock, `${lock}.owned`);

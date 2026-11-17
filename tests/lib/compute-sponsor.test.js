@@ -32,7 +32,7 @@ test('the copy links the compute URL exactly once and links nowhere else', () =>
 test('the copy names Ito as the preferred sponsor and keeps other providers open', () => {
   const copy = getComputeSponsorCopy();
   assert.match(copy, /^Run or self-host any open-source model\./);
-  assert.match(copy, /Itô is ECC's preferred compute sponsor/);
+  assert.match(copy, /Itô is yus's preferred compute sponsor/);
   assert.match(copy, /Any GPU provider works\./);
 });
 
@@ -42,9 +42,9 @@ test('the copy keeps the sponsorship link passive', () => {
   assert.match(copy, /does not invoke an RFQ, reserve capacity, provision compute, or configure serving/);
 });
 
-test('the copy keeps the ecc ito find bridge separate, opt-in, and non-reserving', () => {
+test('the copy keeps the yus ito find bridge separate, opt-in, and non-reserving', () => {
   const copy = getComputeSponsorCopy();
-  assert.match(copy, /Separately, the opt-in "ecc ito find" bridge/);
+  assert.match(copy, /Separately, the opt-in "yus ito find" bridge/);
   assert.match(copy, /explicitly configured canonical Itô CLI/);
   assert.match(copy, /submits a live authenticated RFQ; it does not reserve capacity\./);
 });

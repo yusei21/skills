@@ -2,9 +2,9 @@
 
 > Sponsor status: Atlas Cloud is a past sponsor. This status change leaves the documented integration unchanged.
 
-[Atlas Cloud](https://www.atlascloud.ai/?utm_source=github&utm_medium=link&utm_campaign=ECC) is a full-modal AI inference platform providing an OpenAI-compatible API for 59+ LLM models, image generation, and video generation.
+[Atlas Cloud](https://www.atlascloud.ai/?utm_source=github&utm_medium=link&utm_campaign=yus) is a full-modal AI inference platform providing an OpenAI-compatible API for 59+ LLM models, image generation, and video generation.
 
-> Run or self-host any open-source model instead of using a managed API. Itô is ECC's preferred compute sponsor: [open the Itô dashboard to sign in and rent or manage GPUs](https://compute.itomarkets.com). Any GPU provider works. That sponsorship link is passive: it does not invoke an RFQ, reserve capacity, provision compute, or configure serving. Separately, the opt-in `ecc ito find` bridge invokes the explicitly configured canonical Itô CLI and submits a live authenticated RFQ; it does not reserve capacity. Managed inference through Itô is not live yet.
+> Run or self-host any open-source model instead of using a managed API. Itô is yus's preferred compute sponsor: [open the Itô dashboard to sign in and rent or manage GPUs](https://compute.itomarkets.com). Any GPU provider works. That sponsorship link is passive: it does not invoke an RFQ, reserve capacity, provision compute, or configure serving. Separately, the opt-in `yus ito find` bridge invokes the explicitly configured canonical Itô CLI and submits a live authenticated RFQ; it does not reserve capacity. Managed inference through Itô is not live yet.
 
 ## Configuration
 
@@ -24,7 +24,7 @@ cp .env.example .env
 
 ## Install
 
-ECC can install its managed surfaces into any OpenAI-compatible backend. To use Atlas Cloud with Claude Code (or any ECC-managed harness), set the base URL and API key:
+yus can install its managed surfaces into any OpenAI-compatible backend. To use Atlas Cloud with Claude Code (or any yus-managed harness), set the base URL and API key:
 
 ```bash
 export ATLAS_API_KEY=your-key-here
@@ -63,7 +63,7 @@ client = OpenAI(
 
 response = client.chat.completions.create(
     model="anthropic/claude-sonnet-4.6",
-    messages=[{"role": "user", "content": "Hello from ECC + Atlas Cloud!"}],
+    messages=[{"role": "user", "content": "Hello from yus + Atlas Cloud!"}],
 )
 print(response.choices[0].message.content)
 ```

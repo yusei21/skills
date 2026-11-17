@@ -166,7 +166,7 @@ async function render(responses) {
 
 function populatedView(overrides) {
   return Object.assign({
-    schemaVersion: 'ecc.control-plane.view.v1',
+    schemaVersion: 'yus.control-plane.view.v1',
     tasks: [
       { id: 'task-clear', harness: 'claude', state: 'running', workingSet: { fileCount: 1 },
         projection: { maxRisk: 0.1, point: [1, 0] } },

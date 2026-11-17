@@ -16,13 +16,13 @@ function resolveMaxStdin(value, options = {}) {
   const parsed = Number(value);
   if (!Number.isSafeInteger(parsed) || parsed <= 0) {
     writeDiagnostic(
-      '[Hook] ECC_HOOK_INPUT_MAX_BYTES must be a positive safe integer; using the 1 MiB default\n'
+      '[Hook] YUS_HOOK_INPUT_MAX_BYTES must be a positive safe integer; using the 1 MiB default\n'
     );
     return DEFAULT_MAX_STDIN;
   }
   if (parsed > DEFAULT_MAX_STDIN) {
     writeDiagnostic(
-      '[Hook] ECC_HOOK_INPUT_MAX_BYTES exceeds the 1 MiB safety maximum; clamping to 1 MiB\n'
+      '[Hook] YUS_HOOK_INPUT_MAX_BYTES exceeds the 1 MiB safety maximum; clamping to 1 MiB\n'
     );
     return DEFAULT_MAX_STDIN;
   }
@@ -38,13 +38,13 @@ function resolveStdinIdleTimeout(value, options = {}) {
   const parsed = Number(text);
   if (!Number.isSafeInteger(parsed) || parsed < 0) {
     writeDiagnostic(
-      '[Hook] ECC_HOOK_INPUT_IDLE_TIMEOUT_MS must be a non-negative safe integer; using the 3000 ms default\n'
+      '[Hook] YUS_HOOK_INPUT_IDLE_TIMEOUT_MS must be a non-negative safe integer; using the 3000 ms default\n'
     );
     return DEFAULT_STDIN_IDLE_TIMEOUT_MS;
   }
   if (parsed > MAX_STDIN_IDLE_TIMEOUT_MS) {
     writeDiagnostic(
-      `[Hook] ECC_HOOK_INPUT_IDLE_TIMEOUT_MS exceeds the ${MAX_STDIN_IDLE_TIMEOUT_MS} ms timer maximum; clamping to it\n`
+      `[Hook] YUS_HOOK_INPUT_IDLE_TIMEOUT_MS exceeds the ${MAX_STDIN_IDLE_TIMEOUT_MS} ms timer maximum; clamping to it\n`
     );
     return MAX_STDIN_IDLE_TIMEOUT_MS;
   }
@@ -67,7 +67,7 @@ function readStdinRaw(stream = process.stdin, options = {}) {
   const writeDiagnostic = options.writeDiagnostic
     || (stream === process.stdin ? message => process.stderr.write(message) : () => {});
   const idleTimeoutMs = options.idleTimeoutMs === undefined
-    ? resolveStdinIdleTimeout(process.env.ECC_HOOK_INPUT_IDLE_TIMEOUT_MS, { writeDiagnostic })
+    ? resolveStdinIdleTimeout(process.env.YUS_HOOK_INPUT_IDLE_TIMEOUT_MS, { writeDiagnostic })
     : options.idleTimeoutMs;
   const decoder = new StringDecoder('utf8');
   let raw = '';

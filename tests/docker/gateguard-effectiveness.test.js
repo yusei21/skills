@@ -167,10 +167,10 @@ test('the schedule runs every arm once per scenario and rep, in a seeded order',
 test('the child environment drops harness and hook variables but keeps the OAuth token', () => {
   const saved = { ...process.env };
   try {
-    Object.assign(process.env, { CLAUDE_PLUGIN_ROOT: '/x', ECC_GATEGUARD: 'off', GATEGUARD_DISABLED: '1', CLAUDE_CODE_OAUTH_TOKEN: 'token' });
+    Object.assign(process.env, { CLAUDE_PLUGIN_ROOT: '/x', YUS_GATEGUARD: 'off', GATEGUARD_DISABLED: '1', CLAUDE_CODE_OAUTH_TOKEN: 'token' });
     const env = lib.childEnv('/state');
     assert.strictEqual(env.CLAUDE_PLUGIN_ROOT, undefined);
-    assert.strictEqual(env.ECC_GATEGUARD, undefined);
+    assert.strictEqual(env.YUS_GATEGUARD, undefined);
     assert.strictEqual(env.GATEGUARD_DISABLED, undefined);
     assert.strictEqual(env.CLAUDE_CODE_OAUTH_TOKEN, 'token');
     assert.strictEqual(env.GATEGUARD_STATE_DIR, '/state');
@@ -363,13 +363,13 @@ function syntheticPilotRunner(root, scenario, arms, streamEvents = null) {
   fs.writeFileSync(preload, `
     const cp = require('child_process');
     const originalSpawn = cp.spawnSync;
-    cp.spawnSync = (file, args, options) => file === 'ecc-fake-claude'
+    cp.spawnSync = (file, args, options) => file === 'yus-fake-claude'
       ? ${streamEvents === null
         ? `originalSpawn(process.execPath, [${JSON.stringify(path.join(DIR, 'fake-claude.js'))}, ...args], options)`
         : JSON.stringify({ status: 0, stdout: streamEvents.map(event => JSON.stringify(event)).join('\n') + '\n', stderr: '' })}
       : originalSpawn(file, args, options);
   `);
-  const args = ['--require', preload, path.join(DIR, 'run.js'), '--out', out, '--model', 'fake', '--claude', 'ecc-fake-claude', '--allow-real-provider', '--arms', arms, '--reps', '1', '--scenarios', scenario.id];
+  const args = ['--require', preload, path.join(DIR, 'run.js'), '--out', out, '--model', 'fake', '--claude', 'yus-fake-claude', '--allow-real-provider', '--arms', arms, '--reps', '1', '--scenarios', scenario.id];
   const env = { ...process.env, FAKE_CLAUDE_OVERLAY: path.join(scenario.root, 'reference') };
   const run = extraEnv => spawnSync(process.execPath, args, { env: { ...env, ...extraEnv }, encoding: 'utf8', timeout: 60000 });
   const results = () => {
@@ -501,10 +501,10 @@ if (gitAvailable()) {
       fs.writeFileSync(preload, `
         const cp = require('child_process');
         const originalSpawn = cp.spawnSync;
-        cp.spawnSync = (file, args, options) => file === 'ecc-fake-claude'
+        cp.spawnSync = (file, args, options) => file === 'yus-fake-claude'
           ? originalSpawn(process.execPath, [${JSON.stringify(path.join(DIR, 'fake-claude.js'))}, ...args], options)
           : originalSpawn(file, args, options);
-        if (process.env.ECC_TEST_META_RACE === '1') {
+        if (process.env.YUS_TEST_META_RACE === '1') {
           const fs = require('fs');
           const rename = fs.renameSync;
           fs.renameSync = (from, to) => {
@@ -516,7 +516,7 @@ if (gitAvailable()) {
           };
         }
       `);
-      const args = ['--require', preload, path.join(DIR, 'run.js'), '--out', out, '--model', 'fake', '--claude', 'ecc-fake-claude', '--allow-real-provider', '--arms', 'off', '--reps', '1', '--scenarios', scenario.id];
+      const args = ['--require', preload, path.join(DIR, 'run.js'), '--out', out, '--model', 'fake', '--claude', 'yus-fake-claude', '--allow-real-provider', '--arms', 'off', '--reps', '1', '--scenarios', scenario.id];
       const env = { ...process.env, FAKE_CLAUDE_OVERLAY: path.join(scenario.root, 'reference') };
       const run = extraEnv => spawnSync(process.execPath, args, { env: { ...env, ...extraEnv }, encoding: 'utf8', timeout: 60000 });
       const first = run({});
@@ -547,7 +547,7 @@ if (gitAvailable()) {
           fs.writeFileSync(file, original, { flag: 'wx', mode: 0o600 });
         }
         assert.strictEqual(fs.readFileSync(resultsPath, 'utf8'), results);
-        const raced = run({ ECC_TEST_META_RACE: '1' });
+        const raced = run({ YUS_TEST_META_RACE: '1' });
         assert.strictEqual(raced.status, 0, raced.stderr);
         assert.strictEqual(fs.readFileSync(victim, 'utf8'), 'VICTIM_BYTES');
         assert.deepStrictEqual(JSON.parse(fs.readFileSync(metaPath, 'utf8')), metadata);

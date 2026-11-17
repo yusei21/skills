@@ -94,7 +94,7 @@ function waitForObservation(server, predicate, timeoutMs = 3000) {
 }
 
 async function holdFixtureLock(dbPath) {
-  const lockPath = `${dbPath}.ecc-state.lock`;
+  const lockPath = `${dbPath}.yus-state.lock`;
   const fd = fs.openSync(lockPath, 'wx', 0o600);
   let released = false;
   const release = () => {
@@ -165,7 +165,7 @@ async function burstScenario(server, dbPath) {
 }
 
 async function withServer(readOnly, fn) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-http-contention-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-http-contention-'));
   const dbPath = path.join(dir, 'state.db');
   let server;
   return withCleanup(async () => {

@@ -18,7 +18,7 @@ function resolveHookSessionId(rawInput, env = process.env) {
     // Empty or malformed hook input can still use an environment session ID.
   }
 
-  return [sessionId, env.ECC_SESSION_ID, env.CLAUDE_SESSION_ID]
+  return [sessionId, env.YUS_SESSION_ID, env.CLAUDE_SESSION_ID]
     .find(value => typeof value === 'string' && value.trim().length > 0) || '';
 }
 

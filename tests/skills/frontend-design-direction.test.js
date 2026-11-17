@@ -105,8 +105,8 @@ test('rejects malformed reports and rendered evidence without inspection details
 });
 
 test('CLI requires a nonempty local artifact and fails safely on invalid input', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-ui-evidence-'));
-  const external = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-ui-external-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-ui-evidence-'));
+  const external = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-ui-external-'));
   const input = path.join(dir, 'report.json');
   const run = (...args) => spawnSync(process.execPath, [script, ...args], { encoding: 'utf8' });
   try {

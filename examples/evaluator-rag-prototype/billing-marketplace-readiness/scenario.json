@@ -1,5 +1,5 @@
 {
-  "schema_version": "ecc.evaluator-rag.scenario.v1",
+  "schema_version": "yus.evaluator-rag.scenario.v1",
   "scenario_id": "billing-marketplace-readiness",
   "title": "Verify billing and Marketplace claims before launch copy",
   "mode": "read_only_prototype",
@@ -17,7 +17,7 @@
     },
     {
       "kind": "roadmap",
-      "path": "docs/ECC-2.0-GA-ROADMAP.md",
+      "path": "docs/yus-2.0-GA-ROADMAP.md",
       "purpose": "ECC Tools billing audit acceptance criteria and remaining release blockers"
     },
     {

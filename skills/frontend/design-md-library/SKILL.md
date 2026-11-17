@@ -12,7 +12,7 @@ metadata:
 
 [awesome-design-md](https://github.com/VoltAgent/awesome-design-md) collects DESIGN.md files: each one
 describes a product's visual language as tokens (colors, type scale, spacing, radius) plus component and
-layout guidance. ECC does not copy the 2.9 MB collection; this pointer reads the one file a task needs,
+layout guidance. yus does not copy the 2.9 MB collection; this pointer reads the one file a task needs,
 from a pinned commit.
 
 ## When to Use

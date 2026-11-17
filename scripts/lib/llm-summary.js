@@ -6,7 +6,7 @@
  * summaries from JSONL transcripts. Requires no API key — reuses Claude Code's
  * own authentication.
  *
- * Recursion guard: sets ECC_SKIP_LLM_SUMMARY=1 in subprocess env so any Stop
+ * Recursion guard: sets YUS_SKIP_LLM_SUMMARY=1 in subprocess env so any Stop
  * hooks fired by the subprocess do NOT re-enter LLM summarization.
  */
 
@@ -22,11 +22,11 @@ const LLM_TIMEOUT_MS = 90000;
 const HOOK_FINISH_RESERVE_MS = 1000;
 
 function getLLMModel() {
-  return process.env.ECC_LLM_SUMMARY_MODEL || 'haiku';
+  return process.env.YUS_LLM_SUMMARY_MODEL || 'haiku';
 }
 
 function getContextThreshold() {
-  const raw = parseInt(process.env.ECC_LLM_SUMMARY_CONTEXT_THRESHOLD || '20', 10);
+  const raw = parseInt(process.env.YUS_LLM_SUMMARY_CONTEXT_THRESHOLD || '20', 10);
   return Number.isFinite(raw) && raw > 0 && raw <= 100 ? raw : 20;
 }
 
@@ -120,8 +120,8 @@ function getContextRemainingPct(transcriptPath) {
  * Returns the summary string, or null on failure or when recursion guard is active.
  */
 function generateSessionSummary(transcriptPath, { onSkip = () => {} } = {}) {
-  if (process.env.ECC_SKIP_LLM_SUMMARY) {
-    onSkip('ECC_SKIP_LLM_SUMMARY');
+  if (process.env.YUS_SKIP_LLM_SUMMARY) {
+    onSkip('YUS_SKIP_LLM_SUMMARY');
     return null;
   }
 
@@ -129,8 +129,8 @@ function generateSessionSummary(transcriptPath, { onSkip = () => {} } = {}) {
   if (!conversation) return null;
 
   let timeout = LLM_TIMEOUT_MS;
-  if (process.env.ECC_HOOK_DEADLINE_MS !== undefined) {
-    const deadline = Number(process.env.ECC_HOOK_DEADLINE_MS);
+  if (process.env.YUS_HOOK_DEADLINE_MS !== undefined) {
+    const deadline = Number(process.env.YUS_HOOK_DEADLINE_MS);
     if (!Number.isSafeInteger(deadline) || deadline <= 0) {
       onSkip('invalid lifecycle deadline');
       return null;
@@ -183,8 +183,8 @@ function generateSessionSummary(transcriptPath, { onSkip = () => {} } = {}) {
       env: {
         ...process.env,
         CLAUDECODE: '',
-        ECC_SKIP_LLM_SUMMARY: '1',
-        ECC_LLM_SUMMARY_SUBPROCESS: '1'
+        YUS_SKIP_LLM_SUMMARY: '1',
+        YUS_LLM_SUMMARY_SUBPROCESS: '1'
       },
       timeout,
       shell: process.platform === 'win32'

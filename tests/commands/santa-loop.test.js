@@ -36,26 +36,26 @@ function runCodexExample(commandPath, configuredModel) {
   const source = fs.readFileSync(path.join(repoRoot, commandPath), 'utf8');
   const invocation = source.match(/^\s*codex exec[^\n]+/m);
   assert.ok(invocation, 'Expected a Codex reviewer invocation');
-  const tempRoot = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-santa-model-')));
+  const tempRoot = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'yus-santa-model-')));
   try {
     const promptFile = path.join(tempRoot, 'prompt.md');
     fs.writeFileSync(promptFile, 'Independent review only.');
     fs.writeFileSync(path.join(tempRoot, 'codex.js'), `const fs = require('fs');
 const args = process.argv.slice(2);
 const modelFlag = args.findIndex(arg => arg === '-m' || arg === '--model');
-const model = modelFlag < 0 ? process.env.ECC_TEST_CONFIGURED_MODEL : args[modelFlag + 1];
-if (model !== process.env.ECC_TEST_CONFIGURED_MODEL) {
+const model = modelFlag < 0 ? process.env.YUS_TEST_CONFIGURED_MODEL : args[modelFlag + 1];
+if (model !== process.env.YUS_TEST_CONFIGURED_MODEL) {
   console.error('400: model is not supported by this account');
   process.exit(1);
 }
 console.log(JSON.stringify({ args, model, prompt: fs.readFileSync(0, 'utf8') }));
 `);
-    fs.writeFileSync(path.join(tempRoot, 'codex'), '#!/bin/sh\nexec "$ECC_TEST_NODE" "$0.js" "$@"\n', { mode: 0o755 });
+    fs.writeFileSync(path.join(tempRoot, 'codex'), '#!/bin/sh\nexec "$YUS_TEST_NODE" "$0.js" "$@"\n', { mode: 0o755 });
     // Ignore exported functions and startup scripts so CLI dispatch stays inside the fixture.
     const result = spawnSync('bash', ['-p', '-c', invocation[0]], {
       cwd: tempRoot,
       env: { ...process.env, PATH: `${tempRoot}${path.delimiter}${process.env.PATH}`,
-        PROMPT_FILE: promptFile, ECC_TEST_CONFIGURED_MODEL: configuredModel, ECC_TEST_NODE: process.execPath },
+        PROMPT_FILE: promptFile, YUS_TEST_CONFIGURED_MODEL: configuredModel, YUS_TEST_NODE: process.execPath },
       encoding: 'utf8', timeout: 10000,
     });
     assert.strictEqual(result.status, 0, result.stderr);

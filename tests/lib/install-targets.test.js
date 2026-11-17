@@ -44,17 +44,17 @@ function normalizedRelativePath(value) {
     const statePath = adapter.getInstallStatePath({ projectRoot });
 
     assert.strictEqual(root, path.join(projectRoot, '.cursor'));
-    assert.strictEqual(statePath, path.join(projectRoot, '.cursor', 'ecc-install-state.json'));
+    assert.strictEqual(statePath, path.join(projectRoot, '.cursor', 'yus-install-state.json'));
   });
 
   test('resolves claude adapter root and install-state path from home dir', () => {
     const adapter = getInstallTargetAdapter('claude');
     const homeDir = path.resolve('/Users/example');
-    const root = adapter.resolveRoot({ homeDir, repoRoot: '/repo/ecc' });
-    const statePath = adapter.getInstallStatePath({ homeDir, repoRoot: '/repo/ecc' });
+    const root = adapter.resolveRoot({ homeDir, repoRoot: '/repo/yus' });
+    const statePath = adapter.getInstallStatePath({ homeDir, repoRoot: '/repo/yus' });
 
     assert.strictEqual(root, path.join(homeDir, '.claude'));
-    assert.strictEqual(statePath, path.join(homeDir, '.claude', 'ecc', 'install-state.json'));
+    assert.strictEqual(statePath, path.join(homeDir, '.claude', 'yus', 'install-state.json'));
   });
 
   test('plans current Kimi Code project instructions, skills, and MCP config under .kimi-code', () => {
@@ -85,7 +85,7 @@ function normalizedRelativePath(value) {
     assert.strictEqual(plan.targetRoot, path.join(projectRoot, '.kimi-code'));
     assert.strictEqual(
       plan.installStatePath,
-      path.join(projectRoot, '.kimi-code', 'ecc-install-state.json')
+      path.join(projectRoot, '.kimi-code', 'yus-install-state.json')
     );
     assert.ok(
       plan.operations.some(operation => (
@@ -114,7 +114,7 @@ function normalizedRelativePath(value) {
         normalizedRelativePath(operation.sourceRelativePath) === '.agents/skills'
         && operation.destinationPath === path.join(projectRoot, '.kimi-code', 'skills')
       )),
-      'Should remap ECC Agent Skills into Kimi\'s native skill directory'
+      'Should remap yus Agent Skills into Kimi\'s native skill directory'
     );
     assert.ok(
       plan.operations.some(operation => (
@@ -133,7 +133,7 @@ function normalizedRelativePath(value) {
     );
   });
 
-  test('Kimi MCP planning requires an explicit ECC source root', () => {
+  test('Kimi MCP planning requires an explicit yus source root', () => {
     assert.throws(
       () => planInstallTargetScaffold({
         target: 'kimi',
@@ -167,9 +167,9 @@ function normalizedRelativePath(value) {
     assert.ok(
       plan.operations.some(operation => (
         normalizedRelativePath(operation.sourceRelativePath) === 'rules'
-        && operation.destinationPath === path.join(homeDir, '.claude', 'rules', 'ecc')
+        && operation.destinationPath === path.join(homeDir, '.claude', 'rules', 'yus')
       )),
-      'Should install bundled Claude rules under rules/ecc'
+      'Should install bundled Claude rules under rules/yus'
     );
     assert.ok(
       plan.operations.some(operation => (
@@ -203,7 +203,7 @@ function normalizedRelativePath(value) {
 
     assert.strictEqual(plan.adapter.id, 'cursor-project');
     assert.strictEqual(plan.targetRoot, path.join(projectRoot, '.cursor'));
-    assert.strictEqual(plan.installStatePath, path.join(projectRoot, '.cursor', 'ecc-install-state.json'));
+    assert.strictEqual(plan.installStatePath, path.join(projectRoot, '.cursor', 'yus-install-state.json'));
 
     const hooksJson = plan.operations.find(operation => (
       normalizedRelativePath(operation.sourceRelativePath) === '.cursor/hooks.json'
@@ -303,7 +303,7 @@ function normalizedRelativePath(value) {
       !plan.operations.some(operation => (
         normalizedRelativePath(operation.sourceRelativePath) === 'AGENTS.md'
       )),
-      'Cursor installs should not copy ECC root AGENTS.md into host project context'
+      'Cursor installs should not copy yus root AGENTS.md into host project context'
     );
     assert.ok(
       !plan.operations.some(operation => (
@@ -313,7 +313,7 @@ function normalizedRelativePath(value) {
     );
   });
 
-  test('plans cursor agents with ecc-prefixed filenames to avoid agent collisions', () => {
+  test('plans cursor agents with yus-prefixed filenames to avoid agent collisions', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const projectRoot = '/workspace/app';
 
@@ -332,9 +332,9 @@ function normalizedRelativePath(value) {
     assert.ok(
       plan.operations.some(operation => (
         normalizedRelativePath(operation.sourceRelativePath) === 'agents/architect.md'
-        && operation.destinationPath === path.join(projectRoot, '.cursor', 'agents', 'ecc-architect.md')
+        && operation.destinationPath === path.join(projectRoot, '.cursor', 'agents', 'yus-architect.md')
       )),
-      'Should prefix Cursor agent files with ecc-'
+      'Should prefix Cursor agent files with yus-'
     );
     assert.ok(
       !plan.operations.some(operation => (
@@ -561,14 +561,14 @@ function normalizedRelativePath(value) {
     assert.strictEqual(typeof claudeAdapter.planOperations, 'function');
     assert.strictEqual(typeof claudeAdapter.validate, 'function');
     assert.deepStrictEqual(
-      claudeAdapter.validate({ homeDir: '/Users/example', repoRoot: '/repo/ecc' }),
+      claudeAdapter.validate({ homeDir: '/Users/example', repoRoot: '/repo/yus' }),
       []
     );
 
     assert.strictEqual(typeof cursorAdapter.planOperations, 'function');
     assert.strictEqual(typeof cursorAdapter.validate, 'function');
     assert.deepStrictEqual(
-      cursorAdapter.validate({ projectRoot: '/workspace/app', repoRoot: '/repo/ecc' }),
+      cursorAdapter.validate({ projectRoot: '/workspace/app', repoRoot: '/repo/yus' }),
       []
     );
   });
@@ -590,7 +590,7 @@ function normalizedRelativePath(value) {
     assert.strictEqual(adapter.target, 'codebuddy');
     assert.strictEqual(adapter.kind, 'project');
     assert.strictEqual(root, path.join(projectRoot, '.codebuddy'));
-    assert.strictEqual(statePath, path.join(projectRoot, '.codebuddy', 'ecc-install-state.json'));
+    assert.strictEqual(statePath, path.join(projectRoot, '.codebuddy', 'yus-install-state.json'));
   });
 
   test('resolves gemini adapter root and install-state path from project root', () => {
@@ -603,7 +603,7 @@ function normalizedRelativePath(value) {
     assert.strictEqual(adapter.target, 'gemini');
     assert.strictEqual(adapter.kind, 'project');
     assert.strictEqual(root, path.join(projectRoot, '.gemini'));
-    assert.strictEqual(statePath, path.join(projectRoot, '.gemini', 'ecc-install-state.json'));
+    assert.strictEqual(statePath, path.join(projectRoot, '.gemini', 'yus-install-state.json'));
   });
 
   test('codebuddy adapter supports lookup by target and adapter id', () => {
@@ -626,7 +626,7 @@ function normalizedRelativePath(value) {
     assert.strictEqual(adapter.target, 'joycode');
     assert.strictEqual(adapter.kind, 'project');
     assert.strictEqual(root, path.join(projectRoot, '.joycode'));
-    assert.strictEqual(statePath, path.join(projectRoot, '.joycode', 'ecc-install-state.json'));
+    assert.strictEqual(statePath, path.join(projectRoot, '.joycode', 'yus-install-state.json'));
   });
 
   test('joycode adapter supports lookup by target and adapter id', () => {
@@ -649,7 +649,7 @@ function normalizedRelativePath(value) {
     assert.strictEqual(adapter.target, 'qwen');
     assert.strictEqual(adapter.kind, 'home');
     assert.strictEqual(root, path.join(homeDir, '.qwen'));
-    assert.strictEqual(statePath, path.join(homeDir, '.qwen', 'ecc-install-state.json'));
+    assert.strictEqual(statePath, path.join(homeDir, '.qwen', 'yus-install-state.json'));
   });
 
   test('opencode adapter honors config overrides in priority order', () => {
@@ -677,7 +677,7 @@ function normalizedRelativePath(value) {
         homeDir,
         env: { OPENCODE_CONFIG_DIR: explicitRoot },
       }),
-      path.join(path.resolve(explicitRoot), 'ecc-install-state.json')
+      path.join(path.resolve(explicitRoot), 'yus-install-state.json')
     );
   });
 
@@ -685,15 +685,15 @@ function normalizedRelativePath(value) {
     const homeDir = '/Users/isolated';
     const registryPath = path.join(__dirname, '..', '..', 'scripts', 'lib', 'install-targets', 'registry.js');
     const child = spawnSync(process.execPath, ['-e', [
-      'const { getInstallTargetAdapter } = require(process.env.ECC_TEST_REGISTRY);',
-      'const root = getInstallTargetAdapter(\'opencode\').resolveRoot({ homeDir: process.env.ECC_TEST_HOME });',
+      'const { getInstallTargetAdapter } = require(process.env.YUS_TEST_REGISTRY);',
+      'const root = getInstallTargetAdapter(\'opencode\').resolveRoot({ homeDir: process.env.YUS_TEST_HOME });',
       'process.stdout.write(JSON.stringify(root));',
     ].join('\n')], {
       encoding: 'utf8',
       env: {
         ...process.env,
-        ECC_TEST_REGISTRY: registryPath,
-        ECC_TEST_HOME: homeDir,
+        YUS_TEST_REGISTRY: registryPath,
+        YUS_TEST_HOME: homeDir,
         OPENCODE_CONFIG_DIR: '/runner/global/opencode',
         XDG_CONFIG_HOME: '/runner/global/xdg',
       },
@@ -717,7 +717,7 @@ function normalizedRelativePath(value) {
     );
     assert.strictEqual(
       adapter.getInstallStatePath({ homeDir, env: { CLAUDE_CONFIG_DIR: claudeConfigDir } }),
-      path.join(path.resolve(claudeConfigDir), 'ecc', 'install-state.json')
+      path.join(path.resolve(claudeConfigDir), 'yus', 'install-state.json')
     );
   });
 
@@ -791,7 +791,7 @@ function normalizedRelativePath(value) {
     assert.strictEqual(adapter.target, 'zed');
     assert.strictEqual(adapter.kind, 'project');
     assert.strictEqual(root, path.join(projectRoot, '.zed'));
-    assert.strictEqual(statePath, path.join(projectRoot, '.zed', 'ecc-install-state.json'));
+    assert.strictEqual(statePath, path.join(projectRoot, '.zed', 'yus-install-state.json'));
   });
 
   test('zed adapter supports lookup by target and adapter id', () => {
@@ -822,7 +822,7 @@ function normalizedRelativePath(value) {
 
     assert.strictEqual(plan.adapter.id, 'codebuddy-project');
     assert.strictEqual(plan.targetRoot, path.join(projectRoot, '.codebuddy'));
-    assert.strictEqual(plan.installStatePath, path.join(projectRoot, '.codebuddy', 'ecc-install-state.json'));
+    assert.strictEqual(plan.installStatePath, path.join(projectRoot, '.codebuddy', 'yus-install-state.json'));
 
     assert.ok(
       plan.operations.some(operation => (
@@ -869,7 +869,7 @@ function normalizedRelativePath(value) {
 
     assert.strictEqual(plan.adapter.id, 'joycode-project');
     assert.strictEqual(plan.targetRoot, path.join(projectRoot, '.joycode'));
-    assert.strictEqual(plan.installStatePath, path.join(projectRoot, '.joycode', 'ecc-install-state.json'));
+    assert.strictEqual(plan.installStatePath, path.join(projectRoot, '.joycode', 'yus-install-state.json'));
 
     assert.ok(
       plan.operations.some(operation => (
@@ -935,7 +935,7 @@ function normalizedRelativePath(value) {
 
     assert.strictEqual(plan.adapter.id, 'qwen-home');
     assert.strictEqual(plan.targetRoot, path.join(homeDir, '.qwen'));
-    assert.strictEqual(plan.installStatePath, path.join(homeDir, '.qwen', 'ecc-install-state.json'));
+    assert.strictEqual(plan.installStatePath, path.join(homeDir, '.qwen', 'yus-install-state.json'));
     assert.ok(
       plan.operations.some(operation => (
         normalizedRelativePath(operation.sourceRelativePath) === 'rules'
@@ -998,7 +998,7 @@ function normalizedRelativePath(value) {
 
     assert.strictEqual(plan.adapter.id, 'zed-project');
     assert.strictEqual(plan.targetRoot, path.join(projectRoot, '.zed'));
-    assert.strictEqual(plan.installStatePath, path.join(projectRoot, '.zed', 'ecc-install-state.json'));
+    assert.strictEqual(plan.installStatePath, path.join(projectRoot, '.zed', 'yus-install-state.json'));
     assert.ok(
       plan.operations.some(operation => (
         normalizedRelativePath(operation.sourceRelativePath) === '.zed'
@@ -1051,7 +1051,7 @@ function normalizedRelativePath(value) {
     assert.strictEqual(adapter.target, 'adal');
     assert.strictEqual(adapter.kind, 'project');
     assert.strictEqual(root, path.join(projectRoot, '.adal'));
-    assert.strictEqual(statePath, path.join(projectRoot, '.adal', 'ecc-install-state.json'));
+    assert.strictEqual(statePath, path.join(projectRoot, '.adal', 'yus-install-state.json'));
   });
 
   test('adal adapter supports lookup by target and adapter id', () => {
@@ -1090,7 +1090,7 @@ function normalizedRelativePath(value) {
 
     assert.strictEqual(plan.adapter.id, 'adal-project');
     assert.strictEqual(plan.targetRoot, path.join(projectRoot, '.adal'));
-    assert.strictEqual(plan.installStatePath, path.join(projectRoot, '.adal', 'ecc-install-state.json'));
+    assert.strictEqual(plan.installStatePath, path.join(projectRoot, '.adal', 'yus-install-state.json'));
     assert.ok(
       plan.operations.some(operation => (
         normalizedRelativePath(operation.sourceRelativePath) === 'rules'
@@ -1160,13 +1160,13 @@ function normalizedRelativePath(value) {
     assert.strictEqual(typeof codebuddyAdapter.planOperations, 'function');
     assert.strictEqual(typeof codebuddyAdapter.validate, 'function');
     assert.deepStrictEqual(
-      codebuddyAdapter.validate({ projectRoot: '/workspace/app', repoRoot: '/repo/ecc' }),
+      codebuddyAdapter.validate({ projectRoot: '/workspace/app', repoRoot: '/repo/yus' }),
       []
     );
   });
 
   test('every schema target enum value has a matching adapter (regression guard)', () => {
-    const schemaPath = path.join(__dirname, '..', '..', 'schemas', 'ecc-install-config.schema.json');
+    const schemaPath = path.join(__dirname, '..', '..', 'schemas', 'yus-install-config.schema.json');
     const schema = JSON.parse(require('fs').readFileSync(schemaPath, 'utf8'));
     const schemaTargets = schema.properties.target.enum;
     const adapters = listInstallTargetAdapters();
@@ -1182,7 +1182,7 @@ function normalizedRelativePath(value) {
   });
 
   test('every adapter target is listed in the schema enum (regression guard)', () => {
-    const schemaPath = path.join(__dirname, '..', '..', 'schemas', 'ecc-install-config.schema.json');
+    const schemaPath = path.join(__dirname, '..', '..', 'schemas', 'yus-install-config.schema.json');
     const schema = JSON.parse(require('fs').readFileSync(schemaPath, 'utf8'));
     const schemaTargets = schema.properties.target.enum;
     const adapters = listInstallTargetAdapters();
@@ -1219,7 +1219,7 @@ function normalizedRelativePath(value) {
     assert.strictEqual(adapter.target, 'claude-project');
     assert.strictEqual(adapter.kind, 'project');
     assert.strictEqual(root, path.join(projectRoot, '.claude'));
-    assert.strictEqual(statePath, path.join(projectRoot, '.claude', 'ecc', 'install-state.json'));
+    assert.strictEqual(statePath, path.join(projectRoot, '.claude', 'yus', 'install-state.json'));
   });
 
   test('claude-project adapter supports lookup by target and adapter id', () => {
@@ -1253,13 +1253,13 @@ function normalizedRelativePath(value) {
 
     assert.strictEqual(plan.adapter.id, 'claude-project');
     assert.strictEqual(plan.targetRoot, path.join(projectRoot, '.claude'));
-    assert.strictEqual(plan.installStatePath, path.join(projectRoot, '.claude', 'ecc', 'install-state.json'));
+    assert.strictEqual(plan.installStatePath, path.join(projectRoot, '.claude', 'yus', 'install-state.json'));
     assert.ok(
       plan.operations.some(operation => (
         normalizedRelativePath(operation.sourceRelativePath) === 'rules'
-        && operation.destinationPath === path.join(projectRoot, '.claude', 'rules', 'ecc')
+        && operation.destinationPath === path.join(projectRoot, '.claude', 'rules', 'yus')
       )),
-      'Should install bundled rules under project-scope rules/ecc'
+      'Should install bundled rules under project-scope rules/yus'
     );
     assert.ok(
       plan.operations.some(operation => (
@@ -1289,7 +1289,7 @@ function normalizedRelativePath(value) {
     assert.ok(
       plan.operations.some(operation => (
         normalizedRelativePath(operation.sourceRelativePath) === 'rules'
-        && operation.destinationPath === path.join(projectRoot, '.claude', 'rules', 'ecc')
+        && operation.destinationPath === path.join(projectRoot, '.claude', 'rules', 'yus')
       )),
       'Should still include non-foreign rules path (guards against empty-plan regression)'
     );
@@ -1311,7 +1311,7 @@ function normalizedRelativePath(value) {
 
   test('opencode adapter skips the foreign Pi harness directory', () => {
     const repoRoot = path.join(__dirname, '..', '..');
-    const homeDir = path.join(os.tmpdir(), 'ecc-opencode-pi-home');
+    const homeDir = path.join(os.tmpdir(), 'yus-opencode-pi-home');
 
     const plan = planInstallTargetScaffold({
       target: 'opencode',
@@ -1365,7 +1365,7 @@ function normalizedRelativePath(value) {
     assert.strictEqual(root, path.join(path.resolve(homeDir), '.config', 'opencode'));
     assert.strictEqual(
       statePath,
-      path.join(path.resolve(homeDir), '.config', 'opencode', 'ecc-install-state.json')
+      path.join(path.resolve(homeDir), '.config', 'opencode', 'yus-install-state.json')
     );
   });
 
@@ -1502,7 +1502,7 @@ function normalizedRelativePath(value) {
           kind: 'home',
           supports: target => target === 'opencode',
           resolveRoot: input => path.join((input.homeDir || '/Users/example'), '.opencode'),
-          getInstallStatePath: input => path.join((input.homeDir || '/Users/example'), '.opencode', 'ecc-install-state.json'),
+          getInstallStatePath: input => path.join((input.homeDir || '/Users/example'), '.opencode', 'yus-install-state.json'),
           validate: () => ([
             { severity: 'error', code: 'opencode-plugin-not-built', message: 'missing payload' },
             { severity: 'error', code: 'opencode-other-blocker', message: 'still blocked' },
@@ -1599,7 +1599,7 @@ function normalizedRelativePath(value) {
       const resolved = adapter.resolveRoot({ homeDir, env: { CLAUDE_CONFIG_DIR: windowsConfigDir } });
       assert.strictEqual(resolved, path.resolve(expectedWslPath));
       const statePath = adapter.getInstallStatePath({ homeDir, env: { CLAUDE_CONFIG_DIR: windowsConfigDir } });
-      assert.strictEqual(statePath, path.join(path.resolve(expectedWslPath), 'ecc', 'install-state.json'));
+      assert.strictEqual(statePath, path.join(path.resolve(expectedWslPath), 'yus', 'install-state.json'));
     } finally {
       setWSLForTesting(null);
     }

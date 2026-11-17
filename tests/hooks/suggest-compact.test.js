@@ -43,7 +43,7 @@ function runCompact(envOverrides = {}) {
 function runCompactWithInput(input, envOverrides = {}) {
   const env = {
     ...process.env,
-    ECC_CONTEXT_WINDOW_TOKENS: '',
+    YUS_CONTEXT_WINDOW_TOKENS: '',
     CLAUDE_CODE_AUTO_COMPACT_WINDOW: '',
     ...envOverrides,
   };
@@ -661,7 +661,7 @@ function runTests() {
     return path.join(os.tmpdir(), `claude-context-bucket-${sessionId}`);
   }
 
-  const transcriptDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-compact-transcripts-'));
+  const transcriptDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-compact-transcripts-'));
   process.once('exit', () => fs.rmSync(transcriptDir, { recursive: true, force: true }));
   let transcriptSeq = 0;
 
@@ -724,7 +724,7 @@ function runTests() {
     try {
       const result = runCompactWithInput(
         { session_id: ctx.sessionId, transcript_path: transcript },
-        { ECC_CONTEXT_WINDOW_TOKENS: '', CLAUDE_CODE_AUTO_COMPACT_WINDOW: '' },
+        { YUS_CONTEXT_WINDOW_TOKENS: '', CLAUDE_CODE_AUTO_COMPACT_WINDOW: '' },
       );
       assert.strictEqual(result.code, 0, 'Should exit 0');
       assert.ok(result.stdout.trim().length > 0, `Expected stdout payload. Got: "${result.stdout}"`);
@@ -751,7 +751,7 @@ function runTests() {
       fs.writeFileSync(transcript, '{}\n' + usageLine + paddedResult + '\n');
       const result = runCompactWithInput(
         { session_id: ctx.sessionId, transcript_path: transcript },
-        { ECC_CONTEXT_WINDOW_TOKENS: '', CLAUDE_CODE_AUTO_COMPACT_WINDOW: '', COMPACT_CONTEXT_THRESHOLD: '160000' }
+        { YUS_CONTEXT_WINDOW_TOKENS: '', CLAUDE_CODE_AUTO_COMPACT_WINDOW: '', COMPACT_CONTEXT_THRESHOLD: '160000' }
       );
       assert.strictEqual(result.code, 0, 'Should exit 0');
       const parsed = JSON.parse(result.stdout);

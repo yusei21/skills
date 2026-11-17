@@ -1,9 +1,9 @@
 /**
- * Tests for the ECC <-> Pi coding agent thin adapter (.pi/extensions/index.ts).
+ * Tests for the yus <-> Pi coding agent thin adapter (.pi/extensions/index.ts).
  *
  * This adapter was rejected once already (PR #2352) for four defects:
  *   (a) resolving hook scripts from `process.cwd()` instead of the installed
- *       ECC package root, which breaks global installs;
+ *       yus package root, which breaks global installs;
  *   (b) running hooks through an interpolated shell string
  *       (`exec(\`node ${scriptPath}\`)`), which breaks on paths with spaces
  *       and is a shell-injection risk;
@@ -17,7 +17,7 @@
  * `require()`d or `import()`ed from a plain Node test — source inspection is
  * the only option available without adding a build step or a new dependency.
  *
- * Group 2 exercises ECC's real hook runner (`scripts/hooks/run-with-flags.js`)
+ * Group 2 exercises yus's real hook runner (`scripts/hooks/run-with-flags.js`)
  * with the exact argv/env shape the adapter builds, so the fix is proven by
  * behavior, not just by grep.
  *
@@ -29,7 +29,7 @@
  * real behavioral test wherever the fix is about runtime behavior rather
  * than pure control flow.
  *
- * Group 4 covers the adapter's injection of ECC's canonical engineering rules
+ * Group 4 covers the adapter's injection of yus's canonical engineering rules
  * into Pi's system prompt (`PORTABLE_RULE_FILES`, `loadPortableRules`,
  * `isDisabledByEnv`, and the expanded `before_agent_start` handler). The core
  * constraint under test is that rules are read at RUNTIME from the canonical
@@ -76,34 +76,34 @@ function stripComments(source) {
 // Hook scripts write homunculus observations under the home directory, so
 // runner calls get an empty home instead of the developer's real one unless a
 // test passes its own HOME.
-const ISOLATED_HOME = fs.mkdtempSync(path.join(os.tmpdir(), "ecc-pi-home-"))
+const ISOLATED_HOME = fs.mkdtempSync(path.join(os.tmpdir(), "yus-pi-home-"))
 const ISOLATED_HOME_ENV = { HOME: ISOLATED_HOME, USERPROFILE: ISOLATED_HOME }
 process.on("exit", () => fs.rmSync(ISOLATED_HOME, { recursive: true, force: true }))
 
 /**
- * Invokes ECC's hook runner like the adapter (`runEccHook` in
+ * Invokes yus's hook runner like the adapter (`runEccHook` in
  * .pi/extensions/index.ts): it uses the test host's Node executable with the
  * same argv shape and JSON payload on stdin. No shell is used.
  */
-function runHookRunner(eccRoot, hookId, relScript, profiles, payload, extraEnv, cwd) {
-  const runner = path.join(eccRoot, "scripts", "hooks", "run-with-flags.js")
+function runHookRunner(yusRoot, hookId, relScript, profiles, payload, extraEnv, cwd) {
+  const runner = path.join(yusRoot, "scripts", "hooks", "run-with-flags.js")
   return spawnSync(process.execPath, [runner, hookId, relScript, profiles], {
     input: JSON.stringify(payload),
     encoding: "utf8",
-    cwd: cwd || eccRoot,
+    cwd: cwd || yusRoot,
     timeout: 30000,
-    env: { ...process.env, ...ISOLATED_HOME_ENV, CLAUDE_PLUGIN_ROOT: eccRoot, ECC_PLUGIN_ROOT: eccRoot, ...extraEnv },
+    env: { ...process.env, ...ISOLATED_HOME_ENV, CLAUDE_PLUGIN_ROOT: yusRoot, YUS_PLUGIN_ROOT: yusRoot, ...extraEnv },
   })
 }
 
 /**
- * Builds a minimal, standalone ECC package skeleton under a fresh temp
+ * Builds a minimal, standalone yus package skeleton under a fresh temp
  * directory so tests 8/9 can simulate a global install without touching the
  * real repo. Only the files `run-with-flags.js` -> `session-end-marker.js`
  * actually `require()` at runtime are copied.
  */
 function buildEccSkeleton(repoRoot) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "ecc pi test-"))
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "yus pi test-"))
   const hooksDir = path.join(root, "scripts", "hooks")
   fs.mkdirSync(hooksDir, { recursive: true })
 
@@ -280,7 +280,7 @@ function parseMaxRulesBytes(source) {
 /**
  * Mirror of the adapter's `loadPortableRules` (same file, same
  * read-trim-skip-cap-join loop over `rules/common/<file>`, same
- * `"\n\n---\n\n"` join). Deliberately omits the `ECC_PI_RULES` disable check
+ * `"\n\n---\n\n"` join). Deliberately omits the `YUS_PI_RULES` disable check
  * and the `cachedRules` memoization, which are exercised separately (the
  * disable check via `isDisabledByEnv` below; memoization is pure control
  * flow with no behavior to mirror). This copy proves the *behavior* below is
@@ -318,7 +318,7 @@ function loadPortableRulesMirror(rootDir, ruleFiles, maxBytes) {
  * trim + lowercase normalization). This copy proves the *behavior* below is
  * correct, but a copy cannot detect the real adapter's guard drifting out
  * from under it. The source-text assertion in the "isDisabledByEnv ..." test
- * below reads the real function and the real `ECC_PI_RULES` env var name out
+ * below reads the real function and the real `YUS_PI_RULES` env var name out
  * of `.pi/extensions/index.ts` and pins them directly.
  */
 const DISABLED_VALUES_MIRROR = new Set(["0", "false", "off", "none", "disabled"])
@@ -356,11 +356,11 @@ async function main() {
   const tests = [
     // ---- Group 1: source contract -------------------------------------
 
-    ["resolves the ECC package root from __dirname, never from process.cwd()", () => {
+    ["resolves the yus package root from __dirname, never from process.cwd()", () => {
       assert.ok(
         extensionSource.includes("path.resolve(__dirname"),
         "expected the adapter to derive its package root with path.resolve(__dirname, ...); " +
-          "resolving from __dirname is what makes a globally installed ECC find its own hooks " +
+          "resolving from __dirname is what makes a globally installed yus find its own hooks " +
           "regardless of which project the user opened Pi in"
       )
 
@@ -369,8 +369,8 @@ async function main() {
         !withoutComments.includes("process.cwd()"),
         "found process.cwd() used as executable code in .pi/extensions/index.ts; " +
           "resolving hook scripts from the working directory breaks global installs " +
-          "because it looks for ECC's hooks inside the user's project instead of the " +
-          "installed ECC package (this is the exact defect PR #2352 was rejected for)"
+          "because it looks for yus's hooks inside the user's project instead of the " +
+          "installed yus package (this is the exact defect PR #2352 was rejected for)"
       )
     }],
 
@@ -428,7 +428,7 @@ async function main() {
           runtimeSource.includes("path.basename(execPath)") &&
           runtimeSource.includes("path.isAbsolute(overridePath)") &&
           runtimeSource.includes(
-            'throw new Error("ECC_HOOK_NODE must be an absolute path: " + overridePath)'
+            'throw new Error("YUS_HOOK_NODE must be an absolute path: " + overridePath)'
           ),
         "expected the selector to reject Bun/OMP runtimes, require absolute overrides, and " +
           "fall back to PATH node"
@@ -474,7 +474,7 @@ async function main() {
             execPath: "/usr/bin/node",
             override: "./node",
           }),
-        /ECC_HOOK_NODE must be an absolute path: \.\/node/
+        /YUS_HOOK_NODE must be an absolute path: \.\/node/
       )
       assert.strictEqual(
         resolveHookRuntime({
@@ -520,10 +520,10 @@ async function main() {
       )
     }],
 
-    ["registers the ecc-doctor diagnostics command", () => {
+    ["registers the yus-doctor diagnostics command", () => {
       assert.ok(
-        extensionSource.includes(`registerCommand("ecc-doctor"`),
-        "expected the adapter to register an 'ecc-doctor' command via pi.registerCommand(...) " +
+        extensionSource.includes(`registerCommand("yus-doctor"`),
+        "expected the adapter to register an 'yus-doctor' command via pi.registerCommand(...) " +
           "so users have an install-diagnostics entry point"
       )
     }],
@@ -549,16 +549,16 @@ async function main() {
       )
     }],
 
-    ["propagates the ECC package root to hooks via CLAUDE_PLUGIN_ROOT and ECC_PLUGIN_ROOT", () => {
+    ["propagates the yus package root to hooks via CLAUDE_PLUGIN_ROOT and YUS_PLUGIN_ROOT", () => {
       assert.ok(
         extensionSource.includes("CLAUDE_PLUGIN_ROOT"),
-        "expected the adapter to set CLAUDE_PLUGIN_ROOT in the hook environment; ECC's " +
+        "expected the adapter to set CLAUDE_PLUGIN_ROOT in the hook environment; yus's " +
           "shared hook scripts read this to locate the package root"
       )
       assert.ok(
-        extensionSource.includes("ECC_PLUGIN_ROOT"),
-        "expected the adapter to set ECC_PLUGIN_ROOT in the hook environment; this is " +
-          "the ECC-specific fallback the same hook scripts also read"
+        extensionSource.includes("YUS_PLUGIN_ROOT"),
+        "expected the adapter to set YUS_PLUGIN_ROOT in the hook environment; this is " +
+          "the yus-specific fallback the same hook scripts also read"
       )
     }],
 
@@ -616,14 +616,14 @@ async function main() {
         assert.strictEqual(
           result.error,
           undefined,
-          "hook runner failed to spawn when cwd pointed away from the ECC package root; " +
-            "a globally installed ECC must resolve its own hooks regardless of which " +
+          "hook runner failed to spawn when cwd pointed away from the yus package root; " +
+            "a globally installed yus must resolve its own hooks regardless of which " +
             `project directory the user is in (error: ${result.error && result.error.message})`
         )
         assert.strictEqual(
           result.status,
           0,
-          "hook runner exited non-zero when cwd pointed away from the ECC package root " +
+          "hook runner exited non-zero when cwd pointed away from the yus package root " +
             `(cwd=${os.tmpdir()}, CLAUDE_PLUGIN_ROOT=${skeletonRoot}); this means hook ` +
             "resolution is leaking cwd-dependence instead of being package-relative " +
             `(stderr: ${result.stderr})`
@@ -646,19 +646,19 @@ async function main() {
           "scripts/hooks/session-end-marker.js",
           "minimal,standard,strict",
           { hook_event_name: "SessionEnd", reason: "quit", cwd: skeletonRoot, session_id: "pi-adapter-test" },
-          { ECC_DISABLED_HOOKS: "session:end:marker" }
+          { YUS_DISABLED_HOOKS: "session:end:marker" }
         )
 
         assert.strictEqual(
           disabledResult.error,
           undefined,
           "hook runner failed to spawn when session:end:marker was listed in " +
-            `ECC_DISABLED_HOOKS (error: ${disabledResult.error && disabledResult.error.message})`
+            `YUS_DISABLED_HOOKS (error: ${disabledResult.error && disabledResult.error.message})`
         )
         assert.strictEqual(
           disabledResult.status,
           0,
-          "hook runner exited non-zero for a hook disabled via ECC_DISABLED_HOOKS; a " +
+          "hook runner exited non-zero for a hook disabled via YUS_DISABLED_HOOKS; a " +
             "disabled hook must be skipped cleanly rather than crashing the Pi session " +
             `(stderr: ${disabledResult.stderr})`
         )
@@ -669,19 +669,19 @@ async function main() {
           "scripts/hooks/session-end-marker.js",
           "minimal,standard,strict",
           { hook_event_name: "SessionEnd", reason: "quit", cwd: skeletonRoot, session_id: "pi-adapter-test" },
-          { ECC_HOOK_PROFILE: "minimal" }
+          { YUS_HOOK_PROFILE: "minimal" }
         )
 
         assert.strictEqual(
           minimalResult.error,
           undefined,
-          "hook runner failed to spawn under ECC_HOOK_PROFILE=minimal " +
+          "hook runner failed to spawn under YUS_HOOK_PROFILE=minimal " +
             `(error: ${minimalResult.error && minimalResult.error.message})`
         )
         assert.strictEqual(
           minimalResult.status,
           0,
-          "hook runner exited non-zero under ECC_HOOK_PROFILE=minimal; hook-profile " +
+          "hook runner exited non-zero under YUS_HOOK_PROFILE=minimal; hook-profile " +
             `gating must degrade cleanly, not crash the session (stderr: ${minimalResult.stderr})`
         )
       } finally {
@@ -725,7 +725,7 @@ async function main() {
         extractAdditionalContext('{"hookSpecificOutput":{"additionalContext":""}}'),
         undefined,
         "expected an empty-string additionalContext to yield undefined rather than an " +
-          "empty <ecc-session-context> block being spliced into the system prompt"
+          "empty <yus-session-context> block being spliced into the system prompt"
       )
 
       // ---- Source-text assertions on the REAL adapter -------------------
@@ -939,15 +939,15 @@ async function main() {
       )
       // Pin the guarantee (read the value, then clear it, then return) rather
       // than one particular spelling of it. The handler injects the context
-      // inline inside its <ecc-session-context> block instead of copying it to
+      // inline inside its <yus-session-context> block instead of copying it to
       // a local first; both orders are equivalent in a synchronous handler.
-      const captureIdx = beforeAgentStartSource.indexOf("<ecc-session-context>")
+      const captureIdx = beforeAgentStartSource.indexOf("<yus-session-context>")
       const clearIdx2 = beforeAgentStartSource.indexOf("pendingContext = undefined")
       const returnIdx = beforeAgentStartSource.indexOf("return {")
       assert.ok(
         captureIdx !== -1,
         "expected the before_agent_start handler in .pi/extensions/index.ts to read " +
-          "pendingContext into an <ecc-session-context> block before clearing it"
+          "pendingContext into an <yus-session-context> block before clearing it"
       )
       assert.ok(
         clearIdx2 !== -1,
@@ -1015,7 +1015,7 @@ async function main() {
           "an object entry before normalizing; Pi's settings accept both a bare source " +
           'string and an object carrying it ({ source: "npm:x", skills: [] }), and a ' +
           "package filtered that way is just as installed as a plain one -- treating the " +
-          "object form as unrecognized makes /ecc-doctor report an installed companion as " +
+          "object form as unrecognized makes /yus-doctor report an installed companion as " +
           "missing"
       )
       assert.ok(
@@ -1098,7 +1098,7 @@ async function main() {
         "pi-subagents",
         "expected the object form Pi documents for filtered packages to resolve to the " +
           "same name as the bare string; a user who narrows which resources pi-subagents " +
-          "contributes still has it installed, and /ecc-doctor exists to report exactly that"
+          "contributes still has it installed, and /yus-doctor exists to report exactly that"
       )
       assert.strictEqual(
         normalizePiPackageName({ source: "npm:@juicesharp/rpiv-todo@1.4.2", prompts: ["prompts/review.md"] }),
@@ -1218,7 +1218,7 @@ async function main() {
         ),
         "expected findInstalledCompanion in .pi/extensions/index.ts to bail out for a SCOPED " +
           "companion entry before the fallback; for an entry like " +
-          "@juicesharp/rpiv-todo the scope is part of the identity ECC is naming, so some " +
+          "@juicesharp/rpiv-todo the scope is part of the identity yus is naming, so some " +
           "other publisher's rpiv-todo must not silently satisfy it"
       )
       assert.ok(
@@ -1234,12 +1234,12 @@ async function main() {
       assert.ok(
         !/installed\.has\(name\)/.test(withoutComments),
         "found a bare installed.has(name) still used as executable code in " +
-          ".pi/extensions/index.ts; the /ecc-doctor companion loop must go through " +
+          ".pi/extensions/index.ts; the /yus-doctor companion loop must go through " +
           "findInstalledCompanion so a scoped fork is not reported as missing"
       )
       assert.ok(
         /satisfied by/.test(extensionSource),
-        "expected the /ecc-doctor companion loop in .pi/extensions/index.ts to name the " +
+        "expected the /yus-doctor companion loop in .pi/extensions/index.ts to name the " +
           "package that satisfied an entry when it is not an exact match; reporting a " +
           "bare 'installed' for @tintinweb/pi-subagents under the pi-subagents line hides " +
           "which implementation is actually loaded, which is the first thing to know when " +
@@ -1259,7 +1259,7 @@ async function main() {
         "expected a scoped fork to satisfy the unscoped pi-subagents entry; the subagents " +
           "capability is published under that bare name by more than one maintainer, and a " +
           "user running the scoped one has working Agent/SubagentWorkflow tools in session " +
-          "while /ecc-doctor was calling it missing"
+          "while /yus-doctor was calling it missing"
       )
       assert.strictEqual(
         findInstalledCompanion("pi-subagents", new Set(["pi-subagents", "@tintinweb/pi-subagents"])),
@@ -1287,9 +1287,9 @@ async function main() {
       assert.strictEqual(
         findInstalledCompanion("@juicesharp/rpiv-todo", new Set(["@someoneelse/rpiv-todo"])),
         undefined,
-        "expected a DIFFERENT scope to not satisfy a scoped companion entry; ECC names that " +
+        "expected a DIFFERENT scope to not satisfy a scoped companion entry; yus names that " +
           "scope deliberately, so relaxing this direction would report an unrelated " +
-          "publisher's package as the one ECC documents"
+          "publisher's package as the one yus documents"
       )
       assert.strictEqual(
         findInstalledCompanion("@juicesharp/rpiv-todo", new Set(["rpiv-todo"])),
@@ -1332,7 +1332,7 @@ async function main() {
 
     // ---- Group 4: engineering-rules injection -------------------------
 
-    ["PORTABLE_RULE_FILES lists exactly ECC's 7 Pi-portable rule files and excludes the 3 Claude-Code-only ones", () => {
+    ["PORTABLE_RULE_FILES lists exactly yus's 7 Pi-portable rule files and excludes the 3 Claude-Code-only ones", () => {
       const ruleFiles = parsePortableRuleFiles(extensionSource)
       assert.ok(
         ruleFiles.length > 0,
@@ -1351,7 +1351,7 @@ async function main() {
           "code-review.md",
         ],
         "expected PORTABLE_RULE_FILES in .pi/extensions/index.ts to contain exactly these " +
-          `7 files (got: ${ruleFiles.join(", ")}); a drift here silently changes which ECC ` +
+          `7 files (got: ${ruleFiles.join(", ")}); a drift here silently changes which yus ` +
           "engineering rules get injected into Pi's system prompt"
       )
 
@@ -1370,10 +1370,10 @@ async function main() {
     ["engineering rules are read from rules/common/ joined onto the package root at runtime, and nothing is copied into .pi/", () => {
       const withoutComments = stripComments(extensionSource)
       assert.ok(
-        /path\.join\(\s*ECC_ROOT\s*,\s*["'`]rules["'`]\s*,\s*["'`]common["'`]/.test(withoutComments),
+        /path\.join\(\s*YUS_ROOT\s*,\s*["'`]rules["'`]\s*,\s*["'`]common["'`]/.test(withoutComments),
         "expected .pi/extensions/index.ts to build the rules directory via " +
-          'path.join(ECC_ROOT, "rules", "common", ...); rules must be read at runtime from ' +
-          "the canonical rules/common/ directory of the installed ECC package, which is " +
+          'path.join(YUS_ROOT, "rules", "common", ...); rules must be read at runtime from ' +
+          "the canonical rules/common/ directory of the installed yus package, which is " +
           "the entire point of this adapter feature, not from a path baked in some other way"
       )
 
@@ -1385,7 +1385,7 @@ async function main() {
       const piRulesDir = path.join(piDir, "rules")
       assert.ok(
         !fs.existsSync(piRulesDir),
-        `found ${piRulesDir} on disk; ECC's engineering rules must be read at runtime from ` +
+        `found ${piRulesDir} on disk; yus's engineering rules must be read at runtime from ` +
           "the canonical rules/common/ directory and never copied or generated into .pi/ -- " +
           "a rules/ directory under .pi/ means that core constraint has been violated"
       )
@@ -1429,7 +1429,7 @@ async function main() {
       assert.ok(
         typeof result === "string" && result.length > 0,
         "expected loadPortableRules() to return a non-empty string when run against this " +
-          "repo's real rules/common/ files; an empty result means the <ecc-engineering-rules> " +
+          "repo's real rules/common/ files; an empty result means the <yus-engineering-rules> " +
           "block would be silently omitted from Pi's system prompt on every turn"
       )
       assert.ok(
@@ -1472,7 +1472,7 @@ async function main() {
       }
     }],
 
-    ["/ecc-doctor reports rule files actually loaded, not the allowlist length (source contract)", () => {
+    ["/yus-doctor reports rule files actually loaded, not the allowlist length (source contract)", () => {
       assert.ok(
         /let\s+cachedRuleFileCount\s*=\s*0/.test(extensionSource),
         "expected .pi/extensions/index.ts to track how many rule files actually loaded in a " +
@@ -1486,12 +1486,12 @@ async function main() {
       )
 
       const disabledBranch = extensionSource.slice(
-        extensionSource.indexOf("isDisabledByEnv(process.env.ECC_PI_RULES)"),
+        extensionSource.indexOf("isDisabledByEnv(process.env.YUS_PI_RULES)"),
         extensionSource.indexOf("const sections: string[] = []")
       )
       assert.ok(
         /cachedRuleFileCount\s*=\s*0/.test(disabledBranch),
-        "expected the ECC_PI_RULES disable branch of loadPortableRules in " +
+        "expected the YUS_PI_RULES disable branch of loadPortableRules in " +
           ".pi/extensions/index.ts to reset cachedRuleFileCount to 0, so the counter can " +
           "never survive from a prior load into a disabled session"
       )
@@ -1513,12 +1513,12 @@ async function main() {
           "over the allowlist length (`${cachedRuleFileCount}/${PORTABLE_RULE_FILES.length} " +
           "rule file(s)`); loadPortableRules silently skips unreadable and empty files and " +
           "breaks out of the loop at MAX_RULES_BYTES, so reporting the allowlist length " +
-          "alone makes an install that loaded 3 of 7 report 7 -- and /ecc-doctor is the one " +
+          "alone makes an install that loaded 3 of 7 report 7 -- and /yus-doctor is the one " +
           "place a user looks to find a partial install"
       )
     }],
 
-    ["/ecc-doctor validates agent portability instead of trusting file existence (source contract)", () => {
+    ["/yus-doctor validates agent portability instead of trusting file existence (source contract)", () => {
       const start = extensionSource.indexOf("function validateAgentPortability")
       assert.ok(start !== -1, "expected .pi/extensions/index.ts to define validateAgentPortability")
       const end = extensionSource.indexOf("\nfunction ", start + 1)
@@ -1534,7 +1534,7 @@ async function main() {
       assert.ok(/OK: \(\\d\+\) agents parsed and validated/.test(src), "must parse the real --check output")
     }],
 
-    ["/ecc-doctor renders three honest agent states (behavioral mirror)", () => {
+    ["/yus-doctor renders three honest agent states (behavioral mirror)", () => {
       assert.strictEqual(
         describeAgentPortabilityMirror(68, { status: "validated", count: 68 }),
         "68 agent(s) source schema validated; Pi conversion available via scripts/agent-convert.js"
@@ -1560,7 +1560,7 @@ async function main() {
       assert.ok(extensionSource.includes("unvalidated —"), "expected the unvalidated line pinned in the source")
     }],
 
-    ["isDisabledByEnv() behavioral mirror: recognizes 0/false/off/none/disabled case- and whitespace-insensitively, and the real function reads ECC_PI_RULES", () => {
+    ["isDisabledByEnv() behavioral mirror: recognizes 0/false/off/none/disabled case- and whitespace-insensitively, and the real function reads YUS_PI_RULES", () => {
       for (const disabledValue of ["0", "false", "off", "none", "disabled"]) {
         assert.strictEqual(
           isDisabledByEnvMirror(disabledValue),
@@ -1583,7 +1583,7 @@ async function main() {
         isDisabledByEnvMirror("  OFF  "),
         true,
         'expected isDisabledByEnv("  OFF  ") to be true (mixed case AND surrounding whitespace ' +
-          "at once); a user pasting ECC_PI_RULES=\"  OFF  \" into a shell profile must still " +
+          "at once); a user pasting YUS_PI_RULES=\"  OFF  \" into a shell profile must still " +
           "disable injection"
       )
 
@@ -1593,16 +1593,16 @@ async function main() {
           false,
           `expected isDisabledByEnv(${JSON.stringify(enabledValue)}) to be false; treating an ` +
             "unrecognized value as disabled would silently turn off rule injection for anyone " +
-            "who sets ECC_PI_RULES to something other than the 5 documented off-values"
+            "who sets YUS_PI_RULES to something other than the 5 documented off-values"
         )
       }
 
       const withoutComments = stripComments(extensionSource)
       assert.ok(
-        withoutComments.includes("process.env.ECC_PI_RULES"),
-        "expected .pi/extensions/index.ts to read process.env.ECC_PI_RULES as the env var " +
+        withoutComments.includes("process.env.YUS_PI_RULES"),
+        "expected .pi/extensions/index.ts to read process.env.YUS_PI_RULES as the env var " +
           "that turns rule injection off; a different or renamed env var would silently break " +
-          "anyone's existing ECC_PI_RULES=off configuration"
+          "anyone's existing YUS_PI_RULES=off configuration"
       )
     }],
 
@@ -1621,22 +1621,22 @@ async function main() {
       const handlerSource = stripComments(extensionSource.slice(beforeAgentStartIdx, sessionShutdownIdx))
 
       assert.ok(
-        handlerSource.includes("<ecc-engineering-rules>"),
+        handlerSource.includes("<yus-engineering-rules>"),
         "expected the before_agent_start handler in .pi/extensions/index.ts to wrap " +
-          "injected rules in an <ecc-engineering-rules> tag"
+          "injected rules in an <yus-engineering-rules> tag"
       )
       assert.ok(
-        handlerSource.includes("<ecc-session-context>"),
+        handlerSource.includes("<yus-session-context>"),
         "expected the before_agent_start handler in .pi/extensions/index.ts to wrap the " +
-          "session context in an <ecc-session-context> tag"
+          "session context in an <yus-session-context> tag"
       )
 
-      const contextPushIdx = handlerSource.indexOf("<ecc-session-context>")
+      const contextPushIdx = handlerSource.indexOf("<yus-session-context>")
       const clearIdx = handlerSource.indexOf("pendingContext = undefined", contextPushIdx)
       assert.ok(
         contextPushIdx !== -1 && clearIdx !== -1 && clearIdx > contextPushIdx,
         "expected before_agent_start to clear pendingContext = undefined after using it to " +
-          "build the <ecc-session-context> block; without this, the same one-shot session " +
+          "build the <yus-session-context> block; without this, the same one-shot session " +
           "context would be replayed into every later agent turn instead of being consumed once"
       )
 

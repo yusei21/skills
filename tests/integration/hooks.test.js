@@ -44,7 +44,7 @@ async function asyncTest(name, fn) {
 // Hook scripts write session data, learned skills and homunculus observations
 // under the home directory, so runs get an empty home instead of the developer's
 // real one unless a test passes its own HOME.
-const ISOLATED_HOME = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-integration-home-'));
+const ISOLATED_HOME = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-integration-home-'));
 const ISOLATED_HOME_ENV = { HOME: ISOLATED_HOME, USERPROFILE: ISOLATED_HOME };
 process.on('exit', () => fs.rmSync(ISOLATED_HOME, { recursive: true, force: true }));
 
@@ -239,7 +239,7 @@ function getTestHomunculusEnv(testDir) {
   return {
     HOME: testDir,
     XDG_DATA_HOME: xdgDataHome,
-    homunculusDir: path.join(xdgDataHome, 'ecc-homunculus'),
+    homunculusDir: path.join(xdgDataHome, 'yus-homunculus'),
   };
 }
 
@@ -598,9 +598,9 @@ async function runTests() {
         { tool_name: 'mcp__broken__search', tool_input: {} },
         {
           CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
-          ECC_MCP_CONFIG_PATH: configPath,
-          ECC_MCP_HEALTH_STATE_PATH: statePath,
-          ECC_MCP_HEALTH_TIMEOUT_MS: '1000'
+          YUS_MCP_CONFIG_PATH: configPath,
+          YUS_MCP_HEALTH_STATE_PATH: statePath,
+          YUS_MCP_HEALTH_TIMEOUT_MS: '1000'
         }
       );
 

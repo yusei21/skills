@@ -14,7 +14,7 @@ const stopCommand = hooks.Stop.flatMap(group => group.hooks)
   .find(hook => hook.command.includes('stop:check-console-log')).command;
 
 function fixture() {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-registered-profile-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-registered-profile-'));
   const home = path.join(root, 'home');
   const selected = path.join(root, 'selected');
   const decoy = path.join(home, '.claude', 'scripts', 'hooks');
@@ -24,8 +24,8 @@ function fixture() {
   }
   const env = {
     ...process.env, HOME: home, USERPROFILE: home, CLAUDE_CONFIG_DIR: selected,
-    CLAUDE_PLUGIN_ROOT: '', ECC_PLUGIN_ROOT: '', ECC_HOOK_PROFILE: 'standard',
-    ECC_HOOKS_ENABLED: undefined, ECC_HOOK_CONFIG: undefined, ECC_DISABLED_HOOKS: '',
+    CLAUDE_PLUGIN_ROOT: '', YUS_PLUGIN_ROOT: '', YUS_HOOK_PROFILE: 'standard',
+    YUS_HOOKS_ENABLED: undefined, YUS_HOOK_CONFIG: undefined, YUS_DISABLED_HOOKS: '',
     CLAUDE_PLUGIN_OPTION_HOOKS_ENABLED: 'true', CLAUDE_PLUGIN_OPTION_HOOK_PROFILE: 'standard',
   };
   return { root, home, selected, env };

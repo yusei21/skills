@@ -1,6 +1,6 @@
 # Progress Sync Contract
 
-ECC 2.0 tracks execution state across GitHub, Linear, local handoffs, and the
+yus 2.0 tracks execution state across GitHub, Linear, local handoffs, and the
 repo roadmap. This contract defines the minimum evidence required before a
 status update can claim a lane is current.
 
@@ -11,12 +11,12 @@ status update can claim a lane is current.
 | GitHub PRs/issues/discussions | Public queue and review state | Recheck live counts before every significant merge batch and before release approval. |
 | Linear project | Executive roadmap and stakeholder status update | Use project documents and project/issue comments because project status updates are disabled in this workspace; create/reuse issues for durable execution lanes. |
 | Local handoff | Durable operator continuity | Update the active handoff after every merge batch, queue drain, skipped release gate, or blocked external action. |
-| Repo roadmap | Auditable planning mirror | Keep `docs/ECC-2.0-GA-ROADMAP.md` aligned to merged PR evidence and unresolved gates. |
+| Repo roadmap | Auditable planning mirror | Keep `docs/yus-2.0-GA-ROADMAP.md` aligned to merged PR evidence and unresolved gates. |
 | `scripts/work-items.js` | Local tracker bridge | Sync GitHub PRs/issues into the SQLite work-items store for status snapshots and blocked follow-up. |
 
 ## Flow Lanes
 
-The repo mirror uses these flow lanes so ECC work does not collapse into one
+The repo mirror uses these flow lanes so yus work does not collapse into one
 undifferentiated backlog:
 
 - Queue hygiene and stale-work salvage

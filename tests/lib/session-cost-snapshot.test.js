@@ -37,7 +37,7 @@ function test(name, fn) {
   }
 }
 
-const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-cost-snapshot-'));
+const root = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-cost-snapshot-'));
 let passed = 0;
 let failed = 0;
 

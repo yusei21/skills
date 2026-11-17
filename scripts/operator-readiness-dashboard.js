@@ -6,7 +6,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const { buildReport: buildPlatformReport } = require('./platform-audit');
 
-const SCHEMA_VERSION = 'ecc.operator-readiness-dashboard.v1';
+const SCHEMA_VERSION = 'yus.operator-readiness-dashboard.v1';
 const DEFAULT_THRESHOLDS = Object.freeze({
   maxOpenPrs: 20,
   maxOpenIssues: 20,
@@ -17,7 +17,7 @@ function usage() {
   console.log([
     'Usage: node scripts/operator-readiness-dashboard.js [options]',
     '',
-    'Generate the ECC operator readiness dashboard and prompt-to-artifact audit.',
+    'Generate the yus operator readiness dashboard and prompt-to-artifact audit.',
     '',
     'Options:',
     '  --format <text|json|markdown>',
@@ -282,7 +282,7 @@ const PROMOTION_TRACE_MARKERS = [
   'operator-visible promotion output values',
 ];
 
-const ECC_TOOLS_EVIDENCE_TIERS = [
+const YUS_TOOLS_EVIDENCE_TIERS = [
   [ANNOUNCEMENT_GATE_READY_MARKERS, 'billing announcement gate, selected-target announcement gate, billing gate env-file operator path, non-breaking operator bearer path, hosted analysis lanes, AgentShield fleet-summary consumption, hosted finding evidence paths, harness-route policy linking, policy-promotion Action-output telemetry, operator-visible promotion output details, hosted promotion judge audit traces, billing announcement preflight, aggregate production billing KV readback, Wrangler selected-target readback, target-account billing readback, provenance-aware Marketplace billing-state gates, sanitized Marketplace plan/action provenance counts, ready Marketplace Pro target selection, hosted team-learning feedback controls, and ECC-Tools Dependabot alert remediation are mirrored in the GA roadmap'],
   [SELECTED_TARGET_GATE_MARKERS, 'billing announcement gate, selected-target announcement gate, billing gate env-file operator path, hosted analysis lanes, AgentShield fleet-summary consumption, hosted finding evidence paths, harness-route policy linking, policy-promotion Action-output telemetry, operator-visible promotion output details, hosted promotion judge audit traces, billing announcement preflight, aggregate production billing KV readback, Wrangler OAuth readback, target-account billing readback, provenance-aware Marketplace billing-state gates, sanitized Marketplace plan/action provenance counts, ready Marketplace Pro target selection, hosted team-learning feedback controls, and ECC-Tools Dependabot alert remediation are mirrored in the GA roadmap'],
   [['69ca535', 'team feedback controls', 'e56fc1a'], 'billing announcement gate, hosted analysis lanes, AgentShield fleet-summary consumption, hosted finding evidence paths, harness-route policy linking, policy-promotion Action-output telemetry, operator-visible promotion output details, hosted promotion judge audit traces, billing announcement preflight, aggregate production billing KV readback, Wrangler OAuth readback, target-account billing readback, provenance-aware Marketplace billing-state gates, sanitized Marketplace plan/action provenance counts, hosted team-learning feedback controls, and ECC-Tools Dependabot alert remediation are mirrored in the GA roadmap'],
@@ -294,9 +294,9 @@ const ECC_TOOLS_EVIDENCE_TIERS = [
   [PRODUCTION_READBACK_MARKERS, 'billing announcement gate, hosted analysis lanes, AgentShield fleet-summary consumption, hosted finding evidence paths, harness-route policy linking, policy-promotion Action-output telemetry, operator-visible promotion output details, hosted promotion judge audit traces, billing announcement preflight, and production KV readback state are mirrored in the GA roadmap'],
   [PROMOTION_TRACE_MARKERS, 'billing announcement gate, hosted analysis lanes, AgentShield fleet-summary consumption, hosted finding evidence paths, harness-route policy linking, policy-promotion Action-output telemetry, operator-visible promotion output details, and hosted promotion judge audit traces are mirrored in the GA roadmap'],
 ];
-const ECC_TOOLS_EVIDENCE_FALLBACK = 'billing announcement gate, hosted analysis lanes, AgentShield fleet-summary consumption, hosted finding evidence paths, and harness-route policy linking are mirrored in the GA roadmap';
+const YUS_TOOLS_EVIDENCE_FALLBACK = 'billing announcement gate, hosted analysis lanes, AgentShield fleet-summary consumption, hosted finding evidence paths, and harness-route policy linking are mirrored in the GA roadmap';
 
-const ECC_TOOLS_GAP_TIERS = [
+const YUS_TOOLS_GAP_TIERS = [
   [ANNOUNCEMENT_GATE_READY_MARKERS, 'repeat KV readback and selected-target announcement gate immediately before launch; keep native-payments copy behind the final release, plugin, URL, and owner-approval gates'],
   [[...SELECTED_TARGET_GATE_MARKERS, 'old "no Marketplace-managed Pro target billing-state" blocker is cleared'], 'obtain or rotate the local/internal INTERNAL_API_SECRET bearer-token path, via exported env or ignored --env-file, then run the live selected-target billing announcement gate before publishing native-payments copy'],
   [['1Password CLI authorization timed out', 'Cloudflare API auth returned `Authentication error [code: 10000]`'], 'authorize Cloudflare API or 1Password CLI access, configure the target Marketplace Pro account and INTERNAL_API_SECRET, create or replay Marketplace Pro webhook state, then rerun target readback and the live announcement gate'],
@@ -309,25 +309,25 @@ const ECC_TOOLS_GAP_TIERS = [
   [PRODUCTION_READBACK_MARKERS, 'complete Marketplace purchase/webhook readback, then run the live announcement gate'],
   [PROMOTION_TRACE_MARKERS, 'live Marketplace test-account readback pending'],
 ];
-const ECC_TOOLS_GAP_FALLBACK = 'live Marketplace test-account readback, hosted promotion telemetry, and richer operator review UX pending';
+const YUS_TOOLS_GAP_FALLBACK = 'live Marketplace test-account readback, hosted promotion telemetry, and richer operator review UX pending';
 
 function roadmapTierMessage(roadmap, tiers, fallback) {
   const tier = tiers.find(([markers]) => markers.some(marker => roadmap.includes(marker)));
   return tier ? tier[1] : fallback;
 }
 
-function eccToolsNextLevelEvidence(roadmap) {
-  return roadmapTierMessage(roadmap, ECC_TOOLS_EVIDENCE_TIERS, ECC_TOOLS_EVIDENCE_FALLBACK);
+function yusToolsNextLevelEvidence(roadmap) {
+  return roadmapTierMessage(roadmap, YUS_TOOLS_EVIDENCE_TIERS, YUS_TOOLS_EVIDENCE_FALLBACK);
 }
 
-function eccToolsNextLevelGap(roadmap) {
-  return roadmapTierMessage(roadmap, ECC_TOOLS_GAP_TIERS, ECC_TOOLS_GAP_FALLBACK);
+function yusToolsNextLevelGap(roadmap) {
+  return roadmapTierMessage(roadmap, YUS_TOOLS_GAP_TIERS, YUS_TOOLS_GAP_FALLBACK);
 }
 
 function supplyChainLocalProtectionEvidence({ roadmap, scripts }) {
   if (scripts['security:advisory-sources'] === 'node scripts/ci/supply-chain-advisory-sources.js'
     && roadmap.includes('package-manager hardening Action outputs')) {
-    return 'scheduled supply-chain watch emits IOC/advisory-source refresh artifacts; ECC scanner covers gh-token-monitor token-store persistence; AgentShield now detects known AI-tool persistence IOCs, npm lifecycle/token drift, unsupported npm age-key drift, and pnpm/Yarn cooldown drift; current-head watch evidence and ITO-57 May 18 Linear evidence updates are current';
+    return 'scheduled supply-chain watch emits IOC/advisory-source refresh artifacts; yus scanner covers gh-token-monitor token-store persistence; AgentShield now detects known AI-tool persistence IOCs, npm lifecycle/token drift, unsupported npm age-key drift, and pnpm/Yarn cooldown drift; current-head watch evidence and ITO-57 May 18 Linear evidence updates are current';
   }
 
   return scripts['security:advisory-sources'] === 'node scripts/ci/supply-chain-advisory-sources.js'
@@ -347,7 +347,7 @@ function supplyChainLocalProtectionGap({ roadmap, scripts }) {
 function hasCurrentLinearProgressSync({ roadmap, progressSync }) {
   const hasOperatorProgressSurface = roadmap.includes('operator progress snapshot')
     || roadmap.includes('operator progress comment');
-  const hasMay19ProgressSurface = roadmap.includes('ecc-may-19-post-pr-2002-sync-64cef8f668e0')
+  const hasMay19ProgressSurface = roadmap.includes('yus-may-19-post-pr-2002-sync-64cef8f668e0')
     && roadmap.includes('a6411e3a-8c8e-4a58-adba-687e77d4c543')
     && roadmap.includes('ITO-56');
   const hasMay20ReleaseGateSurface = roadmap.includes('467d148a-712a-4777-aad9-95593e9f1739')
@@ -381,10 +381,10 @@ function linearProgressEvidence(context) {
   if (hasCurrentLinearProgressSync(context)) {
     if (context.roadmap.includes('467d148a-712a-4777-aad9-95593e9f1739')
       && context.roadmap.includes('7642ee9c-3107-400c-a229-53e2895a8914')) {
-      return 'Linear live sync is current with the May 20 Marketplace Pro release-gate comments on ITO-61 and the ECC platform roadmap; progress-sync contract defines the file-backed work-items/status path';
+      return 'Linear live sync is current with the May 20 Marketplace Pro release-gate comments on ITO-61 and the yus platform roadmap; progress-sync contract defines the file-backed work-items/status path';
     }
 
-    if (context.roadmap.includes('ecc-may-19-post-pr-2002-sync-64cef8f668e0')) {
+    if (context.roadmap.includes('yus-may-19-post-pr-2002-sync-64cef8f668e0')) {
       return 'Linear live sync is current with the May 19 post-PR #2002 sync document, project comment, and active issue-lane updates; progress-sync contract defines the file-backed work-items/status path';
     }
 
@@ -467,7 +467,7 @@ function extractGrowthBaseline(hypergrowth) {
 }
 
 function buildGrowthSummary(rootDir) {
-  const hypergrowth = readText(rootDir, 'docs/releases/2.0.0/ecc-2-hypergrowth-release-command-center.md');
+  const hypergrowth = readText(rootDir, 'docs/releases/2.0.0/yus-2-hypergrowth-release-command-center.md');
   const partnerPack = readText(rootDir, 'docs/releases/2.0.0-rc.1/partner-sponsor-talks-pack.md');
   const baseline = extractGrowthBaseline(hypergrowth || partnerPack);
 
@@ -493,13 +493,13 @@ const TIERED_STATUS = ['current', 'in_progress', 'not_complete'];
 function readReleaseDocs(rootDir) {
   const packageJson = readPackage(rootDir);
   return {
-    roadmap: readText(rootDir, 'docs/ECC-2.0-GA-ROADMAP.md'),
+    roadmap: readText(rootDir, 'docs/yus-2.0-GA-ROADMAP.md'),
     publicationReadiness: readText(rootDir, 'docs/releases/2.0.0-rc.1/publication-readiness.md'),
     namingMatrix: readText(rootDir, 'docs/releases/2.0.0-rc.1/naming-and-publication-matrix.md'),
     releasePublicationChecklist: readText(rootDir, 'docs/releases/2.0.0-rc.1/release-name-plugin-publication-checklist-2026-05-18.md'),
     releaseUrlLedger: readText(rootDir, 'docs/releases/2.0.0-rc.1/release-url-ledger-2026-05-19.md'),
     publicationEvidenceMay19: readText(rootDir, 'docs/releases/2.0.0-rc.1/publication-evidence-2026-05-19.md'),
-    hypergrowthCommandCenter: readText(rootDir, 'docs/releases/2.0.0/ecc-2-hypergrowth-release-command-center.md'),
+    hypergrowthCommandCenter: readText(rootDir, 'docs/releases/2.0.0/yus-2-hypergrowth-release-command-center.md'),
     partnerSponsorTalksPack: readText(rootDir, 'docs/releases/2.0.0-rc.1/partner-sponsor-talks-pack.md'),
     releaseVideoProduction: readText(rootDir, 'docs/releases/2.0.0-rc.1/video-suite-production.md'),
     ownerQueueCleanup: readText(rootDir, 'docs/releases/2.0.0-rc.1/owner-queue-cleanup-2026-05-18.md'),
@@ -528,7 +528,7 @@ function assessReadiness(rootDir, docs) {
     && fileExists(rootDir, 'scripts/preview-pack-smoke.js')
     && includesAll(previewManifest, ['scripts/preview-pack-smoke.js', 'npm run preview-pack:smoke'])
     && includesAll(previewPackSmoke, [
-      'ecc.preview-pack-smoke.v1',
+      'yus.preview-pack-smoke.v1',
       'preview-pack-artifacts-present',
       'hermes-boundary-sanitized',
       'publication-blockers-preserved'
@@ -550,13 +550,13 @@ function assessReadiness(rootDir, docs) {
   const releaseVideoSuiteReady = scripts['release:video-suite'] === 'node scripts/release-video-suite.js'
     && fileExists(rootDir, 'scripts/release-video-suite.js')
     && includesAll(docs.releaseVideoProduction, [
-      'ECC 2.0 Video Suite Production Manifest',
+      'yus 2.0 Video Suite Production Manifest',
       'Primary launch video',
       'Self-Eval Gate',
       'timeline',
     ])
     && includesAll(docs.releaseVideoSuite, [
-      'ecc.release-video-suite.v1',
+      'yus.release-video-suite.v1',
       'video-source-assets-present',
       'video-release-artifacts-present',
     ]);
@@ -687,8 +687,8 @@ function releasePackRequirements(rootDir, docs, readiness) {
       'keep generated dashboard attached to publication evidence'
     ),
     buildRequirement(
-      'ecc-preview-pack',
-      'ECC 2.0 preview pack ready',
+      'yus-preview-pack',
+      'yus 2.0 preview pack ready',
       'docs/releases/2.0.0-rc.1/preview-pack-manifest.md',
       tiered(previewPackReady, previewPackManifestReady, TIERED_STATUS),
       tiered(previewPackReady, previewPackManifestReady, [
@@ -720,9 +720,9 @@ function releasePackRequirements(rootDir, docs, readiness) {
       'naming-and-publication-matrix plus release-name-plugin-publication checklist plus publication-readiness',
       includesAll(docs.namingMatrix, ['Claude plugin', 'Codex plugin', 'npm package', 'Publication Paths'])
         && includesAll(docs.releasePublicationChecklist, [
-          'Ship `v2.0.0-rc.1` as **ECC**',
-          'affaan-m/ECC',
-          'ecc-universal',
+          'Ship `v2.0.0-rc.1` as **yus**',
+          'yusei21/yus',
+          'yus-universal',
           'claude plugin tag .claude-plugin --dry-run',
           'codex plugin marketplace add',
           'Do not rename the npm package until rc.1 is published'
@@ -792,7 +792,7 @@ function growthRequirements(readiness) {
     buildRequirement(
       'hypergrowth-command-center',
       'Create a second-phase hypergrowth release command center',
-      'docs/releases/2.0.0/ecc-2-hypergrowth-release-command-center.md plus May 19 evidence',
+      'docs/releases/2.0.0/yus-2-hypergrowth-release-command-center.md plus May 19 evidence',
       hypergrowthCommandCenterReady ? 'current' : 'in_progress',
       hypergrowthCommandCenterReady
         ? 'current MRR, target MRR, gap, release claim, video lane, distribution plan, and approval boundaries are in-tree'
@@ -803,7 +803,7 @@ function growthRequirements(readiness) {
     ),
     buildRequirement(
       'release-video-suite',
-      'Produce the ECC 2.0 release video suite',
+      'Produce the yus 2.0 release video suite',
       'docs/releases/2.0.0-rc.1/video-suite-production.md and npm run release:video-suite',
       tiered(releaseVideoPublishCandidatesReady, releaseVideoSuiteReady, TIERED_STATUS),
       tiered(releaseVideoPublishCandidatesReady, releaseVideoSuiteReady, [
@@ -843,8 +843,8 @@ function programRequirements(rootDir, docs) {
       includesAll(roadmap, ['ECC-Tools PR #78', 'hosted promotion', 'announcementGate'])
         ? 'in_progress'
         : 'not_complete',
-      eccToolsNextLevelEvidence(roadmap),
-      eccToolsNextLevelGap(roadmap)
+      yusToolsNextLevelEvidence(roadmap),
+      yusToolsNextLevelGap(roadmap)
     ),
     buildRequirement(
       'legacy-salvage',
@@ -864,7 +864,7 @@ function programRequirements(rootDir, docs) {
     ),
     buildRequirement(
       'observability-for-self-use',
-      'Provide ECC 2.0 observability for self-use',
+      'Provide yus 2.0 observability for self-use',
       'observability readiness gate',
       observabilityScriptReady
         && includesAll(docs.observabilityReadiness, ['observability-readiness.js'])
@@ -974,7 +974,7 @@ function markdownEscape(value) {
 
 function renderText(report) {
   const lines = [
-    `ECC Operator Readiness Dashboard: ${report.ready ? 'objective ready' : 'work remaining'}`,
+    `yus Operator Readiness Dashboard: ${report.ready ? 'objective ready' : 'work remaining'}`,
     `Generated: ${report.generatedAt}`,
     `Commit: ${report.head || 'unknown'}`,
     `Dashboard ready: ${report.dashboardReady}`,
@@ -1011,7 +1011,7 @@ function renderText(report) {
 
 function renderMarkdown(report) {
   const lines = [
-    '# ECC Operator Readiness Dashboard',
+    '# yus Operator Readiness Dashboard',
     '',
     'This dashboard is generated by `npm run operator:dashboard`. It is an operator snapshot, not release approval.',
     '',

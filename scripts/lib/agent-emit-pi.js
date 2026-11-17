@@ -2,7 +2,7 @@
 'use strict';
 
 /**
- * ECC Agent IR — Pi emitter.
+ * yus Agent IR — Pi emitter.
  *
  * Turns one IR object into a native Pi subagent definition (markdown file with
  * Pi frontmatter). The frontmatter contract is verified against
@@ -28,7 +28,7 @@
 
 const { mapToolToPi } = require('./agent-tool-map');
 
-// Pi core built-in agent names (case-sensitive). ECC agent names are kebab-case
+// Pi core built-in agent names (case-sensitive). yus agent names are kebab-case
 // and do not collide today; warn if a future one ever does.
 const RESERVED_AGENT_NAMES = new Set(['general-purpose', 'Explore', 'Plan']);
 

@@ -1,5 +1,5 @@
 {
-  "schema_version": "ecc.evaluator-rag.report.v1",
+  "schema_version": "yus.evaluator-rag.report.v1",
   "scenario_id": "connector-diagnostics-gap",
   "run_id": "illustrative-connector-gap",
   "read_only": true,
@@ -53,7 +53,7 @@
     ],
     "gaps": [
       "Event retention and deployed settings are unknown.",
-      "The historical incident and ECC causal contribution are unverified; no connector was executed.",
+      "The historical incident and yus causal contribution are unverified; no connector was executed.",
       "Management access, collection, SSH and notification behavior are synthetic inputs, not live checks.",
       "No target sample, original candidate code, source-system execution or deployed recovery was inspected."
     ]

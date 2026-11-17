@@ -239,7 +239,7 @@ function formatHealthReport(report, options = {}) {
 
   if (!report.skills.length) {
     return [
-      'ECC skill health',
+      'yus skill health',
       `Generated: ${report.generated_at}`,
       '',
       'No skill execution records found.',
@@ -248,7 +248,7 @@ function formatHealthReport(report, options = {}) {
   }
 
   const lines = [
-    'ECC skill health',
+    'yus skill health',
     `Generated: ${report.generated_at}`,
     `Skills: ${summary.total_skills} total, ${summary.measured_skills} measured, ${summary.healthy_skills} healthy, ${summary.declining_skills} declining, ${summary.unmeasured_skills} unmeasured`,
     '',

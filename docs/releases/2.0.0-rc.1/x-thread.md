@@ -1,16 +1,16 @@
-# X Thread Draft - ECC v2.0.0-rc.1
+# X Thread Draft - yus v2.0.0-rc.1
 
-1/ ECC v2.0.0-rc.1 is the first release-candidate pass at the 2.0 direction.
+1/ yus v2.0.0-rc.1 is the first release-candidate pass at the 2.0 direction.
 
 The repo is moving from a Claude Code config pack into a meta-harness for
 agentic work.
 
 2/ The important split:
 
-ECC is the reusable substrate.
+yus is the reusable substrate.
 Hermes is the operator shell that can run on top.
 
-Skills, hooks, MCP configs, rules, and workflow packs live in ECC.
+Skills, hooks, MCP configs, rules, and workflow packs live in yus.
 
 3/ A meta-harness matters because the agent layer is fragmenting.
 
@@ -25,7 +25,7 @@ workflows all need similar operating primitives:
 - release evidence
 - security checks
 
-4/ ECC gives those primitives a shared shape instead of leaving every workflow
+4/ yus gives those primitives a shared shape instead of leaving every workflow
 stuck inside one client.
 
 Use the harness you like. Keep the workflow layer portable.
@@ -85,7 +85,7 @@ Most agent systems fail in the daily operating loop.
 
 They can code, but they do not keep research, content, handoffs, reminders, and execution in one measurable surface.
 
-12/ ECC gives the reusable layer.
+12/ yus gives the reusable layer.
 
 Hermes gives the operator shell.
 
@@ -100,16 +100,16 @@ The deeper local integrations stay local until they are sanitized. The GitHub pr
 14/ Start here:
 
 Repo:
-<https://github.com/affaan-m/ECC>
+<https://github.com/yusei21/yus>
 
-Hermes x ECC setup:
-<https://github.com/affaan-m/ECC/blob/main/docs/HERMES-SETUP.md>
+Hermes x yus setup:
+<https://github.com/yusei21/yus/blob/main/docs/HERMES-SETUP.md>
 
 15/ Release notes:
-<https://github.com/affaan-m/ECC/blob/main/docs/releases/2.0.0-rc.1/release-notes.md>
+<https://github.com/yusei21/yus/blob/main/docs/releases/2.0.0-rc.1/release-notes.md>
 
 Itô skill pack boundary:
-<https://github.com/affaan-m/ECC/blob/main/docs/releases/2.0.0-rc.1/ito-prediction-market-skill-pack.md>
+<https://github.com/yusei21/yus/blob/main/docs/releases/2.0.0-rc.1/ito-prediction-market-skill-pack.md>
 
 URL ledger:
-<https://github.com/affaan-m/ECC/blob/main/docs/releases/2.0.0-rc.1/release-url-ledger-2026-05-19.md>
+<https://github.com/yusei21/yus/blob/main/docs/releases/2.0.0-rc.1/release-url-ledger-2026-05-19.md>

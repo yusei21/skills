@@ -48,27 +48,27 @@ function runHook(scriptPath, input, env = {}, cwd = REPO_ROOT) {
   const raw = typeof input === 'string' ? input : JSON.stringify(input);
   const childEnv = {
     ...process.env,
-    ECC_HOOK_PROFILE: 'standard',
+    YUS_HOOK_PROFILE: 'standard',
     ...env,
   };
-  if (!Object.hasOwn(env, 'ECC_HOOKS_ENABLED')) {
-    delete childEnv.ECC_HOOKS_ENABLED;
+  if (!Object.hasOwn(env, 'YUS_HOOKS_ENABLED')) {
+    delete childEnv.YUS_HOOKS_ENABLED;
   }
-  if (!Object.hasOwn(env, 'ECC_DISABLED_HOOKS')) {
-    delete childEnv.ECC_DISABLED_HOOKS;
+  if (!Object.hasOwn(env, 'YUS_DISABLED_HOOKS')) {
+    delete childEnv.YUS_DISABLED_HOOKS;
   }
   if (!Object.hasOwn(env, 'CLAUDE_SESSION_ID')) {
     delete childEnv.CLAUDE_SESSION_ID;
   }
-  if (!Object.hasOwn(env, 'ECC_SESSION_ID')) {
-    delete childEnv.ECC_SESSION_ID;
+  if (!Object.hasOwn(env, 'YUS_SESSION_ID')) {
+    delete childEnv.YUS_SESSION_ID;
   }
   for (const key of [
     'CLAUDE_PLUGIN_OPTION_HOOKS_ENABLED',
     'CLAUDE_PLUGIN_OPTION_HOOK_PROFILE',
-    'ECC_HOOK_CONFIG',
+    'YUS_HOOK_CONFIG',
     'CLAUDE_PLUGIN_ROOT',
-    'ECC_PLUGIN_ROOT',
+    'YUS_PLUGIN_ROOT',
   ]) {
     if (!Object.hasOwn(env, key)) {
       delete childEnv[key];
@@ -87,7 +87,7 @@ function accumulatorPath(sessionId, cwd) {
   const raw = sessionId
     || crypto.createHash('sha1').update(cwd).digest('hex').slice(0, 12);
   const safeId = raw.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 64);
-  return path.join(os.tmpdir(), `ecc-edited-${safeId}.txt`);
+  return path.join(os.tmpdir(), `yus-edited-${safeId}.txt`);
 }
 
 function writeFile(filePath, content) {
@@ -96,7 +96,7 @@ function writeFile(filePath, content) {
 }
 
 function createInstalledCursorFixture(options = {}) {
-  const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-cursor-dispatcher-'));
+  const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-cursor-dispatcher-'));
   const cursorRoot = path.join(projectRoot, '.cursor');
   const hooksRoot = path.join(cursorRoot, 'hooks');
   const scriptsRoot = path.join(cursorRoot, 'scripts');
@@ -148,7 +148,7 @@ function createInstalledCursorFixture(options = {}) {
     [
       "'use strict';",
       "const fs = require('fs');",
-      "fs.appendFileSync(process.env.CURSOR_HOOK_LOG, `stop-format-typecheck:${process.env.ECC_STOP_FORMAT_TYPECHECK_BUDGET_MS}\\n`);",
+      "fs.appendFileSync(process.env.CURSOR_HOOK_LOG, `stop-format-typecheck:${process.env.YUS_STOP_FORMAT_TYPECHECK_BUDGET_MS}\\n`);",
       "process.stdout.write(require('fs').readFileSync(0, 'utf8'));",
       '',
     ].join('\n')
@@ -183,7 +183,7 @@ function createInstalledCursorFixture(options = {}) {
   );
   writeFile(
     path.join(scriptsRoot, 'hooks', 'cursor-session-env.js'),
-    "process.stdout.write(JSON.stringify({ env: { ECC_AGENT_DATA_HOME: '/tmp/cursor-ecc' }, additional_context: 'cursor env' }));\n"
+    "process.stdout.write(JSON.stringify({ env: { YUS_AGENT_DATA_HOME: '/tmp/cursor-yus' }, additional_context: 'cursor env' }));\n"
   );
   writeFile(
     path.join(scriptsRoot, 'hooks', 'session-start.js'),
@@ -191,7 +191,7 @@ function createInstalledCursorFixture(options = {}) {
       "const fs = require('fs');",
       "const input = JSON.parse(fs.readFileSync(0, 'utf8'));",
       "if (input.hook_event_name !== 'SessionStart' || input.source !== 'startup') process.exit(3);",
-      "if (process.env.ECC_AGENT_DATA_HOME !== '/tmp/cursor-ecc') process.exit(4);",
+      "if (process.env.YUS_AGENT_DATA_HOME !== '/tmp/cursor-yus') process.exit(4);",
       "process.stdout.write(JSON.stringify({ hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: 'shared context' } }));",
       '',
     ].join('\n')
@@ -248,7 +248,7 @@ if (test('beforeShellExecution dispatcher honors the master hook switch', () => 
   const result = runHook(
     BEFORE_SHELL,
     { command: 'git commit --no-verify -m test' },
-    { ECC_HOOKS_ENABLED: 'false' }
+    { YUS_HOOKS_ENABLED: 'false' }
   );
   assert.strictEqual(result.status, 0, result.stderr);
 })) passed++; else failed++;
@@ -264,7 +264,7 @@ if (test('beforeShellExecution dispatcher preserves the dev-server guard', () =>
 })) passed++; else failed++;
 
 if (test('Cursor-native security hooks honor the master hook switch', () => {
-  const disabledEnv = { ECC_HOOKS_ENABLED: 'false' };
+  const disabledEnv = { YUS_HOOKS_ENABLED: 'false' };
   const cases = [
     [BEFORE_READ, { path: '.env' }],
     [BEFORE_PROMPT, { prompt: 'token sk-123456789012345678901234' }],
@@ -309,7 +309,7 @@ if (test('Cursor-native audit hooks stay disabled in the minimal profile', () =>
     [SUBAGENT_STOP, { agent_name: 'explore' }],
   ];
   for (const [scriptPath, input] of cases) {
-    const result = runHook(scriptPath, input, { ECC_HOOK_PROFILE: 'minimal' });
+    const result = runHook(scriptPath, input, { YUS_HOOK_PROFILE: 'minimal' });
     assert.strictEqual(result.status, 0, result.stderr);
     assert.strictEqual(result.stderr, '', `${path.basename(scriptPath)} should be disabled`);
   }
@@ -317,14 +317,14 @@ if (test('Cursor-native audit hooks stay disabled in the minimal profile', () =>
 
 if (test('disabled preCompact preserves malformed input unchanged', () => {
   const raw = '{not-json';
-  const result = runHook(PRE_COMPACT, raw, { ECC_HOOK_PROFILE: 'minimal' });
+  const result = runHook(PRE_COMPACT, raw, { YUS_HOOK_PROFILE: 'minimal' });
   assert.strictEqual(result.status, 0, result.stderr);
   assert.strictEqual(result.stdout, raw);
 })) passed++; else failed++;
 
 if (test('Stop dispatcher runs batch format/typecheck in standard profile', () => {
   const sessionId = `cursor-stop-standard-${process.pid}`;
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-cursor-stop-'));
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-cursor-stop-'));
   const editedFile = path.join(tempRoot, 'edited.js');
   const accumFile = accumulatorPath(sessionId, tempRoot);
   writeFile(editedFile, 'const answer = 42;\n');
@@ -333,7 +333,7 @@ if (test('Stop dispatcher runs batch format/typecheck in standard profile', () =
   try {
     const result = runHook(STOP, { conversation_id: sessionId }, {
       CLAUDE_SESSION_ID: sessionId,
-      ECC_DISABLED_HOOKS: [
+      YUS_DISABLED_HOOKS: [
         'stop:check-console-log',
         'stop:session-end',
         'stop:evaluate-session',
@@ -359,7 +359,7 @@ if (test('afterFileEdit maps Cursor file_path and conversation_id', () => {
       conversation_id: conversationId,
       file_path: editedFile,
     }, {
-      ECC_DISABLED_HOOKS: [
+      YUS_DISABLED_HOOKS: [
         'post:edit:console-warn',
         'post:edit:design-quality-check',
       ].join(','),
@@ -381,7 +381,7 @@ if (test('parallel Cursor conversations keep separate edit accumulators', () => 
 
   try {
     const env = {
-      ECC_DISABLED_HOOKS: [
+      YUS_DISABLED_HOOKS: [
         'post:edit:console-warn',
         'post:edit:design-quality-check',
       ].join(','),
@@ -399,7 +399,7 @@ if (test('parallel Cursor conversations keep separate edit accumulators', () => 
     assert.ok(fs.existsSync(secondAccum), 'Second conversation should own an accumulator');
 
     const stopped = runHook(STOP, { conversation_id: firstId }, {
-      ECC_DISABLED_HOOKS: [
+      YUS_DISABLED_HOOKS: [
         'stop:check-console-log',
         'stop:session-end',
         'stop:evaluate-session',
@@ -416,13 +416,13 @@ if (test('parallel Cursor conversations keep separate edit accumulators', () => 
 })) passed++; else failed++;
 
 if (test('afterFileEdit forwards user-visible console warnings', () => {
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-cursor-warning-'));
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'yus-cursor-warning-'));
   const editedFile = path.join(tempRoot, 'warning.js');
   writeFile(editedFile, 'console.log("debug");\n');
 
   try {
     const result = runHook(AFTER_FILE_EDIT, { file_path: editedFile }, {
-      ECC_DISABLED_HOOKS: [
+      YUS_DISABLED_HOOKS: [
         'post:edit:accumulator',
         'post:edit:design-quality-check',
       ].join(','),
@@ -439,7 +439,7 @@ if (test('Stop reserves time for lifecycle hooks before the format batch', () =>
   try {
     const result = runHook(fixture.stop, { conversation_id: 'ordered-stop' }, {
       CURSOR_HOOK_LOG: fixture.logPath,
-      ECC_DISABLED_HOOKS: [
+      YUS_DISABLED_HOOKS: [
         'stop:check-console-log',
         'stop:evaluate-session',
         'stop:cost-tracker',
@@ -455,7 +455,7 @@ if (test('Stop reserves time for lifecycle hooks before the format batch', () =>
       forwardStderr: true,
       env: {
         CLAUDE_SESSION_ID: 'abc',
-        ECC_STOP_FORMAT_TYPECHECK_BUDGET_MS: '210000',
+        YUS_STOP_FORMAT_TYPECHECK_BUDGET_MS: '210000',
       },
     });
   } finally {
@@ -471,8 +471,8 @@ if (test('Stop dispatcher leaves batch format/typecheck disabled in minimal prof
   try {
     const result = runHook(STOP, { conversation_id: sessionId }, {
       CLAUDE_SESSION_ID: sessionId,
-      ECC_HOOK_PROFILE: 'minimal',
-      ECC_DISABLED_HOOKS: [
+      YUS_HOOK_PROFILE: 'minimal',
+      YUS_DISABLED_HOOKS: [
         'stop:session-end',
         'stop:evaluate-session',
         'stop:cost-tracker',
@@ -494,7 +494,7 @@ if (test('afterFileEdit does not accumulate files in the minimal profile', () =>
     const result = runHook(
       AFTER_FILE_EDIT,
       { path: path.join(REPO_ROOT, 'example.js') },
-      { CLAUDE_SESSION_ID: sessionId, ECC_HOOK_PROFILE: 'minimal' }
+      { CLAUDE_SESSION_ID: sessionId, YUS_HOOK_PROFILE: 'minimal' }
     );
     assert.strictEqual(result.status, 0, result.stderr);
     assert.ok(!fs.existsSync(accumFile), 'Minimal profile must not accumulate edit paths');
@@ -534,7 +534,7 @@ if (test('installed Cursor hooks keep profile controls without the shared helper
     const disabled = runHook(
       fixture.beforeShell,
       { command: 'git commit --no-verify -m test' },
-      { ECC_HOOKS_ENABLED: 'false' },
+      { YUS_HOOKS_ENABLED: 'false' },
       fixture.projectRoot
     );
     assert.strictEqual(disabled.status, 0, disabled.stderr);
@@ -542,7 +542,7 @@ if (test('installed Cursor hooks keep profile controls without the shared helper
     const enabled = runHook(
       fixture.beforeShell,
       { command: 'git commit --no-verify -m test' },
-      { ECC_HOOKS_ENABLED: 'true' },
+      { YUS_HOOKS_ENABLED: 'true' },
       fixture.projectRoot
     );
     assert.strictEqual(enabled.status, 2, enabled.stderr);
@@ -559,7 +559,7 @@ if (test('installed Stop dispatcher resolves hooks inside .cursor/scripts', () =
       { conversation_id: 'installed-stop' },
       {
         CURSOR_HOOK_LOG: fixture.logPath,
-        ECC_DISABLED_HOOKS: [
+        YUS_DISABLED_HOOKS: [
           'stop:check-console-log',
           'stop:session-end',
           'stop:evaluate-session',
@@ -589,7 +589,7 @@ if (test('installed sessionStart dispatcher combines env and shared context', ()
     );
     assert.strictEqual(result.status, 0, result.stderr);
     assert.deepStrictEqual(JSON.parse(result.stdout), {
-      env: { ECC_AGENT_DATA_HOME: '/tmp/cursor-ecc' },
+      env: { YUS_AGENT_DATA_HOME: '/tmp/cursor-yus' },
       additional_context: 'cursor env\n\nshared context',
     });
   } finally {
@@ -603,7 +603,7 @@ if (test('installed sessionStart keeps environment fallback for malformed input'
     for (const raw of ['{not-json', 'null']) {
       const result = runHook(fixture.sessionStart, raw, {}, fixture.projectRoot);
       assert.strictEqual(result.status, 0, result.stderr);
-      assert.strictEqual(JSON.parse(result.stdout).env.ECC_AGENT_DATA_HOME, '/tmp/cursor-ecc');
+      assert.strictEqual(JSON.parse(result.stdout).env.YUS_AGENT_DATA_HOME, '/tmp/cursor-yus');
     }
   } finally {
     fs.rmSync(fixture.projectRoot, { recursive: true, force: true });
@@ -614,7 +614,7 @@ if (test('sessionStart dispatcher honors the master hook switch', () => {
   const result = runHook(
     path.join(REPO_ROOT, '.cursor', 'hooks', 'session-start.js'),
     { conversation_id: 'disabled-session' },
-    { ECC_HOOKS_ENABLED: 'false' }
+    { YUS_HOOKS_ENABLED: 'false' }
   );
   assert.strictEqual(result.status, 0, result.stderr);
   assert.deepStrictEqual(JSON.parse(result.stdout), {});
@@ -646,9 +646,9 @@ if (test('oversized beforeShellExecution input honors explicit guard disablement
     padding: 'x'.repeat(1024 * 1024),
   });
   for (const env of [
-    { ECC_HOOKS_ENABLED: 'false' },
+    { YUS_HOOKS_ENABLED: 'false' },
     {
-      ECC_DISABLED_HOOKS: [
+      YUS_DISABLED_HOOKS: [
         'pre:bash:block-no-verify',
         'pre:bash:dev-server-block',
       ].join(','),

@@ -12,7 +12,7 @@ const VALUE_FLAGS = ['--task-input', '--previous', '--expected-digest', '--state
 function parse(argv) {
   const args = argv.filter(arg => arg !== '--dry-run');
   const result = { command: args.shift(), include: [], exclude: [], json: false,
-    dryRun: argv.includes('--dry-run') || process.env.ECC_DRY_RUN === '1', load: false };
+    dryRun: argv.includes('--dry-run') || process.env.YUS_DRY_RUN === '1', load: false };
   const seen = new Set();
   for (let index = 0; index < args.length; index++) {
     const arg = args[index];
@@ -167,7 +167,7 @@ function execute(options) {
 function run(argv) {
   const options = parse(argv);
   const value = execute(options);
-  return { schemaVersion: 'ecc.profile-operation.v1', status: (value.launch?.status === 'failed' || value.interactive?.status === 'failed') ? 'error' : 'success',
+  return { schemaVersion: 'yus.profile-operation.v1', status: (value.launch?.status === 'failed' || value.interactive?.status === 'failed') ? 'error' : 'success',
     summary: options.command === 'start' ? 'Opt-in interactive session uses the verified isolated generation and inherited terminal. Context selection remains advisory.'
       : options.command === 'run' ? 'Task launch uses selected context and the provider configuration. Inspect the launch result.'
       : options.command === 'resolve' ? 'Task context resolved within the selected profile.'

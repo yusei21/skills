@@ -5,7 +5,7 @@ const path = require('path');
 const { StringDecoder } = require('string_decoder');
 const fs = require('fs');
 const { spawnSync } = require('child_process');
-const { normalizePluginRootForPlatform } = require('../lib/resolve-ecc-root');
+const { normalizePluginRootForPlatform } = require('../lib/resolve-yus-root');
 const { readStdinRaw, resolveMaxStdin } = require('./hook-input');
 const { createHookContextScanner } = require('./hook-input-limits');
 
@@ -39,7 +39,7 @@ function exitAfterFlush(stdout, stderr, exitCode) {
 
 async function main() {
   const [, , hookId, relScriptPath, profilesCsv, timeoutValue] = process.argv;
-  const maxStdin = resolveMaxStdin(process.env.ECC_HOOK_INPUT_MAX_BYTES, {
+  const maxStdin = resolveMaxStdin(process.env.YUS_HOOK_INPUT_MAX_BYTES, {
     writeDiagnostic: message => process.stderr.write(message)
   });
   const contextDecoder = new StringDecoder('utf8');
@@ -47,7 +47,7 @@ async function main() {
   const { raw, truncated } = await readStdinRaw(process.stdin, {
     maxStdin,
     truncated: /^(1|true|yes)$/i.test(
-      String(process.env.ECC_HOOK_INPUT_TRUNCATED_UPSTREAM || '')
+      String(process.env.YUS_HOOK_INPUT_TRUNCATED_UPSTREAM || '')
     ),
     onChunk: buffer => contextScanner.push(contextDecoder.write(buffer))
   });
@@ -61,17 +61,17 @@ async function main() {
   }
 
   const pluginRoot = normalizePluginRootForPlatform(
-    process.env.CLAUDE_PLUGIN_ROOT || process.env.ECC_PLUGIN_ROOT
+    process.env.CLAUDE_PLUGIN_ROOT || process.env.YUS_PLUGIN_ROOT
   );
   if (!pluginRoot) {
-    writeStderr('[Hook] lifecycle bootstrap could not resolve ECC plugin root; skipping hook');
+    writeStderr('[Hook] lifecycle bootstrap could not resolve yus plugin root; skipping hook');
     process.exitCode = 0;
     return;
   }
   const resolvedRoot = path.resolve(pluginRoot);
   const runner = path.resolve(resolvedRoot, 'scripts', 'hooks', 'run-with-flags.js');
   if (!runner.startsWith(resolvedRoot + path.sep) || !fs.existsSync(runner)) {
-    writeStderr('[Hook] lifecycle bootstrap could not resolve ECC plugin root; skipping hook');
+    writeStderr('[Hook] lifecycle bootstrap could not resolve yus plugin root; skipping hook');
     process.exitCode = 0;
     return;
   }
@@ -90,11 +90,11 @@ async function main() {
       env: {
         ...process.env,
         CLAUDE_PLUGIN_ROOT: resolvedRoot,
-        ECC_PLUGIN_ROOT: resolvedRoot,
-        ECC_HOOK_INPUT_MAX_BYTES: String(maxStdin),
-        ECC_HOOK_INPUT_TRUNCATED_UPSTREAM: truncated ? '1' : '0',
-        ECC_HOOK_CONTEXT_JSON: JSON.stringify(hookContext),
-        ECC_HOOK_DEADLINE_MS: String(Date.now() + timeout)
+        YUS_PLUGIN_ROOT: resolvedRoot,
+        YUS_HOOK_INPUT_MAX_BYTES: String(maxStdin),
+        YUS_HOOK_INPUT_TRUNCATED_UPSTREAM: truncated ? '1' : '0',
+        YUS_HOOK_CONTEXT_JSON: JSON.stringify(hookContext),
+        YUS_HOOK_DEADLINE_MS: String(Date.now() + timeout)
       },
       cwd: process.cwd(),
       timeout,
