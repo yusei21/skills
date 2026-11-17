@@ -1,5 +1,7 @@
 # The Shorthand Guide to Everything Agentic Security
 
+**English** | [Português](the-security-guide.pt-BR.md) | [中文](the-security-guide.zh-CN.md)
+
 _ecc / research / security_
 
 ---

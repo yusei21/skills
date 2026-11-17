@@ -1,5 +1,7 @@
 # The Longform Guide to ECC
 
+**English** | [Português](the-longform-guide.pt-BR.md) | [中文](the-longform-guide.zh-CN.md)
+
 ![Header: The Longform Guide to ECC](./assets/images/longform/01-header.png)
 
 ---

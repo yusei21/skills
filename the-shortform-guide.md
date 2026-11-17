@@ -1,5 +1,7 @@
 # The Shorthand Guide to ECC
 
+**English** | [Português](the-shortform-guide.pt-BR.md) | [中文](the-shortform-guide.zh-CN.md)
+
 ![Header: Anthropic Hackathon Winner - Tips & Tricks for Claude Code](./assets/images/shortform/00-header.png)
 
 ---
