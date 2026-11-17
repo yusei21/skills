@@ -17,10 +17,11 @@ regras, memória e fluxos de aprendizado contínuo.
 
 ## Instalar no Claude Code
 
-Adicione este repositório como marketplace e instale o plugin principal:
+Adicione este repositório como marketplace e instale o plugin principal.
+Quem quiser usar os plugins roda isto no próprio Claude Code:
 
 ```text
-/plugin marketplace add <caminho ou URL git deste repositório>
+/plugin marketplace add yusei21/skills
 /plugin install ecc@ecc
 ```
 

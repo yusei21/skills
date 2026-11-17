@@ -1,5 +1,7 @@
 # Troubleshooting Guide
 
+**English** | [Português](TROUBLESHOOTING.pt-BR.md) | [中文](TROUBLESHOOTING.zh-CN.md)
+
 Common issues and solutions for ECC plugin.
 
 ## Table of Contents

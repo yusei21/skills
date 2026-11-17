@@ -16,10 +16,11 @@ rules, memory and continuous-learning workflows.
 
 ## Install with Claude Code
 
-Add this repository as a marketplace, then install the core plugin:
+Add this repository as a marketplace, then install the core plugin. Anyone
+who wants the plugins runs this in their own Claude Code:
 
 ```text
-/plugin marketplace add <path or git URL of this repository>
+/plugin marketplace add yusei21/skills
 /plugin install ecc@ecc
 ```
 

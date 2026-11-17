@@ -1,5 +1,7 @@
 # Commands Quick Reference
 
+**English** | [Português](COMMANDS-QUICK-REF.pt-BR.md) | [中文](COMMANDS-QUICK-REF.zh-CN.md)
+
 > 94 slash commands installed globally. Type `/` in any Claude Code session to invoke.
 
 ---

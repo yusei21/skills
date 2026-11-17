@@ -1,5 +1,7 @@
 # Contributing to ECC
 
+**English** | [Português](CONTRIBUTING.pt-BR.md) | [中文](CONTRIBUTING.zh-CN.md)
+
 Thanks for wanting to contribute! This repo is a community resource for Claude Code users.
 
 ## Table of Contents
@@ -65,7 +67,7 @@ git checkout -b feat/my-contribution
 # 3. Add your contribution (see sections below)
 
 # 4. Test locally
-cp -r skills/my-skill ~/.claude/skills/  # for skills
+cp -r skills/<department>/my-skill ~/.claude/skills/  # for skills
 # Then test with Claude Code
 
 # 5. Submit PR
@@ -89,9 +91,14 @@ Skills are knowledge modules that Claude Code loads based on context.
 
 ```
 skills/
-└── your-skill-name/
-    └── SKILL.md
+└── <department>/
+    └── your-skill-name/
+        └── SKILL.md
 ```
+
+Pick the department from `manifests/skill-departments.json`, list the skill
+there, then run `npm run departments:sync` so the department plugins pick it
+up.
 
 ### SKILL.md Template
 
@@ -422,7 +429,7 @@ ECC ships skill subsets for other harnesses:
 
 When you **add a new skill** that should be available on Codex or Cursor:
 
-1. Add the skill under `skills/your-skill-name/` as usual.
+1. Add the skill under `skills/<department>/your-skill-name/` as usual.
 2. If it should be available on **Codex**, add it to `.agents/skills/` (copy the skill directory or add a reference) and ensure it is referenced in `agents/openai.yaml` if required.
 3. If it should be available on **Cursor**, add it under `.cursor/skills/` per Cursor's layout.
 
@@ -430,7 +437,12 @@ Check existing skills in those directories for the expected structure. Keeping t
 
 ### Translations
 
-Translations live under `docs/` (e.g. `docs/zh-CN`, `docs/zh-TW`, `docs/ja-JP`). If you change agents, commands, or skills that are translated, consider updating the corresponding translation files or opening an issue so maintainers or translators can update them.
+The root documents (README, NOTICE, CONTRIBUTING, SECURITY, TROUBLESHOOTING,
+CODE_OF_CONDUCT, COMMANDS-QUICK-REF and the three guides) have Portuguese
+(`*.pt-BR.md`) and Chinese (`*.zh-CN.md`) versions next to the English file.
+When you change one of them, update the translations in the same PR or say in
+the PR that they still need it. Everything under `docs/`, `skills/`, `agents/`
+and `commands/` is English only.
 
 ---
 

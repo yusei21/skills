@@ -16,10 +16,10 @@
 
 ## 在 Claude Code 中安装
 
-把本仓库添加为插件市场，然后安装核心插件：
+把本仓库添加为插件市场，然后安装核心插件。想使用这些插件的人在自己的 Claude Code 中运行：
 
 ```text
-/plugin marketplace add <本仓库的路径或 git URL>
+/plugin marketplace add yusei21/skills
 /plugin install ecc@ecc
 ```
 
