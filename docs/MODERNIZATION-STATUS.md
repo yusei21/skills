@@ -209,8 +209,9 @@ de `atomic-write` e `claude-settings-lock`:
   ESLint: 0 erros; markdownlint: ok; `build-pi-core.js --check`: ok.
 - CI do `ad0c1c2` (run `44109809052`): tudo verde, inclusive o Windows full,
   menos dois jobs do macOS cancelados sem runner (falta de máquina no GitHub).
-- Por isso o CI tirou as lanes `pnpm` e `yarn` do macOS (cobertas no Linux e
-  no Windows). No macOS ficam `npm full`, `bun` e o `Packed Install`.
+- Por isso o CI tirou as lanes `pnpm`, `yarn` e `bun` do macOS (cobertas no
+  Linux, e `pnpm`/`yarn` também no Windows). No macOS ficam `npm full` e o
+  `Packed Install`.
 
 Rodada anterior:
 

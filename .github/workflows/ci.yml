@@ -39,14 +39,13 @@ jobs:
           - { os: windows-latest, node: '24.x', pm: npm, scope: full }
           - { os: macos-latest, node: '24.x', pm: npm, scope: full }
           # Package-manager lanes on current LTS. Bun has limited Windows support.
-          # macOS keeps only bun: pnpm and yarn are covered on Linux and Windows,
-          # and hosted macOS runners are often unavailable.
+          # No macOS lanes: hosted macOS runners are often unavailable, and every
+          # package manager is covered on Linux (pnpm and yarn on Windows too).
           - { os: ubuntu-latest, node: '24.x', pm: pnpm, scope: pm }
           - { os: ubuntu-latest, node: '24.x', pm: yarn, scope: pm }
           - { os: ubuntu-latest, node: '24.x', pm: bun, scope: pm }
           - { os: windows-latest, node: '24.x', pm: pnpm, scope: pm }
           - { os: windows-latest, node: '24.x', pm: yarn, scope: pm }
-          - { os: macos-latest, node: '24.x', pm: bun, scope: pm }
 
     steps:
       - name: Checkout
