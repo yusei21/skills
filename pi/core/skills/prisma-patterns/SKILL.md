@@ -15,11 +15,14 @@ Production patterns and non-obvious traps for Prisma ORM in TypeScript backends.
 > npx prisma --version
 > ```
 >
-> Notable API differences across versions:
-> - `relationJoins` can load relations via JOIN rather than separate queries, but may cause row explosion on large 1:N relations or deep `include` — benchmark both approaches
-> - `omit` field modifier and `prisma.$extends` Client Extensions API were added
-> - **Newer installs**: the package may be named `prisma` instead of `@prisma/client`; `PrismaClient` may require a driver adapter (e.g. `@prisma/adapter-pg`); `datasource.url` may live in `prisma.config.ts` instead of `schema.prisma`
-> - CLI commands (`migrate dev`, `migrate deploy`, `generate`) are unchanged across versions
+> What changed in Prisma 7 (the examples below use it):
+> - **Generator** `provider = "prisma-client"` with a required `output`; import the client from that path (`./generated/prisma/client`), not from `@prisma/client`. `prisma-client-js` is the legacy generator.
+> - **Driver adapters are required**: `new PrismaClient({ adapter })` with e.g. `@prisma/adapter-pg`. The pool belongs to the driver, so `connection_limit` / `pool_timeout` in the URL no longer apply.
+> - **`prisma.config.ts`** holds the datasource URL, schema and migrations paths. `.env` is not loaded automatically: import `dotenv/config` there.
+> - **`migrate dev` no longer runs `generate` or the seed script**: run `prisma generate` (and `prisma db seed`) yourself.
+> - `$use` middleware is gone; use `prisma.$extends` Client Extensions. `omit` is stable.
+>
+> On Prisma 6 or earlier: `prisma-client-js`, `import { PrismaClient } from '@prisma/client'`, the URL in `schema.prisma`, and adapters optional.
 
 ## When to Activate
 
@@ -69,7 +72,7 @@ model User {
 | Returns | All scalar fields + specified relations | Only specified fields |
 | Use when | You need most fields plus a relation | Hot paths, large tables, avoiding over-fetch |
 | Performance | May over-fetch on wide tables | Minimal payload, faster on large datasets |
-| Prisma 5 note | Uses JOIN by default (`relationJoins`) | Same |
+| Join strategy | One JOIN query with `relationLoadStrategy: 'join'` (`relationJoins`); separate queries otherwise | Same |
 
 ```ts
 // include — all columns + relation
@@ -119,15 +122,41 @@ const post = await prisma.$transaction(async (tx) => {
 });
 ```
 
+### Setup (Prisma 7)
+
+```prisma
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+```
+
+```ts
+// prisma.config.ts
+import 'dotenv/config';
+import { defineConfig, env } from 'prisma/config';
+
+export default defineConfig({
+  schema: 'prisma/schema.prisma',
+  migrations: { path: 'prisma/migrations' },
+  datasource: { url: env('DATABASE_URL') },
+});
+```
+
+Add the generated folder to `.gitignore` and run `npx prisma generate` after every schema change.
+
 ### PrismaClient Singleton
 
 Each `PrismaClient` instance opens its own connection pool. Instantiate once.
 
 ```ts
-// lib/prisma.ts
-
-// Option A — adapter-based initialization (required by newer Prisma installs)
-import { PrismaClient } from '@prisma/client'; // or the generated client path for your setup
+// src/lib/prisma.ts
+import { PrismaClient } from '../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 
 function createPrismaClient() {
@@ -145,16 +174,11 @@ const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
-
-// Option B — direct initialization (older installs, no adapter needed)
-// import { PrismaClient } from '@prisma/client';
-// export const prisma = globalForPrisma.prisma ?? new PrismaClient({ ... });
 ```
 
-Use Option A if your Prisma install requires an `adapter` argument in the `PrismaClient` constructor.
-Use Option B if `new PrismaClient()` works without arguments. Let the compiler tell you which is correct.
+On Prisma 6 without an adapter: `import { PrismaClient } from '@prisma/client'` and `new PrismaClient({ log })`.
 
-The `globalThis` pattern prevents duplicate instances during hot reload (Next.js, nodemon, ts-node-dev).
+The `globalThis` pattern prevents duplicate instances during hot reload (Next.js, nodemon, `tsx watch`).
 
 ### N+1 Problem
 
@@ -171,7 +195,7 @@ for (const user of users) {
 const users = await prisma.user.findMany({ include: { posts: true } });
 ```
 
-With Prisma 5+ `relationJoins`, the `include` form uses a single JOIN. On large 1:N sets this may increase result set size — benchmark both approaches if the relation can return many rows per parent.
+With `relationLoadStrategy: 'join'` (the `relationJoins` feature; older versions need it in `previewFeatures`), the `include` runs as a single JOIN query. On large 1:N sets this can multiply the result size, so benchmark it against the default `'query'` strategy when a parent can have many rows.
 
 ## Code Examples
 
@@ -211,7 +235,7 @@ await prisma.user.update({ where: { id }, data: { deletedAt: null } }); // resto
 ### Error Handling
 
 ```ts
-import { Prisma } from '@prisma/client'; // or the generated client path for your setup
+import { Prisma } from '../generated/prisma/client'; // '@prisma/client' on Prisma 6
 
 try {
   await prisma.user.create({ data: { email } });
@@ -231,30 +255,34 @@ Catch at the service boundary and translate to domain errors. Never expose raw P
 
 ### Connection Pool — Serverless
 
-Embed connection params directly in `DATABASE_URL` — string concatenation breaks if the URL already has query parameters (e.g. `?schema=public`):
+Each serverless instance holds its own pool, so many warm instances can exhaust the
+database. Keep the pool tiny per instance and put a pooler (PgBouncer, Supabase or
+Neon pooler, Prisma Accelerate) in front of the database.
 
-```bash
-# .env — preferred: embed params in the URL
-DATABASE_URL="postgresql://user:pass@host/db?connection_limit=1&pool_timeout=20"
-
-# With an external pooler (PgBouncer, Supabase pooler)
-DATABASE_URL="postgresql://user:pass@host/db?pgbouncer=true&connection_limit=1"
-```
+With a driver adapter the pool is the driver's: size it in the adapter options.
 
 ```ts
-// Vercel, AWS Lambda, and similar serverless runtimes:
-// cap pool to 1 per instance; connection_limit and pool_timeout controlled via DATABASE_URL
-
-// Adapter-based setup (if your Prisma install requires an adapter):
-import { PrismaClient } from '@prisma/client';
+// Vercel, AWS Lambda and similar runtimes
+import { PrismaClient } from '../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 
 const prisma = new PrismaClient({
-  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
+  adapter: new PrismaPg({
+    connectionString: process.env.DATABASE_URL!, // the pooler's URL
+    max: 1,                       // connections per instance
+    connectionTimeoutMillis: 20_000,
+  }),
 });
+```
 
-// Direct setup (if your Prisma install does not require an adapter):
-// const prisma = new PrismaClient();
+On Prisma 6 without an adapter, the query engine reads pool settings from the URL
+instead. Add them as URL parameters rather than concatenating strings, which breaks
+when the URL already has a query (`?schema=public`):
+
+```bash
+DATABASE_URL="postgresql://user:pass@host/db?connection_limit=1&pool_timeout=20"
+# behind PgBouncer in transaction mode
+DATABASE_URL="postgresql://user:pass@host/db?pgbouncer=true&connection_limit=1"
 ```
 
 ## Anti-Patterns
@@ -389,7 +417,7 @@ await prisma.post.deleteMany({ where: { authorId: userId } });
 | Map entities to response DTOs | Prevents leaking internal fields |
 | Catch `PrismaClientKnownRequestError` at service boundary | Translate to domain errors |
 | Prefer `*OrThrow` methods over manual null checks | Throws P2025 automatically; use `findFirstOrThrow` when filtering non-unique fields |
-| `connection_limit=1` + external pooler in serverless | Prevents connection exhaustion |
+| Pool of 1 per serverless instance (adapter `max: 1`; `connection_limit=1` on Prisma 6) + external pooler | Prevents connection exhaustion |
 | Always provide `where` on `deleteMany` | Prevents accidental table wipe |
 | Set `updatedAt: new Date()` manually in `updateMany` | `@updatedAt` skips bulk writes |
 

@@ -77,51 +77,39 @@ def get_value(dictionary: dict, key: str, default_value: Any = None) -> Any:
 ### Basic Type Annotations
 
 ```python
-from typing import Optional, List, Dict, Any
+from typing import Any
 
 def process_user(
     user_id: str,
-    data: Dict[str, Any],
-    active: bool = True
-) -> Optional[User]:
+    data: dict[str, Any],
+    active: bool = True,
+) -> User | None:
     """Process a user and return the updated User or None."""
     if not active:
         return None
     return User(user_id, data)
 ```
 
-### Modern Type Hints (Python 3.9+)
+Use built-in generics (`list[str]`, `dict[str, int]`, Python 3.9+) and `X | None`
+(3.10+). `typing.List`, `Dict`, `Optional` and `Union` are only for code that must
+still run on older versions.
+
+### Type Aliases and Generics
 
 ```python
-# Python 3.9+ - Use built-in types
-def process_items(items: list[str]) -> dict[str, int]:
-    return {item: len(item) for item in items}
-
-# Python 3.8 and earlier - Use typing module
-from typing import List, Dict
-
-def process_items(items: List[str]) -> Dict[str, int]:
-    return {item: len(item) for item in items}
-```
-
-### Type Aliases and TypeVar
-
-```python
-from typing import TypeVar, Union
-
-# Type alias for complex types
-JSON = Union[dict[str, Any], list[Any], str, int, float, bool, None]
+# Python 3.12+: the type statement and inline type parameters
+type JSON = dict[str, JSON] | list[JSON] | str | int | float | bool | None
 
 def parse_json(data: str) -> JSON:
     return json.loads(data)
 
-# Generic types
-T = TypeVar('T')
-
-def first(items: list[T]) -> T | None:
+def first[T](items: list[T]) -> T | None:
     """Return the first item or None if list is empty."""
     return items[0] if items else None
 ```
+
+On 3.11, declare the alias with `JSON: TypeAlias = ...` and the type variable with
+`T = TypeVar("T")`.
 
 ### Protocol-Based Duck Typing
 

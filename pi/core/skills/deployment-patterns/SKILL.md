@@ -354,8 +354,8 @@ import { z } from "zod";
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "staging", "production"]),
   PORT: z.coerce.number().default(3000),
-  DATABASE_URL: z.string().url(),
-  REDIS_URL: z.string().url(),
+  DATABASE_URL: z.url(),
+  REDIS_URL: z.url(),
   JWT_SECRET: z.string().min(32),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
 });

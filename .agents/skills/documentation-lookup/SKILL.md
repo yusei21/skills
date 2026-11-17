@@ -67,7 +67,7 @@ Limit: do not call query-docs (or resolve-library-id) more than 3 times per ques
 1. Call **resolve-library-id** with `libraryName: "Next.js"`, `query: "How do I set up Next.js middleware?"`.
 2. From results, pick the best match (e.g. `/vercel/next.js`) by name and benchmark score.
 3. Call **query-docs** with `libraryId: "/vercel/next.js"`, `query: "How do I set up Next.js middleware?"`.
-4. Use the returned snippets and text to answer; include a minimal `middleware.ts` example from the docs if relevant.
+4. Use the returned snippets and text to answer; include a minimal example from the docs if relevant. Since Next.js 16 the file is `proxy.ts`; older versions use `middleware.ts`.
 
 ### Example: Prisma query
 

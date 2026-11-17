@@ -222,7 +222,7 @@ Untrusted data enters at I/O boundaries: API handlers, message consumers, file l
 import { z } from 'zod'
 
 const userInputSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   age: z.number().int().min(0).max(150)
 })
 

@@ -86,8 +86,10 @@ Most pages do not need context or a global store. Resist abstraction until dupli
 
 ```tsx
 // Server Component - default, async, never ships JS for itself
-export default async function ProductPage({ params }: { params: { id: string } }) {
-  const product = await db.product.findUnique({ where: { id: params.id } });
+// Next.js 15+: params is a Promise
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const product = await db.product.findUnique({ where: { id } });
   if (!product) notFound();
   return <ProductView product={product} />;
 }

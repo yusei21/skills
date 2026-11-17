@@ -347,7 +347,7 @@ const { data: posts } = await useFetch("/api/posts", {
 // server/api/users/[id].ts
 export default defineEventHandler(async (event) => {
   const { id } = await getValidatedRouterParams(event, z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
   }).parse);
   // ... fetch and return
 });

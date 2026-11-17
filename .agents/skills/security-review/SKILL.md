@@ -54,7 +54,7 @@ import { z } from 'zod'
 
 // Define validation schema
 const CreateUserSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   name: z.string().min(1).max(100),
   age: z.number().int().min(0).max(150)
 })

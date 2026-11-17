@@ -19,22 +19,28 @@ Use when: implementing a new MCP server, adding tools or resources, choosing std
 
 ### Core concepts
 
-- **Tools**: Actions the model can invoke (e.g. search, run a command). Register with `registerTool()` or `tool()` depending on SDK version.
-- **Resources**: Read-only data the model can fetch (e.g. file contents, API responses). Register with `registerResource()` or `resource()`. Handlers typically receive a `uri` argument.
-- **Prompts**: Reusable, parameterised prompt templates the client can surface (e.g. in Claude Desktop). Register with `registerPrompt()` or equivalent.
+- **Tools**: Actions the model can invoke (e.g. search, run a command). Register with `registerTool()`.
+- **Resources**: Read-only data the model can fetch (e.g. file contents, API responses). Register with `registerResource()`; handlers receive the resolved `uri`.
+- **Prompts**: Reusable, parameterised prompt templates the client can surface (e.g. in Claude Desktop). Register with `registerPrompt()`.
 - **Transport**: stdio for local clients (e.g. Claude Desktop); Streamable HTTP is preferred for remote (Cursor, cloud). Legacy HTTP/SSE is for backward compatibility.
 
-The Node/TypeScript SDK may expose `tool()` / `resource()` or `registerTool()` / `registerResource()`; the official SDK has changed over time. Always verify against the current [MCP docs](https://modelcontextprotocol.io) or Context7.
+In `@modelcontextprotocol/sdk` 1.x the `register*` methods are current; the older positional `tool()`, `resource()` and `prompt()` are deprecated. Check the [MCP docs](https://modelcontextprotocol.io) or Context7 when you pin a different major.
 
 ### Connecting with stdio
 
-For local clients, create a stdio transport and pass it to your server’s connect method. The exact API varies by SDK version (e.g. constructor vs factory). See the official MCP documentation or query Context7 for "MCP stdio server" for the current pattern.
+```typescript
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+
+await server.connect(new StdioServerTransport());
+```
+
+A stdio server owns stdout for protocol messages: log to stderr (`console.error`), never `console.log`.
 
 Keep server logic (tools + resources) independent of transport so you can plug in stdio or HTTP in the entrypoint.
 
 ### Remote (Streamable HTTP)
 
-For Cursor, cloud, or other remote clients, use **Streamable HTTP** (single MCP HTTP endpoint per current spec). Support legacy HTTP/SSE only when backward compatibility is required.
+For Cursor, cloud, or other remote clients, use **Streamable HTTP** (single MCP HTTP endpoint per current spec) through `StreamableHTTPServerTransport` from `@modelcontextprotocol/sdk/server/streamableHttp.js`. The SSE transport is deprecated; support it only for old clients.
 
 ## Examples
 
@@ -51,9 +57,31 @@ import { z } from "zod";
 const server = new McpServer({ name: "my-server", version: "1.0.0" });
 ```
 
-Register tools and resources using the API your SDK version provides: some versions use `server.tool(name, description, schema, handler)` (positional args), others use `server.tool({ name, description, inputSchema }, handler)` or `registerTool()`. Same for resources — include a `uri` in the handler when the API provides it. Check the official MCP docs or Context7 for the current `@modelcontextprotocol/sdk` signatures to avoid copy-paste errors.
+### Register a tool and a resource
 
-Use **Zod** (or the SDK’s preferred schema format) for input validation.
+```typescript
+server.registerTool(
+  "search_issues",
+  {
+    title: "Search issues",
+    description: "Search open issues by text. Returns at most `limit` results.",
+    inputSchema: { query: z.string().min(1), limit: z.number().int().max(50).default(10) },
+  },
+  async ({ query, limit }) => {
+    const issues = await searchIssues(query, limit);
+    return { content: [{ type: "text", text: JSON.stringify(issues) }] };
+  },
+);
+
+server.registerResource(
+  "config",
+  "config://app",
+  { title: "App config", mimeType: "application/json" },
+  async (uri) => ({ contents: [{ uri: uri.href, text: JSON.stringify(await loadConfig()) }] }),
+);
+```
+
+`inputSchema` is a shape of Zod fields, not a `z.object()`. Report a failure the model should see with `{ isError: true, content: [...] }` instead of throwing.
 
 ## Best Practices
 

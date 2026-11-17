@@ -55,7 +55,7 @@ import { useLocalSearchParams, router } from 'expo-router'
 import { z } from 'zod'
 import { UserProfile } from '@/features/user/UserProfile'
 
-const Params = z.object({ id: z.string().uuid() })
+const Params = z.object({ id: z.uuid() })
 
 export default function UserRoute() {
   const parsed = Params.safeParse(useLocalSearchParams())
@@ -90,7 +90,7 @@ Use a server-cache library (TanStack Query, SWR) instead of fetch-in-`useEffect`
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { z } from 'zod'
 
-const User = z.object({ id: z.string(), email: z.string().email() })
+const User = z.object({ id: z.string(), email: z.email() })
 type User = z.infer<typeof User>
 
 export function useUser(id: string) {
