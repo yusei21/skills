@@ -100,8 +100,14 @@ falta, em ordem. Atualize ao terminar cada item.
   alguém precisa agir, parar por impacto e não por esforço), e a seção
   antes/depois para mudanças de UI na `verification-loop`. Crédito no NOTICE
   e licença ao lado. O runtime deles (orquestrador, Feishu, painel) depende da
-  plataforma DeepSeek Harness e ficou de fora. Ideia ainda não feita: um teste
-  de orçamento do contexto fixo do plugin `yus`, como o `model-surface.spec` deles.
+  plataforma DeepSeek Harness e ficou de fora. Também veio de lá a ideia do
+  orçamento de contexto (abaixo).
+- **Orçamento de contexto do plugin `yus`:**
+  `scripts/ci/check-core-context-budget.js` soma nome e descrição das skills
+  do núcleo, dos comandos e dos agentes, o que toda sessão lê, e falha se uma
+  categoria passar do limite (~5% acima da base: 6154/14731/15986 caracteres,
+  ~9.200 tokens no total). Roda no `npm test`; `npm run context-budget:check`
+  mostra os itens maiores. Baixe o limite quando o texto encolher.
 - `node scripts/dev/generate-skill-triggers.js --keep-triggers` atualiza o
   `registryDigest` sem chamar modelo. Use depois de editar skills sem mudar a
   `description`; com descrição nova ou skill nova, rode a geração completa.
