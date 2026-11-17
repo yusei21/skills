@@ -28,6 +28,8 @@ licenças mantidas ao lado:
 | `graphify` | [safishamsi/graphify](https://github.com/safishamsi/graphify) | Apache-2.0 |
 | `taste-skill` (ponteiro de instalação) | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | MIT |
 | `design-md-library` (ponteiro de referência) | [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) | MIT |
+| `pr-review-threads`, `human-attention-budget` (adaptadas) | [deepseek-ai/dsh-superagent-prototype](https://github.com/deepseek-ai/dsh-superagent-prototype) | MIT |
+| Seção antes/depois da `verification-loop` (adaptada) | [deepseek-ai/dsh-superagent-prototype](https://github.com/deepseek-ai/dsh-superagent-prototype) | MIT |
 
 Cada skill copiada mantém a própria licença; a Licença MIT deste repositório
 não a substitui.

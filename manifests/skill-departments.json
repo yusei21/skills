@@ -337,6 +337,7 @@
             "agentic-os",
             "ai-first-engineering",
             "autonomous-agent-harness",
+            "human-attention-budget",
             "gan-style-harness",
             "dynamic-workflow-mode",
             "loop-design-check",
@@ -699,6 +700,7 @@
           "title": "GitHub, issues and terminal",
           "skills": [
             "github-ops",
+            "pr-review-threads",
             "issue-review",
             "jira-integration",
             "project-flow-ops",

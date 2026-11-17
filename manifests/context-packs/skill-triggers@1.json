@@ -1,6 +1,6 @@
 {
   "coverage": {
-    "skills": 326,
+    "skills": 328,
     "withTriggers": 46
   },
   "generatedAt": "2026-11-16T03:20:01.945Z",
@@ -10,7 +10,7 @@
     "id": "hand-seeded",
     "source": "manual-curation-pending-regeneration"
   },
-  "registryDigest": "9d88a545f58dca4262ccbb931e0b2470335f65b1c60f41c99fef10b4cb27b251",
+  "registryDigest": "09f88ec26231b03124e7f6b45fd79e0388115f00967a164767ec1d215e782a5d",
   "schemaVersion": 1,
   "triggers": {
     "skill:agent-desktop": [

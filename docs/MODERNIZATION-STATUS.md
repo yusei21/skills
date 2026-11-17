@@ -93,6 +93,15 @@ falta, em ordem. Atualize ao terminar cada item.
   (app ECC Tools, `ecc.tools`, `ecc-agentshield`), nomes legados como
   `everything-claude-code` e fixtures com bytes históricos verificados por
   sha256.
+- **Ideias do `deepseek-ai/dsh-superagent-prototype`** (MIT, commit
+  `8c32a9d`), reescritas para qualquer agente: skills `pr-review-threads`
+  (operations; responder review de humanos e bots thread a thread, no máximo
+  3 rodadas por bot) e `human-attention-budget` (ai-agents; falar só quando
+  alguém precisa agir, parar por impacto e não por esforço), e a seção
+  antes/depois para mudanças de UI na `verification-loop`. Crédito no NOTICE
+  e licença ao lado. O runtime deles (orquestrador, Feishu, painel) depende da
+  plataforma DeepSeek Harness e ficou de fora. Ideia ainda não feita: um teste
+  de orçamento do contexto fixo do plugin `yus`, como o `model-surface.spec` deles.
 - `node scripts/dev/generate-skill-triggers.js --keep-triggers` atualiza o
   `registryDigest` sem chamar modelo. Use depois de editar skills sem mudar a
   `description`; com descrição nova ou skill nova, rode a geração completa.
@@ -137,7 +146,7 @@ claude plugin validate .
 
 Sessão de 16/11/2026 (noite), tipagem dos módulos de sessão:
 
-- `npm test`: 9280 testes em 453 arquivos, 0 falhas.
+- `npm test`: 9280 testes em 453 arquivos, 0 falhas (também depois das skills do dsh-superagent; 328 skills).
 - `npm run typecheck`: ok; ESLint nos três arquivos alterados: 0 erros.
 
 Rodada anterior:

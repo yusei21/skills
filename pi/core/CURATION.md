@@ -1,6 +1,6 @@
 # Curation
 
-pi/core includes 134 of 326 skills and 24 of 98 commands from the root of yus.
+pi/core includes 134 of 328 skills and 24 of 98 commands from the root of yus.
 Everything excluded is listed here with its reason.
 
 ## Rules
@@ -211,6 +211,8 @@ Exclude anything that:
 | `ponytail-review` | third-party skill vendored at a pinned commit in the 2026 modernization; not yet reviewed for the curated Pi profile |
 | `untangle-codebase` | third-party skill vendored at a pinned commit in the 2026 modernization; not yet reviewed for the curated Pi profile |
 | `web-design-guidelines` | third-party skill vendored at a pinned commit in the 2026 modernization; not yet reviewed for the curated Pi profile |
+| `pr-review-threads` | adapted from deepseek-ai/dsh-superagent-prototype in the 2026 modernization; not yet reviewed for the curated Pi profile |
+| `human-attention-budget` | adapted from deepseek-ai/dsh-superagent-prototype in the 2026 modernization; not yet reviewed for the curated Pi profile |
 
 ## Excluded commands
 

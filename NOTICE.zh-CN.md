@@ -24,5 +24,7 @@ ECC 由 Affaan Mustafa 及 ECC 贡献者创建，以 MIT 许可证发布；见 [
 | `graphify` | [safishamsi/graphify](https://github.com/safishamsi/graphify) | Apache-2.0 |
 | `taste-skill`（安装指引） | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | MIT |
 | `design-md-library`（参考指引） | [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) | MIT |
+| `pr-review-threads`、`human-attention-budget`（改编） | [deepseek-ai/dsh-superagent-prototype](https://github.com/deepseek-ai/dsh-superagent-prototype) | MIT |
+| `verification-loop` 中的前后对比部分（改编） | [deepseek-ai/dsh-superagent-prototype](https://github.com/deepseek-ai/dsh-superagent-prototype) | MIT |
 
 每个引入的技能保留其自身的许可证，本仓库的 MIT 许可证不会取代它。

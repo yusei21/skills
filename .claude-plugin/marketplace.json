@@ -10,7 +10,7 @@
     {
       "name": "yus",
       "source": "./",
-      "description": "Harness-native yus operator layer - 71 agents, 326 skills, 98 legacy command shims, reusable hooks, rules, selective install profiles, and production-ready workflows for Claude Code, Codex, OpenCode, Cursor, and related agent harnesses",
+      "description": "Harness-native yus operator layer - 71 agents, 328 skills, 98 legacy command shims, reusable hooks, rules, selective install profiles, and production-ready workflows for Claude Code, Codex, OpenCode, Cursor, and related agent harnesses",
       "version": "2.2.3",
       "author": {
         "name": "Affaan Mustafa",
@@ -291,7 +291,7 @@
       "license": "MIT",
       "category": "workflow",
       "strict": false,
-      "description": "yus AI and agents department: 41 skills. Agent architecture, multi-agent orchestration, prompts and LLM cost. Install alongside the \"yus\" plugin.",
+      "description": "yus AI and agents department: 42 skills. Agent architecture, multi-agent orchestration, prompts and LLM cost. Install alongside the \"yus\" plugin.",
       "keywords": [
         "yus",
         "skills",
@@ -311,6 +311,7 @@
         "./agentic-os",
         "./ai-first-engineering",
         "./autonomous-agent-harness",
+        "./human-attention-budget",
         "./gan-style-harness",
         "./dynamic-workflow-mode",
         "./loop-design-check",
@@ -700,7 +701,7 @@
       "license": "MIT",
       "category": "workflow",
       "strict": false,
-      "description": "yus Operations and integrations department: 20 skills. Email, billing, GitHub, Jira, Google Workspace and notifications. Install alongside the \"yus\" plugin.",
+      "description": "yus Operations and integrations department: 21 skills. Email, billing, GitHub, Jira, Google Workspace and notifications. Install alongside the \"yus\" plugin.",
       "keywords": [
         "yus",
         "skills",
@@ -715,6 +716,7 @@
       ],
       "skills": [
         "./github-ops",
+        "./pr-review-threads",
         "./issue-review",
         "./jira-integration",
         "./project-flow-ops",
@@ -856,7 +858,7 @@
       "license": "MIT",
       "category": "workflow",
       "strict": false,
-      "description": "Every yus department at once: 308 skills. Install alongside the \"yus\" plugin instead of individual yus-<department> plugins.",
+      "description": "Every yus department at once: 310 skills. Install alongside the \"yus\" plugin instead of individual yus-<department> plugins.",
       "keywords": [
         "yus",
         "skills",
@@ -967,6 +969,7 @@
         "./ai-agents/agentic-os",
         "./ai-agents/ai-first-engineering",
         "./ai-agents/autonomous-agent-harness",
+        "./ai-agents/human-attention-budget",
         "./ai-agents/gan-style-harness",
         "./ai-agents/dynamic-workflow-mode",
         "./ai-agents/loop-design-check",
@@ -1110,6 +1113,7 @@
         "./media/taste-distillation",
         "./media/tasteforge-video",
         "./operations/github-ops",
+        "./operations/pr-review-threads",
         "./operations/issue-review",
         "./operations/jira-integration",
         "./operations/project-flow-ops",

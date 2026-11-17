@@ -94,6 +94,19 @@ Review each changed file for:
 - Missing error handling
 - Potential edge cases
 
+## UI Changes: Before and After
+
+When the change affects what users see, the PR needs **both** a Before and an
+After capture, clearly labelled, each naming the revision it was taken from.
+After-only evidence is incomplete.
+
+- Capture the same scenario on both sides: same page, viewport, theme and state.
+- Use real captures of the application, never a mockup standing in for the old
+  version. Screenshots or short recordings both work.
+- Do not show credentials or private data in the captures.
+- Take the captures again when later changes make them out of date.
+- If a real Before capture cannot be made, say so and do not call the PR ready.
+
 ## Target Acceptance
 
 When the requested outcome requires deployment or target-environment verification,
@@ -121,6 +134,7 @@ Lint:      [PASS/FAIL] (X warnings)
 Tests:     [PASS/FAIL] (X/Y passed, Z% coverage)
 Security:  [PASS/FAIL] (X issues)
 Diff:      [X files changed]
+UI:        [BEFORE+AFTER/AFTER ONLY/NOT APPLICABLE]
 
 Overall:   [READY/NOT READY] for PR
 Target:    [VERIFIED/FAILED/NOT PERFORMED/NOT APPLICABLE] (environment/version, evidence)

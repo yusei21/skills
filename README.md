@@ -5,14 +5,14 @@
 Agents, skills, hooks, rules and slash commands for Claude Code and other
 coding-agent harnesses (Codex, Cursor, OpenCode, Gemini, Kimi and more).
 
-Access to 71 agents, 326 skills, and 98 legacy command shims, plus hooks,
+Access to 71 agents, 328 skills, and 98 legacy command shims, plus hooks,
 rules, memory and continuous-learning workflows.
 
 | Surface  | Count | What it is |
 |----------|-------|------------|
 | Agents   | 71 agents | Subagents for planning, review, build repair, security and domain work |
 | Commands | 98 commands | Slash-command shims that route to agents and skills |
-| Skills   | 326 skills | Workflows and domain knowledge, grouped into 18 departments |
+| Skills   | 328 skills | Workflows and domain knowledge, grouped into 18 departments |
 
 ## Install with Claude Code
 
@@ -101,7 +101,7 @@ inside nested folders there.
 ```text
 |-- agents/    # 71 specialized subagents for delegation
 |-- commands/  # 98 maintained slash-command shims
-|-- skills/    # 326 reusable workflows loaded on demand
+|-- skills/    # 328 reusable workflows loaded on demand
 |   |-- core/            one folder per department,
 |   |-- frontend/        one folder per skill inside it:
 |   `-- ...              skills/<department>/<skill>/SKILL.md

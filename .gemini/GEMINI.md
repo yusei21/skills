@@ -4,7 +4,7 @@ This file provides Gemini CLI with the baseline yus workflow, review standards, 
 
 ## Overview
 
-yus is a cross-harness coding system with 71 specialized agents, 326 skills, and 98 commands.
+yus is a cross-harness coding system with 71 specialized agents, 328 skills, and 98 commands.
 
 Gemini support is currently focused on a strong project-local instruction layer via `.gemini/GEMINI.md`, plus the shared MCP catalog and package-manager setup assets shipped by the installer.
 

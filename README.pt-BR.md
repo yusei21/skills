@@ -6,14 +6,14 @@ Agentes, skills, hooks, regras e comandos de barra para o Claude Code e outros
 ambientes de agentes de código (Codex, Cursor, OpenCode, Gemini, Kimi e
 outros).
 
-Acesso a 71 agentes, 326 skills e 98 shims de comandos legados, além de hooks,
+Acesso a 71 agentes, 328 skills e 98 shims de comandos legados, além de hooks,
 regras, memória e fluxos de aprendizado contínuo.
 
 | Recurso | Quantidade | O que é |
 |---------|------------|---------|
 | Agentes | 71 | Subagentes para planejamento, revisão, correção de build, segurança e trabalho de domínio |
 | Comandos | 98 | Shims de comandos de barra que encaminham para agentes e skills |
-| Skills | 326 | Fluxos de trabalho e conhecimento de domínio, agrupados em 18 departamentos |
+| Skills | 328 | Fluxos de trabalho e conhecimento de domínio, agrupados em 18 departamentos |
 
 ## Instalar no Claude Code
 
