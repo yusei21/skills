@@ -1,3 +1,4 @@
+// @ts-check
 'use strict';
 
 const crypto = require('crypto');
@@ -5,8 +6,32 @@ const fs = require('fs');
 const path = require('path');
 
 const INVALID_LOCK_STALE_MS = 5 * 60 * 1000;
+
+/**
+ * The parts of a stat result that identify a file. Path stats and descriptor
+ * stats may be plain or bigint, so both number types are accepted.
+ * @typedef {{ readonly dev: number | bigint, readonly ino: number | bigint }} FileIdentity
+ */
+
+/** @typedef {() => void} ReleaseSettingsLock */
+
+/** @type {WeakMap<ReleaseSettingsLock, Readonly<FileIdentity>>} */
 const acquiredLockIdentities = new WeakMap();
 
+/**
+ * @param {unknown} error
+ * @returns {string | undefined}
+ */
+function errorCode(error) {
+  if (!error || typeof error !== 'object' || !('code' in error)) return undefined;
+  return typeof error.code === 'string' ? error.code : undefined;
+}
+
+/**
+ * @param {FileIdentity} left
+ * @param {FileIdentity} right
+ * @returns {boolean}
+ */
 function sameFileIdentity(left, right) {
   if (left.ino !== right.ino) {
     return false;
@@ -20,9 +45,16 @@ function sameFileIdentity(left, right) {
   return left.dev === right.dev;
 }
 
+/**
+ * @param {string} lockPath
+ * @param {string} [label]
+ * @returns {ReleaseSettingsLock}
+ */
 function createSettingsLock(lockPath, label = 'Claude settings') {
   const tempPath = `${lockPath}.create-${process.pid}-${crypto.randomBytes(8).toString('hex')}`;
+  /** @type {number | undefined} */
   let descriptor;
+  /** @type {fs.BigIntStats} */
   let ownedStats;
   try {
     descriptor = fs.openSync(tempPath, 'wx', 0o600);
@@ -62,12 +94,20 @@ function createSettingsLock(lockPath, label = 'Claude settings') {
   return release;
 }
 
+/**
+ * @param {ReleaseSettingsLock} release
+ * @returns {Readonly<FileIdentity>}
+ */
 function getSettingsLockIdentity(release) {
   const identity = acquiredLockIdentities.get(release);
   if (!identity) throw new Error('No acquired settings lock identity for this release function.');
   return identity;
 }
 
+/**
+ * @param {string} lockPath
+ * @returns {{ metadata: unknown, stats: fs.BigIntStats }}
+ */
 function inspectSettingsLock(lockPath) {
   const descriptor = fs.openSync(lockPath, fs.constants.O_RDONLY | (fs.constants.O_NOFOLLOW || 0));
   try {
@@ -81,6 +121,7 @@ function inspectSettingsLock(lockPath) {
     ) {
       return { metadata: null, stats };
     }
+    /** @type {unknown} */
     let metadata = null;
     try {
       metadata = JSON.parse(fs.readFileSync(descriptor, 'utf8'));
@@ -93,21 +134,41 @@ function inspectSettingsLock(lockPath) {
   }
 }
 
+/**
+ * The owner pid recorded in a lock file, or null when the lock is unreadable.
+ * @param {unknown} metadata
+ * @returns {number | null}
+ */
+function lockOwnerPid(metadata) {
+  if (!metadata || typeof metadata !== 'object' || !('pid' in metadata)) return null;
+  const { pid } = metadata;
+  return typeof pid === 'number' && Number.isSafeInteger(pid) && pid > 0 ? pid : null;
+}
+
+/**
+ * @param {number} pid
+ * @returns {boolean}
+ */
 function processIsAlive(pid) {
   try {
     process.kill(pid, 0);
     return true;
   } catch (error) {
-    return error.code !== 'ESRCH';
+    return errorCode(error) !== 'ESRCH';
   }
 }
 
+/**
+ * @param {string} lockPath
+ * @param {string} [label]
+ * @returns {ReleaseSettingsLock | null}
+ */
 function recoverSettingsLock(lockPath, label = 'Claude settings') {
   const recoveryPath = `${lockPath}.recover`;
   try {
     fs.mkdirSync(recoveryPath, { mode: 0o700 });
   } catch (error) {
-    if (error && error.code === 'EEXIST') return null;
+    if (errorCode(error) === 'EEXIST') return null;
     throw error;
   }
 
@@ -117,13 +178,12 @@ function recoverSettingsLock(lockPath, label = 'Claude settings') {
     try {
       inspected = inspectSettingsLock(lockPath);
     } catch (error) {
-      if (error && error.code === 'ENOENT') return createSettingsLock(lockPath, label);
+      if (errorCode(error) === 'ENOENT') return createSettingsLock(lockPath, label);
       throw error;
     }
-    const validOwner = Number.isSafeInteger(inspected.metadata && inspected.metadata.pid)
-      && inspected.metadata.pid > 0;
-    const stale = validOwner
-      ? !processIsAlive(inspected.metadata.pid)
+    const ownerPid = lockOwnerPid(inspected.metadata);
+    const stale = ownerPid !== null
+      ? !processIsAlive(ownerPid)
       : Date.now() - Number(inspected.stats.mtimeMs) >= INVALID_LOCK_STALE_MS;
     if (!stale) return null;
 
@@ -147,8 +207,8 @@ function recoverSettingsLock(lockPath, label = 'Claude settings') {
  * owner crashes during recovery, inspect and remove the orphaned guard manually
  * only after confirming no yus process is active.
  * @param {string} settingsPath - Settings file protected by the lock
- * @param {object} options - Diagnostic label and bounded wait duration
- * @returns {Function} Release callback for the acquired lock
+ * @param {{ label?: string, timeoutMs?: number }} [options] - Diagnostic label and bounded wait duration
+ * @returns {ReleaseSettingsLock} Release callback for the acquired lock
  */
 function acquireSettingsLock(settingsPath, { label = 'Claude settings', timeoutMs = 0 } = {}) {
   if (!Number.isFinite(timeoutMs) || timeoutMs < 0) {
@@ -162,14 +222,15 @@ function acquireSettingsLock(settingsPath, { label = 'Claude settings', timeoutM
     try {
       return createSettingsLock(lockPath, label);
     } catch (error) {
-      if (!error || error.code !== 'EEXIST') throw error;
+      if (errorCode(error) !== 'EEXIST') throw error;
     }
     try {
       const recovered = recoverSettingsLock(lockPath, label);
       if (recovered) return recovered;
     } catch (error) {
       // A different writer can acquire or release between inspection and recovery.
-      if (!error || (error.code !== 'EEXIST' && !(timeoutMs > 0 && error.code === 'ENOENT'))) throw error;
+      const code = errorCode(error);
+      if (code !== 'EEXIST' && !(timeoutMs > 0 && code === 'ENOENT')) throw error;
     }
     const remaining = deadline - performance.now();
     if (remaining <= 0) {
@@ -182,9 +243,19 @@ function acquireSettingsLock(settingsPath, { label = 'Claude settings', timeoutM
   }
 }
 
+/**
+ * Run `callback` while holding the settings lock. A failure to release is
+ * attached to the callback's error as `releaseError`, or thrown on its own.
+ * @template T
+ * @param {string} settingsPath
+ * @param {() => T} callback
+ * @returns {T}
+ */
 function runWithSettingsLock(settingsPath, callback) {
   const releaseLock = acquireSettingsLock(settingsPath);
+  /** @type {unknown} */
   let primaryError = null;
+  /** @type {T | undefined} */
   let result;
   try {
     result = callback();
@@ -192,6 +263,7 @@ function runWithSettingsLock(settingsPath, callback) {
     primaryError = error;
   }
 
+  /** @type {unknown} */
   let releaseError = null;
   try {
     releaseLock();
@@ -200,11 +272,13 @@ function runWithSettingsLock(settingsPath, callback) {
   }
 
   if (primaryError) {
-    if (releaseError) primaryError.releaseError = releaseError;
+    if (releaseError && typeof primaryError === 'object') {
+      Object.assign(primaryError, { releaseError });
+    }
     throw primaryError;
   }
   if (releaseError) throw releaseError;
-  return result;
+  return /** @type {T} */ (result);
 }
 
 module.exports = {
