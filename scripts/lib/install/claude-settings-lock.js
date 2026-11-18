@@ -283,6 +283,7 @@ function runWithSettingsLock(settingsPath, callback) {
 
 module.exports = {
   acquireSettingsLock,
+  errorCode,
   getSettingsLockIdentity,
   runWithSettingsLock,
   sameFileIdentity,

@@ -220,6 +220,18 @@ function runTests() {
     );
   })) passed++; else failed++;
 
+  if (test('materializeManagedHooks reports malformed hooks.json through validation', () => {
+    const cases = [
+      [{ Stop: 'node stop.js' }, /Stop: expected an array/],
+      [{ Stop: ['node stop.js'] }, /Stop\[0\]: expected a JSON object/],
+      [{ Stop: [{ id: 'yus:stop', hooks: 'node stop.js' }] }, /Stop\[0\]: expected hooks/],
+      [{ Stop: [{ id: 'yus:stop', hooks: [null] }] }, /Stop\[0\]\.hooks\[0\]: expected a JSON object/],
+    ];
+    for (const [hooks, expected] of cases) {
+      assert.throws(() => materializeManagedHooks({ hooks }, '/opt/yus'), expected);
+    }
+  })) passed++; else failed++;
+
   if (test('replaces every plugin-root placeholder recursively and immutably', () => {
     const source = {
       SessionStart: [{

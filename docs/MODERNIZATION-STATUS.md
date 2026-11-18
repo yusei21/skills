@@ -161,6 +161,11 @@ falta, em ordem. Atualize ao terminar cada item.
 - **Tipagem:** `atomic-write.js` e `install/claude-settings-lock.js` em
   `strict`. O `runWithSettingsLock` não quebra mais quando o callback lança um
   valor que não é objeto e o lock também falha ao liberar.
+- **Tipagem:** `install/claude-settings.js` em `strict` (tipos `ManagedHooks`,
+  `ClaudeSettings`, `SettingsSnapshot`). Um `hooks.json` malformado (evento que
+  não é lista, entrada ou handler que não é objeto) dava `TypeError` genérico
+  ao resolver o `CLAUDE_PLUGIN_ROOT`; agora passa intacto e a validação
+  aponta o lugar exato, como o comentário do código já prometia.
 - `node scripts/dev/generate-skill-triggers.js --keep-triggers` atualiza o
   `registryDigest` sem chamar modelo. Use depois de editar skills sem mudar a
   `description`; com descrição nova ou skill nova, rode a geração completa.
@@ -170,9 +175,10 @@ falta, em ordem. Atualize ao terminar cada item.
 Os itens da lista original estão feitos. O que sobra é opcional:
 
 1. **Tipagem gradual, quando valer a pena.** Em strict: `package-manager.js`,
-   `utils.js`, `session-manager.js`, `session-aliases.js`, `atomic-write.js` e
-   `install/claude-settings-lock.js`. Os próximos naturais são os que usam o
-   lock (`install/claude-settings.js`, `claude-plugin-setup.js`).
+   `utils.js`, `session-manager.js`, `session-aliases.js`, `atomic-write.js`,
+   `install/claude-settings-lock.js` e `install/claude-settings.js`. Os
+   próximos naturais são os que leem e gravam o settings por ele
+   (`install/apply.js`, `claude-plugin-setup.js`, `claude-scope-migration.js`).
 2. **Versões fixadas nas skills envelhecem.** Repita a busca por versões e APIs
    obsoletas a cada poucos meses; as versões Maven saem de
    `repo1.maven.org/maven2/<grupo>/<artefato>/maven-metadata.xml` (o índice de
@@ -201,6 +207,16 @@ claude plugin validate .
 ```
 
 ## Último resultado
+
+Sessão de 17/11/2026 (noite), tipagem de `install/claude-settings.js`:
+
+- `npm test`: 9296 testes em 455 arquivos, 0 falhas; `npm run typecheck`: ok;
+  ESLint nos arquivos alterados: 0 erros.
+- CI do `b2537d3` (run `44153402430`): tudo verde menos os dois jobs do macOS,
+  que não receberam máquina ("not acquired by Runner", falta de capacidade
+  do macOS arm64 no GitHub); rodados de novo.
+
+Rodada anterior:
 
 Sessão de 17/11/2026 (fim de tarde), varredura de nuvem/JVM/mobile e tipagem
 de `atomic-write` e `claude-settings-lock`:

@@ -41,6 +41,7 @@
 
 - Hooks that exit before reading all of stdin keep their exit status. `spawnSync` reports `EPIPE` (or `EOF` on Windows) even though the status is available, and the hook runners treated that as a failure, so a blocking `exit 2` became 0 or 1 and the action went through.
 - `plan-canvas stop` no longer fails on Windows when the CLI and the server delete `server.json` at the same time (`EPERM` on a file pending deletion).
+- A malformed `hooks/hooks.json` (an event that is not a list, or an entry or handler that is not an object) is reported by managed-hook validation with its location, instead of a bare `TypeError` while resolving `CLAUDE_PLUGIN_ROOT`.
 - The package-manager config no longer accepts inherited keys such as `toString` or `constructor` as a package manager, and `getExecCommand` rejects arguments that contain a newline.
 - Security examples no longer run a third-party action from a branch (`trufflehog@main`), and the OIDC example grants the `id-token: write` permission it needs.
 - Context-size detection keeps a complete usage record at the start of the transcript tail, so a boundary-aligned record still triggers the strategic-compact reminder. Partial records remain excluded.
